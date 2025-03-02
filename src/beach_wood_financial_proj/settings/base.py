@@ -410,11 +410,7 @@ MESSAGE_TAGS = {
 # DEFENDER_VALKEY_URL = (
 #     f"valkey://:{config('VALKEY_PASSWORD', cast=str)}@{config('REDIS_HOST', cast=str)}/0"
 # )
-COMPONENTS = ComponentsSettings(
-    autodiscover=True,
-    reload_on_file_change=True,
-    template_cache_size=2,
-)
+
 # Django-filter configs
 FILTERS_VERBOSE_LOOKUPS = {"exact": "", "iexact": "", "contains": "", "icontains": ""}
 FILTERS_EMPTY_CHOICE_LABEL = ""

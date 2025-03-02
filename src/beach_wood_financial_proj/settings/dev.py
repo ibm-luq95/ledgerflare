@@ -151,3 +151,9 @@ REQUEST_VIEWER = {"LIVE_MONITORING": False, "WHITELISTED_PATH": []}
 # }
 
 TEMPLATES[0]["OPTIONS"]["debug"] = DEBUG
+
+COMPONENTS = ComponentsSettings(
+    autodiscover=True,
+    reload_on_file_change=True,
+    template_cache_size=2,
+)
