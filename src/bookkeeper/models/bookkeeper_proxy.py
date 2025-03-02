@@ -14,6 +14,9 @@ from bookkeeper.models import Bookkeeper
 from core.utils import BeachWoodFinancialError, get_formatted_logger, debugging_print
 from django.db.models import Q
 
+from core.utils.developments.debugging_print_object import DebuggingPrint
+
+
 logger = get_formatted_logger()
 
 
@@ -77,6 +80,12 @@ class BookkeeperProxy(Bookkeeper):
                     for task in tasks:
                         all_lists.append(task)
         return all_lists
+
+    def get_all_jobs(self):
+        from job.models import JobProxy
+
+        all_jobs = JobProxy.original_objects.filter(managed_by=self.user)
+        return all_jobs
 
     def get_user_jobs(self, is_archived: bool = False) -> BaseQuerySetMixin | None:
         if hasattr(self.user, "jobs"):

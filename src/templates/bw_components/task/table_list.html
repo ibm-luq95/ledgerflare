@@ -131,7 +131,8 @@
             </th>
         {% endif %}
         <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2"></div>
+            <div class="flex items-center gap-x-2">
+            </div>
         </th>
     </tr>
 {% endblock thead_block %}
@@ -153,10 +154,12 @@
                     </div>
                 </td>
             {% endif %}
-            <td class="h-px w-px whitespace-nowrap">
+            <td class="h-px w-px">
                 <div class="px-6 py-3">
                     <a href="{% url base_url_name|add:':update' object.pk %}">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.title|safe }}</span>
+                        <p class="line-clamp-4 text-sm text-gray-600 dark:text-gray-400">
+                            {{ object.title|safe }}
+                        </p>
                     </a>
                 </div>
             </td>

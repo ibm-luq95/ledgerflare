@@ -10,7 +10,9 @@
               id="{{ filter_form_id }}"
               action="{{ filter_form_action }}">
             <fieldset form="{{ filter_form_id }}"
-                      {% if is_disabled is True %}disabled{% endif %}>
+                      {% if is_disabled is True %}
+                          disabled
+                      {% endif %}>
                 <div class="flex flex-wrap">
                     <!-- Input -->
                     {% for filter_field in filter_form %}
@@ -130,34 +132,61 @@
                         </div>
                     {% endif %}
                     <!-- End Input -->
+                    {% if visibility_filter_form %}
+                        <div class="mx-3 mb-5">
+                            <div class="bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 mt-4 px-4 py-3">
+                                <div class="grid space-y-3">
+                                    <div class="relative flex items-start">
+                                        <div class="flex items-center h-5 mt-1">
+                                            {% render_field visibility_filter_form.show_all_jobs class+="bw-input border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" disabled="disabled" %}
+                                            {% comment  %}
+                                                <input id="hs-checkbox-delete" name="hs-checkbox-delete" type="checkbox" class="border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" aria-describedby="hs-checkbox-delete-description" checked="" />
+                                            {% endcomment %}
+                                        </div>
+                                        <label for="{{ visibility_filter_form.show_all_jobs.id_for_label }}"
+                                               class="ms-3">
+                                            <span class="block text-sm font-semibold text-gray-800 dark:text-neutral-300">
+                                                {{ visibility_filter_form.show_all_jobs.label }}
+                                            </span>
+                                            <span id="hs-checkbox-delete-description"
+                                                  class="block text-sm text-gray-600 dark:text-neutral-500">
+                                                {{ visibility_filter_form.show_all_jobs.help_text }}
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="bg-gray-100 border-t rounded-b-xl py-2 px-4 md:py-2 md:px-5 dark:bg-gray-800 dark:border-gray-700">
+            <div class="flex flex-row-reverse">
+                <div class="hs-tooltip inline-block">
+                    <button type="submit"
+                            {% if is_disabled is True %}
+                                disabled
+                            {% endif %}
+                            form="{{ filter_form_id }}"
+                            class="hs-tooltip-toggle inline-flex flex-shrink-0 h-[2.375rem] w-[2.375rem] py-3 px-4 justify-center items-center gap-2 rounded-md bg-blue-100 border border-transparent font-semibold text-blue-500 hover:text-white hover:bg-blue-500 focus:outline-none focus:ring-2 ring-offset-white focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 mx-1">
+                        <i class="fa-solid fa-filter"></i>
+                        <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
+                              role="tooltip">{% translate "Filter" %}</span>
+                    </button>
                 </div>
-            </fieldset>
-        </form>
-    </div>
-    <div class="bg-gray-100 border-t rounded-b-xl py-2 px-4 md:py-2 md:px-5 dark:bg-gray-800 dark:border-gray-700">
-        <div class="flex flex-row-reverse">
-            <div class="hs-tooltip inline-block">
-                <button type="submit"
-                        {% if is_disabled is True %}disabled{% endif %}
-                        form="{{ filter_form_id }}"
-                        class="hs-tooltip-toggle inline-flex flex-shrink-0 h-[2.375rem] w-[2.375rem] py-3 px-4 justify-center items-center gap-2 rounded-md bg-blue-100 border border-transparent font-semibold text-blue-500 hover:text-white hover:bg-blue-500 focus:outline-none focus:ring-2 ring-offset-white focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 mx-1">
-                    <i class="fa-solid fa-filter"></i>
-                    <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                          role="tooltip">{% translate "Filter" %}</span>
-                </button>
-            </div>
-            <div class="hs-tooltip inline-block">
-                <button type="reset"
-                        data-href="{{ filter_cancel_url }}"
-                        id="resetFilterBtn"
-                        form="{{ filter_form_id }}"
-                        data-form="{{ filter_form_id }}"
-                        class="hs-tooltip-toggle inline-flex flex-shrink-0 h-[2.375rem] w-[2.375rem] justify-center items-center gap-2 rounded-md py-3 px-4inline-flex bg-gray-300 border border-transparent font-semibold text-gray-800 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 ring-offset-white focus:ring-gray-800 focus:ring-offset-2 transition-all text-sm dark:bg-gray-700 dark:hover:bg-gray-900 dark:hover:border-gray-900 dark:text-white dark:focus:ring-gray-900 dark:focus:ring-offset-gray-800">
-                    <i class="fa-solid fa-eraser"></i>
-                    <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                          role="tooltip">{% translate "Reset filter" %}</span>
-                </button>
+                <div class="hs-tooltip inline-block">
+                    <button type="reset"
+                            data-href="{{ filter_cancel_url }}"
+                            id="resetFilterBtn"
+                            form="{{ filter_form_id }}"
+                            data-form="{{ filter_form_id }}"
+                            class="hs-tooltip-toggle inline-flex flex-shrink-0 h-[2.375rem] w-[2.375rem] justify-center items-center gap-2 rounded-md py-3 px-4inline-flex bg-gray-300 border border-transparent font-semibold text-gray-800 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 ring-offset-white focus:ring-gray-800 focus:ring-offset-2 transition-all text-sm dark:bg-gray-700 dark:hover:bg-gray-900 dark:hover:border-gray-900 dark:text-white dark:focus:ring-gray-900 dark:focus:ring-offset-gray-800">
+                        <i class="fa-solid fa-eraser"></i>
+                        <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
+                              role="tooltip">{% translate "Reset filter" %}</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>

@@ -37,15 +37,14 @@ const castBooleanCheckboxElement = (input) => {
 };
 
 /**
- * Serializes form input elements into an object or FormData.
- *
- * @param {Object} options - The options for serialization.
- * @param {HTMLFormElement} options.formElement - The form element to serialize.
- * @param {Array} [options.excludedFields=[]] - The fields to exclude from serialization.
- * @param {boolean} [options.isOrdered=false] - Whether to order the serialized object alphabetically by keys.
- * @param {boolean} [options.returnAsFormData=false] - Whether to return the serialized data as a FormData object.
- * @param {Array} [options.filesArray=[]] - The names of file input fields to include in the FormData.
- * @returns {Object|FormData} - The serialized form data.
+ * Serializes form elements into an object or FormData with Django compatibility.
+ * @param {Object} config - Configuration object
+ * @param {HTMLFormElement} config.formElement - Form element to serialize
+ * @param {string[]} [config.excludedFields=[]] - Field names to exclude
+ * @param {boolean} [config.isOrdered=false] - Alphabetically order keys
+ * @param {boolean} [config.returnAsFormData=false] - Return FormData instead
+ * @param {string[]} [config.filesArray=[]] - File input names to include
+ * @returns {Object|FormData} Serialized form data
  */
 const formInputSerializer = ({
   formElement,
@@ -54,73 +53,101 @@ const formInputSerializer = ({
   returnAsFormData = false,
   filesArray = [],
 }) => {
-  const serializedObject = {};
-  const checkboxArray = new Set();
-  Array.from(formElement.elements).forEach((element) => {
-    // check if the element.name in excludedFields
-    if (excludedFields.includes(element.name) === false) {
-      if (element.name !== "") {
-        // check if the element type is checkbox
-        if (element.type !== "checkbox") {
-          // check if the element name not empty string
-          serializedObject[element.name] = element.value;
-        } else {
-          //checkbox single or multiple inputs
-          checkboxArray.add(element.name);
-        }
+  /** @type {Record<string, any>} */
+  const formData = {};
+  const elements = Array.from(formElement.elements);
+
+  // Group special elements
+  const groupedElements = elements.reduce(
+    (acc, el) => {
+      if (!el.name || excludedFields.includes(el.name)) return acc;
+
+      if (el.type === "checkbox") {
+        const current = acc.checkboxes.get(el.name) || [];
+        acc.checkboxes.set(el.name, [...current, el]);
+      } else if (el.type === "radio") {
+        const current = acc.radios.get(el.name) || [];
+        acc.radios.set(el.name, [...current, el]);
       }
+      return acc;
+    },
+    { checkboxes: new Map(), radios: new Map() },
+  );
+
+  // Process regular inputs
+  elements.forEach((el) => {
+    if (!el.name || excludedFields.includes(el.name)) return;
+
+    if (["checkbox", "radio", "file"].includes(el.type)) return;
+
+    if (el instanceof HTMLSelectElement && el.multiple) {
+      formData[el.name] = Array.from(el.selectedOptions).map((opt) => opt.value);
+    } else if (el.name && !formData.hasOwnProperty(el.name)) {
+      formData[el.name] = el.value;
     }
   });
-  if (checkboxArray.size > 0) {
-    // check if checkboxArray contains only one element
-    // if (checkboxArray.size === 1) {
-    //   checkboxArray.forEach((ele) => {
-    //     const checkboxElement = formElement.querySelector(`input[name='${ele}']:checked`);
-    //     console.log(checkboxElement);
-    //     if(checkboxElement){
-    //       const vvv = castBooleanCheckboxElement(checkboxElement);
-    //       console.log(vvv);
-    //     }
-    //   });
-    // }
-    for (const checkboxName of checkboxArray) {
-      const checkedElementArray = new Array();
-      const checkboxElements = formElement.querySelectorAll(
-        `input[name='${checkboxName}']:checked`,
-      );
-      if (checkboxElements.length > 0) {
-        checkboxElements.forEach((element) => {
-          // checkedElementArray.push(castBooleanCheckboxElement(element));
-          checkedElementArray.push(element.value);
-        });
-        serializedObject[checkboxName] = checkedElementArray;
-      }
-    }
-  }
 
-  // check if returnAsFormData is true
-  if (returnAsFormData === false) {
-    return isOrdered === true ? orderObjectItems(serializedObject) : serializedObject;
-  } else {
-    const formData = new FormData();
-    for (const key in serializedObject) {
-      // check if the element not function, normal element
-      if (typeof serializedObject[key] !== "function") {
-        formData.append(key, serializedObject[key]);
-      }
-    }
-    // check if filesArray contains items
-    if (filesArray.length > 0) {
-      for (const fieldName of filesArray) {
-        if (formElement.elements[fieldName].files[0]) {
-          // console.log(formElement.elements[fieldName]);
-          formData.append(fieldName, formElement.elements[fieldName].files[0]);
-        }
-      }
-    }
+  // Process radio groups
+  groupedElements.radios.forEach((radios, name) => {
+    const checked = radios.find((radio) => radio.checked);
+    if (checked) formData[name] = checked.value;
+  });
 
-    return formData;
-  }
+  // Process checkboxes (Django compatibility)
+  groupedElements.checkboxes.forEach((checkboxes, name) => {
+    const checkedValues = checkboxes
+      .filter((cb) => cb.checked)
+      .map((cb) => cb.value || "on"); // Default to 'on' per HTML spec
+
+    if (checkedValues.length === 0) return;
+
+    // Handle single/multiple checkboxes
+    formData[name] =
+      checkboxes.length === 1
+        ? handleDjangoCheckboxValue(checkedValues[0])
+        : checkedValues;
+  });
+
+  // Order keys if requested
+  const finalData = isOrdered
+    ? Object.fromEntries(Object.entries(formData).sort(([a], [b]) => a.localeCompare(b)))
+    : formData;
+  // console.warn(finalData);
+  // throw new Error("D");
+  // Convert to FormData if required
+  if (!returnAsFormData) return finalData;
+
+  const formDataObj = new FormData();
+  Object.entries(finalData).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((v) => formDataObj.append(key, v));
+    } else {
+      formDataObj.append(key, value);
+    }
+  });
+
+  // Handle file inputs
+  filesArray.forEach((name) => {
+    const fileInput = formElement.querySelector(`[name='${name}']`);
+    if (fileInput?.files?.length > 0) {
+      Array.from(fileInput.files).forEach((file) => {
+        formDataObj.append(name, file, file.name);
+      });
+    }
+  });
+
+  return formDataObj;
+};
+
+/**
+ * Converts checkbox values to Django-compatible types
+ * @param {string} value - Raw checkbox value
+ * @returns {boolean|string} Processed value
+ */
+const handleDjangoCheckboxValue = (value) => {
+  if (value === "on") return true;
+  if (value === "off") return false;
+  return value;
 };
 
 /**

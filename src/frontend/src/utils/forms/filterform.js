@@ -2,116 +2,151 @@
 
 /**
  * @class FilterPersistence
- * @description Handles storing, retrieving, and syncing filter form inputs using localStorage and URL parameters.
+ * @description Handles persistent form filters using localStorage and URL params
  */
 class FilterPersistence {
   /**
-   * Creates an instance of FilterPersistence.
-   * @param {HTMLFormElement} form - The filter form element.
-   * @param {string} storagePrefix - Prefix for localStorage keys to store individual inputs.
+   * @param {HTMLFormElement} form - Form element containing filters
+   * @param {string} storagePrefix - Prefix for localStorage keys
    */
   constructor(form, storagePrefix = "filter_") {
     if (!form || !(form instanceof HTMLFormElement)) {
-      throw new Error("A valid HTMLFormElement is required.");
+      throw new Error("Valid HTMLFormElement required");
     }
 
     this.form = form;
     this.storagePrefix = storagePrefix;
-    this.inputListener = (event) => this.safeSaveFilter(event.target);
+    this.inputListener = (e) => this.handleInputChange(e.target);
 
-    // ✅ Check for saved filters and apply them when the page loads
+    this.initialize();
+  }
+
+  initialize() {
     this.loadFilters();
-
-    // ✅ Add input event listener to save filters
     this.form.addEventListener("input", this.inputListener);
-
-    // ✅ Add reset event listener to clear filters
-    this.form.addEventListener("reset", () => {
-      this.safeResetFilters();
-    });
+    this.form.addEventListener("reset", () => this.safeResetFilters());
   }
 
   /**
-   * Safely saves an individual filter input to localStorage and updates the URL.
-   * @param {HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement} input - The input element to save.
+   * Handles input changes and saves state
+   * @param {HTMLInputElement} input - Changed input element
    */
-  safeSaveFilter(input) {
+  handleInputChange(input) {
     try {
       if (!input.name) return;
 
+      const key = `${this.storagePrefix}${input.name}`;
       let value;
-      if (input.type === "checkbox") {
-        value = input.checked ? "true" : "false";
-      } else if (input.type === "radio") {
-        if (!input.checked) return;
-        value = input.value;
-      } else if (input.multiple) {
-        value = Array.from(input.selectedOptions)
-          .map((opt) => opt.value)
-          .join(",");
-      } else {
-        value = input.value;
+
+      switch (input.type) {
+        case "checkbox":
+          value = this.handleCheckboxChange(input);
+          break;
+
+        case "radio":
+          if (!input.checked) return;
+          value = input.value;
+          break;
+
+        case "select-multiple":
+          value = Array.from(input.selectedOptions)
+            .map((opt) => opt.value)
+            .join(",");
+          break;
+
+        default:
+          value = input.value;
+          break;
       }
 
-      // ✅ Save individual input value to localStorage
-      localStorage.setItem(`${this.storagePrefix}${input.name}`, value);
-
-      // ✅ Update URL parameters
-      const url = new URL(window.location);
-      url.searchParams.set(input.name, value);
-      window.history.replaceState({}, "", url);
-
-      this.form.dispatchEvent(new Event("filtersSaved"));
+      this.updateStorage(key, value);
+      this.updateUrlParams(input.name, value);
+      this.form.dispatchEvent(new Event("filtersUpdated"));
     } catch (error) {
-      console.error(`Error saving filter [${input.name}]:`, error);
+      console.error(`Error processing ${input.name}:`, error);
     }
   }
 
   /**
-   * Loads saved filter values from localStorage and URL parameters, and applies them to the form.
-   * If filters exist, it updates the URL and navigates to the filtered page.
+   * Handles checkbox state changes
+   * @param {HTMLInputElement} checkbox - Changed checkbox element
+   * @returns {string|null} - Stored value or null
+   */
+  handleCheckboxChange(checkbox) {
+    const checkboxes = this.form.querySelectorAll(
+      `input[type="checkbox"][name="${CSS.escape(checkbox.name)}"]`,
+    );
+
+    // Handle checkbox groups
+    if (checkboxes.length > 1) {
+      const values = Array.from(checkboxes)
+        .filter((cb) => cb.checked)
+        .map((cb) => cb.value || "on");
+      return values.length > 0 ? values.join(",") : null;
+    }
+
+    // Handle single checkbox
+    return checkbox.checked ? checkbox.value || "on" : null;
+  }
+
+  /**
+   * Updates localStorage with new value
+   * @param {string} key - Storage key
+   * @param {string|null} value - Value to store
+   */
+  updateStorage(key, value) {
+    if (value !== null) {
+      localStorage.setItem(key, value);
+    } else {
+      localStorage.removeItem(key);
+    }
+  }
+
+  /**
+   * Updates URL parameters
+   * @param {string} name - Parameter name
+   * @param {string|null} value - Parameter value
+   */
+  updateUrlParams(name, value) {
+    const url = new URL(window.location);
+    if (value !== null) {
+      url.searchParams.set(name, value);
+    } else {
+      url.searchParams.delete(name);
+    }
+    window.history.replaceState({}, "", url);
+  }
+
+  /**
+   * Loads and applies saved filters
    */
   loadFilters() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      let hasFilters = false;
+      let shouldReload = false;
 
       Array.from(this.form.elements).forEach((input) => {
         if (!input.name) return;
 
-        // ✅ Get value from URL first, fallback to localStorage
-        const urlValue = urlParams.get(input.name);
-        const savedValue = localStorage.getItem(`${this.storagePrefix}${input.name}`);
-        const value = urlValue !== null ? urlValue : savedValue;
+        // Prefer URL params over localStorage
+        const storedValue = urlParams.has(input.name)
+          ? urlParams.get(input.name)
+          : localStorage.getItem(`${this.storagePrefix}${input.name}`);
 
-        if (value === null) return;
+        if (storedValue === null) return;
 
-        // ✅ Apply saved value to the form input
-        if (input.type === "checkbox") {
-          input.checked = value === "true";
-        } else if (input.type === "radio") {
-          if (input.value === value) input.checked = true;
-        } else if (input.multiple) {
-          const valuesArray = value.split(",");
-          Array.from(input.options).forEach((opt) => {
-            opt.selected = valuesArray.includes(opt.value);
-          });
+        this.applyValueToInput(input, storedValue);
+
+        // Sync localStorage if value came from URL
+        if (urlParams.has(input.name)) {
+          localStorage.setItem(`${this.storagePrefix}${input.name}`, storedValue);
         } else {
-          input.value = value;
-        }
-
-        // ✅ Update URL if the value is from localStorage and not already in the URL
-        if (urlValue === null && savedValue !== null) {
-          urlParams.set(input.name, savedValue);
-          hasFilters = true;
+          shouldReload = true;
         }
       });
 
-      // ✅ If filters were applied from localStorage, navigate to the updated URL
-      if (hasFilters) {
-        const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
-        window.history.replaceState({}, "", newUrl);
-        window.location.href = newUrl; // Navigate to updated URL
+      if (shouldReload) {
+        window.location.search = urlParams.toString();
       }
     } catch (error) {
       console.error("Error loading filters:", error);
@@ -119,45 +154,86 @@ class FilterPersistence {
   }
 
   /**
-   * Safely resets the filter form, clears localStorage, removes URL parameters, and resets input values.
+   * Applies stored value to form input
+   * @param {HTMLInputElement} input - Form element
+   * @param {string} value - Stored value
+   */
+  applyValueToInput(input, value) {
+    switch (input.type) {
+      case "checkbox":
+        this.applyCheckboxValue(input, value);
+        break;
+
+      case "radio":
+        input.checked = input.value === value;
+        break;
+
+      case "select-multiple":
+        const values = value.split(",");
+        Array.from(input.options).forEach((opt) => {
+          opt.selected = values.includes(opt.value);
+        });
+        break;
+
+      default:
+        input.value = value;
+        break;
+    }
+  }
+
+  /**
+   * Applies value to checkbox(s)
+   * @param {HTMLInputElement} checkbox - Checkbox element
+   * @param {string} value - Stored value
+   */
+  applyCheckboxValue(checkbox, value) {
+    const checkboxes = this.form.querySelectorAll(
+      `input[type="checkbox"][name="${CSS.escape(checkbox.name)}"]`,
+    );
+
+    if (checkboxes.length > 1) {
+      const values = value.split(",");
+      checkboxes.forEach((cb) => {
+        cb.checked = values.includes(cb.value || "on");
+      });
+    } else {
+      checkbox.checked = value === (checkbox.value || "on");
+    }
+  }
+
+  /**
+   * Resets all filters and clears storage
    */
   safeResetFilters() {
     try {
-      // 🔹 Remove all stored filter values from localStorage FIRST
+      // Clear localStorage
       Array.from(this.form.elements).forEach((input) => {
         if (input.name) {
           localStorage.removeItem(`${this.storagePrefix}${input.name}`);
         }
       });
 
-      // 🔹 Clear all URL parameters
+      // Clear URL params
       const url = new URL(window.location);
       url.search = "";
       window.history.replaceState({}, "", url);
 
-      // 🔹 Temporarily remove the input event listener to prevent re-saving old values
+      // Reset form and inputs
       this.form.removeEventListener("input", this.inputListener);
-
-      // 🔹 Reset the form (this clears visible input values)
       this.form.reset();
 
-      // 🔹 Ensure checkboxes, radios, and multi-selects are properly cleared
+      // Force-uncheck checkboxes and radios
       setTimeout(() => {
         Array.from(this.form.elements).forEach((input) => {
           if (input.type === "checkbox" || input.type === "radio") {
             input.checked = false;
           } else if (input.multiple) {
             Array.from(input.options).forEach((opt) => (opt.selected = false));
-          } else {
-            input.value = ""; // Clear text and number inputs
           }
         });
-
-        // 🔹 Restore input event listener after reset
         this.form.addEventListener("input", this.inputListener);
       }, 0);
 
-      // 🔹 Dispatch a custom event when filters are reset
       this.form.dispatchEvent(new Event("filtersReset"));
     } catch (error) {
       console.error("Error resetting filters:", error);
@@ -165,18 +241,8 @@ class FilterPersistence {
   }
 }
 
-// Example usage:
-/**
- const filterForm = document.getElementById("filter-form");
-if (filterForm) {
-  const filterPersistence = new FilterPersistence(filterForm);
+// Usage example:
+// const filterForm = document.getElementById("filter-form");
+// if (filterForm) new FilterPersistence(filterForm);
 
-  filterForm.addEventListener("filtersSaved", () => {
-    console.log("Filters saved!");
-  });
-  filterForm.addEventListener("filtersReset", () => {
-    console.log("Filters reset!");
-  });
-}
-*/
 export default FilterPersistence;
