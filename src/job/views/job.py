@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.http import Http404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
@@ -10,6 +11,7 @@ from core.choices import JobStatusEnum, JobStateEnum
 from core.config.forms import BWFormRenderer
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
+from core.constants.status_labels import CON_ARCHIVED, CON_COMPLETED, CON_DRAFT
 from core.constants.users import CON_BOOKKEEPER, CON_ASSISTANT, CON_MANAGER
 from core.utils.developments.debugging_print_object import DebuggingPrint
 from core.views.mixins import BWLoginRequiredMixin, BWBaseListViewMixin
@@ -17,6 +19,7 @@ from core.views.mixins.update_previous_mixin import UpdateReturnPreviousMixin
 from discussion.forms import DiscussionMiniForm
 from document.forms import DocumentForm
 from job.filters import JobFilter
+from job.filters.job_visibility_form import JobVisibilityForm
 from job.forms import JobForm
 from job.models import JobProxy
 from job_category.forms import JobCategoryForm
@@ -106,14 +109,26 @@ class JobListView(
                 ),
             },
         )
+        context.setdefault("visibility_filter_form", JobVisibilityForm)
 
         # debugging_print(self.filterset.form["name"])
         return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        show_all_jobs = self.request.GET.get("show_all_jobs")
+        if show_all_jobs:
+            # queryset = JobProxy.objects.filter(
+            #     ~Q(status__in=[CON_ARCHIVED, CON_COMPLETED, CON_DRAFT])
+            # ).order_by("title")
+            queryset = JobProxy.original_objects.all()
         if self.request.user.user_type == CON_BOOKKEEPER:
-            queryset = self.request.user.bookkeeper.get_proxy_model().get_user_jobs()
+            # queryset = self.request.user.bookkeeper.get_proxy_model().get_user_jobs()
+            if show_all_jobs:
+                queryset = self.request.user.bookkeeper.get_proxy_model().get_all_jobs()
+            else:
+                queryset = self.request.user.bookkeeper.get_proxy_model().get_user_jobs()
+
         self.filterset = JobFilter(self.request.GET, queryset=queryset)
 
         return self.filterset.qs

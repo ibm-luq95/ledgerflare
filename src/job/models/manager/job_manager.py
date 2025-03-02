@@ -15,8 +15,7 @@ class JobManager(SoftDeleteManager):
             BaseQuerySetMixin: A queryset of instances of the model that are not marked as deleted.
 
         """
-        queryset = BaseQuerySetMixin(self.model, using=self._db).filter(
-            Q(is_deleted=False) & ~Q(status__in=[CON_ARCHIVED, CON_COMPLETED])
-        )
-
+        queryset = super().get_queryset()
+        # Add your custom filters
+        queryset = queryset.exclude(status__in=[CON_ARCHIVED, CON_COMPLETED])
         return queryset

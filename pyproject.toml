@@ -1,6 +1,6 @@
 [tool.black]
 line-length = 91
-target-version = ['py312']
+target-version = ['py313']  # Updated to Python 3.13
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -14,23 +14,18 @@ exclude = '''
   | buck-out
   | build
   | dist
-  # The following are specific to Black, you probably don't want those.
-  | blib2to3
-  | tests/data
-  | profiling
 )/
 '''
 
 [tool.isort]
-py_version = 312
+py_version = 313  # Updated to Python 3.13
 profile = "django"
-# known_django = "django"
 line_length = 91
 force_single_line = true
-# known_first_party = "django_components"
 use_parentheses = true
-#sections = ["FUTURE", "STDLIB", "THIRDPARTY", "DJANGO", "FIRSTPARTY", "LOCALFOLDER"]
-#skip = [".tox", "docs"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+known_first_party = ["your_project_name"]  # Replace with your project's name
+known_third_party = ["django", "numpy", "pandas"]  # Add your third-party dependencies
 
 [tool.djlint]
 profile = "django"
@@ -47,14 +42,8 @@ ignore = "H006"
 
 [tool.ruff]
 line-length = 91
-# Skip unused variable rules (`F841`).
-#ignore = ["F841", "F401", "E402", "E501", "E741", "W503"]
-ignore = ["F841", "F401", "E402", "E501", "E741"]
-show-fixes = true
-ignore-init-module-imports = true
-target-version = "py312"
+target-version = "py313"  # Updated to Python 3.13
 indent-width = 4
-# Exclude a variety of commonly ignored directories.
 exclude = [
     ".bzr",
     ".direnv",
@@ -78,69 +67,71 @@ exclude = [
     "node_modules",
     "venv",
 ]
+extend-exclude = ["docs", "test", "tests"]
 
-[tool.ruff.lint.isort]
-#case-sensitive = true
-detect-same-package = false
-combine-as-imports = true
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "tab"
-# Like Black, automatically detect the appropriate line ending.
-line-ending = "auto"
-docstring-code-format = true
-# Enable preview style formatting.
+[tool.ruff.lint]
+select = ["F", "E", "B", "I", "UP", "SIM"]
+ignore = ["D", "CPY", "T20", "DOC", "PGH"]
+fixable = ["ALL"]
+unfixable = []
 preview = true
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-
-# 4. Ignore `E402` (import violations) in all `__init__.py` files, and in select subdirectories.
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E402"]
 "**/{tests,docs,tools}/*" = ["E402"]
 
-[tool.ruff.lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
-# McCabe complexity (`C901`) by default.
-select = ["E4", "E7", "E9", "F"]
-ignore = []
-# Allow fix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
+[tool.ruff.lint.isort]
+force-single-line = true
+force-sort-within-sections = false
+lines-after-imports = 2
 
-# Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-# select = [
-#     # pycodestyle
-#     "E",
-#     # Pyflakes
-#     "F",
-#     # pyupgrade
-#     "UP",
-#     # flake8-bugbear
-#     "B",
-#     # flake8-simplify
-#     "SIM",
-#     # isort
-#     "I",
-# ]
-
-
-[tool.bandit]
-
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+preview = true
+docstring-code-format = true
 
 [tool.mypy]
-warn_return_any = true
+python_version = "3.13"  # Updated to Python 3.13
+ignore_missing_imports = true
+follow_imports = "silent"
+no_implicit_optional = true
+strict_optional = true
 warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+warn_return_any = false
+check_untyped_defs = true
+disallow_untyped_calls = false
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = false
+disallow_subclassing_any = true
+exclude = ["docs", "test", "tests"]
+
+[tool.bandit]
+targets = ["."]
+skips = ["B101"]  # Example: Skip assert statement checks
 
 [tool.docformatter]
-#recursive = true
 wrap-summaries = 91
+wrap-descriptions = 91
 black = true
 blank = true
 pre-summary-newline = true
 pre-summary-space = true
 make-summary-multi-line = true
-wrap-descriptions = 91
-#force-wrap = true
+
+[tool.pre-commit-config]
+repos = [
+    { repo = "https://github.com/astral-sh/ruff-pre-commit", rev = "v0.0.290", hooks = [{ id = "ruff", args = ["--fix"] }] },
+    { repo = "https://github.com/psf/black", rev = "23.10.0", hooks = [{ id = "black" }] },
+    { repo = "https://github.com/pre-commit/mirrors-isort", rev = "5.12.0", hooks = [{ id = "isort" }] },
+    { repo = "https://github.com/myint/docformatter", rev = "v1.5.0", hooks = [{ id = "docformatter", args = ["--wrap-summaries=91", "--wrap-descriptions=91"] }] },
+    { repo = "https://github.com/PyCQA/bandit", rev = "1.7.5", hooks = [{ id = "bandit" }] },
+]
