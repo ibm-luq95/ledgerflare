@@ -148,6 +148,12 @@ class Job(
         # blank=True,
         help_text=JOB_HELP_MESSAGES.get("is_scheduled"),
     )
+    scheduled_date = models.DateField(
+        _("Scheduled date"),
+        null=True,
+        blank=True,
+        help_text=JOB_HELP_MESSAGES.get("scheduled_date"),
+    )
 
     # tasks = models.ManyToManyField(to=Task, help_text=JOB_HELP_MESSAGES.get("tasks"))
     note = models.TextField(
@@ -157,6 +163,7 @@ class Job(
         _("is_created_from_template"), default=False, editable=False
     )
     objects = JobManager()
+    all_objects = models.Manager()
 
     # objects = Manager()
 
@@ -171,6 +178,7 @@ class Job(
         ]
         indexes = [
             models.Index(name="jobs_is_scheduled_idx", fields=["is_scheduled"]),
+            models.Index(name="scheduled_date_idx", fields=["scheduled_date"]),
         ]
 
     # def get_absolute_url(self):
