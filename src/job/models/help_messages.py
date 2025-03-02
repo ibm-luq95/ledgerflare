@@ -18,4 +18,5 @@ JOB_HELP_MESSAGES = {
     "period_year": _("Period year which will be used in reporting"),
     "period_month": _("Period month which will be used in reporting"),
     "is_scheduled": _("Set the start date as scheduled date"),
+    "scheduled_date": _("Scheduled date which bookkeeper start working on the job"),
 }
