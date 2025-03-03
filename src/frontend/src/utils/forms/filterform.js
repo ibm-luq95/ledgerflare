@@ -123,12 +123,12 @@ class FilterPersistence {
   loadFilters() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
+      const newParams = new URLSearchParams();
       let shouldReload = false;
 
       Array.from(this.form.elements).forEach((input) => {
         if (!input.name) return;
 
-        // Prefer URL params over localStorage
         const storedValue = urlParams.has(input.name)
           ? urlParams.get(input.name)
           : localStorage.getItem(`${this.storagePrefix}${input.name}`);
@@ -137,16 +137,19 @@ class FilterPersistence {
 
         this.applyValueToInput(input, storedValue);
 
-        // Sync localStorage if value came from URL
+        // If the value came from URL params, sync it with localStorage
         if (urlParams.has(input.name)) {
           localStorage.setItem(`${this.storagePrefix}${input.name}`, storedValue);
+          newParams.set(input.name, storedValue);
         } else {
-          shouldReload = true;
+          shouldReload = true; // Flag to indicate a potential reload is needed
+          newParams.set(input.name, storedValue);
         }
       });
 
-      if (shouldReload) {
-        window.location.search = urlParams.toString();
+      // Check if the URL actually needs updating
+      if (shouldReload && newParams.toString() !== urlParams.toString()) {
+        window.location.search = newParams.toString(); // Only reload if URL is different
       }
     } catch (error) {
       console.error("Error loading filters:", error);
