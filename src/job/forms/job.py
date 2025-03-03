@@ -20,7 +20,7 @@ class JobForm(BWJSModalFormRendererMixin, BaseModelFormMixin, JoditFormMixin):
 		"client",
 		"managed_by",
 		"start_date",
-		"is_scheduled",
+		# "is_scheduled",
 		"due_date",
 		"period_year",
 		"period_month",
@@ -96,6 +96,7 @@ class JobForm(BWJSModalFormRendererMixin, BaseModelFormMixin, JoditFormMixin):
 
 	class Meta(BaseModelFormMixin.Meta):
 		model = JobProxy
+		excluded = ["scheduled_date", "is_scheduled"]
 		widgets = {
 			"categories": forms.CheckboxSelectMultiple,
 			"description": RichHTMLEditorWidget,
