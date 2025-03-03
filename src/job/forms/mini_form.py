@@ -44,7 +44,7 @@ class JobMiniForm(RemoveFieldsMixin, BWJSModalFormRendererMixin, BWBaseFormMixin
 
     title = forms.CharField(label=_("Title"), required=True)
     start_date = forms.DateField(label=_("Start Date"), required=True)
-    is_scheduled = forms.BooleanField(label=_("Scheduled"), required=False)
+    # is_scheduled = forms.BooleanField(label=_("Scheduled"), required=False)
     due_date = forms.DateField(label=_("Due Date"), required=True)
     description = forms.CharField(
         label=_("Description"),

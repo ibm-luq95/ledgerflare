@@ -29,7 +29,7 @@ class JobSerializer(ValidateDueDateSerializerMixin, serializers.ModelSerializer)
 
     class Meta:
         model = JobProxy
-        exclude = EXCLUDED_FIELDS
+        exclude = EXCLUDED_FIELDS + ["scheduled_date", "is_scheduled"]
         depth = 2
 
     def update(self, instance, validated_data):

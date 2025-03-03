@@ -196,7 +196,7 @@ class JobDetailsView(
             is_updated=True,
             renderer=BWFormRenderer(),
             client=self.get_object().client,
-            # removed_fields=["job"],
+            # removed_fields=["is_scheduled"],
         )
         task_form = TaskForm(
             initial={"job": self.get_object(), "client": self.get_object().client},
