@@ -60,3 +60,4 @@ class DiscussionMiniForm(
         required=False,
         widget=forms.HiddenInput,
     )
+    sender = forms.UUIDField(label=_("Sender"), required=False, widget=forms.HiddenInput)
