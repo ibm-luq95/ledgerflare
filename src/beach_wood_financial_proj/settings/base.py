@@ -536,6 +536,7 @@ LOGGING = {
 
 SESSION_TIMEOUT_REDIRECT = "/auth/login"
 ANONYMOUS_USER_NAME = None
+MANAGER_MAIN_EMAIL = config("MANAGER_MAIN_EMAIL", cast=str)
 
 # Django-import-export config
 # IMPORT_EXPORT_SKIP_ADMIN_LOG = True

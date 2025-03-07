@@ -42,6 +42,17 @@ module.exports = merge(common, {
         test: /\.s?css/i,
         use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "sass-loader"],
       },
+      {
+        test: /\.worker\.js$/,
+        use: {
+          loader: "worker-loader",
+          options: {
+            worker: {
+              target: "webworker", // Critical: Set worker target
+            },
+          },
+        },
+      },
     ],
   },
 });

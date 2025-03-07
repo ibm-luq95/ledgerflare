@@ -14,6 +14,7 @@ class DiscussionAdmin(BWBaseAdminModelMixin):
         "attachment",
         "has_replies",
         "special_assignment",
+        "sender",
         "job",
         "created_at",
     ]

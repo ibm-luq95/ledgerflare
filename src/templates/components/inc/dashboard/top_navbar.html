@@ -24,7 +24,8 @@
                     </svg>
                 </button>
             </div>
-            <div class="hidden sm:block"></div>
+            <div class="hidden sm:block">
+            </div>
             <div class="flex flex-row items-center justify-end gap-2">
                 {% if debug is True %}
                     <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">{{ request.user.get_user_type_display }}</span>
@@ -40,8 +41,12 @@
                     <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[15rem] bg-white shadow-md rounded-lg p-2 dark:bg-gray-800 dark:border dark:border-gray-700"
                          aria-labelledby="hs-dropdown-with-header">
                         <div class="px-5 py-3 -m-2 bg-gray-100 rounded-t-lg dark:bg-gray-700">
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{% translate "Signed in as:" %}</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 italic">{{ request.user.fullname }}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {% translate "Signed in as:" %}
+                            </p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+                                {{ request.user.fullname }}
+                            </p>
                             <p class="text-sm font-medium text-gray-800 dark:text-gray-300">
                                 {{ request.user.email|safe }}
                             </p>
@@ -76,46 +81,91 @@
                         </div>
                     </div>
                 </div>
-                {% if request.user.user_type == CON_MANAGER %}
+                <div class="hs-dropdown relative [--placement:bottom-left] inline-flex"
+                     id="notificationsDropdown">
+                    <button type="button"
+                            id="hs-dropdown"
+                            class="relative hs-dropdown-toggle inline-flex justify-center items-center size-[46px] text-sm font-semibold rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                            aria-haspopup="menu"
+                            aria-expanded="false"
+                            aria-label="Dropdown">
+                        <svg class="shrink-0 size-5"
+                             xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9">
+                            </path>
+                            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0">
+                            </path>
+                        </svg>
+                        <span class="absolute inline-flex items-center justify-center w-5 h-5 text-[12px] font-medium rounded-full bg-red-500 text-white transform translate-x-1/2 -translate-y-1/2"
+                              id="topNotificationBadge">
+                            {% if request.user.unread_notifications.count > 10 %}
+                                9+
+                            {% else %}
+                                {{ request.user.unread_notifications.count }}
+                            {% endif %}
+                        </span>
+                    </button>
+                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
+                         role="menu"
+                         aria-orientation="vertical"
+                         style="max-height: 300px;
+                                overflow-y: auto"
+                         aria-labelledby="hs-dropdown">
+                        <div class="p-1 space-y-0.5">
+                            <input type="hidden"
+                                   id="notificationUrl"
+                                   value="{% url 'dashboard:discussion:api:set-discussion-notifications' %}" />
+                            {% for notification_item in request.user.notifications.all %}
+                                <div class="{% if notification_item.is_read is False %}
+                                                bg-sky-100 font-bold
+                                            {% endif %}
+                                            items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700">
+                                    <a class="block w-full notificationsItem px-3 py-2 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                                       data-notification-pk="{{ notification_item.pk }}"
+                                       data-user="{{ request.user.pk }}"
+                                       href="{{ notification_item.get_url }}">
+                                        <span class="block {% if notification_item.is_read is False %} font-bold {% endif %}">{{ notification_item.msg|safe }}</span>
+                                        <span class="block text-sm text-gray-600 dark:text-neutral-500">{{ notification_item.created_at }}</span>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                            <hr />
+                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                               href="#">All</a>
+                        </div>
+                    </div>
+                </div>
+                {% comment  %}
+                    {% if request.user.user_type == CON_MANAGER %}
                     <div class="hs-dropdown relative [--placement:bottom-left] inline-flex">
-                        <button type="button"
-                                id="hs-dropdown"
-                                class="relative hs-dropdown-toggle inline-flex justify-center items-center size-[46px] text-sm font-semibold rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-                                aria-haspopup="menu"
-                                aria-expanded="false"
-                                aria-label="Dropdown">
-                            <svg class="shrink-0 size-5"
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 width="24"
-                                 height="24"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="2"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round">
-                                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
-                                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                        <button type="button" id="hs-dropdown" class="relative hs-dropdown-toggle inline-flex justify-center items-center size-[46px] text-sm font-semibold rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+                            <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9">
+                                </path>
+                                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0">
+                                </path>
                             </svg>
-                            <span class="absolute inline-flex items-center justify-center w-5 h-5 text-[12px] font-medium rounded-full bg-red-500 text-white transform translate-x-1/2 -translate-y-1/2"
-                                  id="topNotificationBadge">9+</span>
+                            <span class="absolute inline-flex items-center justify-center w-5 h-5 text-[12px] font-medium rounded-full bg-red-500 text-white transform translate-x-1/2 -translate-y-1/2" id="topNotificationBadge">9+</span>
                         </button>
-                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
-                             role="menu"
-                             aria-orientation="vertical"
-                             aria-labelledby="hs-dropdown">
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown">
                             <div class="p-1 space-y-0.5">
-                                <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-                                   href="#">Newsletter</a>
-                                <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-                                   href="#">Purchases</a>
+                                <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">Newsletter</a>
+                                <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">Purchases</a>
                                 <hr />
-                                <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-                                   href="#">All</a>
+                                <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">All</a>
                             </div>
                         </div>
                     </div>
                 {% endif %}
+                {% endcomment %}
             </div>
         </div>
     </nav>
