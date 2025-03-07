@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-#
+from __future__ import annotations
+
 from django.db import transaction
 from django.db.models import Q, Manager
 
+from beach_wood_user.models import BWUser
 from bookkeeper.models import BookkeeperProxy
 from core.constants.status_labels import (
     CON_ARCHIVED,
@@ -9,6 +12,7 @@ from core.constants.status_labels import (
     CON_ENABLED,
     CON_NOT_STARTED,
 )
+from core.utils.developments.debugging_print_object import DebuggingPrint
 from job.models import Job
 
 
@@ -36,6 +40,20 @@ class JobProxy(Job):
 
     class Meta(Job.Meta):
         proxy = True
+
+    def get_staff_discussions(self) -> list[BWUser] | None:
+        users: list[BWUser] = []
+        if hasattr(self, "discussions"):
+            discussions = set(self.discussions.all())
+            for d in discussions:
+                # DebuggingPrint.pprint(d.get_user_type)
+                # DebuggingPrint.pprint(d.get_managed_user())
+                users.append(d.get_managed_user().user)
+            users: list[BWUser] = list(set(users))
+            return users
+        else:
+            return None
+        # DebuggingPrint.pprint(discussions)
 
     def unplug_bookkeeper_for_client_finished_job(self):
         managed_by = self.managed_by
