@@ -1,14 +1,50 @@
 # -*- coding: utf-8 -*-#
+import traceback
 
-from rest_framework import permissions, parsers
+from django.db.transaction import atomic
+from rest_framework import permissions, parsers, status
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
+from beach_wood_user.models import BWUser
 from core.api.permissions import BaseApiPermissionMixin
 from core.utils import get_formatted_logger
-from discussion.models import DiscussionProxy
+from core.utils.developments.debugging_print_object import DebuggingPrint
+from discussion.models import DiscussionProxy, DiscussionNotification
 from discussion.serializers import DiscussionSerializer
 
 logger = get_formatted_logger()
+
+
+class DiscussionNotificationsApiView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    # perm_slug = "discussion.discussionnotifications"
+    http_method_names = ["post"]
+
+    def post(self, request: Request, *args, **kwargs):
+        try:
+            with atomic():
+                data = dict()
+                post_data = request.data
+                discussion_notifications: DiscussionNotification = (
+                    DiscussionNotification.objects.get(pk=post_data.get("pk"))
+                )
+                user: BWUser = BWUser.objects.get(pk=post_data.get("user"))
+                # DebuggingPrint.pprint(discussion_notifications.recipient)
+                # validate it the recipient user match the user how clicked on the notifications
+                if discussion_notifications.recipient == user:
+                    discussion_notifications.is_read = True
+                    discussion_notifications.save()
+
+                # DebuggingPrint.pprint(locals())
+
+                return Response(status=status.HTTP_200_OK, data=data)
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            DebuggingPrint.print_exception()
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data=str(e))
 
 
 class DiscussionViewSet(ModelViewSet):
