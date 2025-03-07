@@ -69,20 +69,35 @@ def create_notification(
                         else:
                             # if there is no discussion user, it will send the manager by default
                             # DebuggingPrint.pprint("No discussion user")
-                            manager_user = BWUser.objects.filter(
-                                email=settings.MANAGER_MAIN_EMAIL
-                            ).first()
-                            # DebuggingPrint.pprint(manager_user)
-                            notification_obj: DiscussionNotification = (
-                                DiscussionNotification(
-                                    discussion=instance,
-                                    job=job,
-                                    recipient=manager_user,
-                                    msg=_("You have notification for job ") + short_title,
+                            if managed_by is not None and managed_by != instance.sender:
+                                # DebuggingPrint.pprint("Managed by")
+                                notification_obj: DiscussionNotification = (
+                                    DiscussionNotification(
+                                        discussion=instance,
+                                        job=job,
+                                        recipient=managed_by,
+                                        msg=_("You have notification for job ")
+                                        + short_title,
+                                    )
                                 )
-                            )
-                            notification_obj.save()
-                            break
+                                notification_obj.save()
+                                break
+                            else:
+                                manager_user = BWUser.objects.filter(
+                                    email=settings.MANAGER_MAIN_EMAIL
+                                ).first()
+                                # DebuggingPrint.pprint(manager_user)
+                                notification_obj: DiscussionNotification = (
+                                    DiscussionNotification(
+                                        discussion=instance,
+                                        job=job,
+                                        recipient=manager_user,
+                                        msg=_("You have notification for job ")
+                                        + short_title,
+                                    )
+                                )
+                                notification_obj.save()
+                                break
             elif isinstance(instance.for_what(), SpecialAssignmentProxy):
                 pass
     except Exception as e:
