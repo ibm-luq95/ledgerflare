@@ -165,7 +165,10 @@
 "djlint.formatAttributeTemplateTags": true,
 "djlint.closeVoidTags": true,
 "djlint.noLineAfterYaml": false,
-"djlint.useGitignore": true
+"djlint.useGitignore": true,
+"intellicodeCompletions.language.javascript": false,
+"intellicodeCompletions.language.python": false,
+"intellicodeCompletions.language.typescript": false
   // config for extention: junstyle.vscode-django-support
   // "files.associations": {
   //   "**/templates/**/*.html": "django-html",
