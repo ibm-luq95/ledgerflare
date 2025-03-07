@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
@@ -24,6 +25,7 @@ from job.forms import JobForm
 from job.models import JobProxy
 from job_category.forms import JobCategoryForm
 from job_category.models import JobCategory
+from manager.models import ManagerProxy
 from note.forms import NoteForm
 from special_assignment.forms import MiniSpecialAssignmentForm
 from task.forms import TaskForm
@@ -191,6 +193,7 @@ class JobDetailsView(
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context.setdefault("title", _(f"Job - {self.get_object().title}"))
+
         job_update_form = JobForm(
             instance=self.get_object(),
             is_updated=True,
@@ -225,6 +228,7 @@ class JobDetailsView(
             current_user.get_staff_member_object.get(
                 "user_type"
             ): current_user.get_staff_member_object.get("staff_object"),
+            "sender": self.request.user.pk,
         }
         # debugging_print(self.request.user.get_staff_member_object)
         # debugging_print(discussion_initial_data)

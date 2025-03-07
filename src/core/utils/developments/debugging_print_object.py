@@ -127,7 +127,7 @@ class DebuggingPrint:
         cls.console.print(obj, justify=justify)
 
     @classmethod
-    def rule(cls, text: str) -> None:
+    def rule(cls, text: str = "") -> None:
         """
         Print a rule with the given text.
         """

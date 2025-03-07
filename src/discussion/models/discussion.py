@@ -3,6 +3,7 @@
 from django.db import models
 from django.utils.translation import gettext as _
 
+from beach_wood_user.models import BWUser
 from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
 from core.models.mixins import BaseModelMixin, TeamMembersMixin, StrModelMixin
 from core.utils import FileValidator
@@ -45,6 +46,13 @@ class Discussion(BaseModelMixin, TeamMembersMixin, StrModelMixin):
         validators=[file_validator],
     )
     is_seen = models.BooleanField(_("is_seen"), default=False)
+    sender = models.ForeignKey(
+        to=BWUser,
+        on_delete=models.CASCADE,
+        related_name="submitted_discussions",
+        null=True,
+        blank=True,
+    )
 
     objects = RepliesManager()
 

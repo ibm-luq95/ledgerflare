@@ -83,6 +83,17 @@ module.exports = merge(common, {
           "sass-loader",
         ],
       },
+      {
+        test: /\.worker\.js$/,
+        use: {
+          loader: "worker-loader",
+          options: {
+            worker: {
+              target: "webworker", // Critical: Set worker target
+            },
+          },
+        },
+      },
     ],
   },
 });

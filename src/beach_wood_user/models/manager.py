@@ -26,6 +26,10 @@ class BeachWoodUserManager(BaseUserManager):
         qs = self.get_queryset()
         return qs.filter(~Q(email="anonymoususer")).order_by("first_name")
 
+    def unread_notifications(self, pk) -> BaseQuerySetMixin:
+        qs = self.get_queryset()
+        return qs.filter(pk=pk, notifications__is_read=False).order_by("-created_at")
+
     def create_user(self, email, password, **extra_fields):
         """
         Create and save a User with the given email and password.
