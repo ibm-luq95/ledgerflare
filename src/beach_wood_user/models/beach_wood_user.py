@@ -81,6 +81,9 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
         else:
             return f"User - {self.email}"
 
+    def unread_notifications(self):
+        return BWUser.objects.unread_notifications(self.pk)
+
     @property
     def fullname(self) -> str:
         return f"{self.first_name} {self.last_name}"
