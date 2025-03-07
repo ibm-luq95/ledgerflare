@@ -47,7 +47,7 @@ def create_notification(
         if created:
             if isinstance(instance.for_what(), JobProxy):
                 job: JobProxy = instance.for_what()
-                short_title = textwrap.shorten(job.title, width=10, placeholder="...")
+                short_title = textwrap.shorten(job.title, width=20, placeholder="...")
                 managed_by: BWUser = job.managed_by
                 discussions_users: list[BWUser] | None = job.get_staff_discussions()
                 if discussions_users is not None:
