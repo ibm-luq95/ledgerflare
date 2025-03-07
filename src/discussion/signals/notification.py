@@ -51,11 +51,11 @@ def create_notification(
                 managed_by: BWUser = job.managed_by
                 discussions_users: list[BWUser] | None = job.get_staff_discussions()
                 if discussions_users is not None:
-                    DebuggingPrint.pprint("Discussion user")
-                    DebuggingPrint.pprint(discussions_users)
+                    # DebuggingPrint.pprint("Discussion user")
+                    # DebuggingPrint.pprint(discussions_users)
                     for discussion_user in discussions_users:
                         if discussion_user != instance.sender:
-                            DebuggingPrint.pprint("Not equal")
+                            # DebuggingPrint.pprint("Not equal")
                             notification_obj: DiscussionNotification = (
                                 DiscussionNotification(
                                     discussion=instance,
@@ -68,11 +68,11 @@ def create_notification(
                             break
                         else:
                             # if there is no discussion user, it will send the manager by default
-                            DebuggingPrint.pprint("No discussion user")
+                            # DebuggingPrint.pprint("No discussion user")
                             manager_user = BWUser.objects.filter(
                                 email=settings.MANAGER_MAIN_EMAIL
                             ).first()
-                            DebuggingPrint.pprint(manager_user)
+                            # DebuggingPrint.pprint(manager_user)
                             notification_obj: DiscussionNotification = (
                                 DiscussionNotification(
                                     discussion=instance,
