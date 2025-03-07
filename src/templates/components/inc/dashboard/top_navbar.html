@@ -104,14 +104,16 @@
                             <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0">
                             </path>
                         </svg>
-                        <span class="absolute inline-flex items-center justify-center w-5 h-5 text-[12px] font-medium rounded-full bg-red-500 text-white transform translate-x-1/2 -translate-y-1/2"
-                              id="topNotificationBadge">
-                            {% if request.user.unread_notifications.count > 10 %}
-                                9+
-                            {% else %}
-                                {{ request.user.unread_notifications.count }}
-                            {% endif %}
-                        </span>
+                        {% if request.user.unread_notifications.count > 0 %}
+                            <span class="absolute inline-flex items-center justify-center w-5 h-5 text-[12px] font-medium rounded-full bg-red-500 text-white transform translate-x-1/2 -translate-y-1/2"
+                                  id="topNotificationBadge">
+                                {% if request.user.unread_notifications.count > 10 %}
+                                    9+
+                                {% else %}
+                                    {{ request.user.unread_notifications.count }}
+                                {% endif %}
+                            </span>
+                        {% endif %}
                     </button>
                     <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
                          role="menu"
@@ -119,6 +121,11 @@
                          style="max-height: 300px;
                                 overflow-y: auto"
                          aria-labelledby="hs-dropdown">
+                        <div class="py-3 px-4 border-b border-gray-200 dark:border-neutral-700">
+                            <p class="text-sm font-medium text-gray-800 dark:text-neutral-300">
+                                {% translate "Total Notifications: " %} {{ request.user.notifications.count }}
+                            </p>
+                        </div>
                         <div class="p-1 space-y-0.5">
                             <input type="hidden"
                                    id="notificationUrl"
@@ -150,9 +157,10 @@
                                     </a>
                                 </div>
                             {% endfor %}
-                            <hr />
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-                               href="#">All</a>
+                            {% comment  %}
+                                <hr />
+                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">All</a>
+                            {% endcomment %}
                         </div>
                     </div>
                 </div>
