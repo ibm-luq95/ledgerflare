@@ -16,6 +16,7 @@ from guardian.mixins import GuardianUserMixin
 
 from .manager import BeachWoodUserManager
 
+
 # TODO: remove the custom logger before push (only for development)
 # ###### [Custom Logger] #########
 logger = get_formatted_logger()
@@ -81,8 +82,13 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
         else:
             return f"User - {self.email}"
 
-    def unread_notifications(self):
-        return BWUser.objects.unread_notifications(self.pk)
+    @property
+    def utils(self):
+        from beach_wood_user.models.utils.ledgerflare_user_utils import (
+            LedgerFlareUserUtils,
+        )
+
+        return LedgerFlareUserUtils(self)
 
     @property
     def fullname(self) -> str:
