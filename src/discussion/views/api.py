@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-#
 import traceback
+from typing import Literal
 
 from django.db.transaction import atomic
 from rest_framework import permissions, parsers, status
@@ -14,6 +15,7 @@ from core.utils import get_formatted_logger
 from core.utils.developments.debugging_print_object import DebuggingPrint
 from discussion.models import DiscussionProxy, DiscussionNotification
 from discussion.serializers import DiscussionSerializer
+from special_assignment.models import SpecialAssignmentNotification
 
 logger = get_formatted_logger()
 
@@ -28,17 +30,28 @@ class DiscussionNotificationsApiView(APIView):
             with atomic():
                 data = dict()
                 post_data = request.data
-                discussion_notifications: DiscussionNotification = (
-                    DiscussionNotification.objects.get(pk=post_data.get("pk"))
-                )
                 user: BWUser = BWUser.objects.get(pk=post_data.get("user"))
-                # DebuggingPrint.pprint(discussion_notifications.recipient)
-                # validate it the recipient user match the user how clicked on the notifications
-                if discussion_notifications.recipient == user:
+                notification_object_lbl: Literal[
+                    "SpecialAssignmentNotification", "DiscussionNotification"
+                ] = post_data.get("notificationType")
+                if notification_object_lbl == "DiscussionNotification":
+                    discussion_notifications: DiscussionNotification = (
+                        DiscussionNotification.objects.get(pk=post_data.get("pk"))
+                    )
+                    # validate it the recipient user match the user how clicked on the notifications
+                    # if discussion_notifications.recipient == user:
                     discussion_notifications.is_read = True
                     discussion_notifications.save()
-
+                elif notification_object_lbl == "SpecialAssignmentNotification":
+                    special_assignment_notification: SpecialAssignmentNotification = (
+                        SpecialAssignmentNotification.objects.get(pk=post_data.get("pk"))
+                    )
+                    # validate it the recipient user match the user how clicked on the notifications
+                    # if special_assignment_notification.recipient == user:
+                    special_assignment_notification.is_read = True
+                    special_assignment_notification.save()
                 # DebuggingPrint.pprint(locals())
+                # DebuggingPrint.pprint(discussion_notifications.recipient)
 
                 return Response(status=status.HTTP_200_OK, data=data)
         except Exception as e:

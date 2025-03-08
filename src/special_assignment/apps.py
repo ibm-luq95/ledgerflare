@@ -7,5 +7,6 @@ class SpecialAssignmentConfig(AppConfig):
 
     def ready(self):
         from special_assignment import cron
+        from special_assignment.signals import notification
 
         cron.check_past_due_sa()

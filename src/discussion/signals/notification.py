@@ -99,6 +99,9 @@ def create_notification(
                                 notification_obj.save()
                                 break
             elif isinstance(instance.for_what(), SpecialAssignmentProxy):
-                pass
+                special_assignment: SpecialAssignmentProxy = instance.for_what()
+                short_title = textwrap.shorten(special_assignment.title, width=20, placeholder="...")
+                managed_by: BWUser = special_assignment.get_managed_user().user
+                DebuggingPrint.pprint(locals())
     except Exception as e:
         print(f"Error creating notification: {e}")

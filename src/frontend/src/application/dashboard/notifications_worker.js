@@ -75,14 +75,13 @@ const sendRequest = async (options) => {
 onmessage = async (message) => {
   // Use async for cleaner promise handling
   try {
-    const { pk, url, token, user } = message.data; // ✅ Get token from main thread
+    const { pk, url, token, user, notificationType } = message.data; // ✅ Get token from main thread
 
     const requestOptions = {
       method: "POST",
-      dataToSend: { pk, user },
+      dataToSend: { pk, user, notificationType },
       url,
       token, // ✅ Token passed from main thread
-      
     };
 
     const data = await sendRequest(requestOptions);
