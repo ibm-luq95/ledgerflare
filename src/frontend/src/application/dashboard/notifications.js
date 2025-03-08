@@ -32,20 +32,21 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
         //   // workerOptions,
         // );
         const notificationsWorker = new Worker(workerOptions);
-        console.log(dataset);
-        
+        // console.log(dataset);
+
         // const dataset = anchor.dataset;
         notificationsWorker.postMessage({
           pk: dataset["notificationPk"],
           url: document.querySelector("input#notificationUrl").value,
           token: getCookie("csrftoken"),
           user: dataset["user"],
+          notificationType: dataset["notificationType"],
         });
         notificationsWorker.onmessage = (event) => {
           // console.log("Worker response:", event.data);
           // console.log("Worker response:", event);
           notificationsWorker.terminate();
-          window.location.assign(href)
+          window.location.assign(href);
         };
 
         notificationsWorker.onerror = (error) => {
