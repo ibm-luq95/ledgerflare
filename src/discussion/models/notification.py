@@ -36,7 +36,7 @@ class DiscussionNotification(BaseModelMixin):
     )
     is_read = models.BooleanField(_("is read"), default=False)
     recipient = models.ForeignKey(
-        to=BWUser, related_name="notifications", on_delete=models.CASCADE
+        to=BWUser, related_name="discussions_notifications", on_delete=models.CASCADE
     )
 
     def get_url(self) -> str:
@@ -71,3 +71,12 @@ class DiscussionNotification(BaseModelMixin):
             models.Index(name="sa_notification_idx", fields=["special_assignment"]),
             models.Index(name="recipient_idx", fields=["recipient"]),
         ]
+
+    def get_absolute_url(self):
+        if self.job:
+            return reverse_lazy("dashboard:job:details", kwargs={"pk": self.job.pk})
+        elif self.special_assignment:
+            return reverse_lazy(
+                "dashboard:special_assignment:details",
+                kwargs={"pk": self.special_assignment.pk},
+            )
