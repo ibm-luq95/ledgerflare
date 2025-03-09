@@ -24,6 +24,10 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           returnAsFormData: true,
           filesArray: ["attachment"],
         });
+        // formInputs.forEach((value, key) => {
+        //   console.log(`${key}:->  (${value})`);
+        // });
+        // throw new Error();
         // check if isReply checkbox checked
         if (replyInputElement) {
           formInputs.append("replies", replyInputElement.value);

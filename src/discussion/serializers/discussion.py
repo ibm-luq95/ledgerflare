@@ -4,12 +4,12 @@ from rest_framework import serializers
 from beach_wood_user.models import BWUser
 from discussion.models import DiscussionProxy
 from job.models import JobProxy
-from special_assignment.models import SpecialAssignment
+from special_assignment.models import SpecialAssignmentProxy
 
 
 class DiscussionSerializer(serializers.ModelSerializer):
     special_assignment = serializers.PrimaryKeyRelatedField(
-        queryset=SpecialAssignment.original_objects.all(), many=False, required=False
+        queryset=SpecialAssignmentProxy.original_objects.all(), many=False, required=False
     )
     replies = serializers.PrimaryKeyRelatedField(
         queryset=DiscussionProxy.original_objects.all(), many=False, required=False
