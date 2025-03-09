@@ -24,14 +24,18 @@
                                     bg-gray-50
                                 {% endif %}
                                 p-4 rounded-lg shadow-sm max-w-[80%]">
-                        <p class="text-xs font-semibold text-gray-600">{{ discussion.get_managed_user }}</p>
+                        <p class="text-xs font-semibold text-gray-600">
+                            {{ discussion.get_managed_user }}
+                        </p>
                         <p class="text-sm font-medium text-gray-700 mt-1">
                             {% autoescape off %}
                                 {{ discussion.body|safe }}
                             {% endautoescape %}
                             {# {{ discussion.body|safe|escape }} #}
                         </p>
-                        <div class="text-xs text-gray-500 mt-2">{{ discussion.created_at|naturaltime }}</div>
+                        <div class="text-xs text-gray-500 mt-2">
+                            {{ discussion.created_at|naturaltime }}
+                        </div>
                         <!-- Attachment Icon -->
                         {% if discussion.attachment %}
                             <div class="flex items-center gap-1 mt-2 text-xs text-blue-600">
@@ -47,7 +51,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828L17.828 9M5 13V6a2 2 0 012-2h11a2 2 0 012 2v7" />
                                     </svg>
                                 </a>
-                                <span>Attachment</span>
+                                <span>{% translate "Attachment" %}</span>
                             </div>
                         {% endif %}
                     </div>
@@ -72,7 +76,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828L17.828 9M5 13V6a2 2 0 012-2h11a2 2 0 012 2v7" />
                                             </svg>
                                         </a>
-                                        <span>Attachment</span>
+                                        <span>{% translate "Attachment" %}</span>
                                     </div>
                                 {% endif %}
                             </div>
@@ -110,6 +114,7 @@
                   id="replyForm">
                 <fieldset class="flex flex-col gap-3" form="replyForm">
                     {% csrf_token %}
+                    <input type="hidden" name="sender" id="sender" value="{{ user.pk }}" />
                     <input type="hidden"
                            disabled
                            name="special_assignment"
@@ -143,11 +148,12 @@
                         <input type="text"
                                name="body"
                                id="body"
-                               placeholder="Type a message..."
+                               placeholder="{% trans 'Type a message...' %}"
                                required
                                class="flex-1 bg-gray-100 border rounded-lg px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring focus:ring-blue-200" />
                         <!-- Send Button -->
                         <button type="submit"
+                                form="replyForm"
                                 class="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition shadow-sm">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  class="h-5 w-5"
