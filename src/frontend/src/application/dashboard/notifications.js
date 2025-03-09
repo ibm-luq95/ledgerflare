@@ -3,6 +3,14 @@ import Worker from "worker-loader!./notifications_worker.js";
 import { getCookie } from "../../utils/cookie";
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const allNotificationItems = document.querySelectorAll("a.notificationsItem");
+  const setAllNotificationsReadBtn = document.querySelector(
+    "button#setAllNotificationsReadBtn",
+  );
+  if (setAllNotificationsReadBtn) {
+    setAllNotificationsReadBtn.addEventListener("click", (event) => {
+      alert("Soon");
+    });
+  }
   if (allNotificationItems.length > 0) {
     allNotificationItems.forEach((item) => {
       item.addEventListener("click", (event) => {

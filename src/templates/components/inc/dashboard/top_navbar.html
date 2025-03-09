@@ -130,8 +130,8 @@
                                 {% translate "Total Notifications: " %} {{ request.user.utils.get_all_notifications|length }}
                             </p>
                             {% if debug is True %}
-                                <button type="button"
-                                        class="py-1 px-2 -ml-2 inline-flex items-center gap-x-1 text-sm font-medium rounded-lg border border-transparent text-blue-600 hover:bg-blue-100 focus:outline-hidden focus:bg-blue-100 hover:text-blue-800 focus:outline-hidden focus:bg-blue-100 focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:bg-blue-800/30 dark:hover:text-blue-400 dark:focus:bg-blue-800/30 dark:focus:text-blue-400">
+                                <button type="button" id="setAllNotificationsReadBtn" disabled
+                                        class="bw-input py-1 px-2 -ml-2 inline-flex items-center gap-x-1 text-sm font-medium rounded-lg border border-transparent text-blue-600 hover:bg-blue-100 focus:outline-hidden focus:bg-blue-100 hover:text-blue-800 focus:outline-hidden focus:bg-blue-100 focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:bg-blue-800/30 dark:hover:text-blue-400 dark:focus:bg-blue-800/30 dark:focus:text-blue-400">
                                     {% translate "Set all as read" %}
                                 </button>
                             {% endif %}
