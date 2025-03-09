@@ -100,8 +100,34 @@ def create_notification(
                                 break
             elif isinstance(instance.for_what(), SpecialAssignmentProxy):
                 special_assignment: SpecialAssignmentProxy = instance.for_what()
-                short_title = textwrap.shorten(special_assignment.title, width=20, placeholder="...")
+                short_title = textwrap.shorten(
+                    special_assignment.title, width=20, placeholder="..."
+                )
                 managed_by: BWUser = special_assignment.get_managed_user().user
-                DebuggingPrint.pprint(locals())
+                # DebuggingPrint.pprint(f"Managed by: {managed_by}")
+                # DebuggingPrint.pprint(f"Sender : {instance.sender}")
+
+                if instance.sender != managed_by:
+                    notification_obj: DiscussionNotification = DiscussionNotification(
+                        discussion=instance,
+                        special_assignment=special_assignment,
+                        recipient=managed_by,
+                        msg=_("You have notification for assignment ") + short_title,
+                    )
+                    notification_obj.save()
+
+                elif instance.sender == managed_by:
+                    # DebuggingPrint.pprint("SDFSFD")
+                    manager_user = BWUser.objects.filter(
+                        email=settings.MANAGER_MAIN_EMAIL
+                    ).first()
+                    notification_obj: DiscussionNotification = DiscussionNotification(
+                        discussion=instance,
+                        special_assignment=special_assignment,
+                        recipient=manager_user,
+                        msg=_("You have notification for assignment ") + short_title,
+                    )
+                    notification_obj.save()
+                # DebuggingPrint.pprint(locals())
     except Exception as e:
         print(f"Error creating notification: {e}")
