@@ -3,6 +3,7 @@ import django_filters
 from django import forms
 from django.db.models.sql.where import WhereNode
 
+from core.filters.filter_created_mixin import FilterCreatedMixin
 from core.filters.filter_help_text import HelpfulFilterSet
 from core.utils.developments.debugging_print_object import DebuggingPrint
 from job.models import JobProxy
@@ -10,12 +11,12 @@ from job_category.models import JobCategory
 from django.utils.translation import gettext as _
 
 
-class JobFilter(HelpfulFilterSet):
+class JobFilter(FilterCreatedMixin):
 
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     # DebuggingPrint.dir(self.form)
-    #     DebuggingPrint.pprint(self.form.fields.get("show_all"))
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # DebuggingPrint.pprint(self.form.fields.items())
+        self.form.fields.pop("created_between")
 
     due_date = django_filters.DateFilter(
         field_name="due_date", widget=forms.DateInput(attrs={"type": "date"})
