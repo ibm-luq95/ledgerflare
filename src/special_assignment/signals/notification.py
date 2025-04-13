@@ -70,7 +70,7 @@ def create_notification(
             short_title = textwrap.shorten(
                 special_assignment.title, width=20, placeholder="..."
             )
-            managed_by: BWUser = special_assignment.get_managed_user().user
+            managed_by: BWUser = special_assignment.assigned_to
             data = {
                 "special_assignment": special_assignment,
                 "recipient": managed_by,

@@ -103,9 +103,9 @@ def create_notification(
                 short_title = textwrap.shorten(
                     special_assignment.title, width=20, placeholder="..."
                 )
-                managed_by: BWUser = special_assignment.get_managed_user().user
-                # DebuggingPrint.pprint(f"Managed by: {managed_by}")
-                # DebuggingPrint.pprint(f"Sender : {instance.sender}")
+                managed_by: BWUser = special_assignment.assigned_to
+                DebuggingPrint.pprint(f"Managed by: {managed_by}")
+                DebuggingPrint.pprint(f"Sender : {instance.sender}")
 
                 if instance.sender != managed_by:
                     notification_obj: DiscussionNotification = DiscussionNotification(

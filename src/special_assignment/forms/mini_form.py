@@ -2,6 +2,7 @@
 from django import forms
 from django.utils.translation import gettext as _
 
+from beach_wood_user.models import BWUser
 from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
 from core.constants.form import (
     PDF_MIME_TYPE,
@@ -39,6 +40,11 @@ class MiniSpecialAssignmentForm(BWJSModalFormRendererMixin, BWBaseFormMixin):
             }
         )
 
+    assigned_to = forms.ModelChoiceField(
+        queryset=BWUser.objects.all(), required=True, label=_("Assigned to")
+    )
+    start_date = forms.DateField(label=_("Start Date"), required=True)
+    due_date = forms.DateField(label=_("Due Date"), required=True)
     title = forms.CharField(label=_("Title"), required=True)
     body = forms.CharField(label=_("Body"), required=True, widget=RichHTMLEditorWidget)
     attachment = forms.FileField(

@@ -78,7 +78,7 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
     def __str__(self) -> str:
         full_info = self.fullname
         if full_info != "":
-            return f"User - {full_info}"
+            return f"User - {full_info} - {self.user_type}"
         else:
             return f"User - {self.email}"
 

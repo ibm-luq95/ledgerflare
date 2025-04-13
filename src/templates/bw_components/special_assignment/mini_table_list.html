@@ -33,13 +33,24 @@
                             <th scope="col" class="px-4 py-2 text-left">
                                 <div class="flex items-center gap-x-2">
                                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                        {% translate "Manager" %}
+                                        {% translate "Assigned to" %}
                                     </span>
 
                                     {% include "bw_components/global/table_list/sort_icon.html" %}
 
                                 </div>
                             </th>
+                            <th scope="col" class="px-4 py-2 text-left">
+                                <div class="flex items-center gap-x-2">
+                                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+                                        {% translate "Assigned by" %}
+                                    </span>
+
+                                    {% include "bw_components/global/table_list/sort_icon.html" %}
+
+                                </div>
+                            </th>
+                            
                             <th scope="col" class="px-4 py-2 text-left">
                                 <div class="flex items-center gap-x-2">
                                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
@@ -60,16 +71,6 @@
 
                                 </div>
                             </th>
-                            <th scope="col" class="px-4 py-2 text-left">
-                                <div class="flex items-center gap-x-2">
-                                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                        {% translate "Assigned by" %}
-                                    </span>
-
-                                    {% include "bw_components/global/table_list/sort_icon.html" %}
-
-                                </div>
-                            </th>
                             {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
                                 <th scope="col" class="px-4 py-2 text-left">
                                     <div class="flex items-center gap-x-2">
@@ -83,7 +84,8 @@
                                 </th>
                             {% endif %}
                             {% if is_actions_menu_enabled is True %}
-                                <th scope="col" class="px-4 py-2 text-right disable-sort"></th>
+                                <th scope="col" class="px-4 py-2 text-right disable-sort">
+                                </th>
                             {% endif %}
                         </tr>
                     </thead>
@@ -123,21 +125,33 @@
                                 </td>
                                 <td class="h-px w-px whitespace-nowrap">
                                     <div class="px-4 py-2">
-                                        {% if object.get_managed_user %}
+                                        {% if object.assigned_to %}
                                             <div class="flex items-center gap-x-2">
                                                 <img class="inline-block h-5 w-5 rounded-full"
-                                                     src="https://images.unsplash.com/photo-1531927557220-a9e23c1e4794?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
+                                                     src="{% if object.assigned_to.profile.profile_picture %} {{ object.assigned_to.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %}  {% endif %}"
                                                      alt="Image Description" />
                                                 <div class="grow">
                                                     {% comment  %}
                                                         {{ object.get_managed_user.profile.profile_picture.url }}
                                                     {% endcomment %}
-                                                    <span class="text-xs text-gray-600 dark:text-gray-400">{{ object.get_managed_user }}</span>
+                                                    <span class="text-xs text-gray-600 dark:text-gray-400">{{ object.assigned_to.fullname }}</span>
                                                 </div>
                                             </div>
                                         {% else %}
                                             <span class="text-xs text-gray-600 dark:text-gray-400">{% translate "N/A" %}</span>
                                         {% endif %}
+                                    </div>
+                                </td>
+                                <td class="h-px w-px whitespace-nowrap">
+                                    <div class="px-4 py-2">
+                                        <div class="flex items-center gap-x-2">
+                                            <img class="inline-block h-4 w-4 rounded-full"
+                                                 src="{% if object.assigned_by.profile.profile_picture %} {{ object.assigned_by.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %}  {% endif %}"
+                                                 alt="Image Description" />
+                                            <div class="grow">
+                                                <span class="text-xs text-gray-600 dark:text-gray-400">{{ object.assigned_by.fullname }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="h-px w-px whitespace-nowrap text-left">
@@ -158,21 +172,11 @@
                                         {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
                                     </div>
                                 </td>
-                                <td class="h-px w-px whitespace-nowrap">
-                                    <div class="px-4 py-2">
-                                        <div class="flex items-center gap-x-2">
-                                            <img class="inline-block h-5 w-5 rounded-full"
-                                                 src="{% if object.assigned_by.profile.profile_picture %} {{ object.assigned_by.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %}  {% endif %}"
-                                                 alt="Image Description" />
-                                            <div class="grow">
-                                                <span class="text-xs text-gray-600 dark:text-gray-400">{{ object.assigned_by.fullname }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
                                 {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
                                     <td class="h-px w-px whitespace-nowrap">
-                                        <div class="px-4 py-2">{% bw_date date_txt=object.created_at is_in_table_list=True %}</div>
+                                        <div class="px-4 py-2">
+                                            {% bw_date date_txt=object.created_at is_in_table_list=True %}
+                                        </div>
                                     </td>
                                 {% endif %}
                                 {% if is_actions_menu_enabled is True %}
