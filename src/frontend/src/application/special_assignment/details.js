@@ -66,7 +66,9 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
             }
             console.error(error);
           })
-          .finally(() => {});
+          .finally(() => {
+            fieldset.disabled = false;
+          });
       });
     } catch (error) {
       const er = bwCleanApiError(error);

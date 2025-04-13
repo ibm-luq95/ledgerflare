@@ -84,8 +84,17 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
               showToastNotification("Error while add new reply!", "error");
             }
             console.error(error);
+            disableAndEnableFieldsetItems({
+              formElement: discussionForm,
+              state: "enabled",
+            });
           })
-          .finally(() => {});
+          .finally(() => {
+            disableAndEnableFieldsetItems({
+              formElement: discussionForm,
+              state: "enabled",
+            });
+          });
       });
     }
   }
