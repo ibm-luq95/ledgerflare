@@ -10,7 +10,8 @@ from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
 from core.constants.status_labels import CON_ARCHIVED, CON_COMPLETED
-from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_BOOKKEEPER, CON_ASSISTANT
+from core.utils.developments.debugging_print_object import DebuggingPrint
 from core.views.mixins import BWLoginRequiredMixin, BWBaseListViewMixin
 from core.views.mixins.update_previous_mixin import UpdateReturnPreviousMixin
 from special_assignment.filters import SpecialAssignmentFilter
@@ -19,13 +20,13 @@ from special_assignment.models import SpecialAssignmentProxy
 
 
 class SpecialAssignmentListView(
-    PermissionRequiredMixin,
+    # PermissionRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     BWBaseListViewMixin,
     ListView,
 ):
-    permission_required = "special_assignment.can_view_list"
+    # permission_required = "special_assignment.can_view_list"
     template_name = "core/crudl/list.html"
     model = SpecialAssignmentProxy
     paginate_by = LIST_VIEW_PAGINATE_BY
@@ -79,12 +80,18 @@ class SpecialAssignmentListView(
             queryset = (
                 self.request.user.bookkeeper.get_proxy_model().special_assignments.all()
             )
+            queryset |= self.request.user.requested_assignments.all()
+        if self.request.user.user_type == CON_ASSISTANT:
+            queryset = (
+                self.request.user.assistant.get_proxy_model().special_assignments.all()
+            )
+            queryset |= self.request.user.requested_assignments.all()
         self.filterset = SpecialAssignmentFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
 
 class SpecialAssignmentCreateView(
-    PermissionRequiredMixin,
+    # PermissionRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     SuccessMessageMixin,
@@ -94,7 +101,7 @@ class SpecialAssignmentCreateView(
     #     "special_assignment.add_specialassignmentproxy",
     #     "special_assignment.add_specialassignment",
     # ]
-    permission_required = "special_assignment.add_specialassignment"
+    # permission_required = "special_assignment.add_specialassignment"
     template_name = "special_assignment/create.html"
     form_class = SpecialAssignmentForm
     success_message = _("Special assignment created successfully")
@@ -116,18 +123,15 @@ class SpecialAssignmentCreateView(
 
 
 class SpecialAssignmentUpdateView(
-    PermissionRequiredMixin,
+    # PermissionRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     SuccessMessageMixin,
     UpdateReturnPreviousMixin,
     UpdateView,
 ):
-    # permission_required = [
-    #     "special_assignment.change_specialassignment",
-    #     "special_assignment.change_specialassignmentproxy",
-    # ]
-    permission_required = "special_assignment.change_specialassignment"
+
+    # permission_required = "special_assignment.change_specialassignment"
     template_name = "special_assignment/update.html"
     form_class = SpecialAssignmentForm
     success_message = _("Special assignment updated successfully")
@@ -152,10 +156,6 @@ class SpecialAssignmentDeleteView(
     SuccessMessageMixin,
     DeleteView,
 ):
-    # permission_required = [
-    #     "special_assignment.delete_specialassignment",
-    #     "special_assignment.delete_specialassignmentproxy",
-    # ]
     permission_required = "special_assignment.delete_specialassignment"
     template_name = "core/crudl/delete.html"
     model = SpecialAssignmentProxy
@@ -174,7 +174,7 @@ class SpecialAssignmentDeleteView(
 
 
 class SpecialAssignmentDetailsView(
-    PermissionRequiredMixin, BWLoginRequiredMixin, BWSiteSettingsViewMixin, DetailView
+    BWLoginRequiredMixin, BWSiteSettingsViewMixin, DetailView
 ):
     model = SpecialAssignmentProxy
     template_name = "special_assignment/details.html"
@@ -182,23 +182,25 @@ class SpecialAssignmentDetailsView(
     #     "special_assignment.view_specialassignment",
     #     "special_assignment.view_specialassignmentproxy",
     # ]
-    permission_required = "special_assignment.view_specialassignment"
+    # permission_required = "special_assignment.view_specialassignment"
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context.setdefault("title", _("SA - ") + self.get_object().title)
+        # DebuggingPrint.pprint(dir(self.get_object()._meta))
+        # DebuggingPrint.pprint(self.get_object()._meta.fields)
         return context
 
 
 class RequestedSpecialAssignmentsListView(
-    PermissionRequiredMixin,
+    # PermissionRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     BWBaseListViewMixin,
     ListView,
 ):
-    permission_required = "special_assignment.can_view_list"
+    # permission_required = "special_assignment.can_view_list"
     template_name = "core/crudl/list.html"
 
     model = SpecialAssignmentProxy
