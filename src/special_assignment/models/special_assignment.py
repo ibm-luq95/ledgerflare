@@ -78,6 +78,7 @@ class SpecialAssignment(
     notes = models.TextField(_("notes"), null=True, blank=True)
     is_seen = models.BooleanField(_("is seen"), default=False, db_index=True)
     assigned_by = models.ForeignKey(
+        verbose_name=_("assigned by"),
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="requested_assignments",
@@ -86,6 +87,13 @@ class SpecialAssignment(
         null=True,
         blank=True,
         db_index=True,
+    )
+    assigned_to = models.ForeignKey(
+        verbose_name=_("assigned to"),
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     # objects = SpecialAssignmentsManager()
