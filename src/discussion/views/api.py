@@ -22,7 +22,7 @@ logger = get_formatted_logger()
 
 class DiscussionNotificationsApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    # perm_slug = "discussion.discussionnotifications"
+    perm_slug = "discussion.discussionnotifications"
     http_method_names = ["post"]
 
     def post(self, request: Request, *args, **kwargs):
