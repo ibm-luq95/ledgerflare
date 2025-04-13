@@ -20,7 +20,7 @@
                 {{ object.title|capfirst|truncatechars:50 }}
               </h1>
               <span class="inline-block mx-2 text-sm">
-                <a href="#">@{{ object.get_managed_user }}</a>
+                <a href="#">@{{ object.assigned_to.fullname }}</a>
               </span>
               <div class="hs-tooltip inline-block">
                 <button type="button" class="hs-tooltip-toggle">
@@ -75,15 +75,21 @@
           <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3">
             {% translate "Description" %}
           </h3>
-          <p>{{ object.body|safe }}</p>
+          <p>
+            {{ object.body|safe }}
+          </p>
           <hr class="my-3" />
         </article>
         {# End Start Description or Body #}
         {# Start Note #}
         {% if object.notes %}
           <article id="note-wrapper">
-            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3">{% translate "Notes" %}</h3>
-            <p>{{ object.notes|safe }}</p>
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3">
+              {% translate "Notes" %}
+            </h3>
+            <p>
+              {{ object.notes|safe }}
+            </p>
             <hr class="my-3" />
           </article>
         {% endif %}
@@ -114,62 +120,67 @@
       <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
         {# Start Client #}
         <section class="mb-3">
-          {% if object.client %}
-            <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400">
-              <div class="flex-shrink-0 group block">
-                <div class="flex items-center">
-                  {% if object.client.company_logo %}
-                    <img class="inline-block flex-shrink-0 w-[30px] h-[30px] rounded-full"
-                         src="{{ object.client.company_logo.url }}"
-                         alt="{{ object.client.name }}" />
-                  {% else %}
-                    <i class="fa-solid fa-building inline-block flex-shrink-0 rounded-full"></i>
-                  {% endif %}
-                  <div class="ml-3">
-                    <h3 class="font-semibold text-sm text-gray-800 dark:text-white">{{ object.client.name }}</h3>
-                    <p class="text-sm font-medium text-gray-400">{% translate "Client name" %}</p>
-                  </div>
+          <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400">
+            <div class="flex-shrink-0 group block">
+              <div class="flex items-center">
+                {% if object.client.company_logo %}
+                  <img class="inline-block flex-shrink-0 w-[30px] h-[30px] rounded-full"
+                       src="{{ object.client.company_logo.url }}"
+                       alt="{{ object.client.name }}" />
+                {% else %}
+                  <i class="fa-solid fa-building inline-block flex-shrink-0 rounded-full"></i>
+                {% endif %}
+                <div class="ml-3">
+                  <h3 class="font-semibold text-sm text-gray-800 dark:text-white">
+                    {{ object.client.name }}
+                  </h3>
+                  <p class="text-sm font-medium text-gray-400">
+                    {% translate "Client name" %}
+                  </p>
                 </div>
               </div>
             </div>
-          {% elif object.job %}
-            <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400">
-              <div class="flex-shrink-0 group block">
-                <div class="flex items-center">
-                  <span class="m-1 inline-flex justify-center items-center w-[20px] h-[20px] rounded-full bg-blue-100 text-blue-600">
-                    <i class="fa-solid fa-briefcase w-5 h-5"></i>
-                  </span>
-                  <div class="ml-3">
-                    <h6 class="font-semibold text-sm text-gray-800 dark:text-white">
-                      <a href="{% url 'dashboard:job:details' object.job.pk %}">
-                        {{ object.job.title|safe|truncatechars:40 }}
-                      </a>
-                    </h6>
-                    <p class="text-sm font-medium text-gray-400">{% translate "Job title" %}</p>
-                  </div>
+          </div>
+          <div class="flex my-2 flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400">
+            <div class="flex-shrink-0 group block">
+              <div class="flex items-center">
+                <span class="m-1 inline-flex justify-center items-center w-[20px] h-[20px] rounded-full bg-blue-100 text-blue-600">
+                  <i class="fa-solid fa-briefcase w-5 h-5"></i>
+                </span>
+                <div class="ml-3">
+                  <h6 class="font-semibold text-sm text-gray-800 dark:text-white">
+                    <a href="{% url 'dashboard:job:details' object.job.pk %}">
+                      {{ object.job.title|safe|truncatechars:40 }}
+                    </a>
+                  </h6>
+                  <p class="text-sm font-medium text-gray-400">
+                    {% translate "Job title" %}
+                  </p>
                 </div>
               </div>
             </div>
-          {% endif %}
+          </div>
           {# Start Start Client Job #}
           <section class="my-2">
             <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
               <div class="flex-shrink-0 group block">
                 <div class="flex items-center">
-                  {% if object.get_managed_user.profile.profile_picture %}
+                  {% if object.assigned_to.profile.profile_picture %}
                     <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
-                         src="{{ object.get_managed_user.profile.profile_picture.url }}"
-                         alt="{{ object.get_managed_user.fullname }}" />
+                         src="{{ object.assigned_to.profile.profile_picture.url }}"
+                         alt="{{ object.assigned_to.fullname }}" />
                   {% else %}
                     <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
                          src="{% static 'img/default_staff.png' %}"
-                         alt="{{ object.get_managed_user.fullname }}" />
+                         alt="{{ object.assigned_to.fullname }}" />
                   {% endif %}
                   <div class="ml-3">
                     <h3 class="font-semibold text-sm text-gray-800 dark:text-white">
-                      {{ object.get_managed_user }}
+                      {{ object.assigned_to.fullname }}
                     </h3>
-                    <p class="text-sm font-medium text-gray-400">{% translate "Assigned to" %}</p>
+                    <p class="text-sm font-medium text-gray-400">
+                      {% translate "Assigned to" %}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -194,7 +205,9 @@
                     <h3 class="font-semibold text-sm text-gray-800 dark:text-white">
                       {{ object.assigned_by.fullname }}
                     </h3>
-                    <p class="text-sm font-medium text-gray-400">{% translate "Assigned By" %}</p>
+                    <p class="text-sm font-medium text-gray-400">
+                      {% translate "Assigned By" %}
+                    </p>
                   </div>
                 </div>
               </div>
