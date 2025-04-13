@@ -22,6 +22,7 @@ from core.constants.form import (
 from core.forms import BaseModelFormMixin, JoditFormMixin
 from core.forms.widgets import RichHTMLEditorWidget
 from core.utils import debugging_print
+from core.utils.developments.debugging_print_object import DebuggingPrint
 from job.models import JobProxy
 from manager.models import ManagerProxy
 from special_assignment.models import SpecialAssignmentProxy
@@ -29,6 +30,7 @@ from special_assignment.models import SpecialAssignmentProxy
 
 class SpecialAssignmentForm(BaseModelFormMixin, JoditFormMixin):
     field_order = [
+        "assigned_to",
         "client",
         "job",
         "title",
@@ -53,6 +55,9 @@ class SpecialAssignmentForm(BaseModelFormMixin, JoditFormMixin):
         # self.fields["assigned_by"].widget.attrs.update(
         #     {"class": "readonly-select cursor-not-allowed", "readonly": "readonly"}
         # )
+        self.fields.pop("bookkeeper")
+        self.fields.pop("manager")
+        self.fields.pop("assistant")
         self.fields.get("attachment").widget.attrs.update(
             {
                 "accept": (
@@ -72,6 +77,11 @@ class SpecialAssignmentForm(BaseModelFormMixin, JoditFormMixin):
     def save(self, commit=True):
         sa = super().save(commit=False)
         with transaction.atomic():
+            DebuggingPrint.pprint(self.cleaned_data)
+            if self.cleaned_data.get("job") and not self.cleaned_data.get("client"):
+                client = self.cleaned_data.get("job").client
+                sa.client = client
+            DebuggingPrint.pprint(self.cleaned_data)
             if commit:
                 assigned_by = self.initial.get("assigned_by", None)
                 if assigned_by is not None:
