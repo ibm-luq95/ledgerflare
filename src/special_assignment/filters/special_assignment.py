@@ -7,10 +7,11 @@ class SpecialAssignmentFilter(FilterCreatedMixin):
     class Meta:
         model = SpecialAssignmentProxy
         fields = {
+            "assigned_by": ["exact"],
+            "assigned_to": ["exact"],
             "title": ["icontains"],
             "client": ["exact"],
             "job": ["exact"],
             "status": ["exact"],
-            "assigned_by": ["exact"],
             "is_seen": ["exact"],
         }
