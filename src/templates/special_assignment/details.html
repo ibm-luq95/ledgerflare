@@ -164,25 +164,27 @@
           <section class="my-2">
             <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
               <div class="flex-shrink-0 group block">
-                <div class="flex items-center">
-                  {% if object.assigned_to.profile.profile_picture %}
-                    <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
-                         src="{{ object.assigned_to.profile.profile_picture.url }}"
-                         alt="{{ object.assigned_to.fullname }}" />
-                  {% else %}
-                    <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
-                         src="{% static 'img/default_staff.png' %}"
-                         alt="{{ object.assigned_to.fullname }}" />
-                  {% endif %}
-                  <div class="ml-3">
-                    <h3 class="font-semibold text-sm text-gray-800 dark:text-white">
-                      {{ object.assigned_to.fullname }}
-                    </h3>
-                    <p class="text-sm font-medium text-gray-400">
-                      {% translate "Assigned to" %}
-                    </p>
+                {% if object.assigned_to %}
+                  <div class="flex items-center">
+                    {% if object.assigned_to.profile.profile_picture %}
+                      <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
+                           src="{{ object.assigned_to.profile.profile_picture.url }}"
+                           alt="{{ object.assigned_to.fullname }}" />
+                    {% else %}
+                      <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
+                           src="{% static 'img/default_staff.png' %}"
+                           alt="{{ object.assigned_to.fullname }}" />
+                    {% endif %}
+                    <div class="ml-3">
+                      <h3 class="font-semibold text-sm text-gray-800 dark:text-white">
+                        {{ object.assigned_to.fullname }}
+                      </h3>
+                      <p class="text-sm font-medium text-gray-400">
+                        {% translate "Assigned to" %}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                {% endif %}
               </div>
             </div>
           </section>
@@ -191,25 +193,27 @@
           <section>
             <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
               <div class="flex-shrink-0 group block">
-                <div class="flex items-center">
-                  {% if object.assigned_by.get_staff_member_object.staff_object.profile.profile_picture %}
-                    <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
-                         src="{{ object.assigned_by.get_staff_member_object.staff_object.profile.profile_picture.url }}"
-                         alt="{{ object.assigned_by.fullname }}" />
-                  {% else %}
-                    <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
-                         src="{% static 'img/default_staff.png' %}"
-                         alt="{{ object.assigned_by.fullname }}" />
-                  {% endif %}
-                  <div class="ml-3">
-                    <h3 class="font-semibold text-sm text-gray-800 dark:text-white">
-                      {{ object.assigned_by.fullname }}
-                    </h3>
-                    <p class="text-sm font-medium text-gray-400">
-                      {% translate "Assigned By" %}
-                    </p>
+                {% if object.assigned_by %}
+                  <div class="flex items-center">
+                    {% if object.assigned_by.get_staff_member_object.staff_object.profile.profile_picture %}
+                      <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
+                           src="{{ object.assigned_by.get_staff_member_object.staff_object.profile.profile_picture.url }}"
+                           alt="{{ object.assigned_by.fullname }}" />
+                    {% else %}
+                      <img class="inline-block flex-shrink-0 w-[20px] h-[20px] rounded-full"
+                           src="{% static 'img/default_staff.png' %}"
+                           alt="{{ object.assigned_by.fullname }}" />
+                    {% endif %}
+                    <div class="ml-3">
+                      <h3 class="font-semibold text-sm text-gray-800 dark:text-white">
+                        {{ object.assigned_by.fullname }}
+                      </h3>
+                      <p class="text-sm font-medium text-gray-400">
+                        {% translate "Assigned By" %}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                {% endif %}
               </div>
             </div>
           </section>
