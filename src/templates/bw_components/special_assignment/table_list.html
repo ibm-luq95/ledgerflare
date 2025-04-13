@@ -88,7 +88,7 @@
         <th scope="col" class="px-6 py-3 text-left">
             <div class="flex items-center gap-x-2">
                 <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Manager" %}
+                    {% translate "Assigned to" %}
                 </span>
 
                 {% include "bw_components/global/table_list/sort_icon.html" %}
@@ -156,7 +156,8 @@
             </th>
         {% endif %}
         <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2"></div>
+            <div class="flex items-center gap-x-2">
+            </div>
         </th>
     </tr>
 {% endblock thead_block %}
@@ -243,8 +244,9 @@
             {# Start Manager #}
             <td class="h-px w-px whitespace-nowrap">
                 <div class="px-6 py-3">
-                    {% if object.get_managed_user %}
-                        <a href="#" class="{{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} text-sm">{{ object.get_managed_user }}</a>
+                    {% if object.assigned_to %}
+                        <a href="{% url 'dashboard:staff:member-details' object.assigned_to.pk %}"
+                           class="{{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} text-sm">{{ object.assigned_to.fullname }}</a>
                     {% else %}
                         ---
                     {% endif %}
@@ -254,7 +256,7 @@
             {# Start Assigned by #}
             <td class="h-px w-px whitespace-nowrap">
                 <div class="px-6 py-3">
-                    <a href="#" class="{{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} text-sm">
+                    <a href="{% url 'dashboard:staff:member-details' object.assigned_by.pk %}" class="{{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} text-sm">
                         {{ object.assigned_by.fullname }}
                     </a>
                 </div>
