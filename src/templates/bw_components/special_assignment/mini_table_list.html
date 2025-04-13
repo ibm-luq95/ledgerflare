@@ -50,7 +50,6 @@
 
                                 </div>
                             </th>
-                            
                             <th scope="col" class="px-4 py-2 text-left">
                                 <div class="flex items-center gap-x-2">
                                     <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
@@ -145,11 +144,15 @@
                                 <td class="h-px w-px whitespace-nowrap">
                                     <div class="px-4 py-2">
                                         <div class="flex items-center gap-x-2">
-                                            <img class="inline-block h-4 w-4 rounded-full"
-                                                 src="{% if object.assigned_by.profile.profile_picture %} {{ object.assigned_by.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %}  {% endif %}"
-                                                 alt="Image Description" />
                                             <div class="grow">
-                                                <span class="text-xs text-gray-600 dark:text-gray-400">{{ object.assigned_by.fullname }}</span>
+                                                {% if object.assigned_by %}
+                                                    <img class="inline-block h-4 w-4 rounded-full"
+                                                         src="{% if object.assigned_by.profile.profile_picture %} {{ object.assigned_by.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %}  {% endif %}"
+                                                         alt="Image Description" />
+                                                    <span class="text-xs text-gray-600 dark:text-gray-400">{{ object.assigned_by.fullname }}</span>
+                                                {% else %}
+                                                <span class="text-xs text-gray-600 dark:text-gray-400">{% translate "N/A" %}</span>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
