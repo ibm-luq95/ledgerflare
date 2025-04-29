@@ -4,8 +4,10 @@ from typing import Optional
 
 from django.utils import timezone
 
-from bookkeeper.signals.signals import bookkeeper_post_soft_delete, \
-    bookkeeper_pre_soft_delete
+from bookkeeper.signals.signals import (
+    bookkeeper_post_soft_delete,
+    bookkeeper_pre_soft_delete,
+)
 from core.constants.status_labels import (
     CON_PAST_DUE,
     CON_STALLED,
