@@ -398,13 +398,13 @@ LOG_VIEWER_EXCLUDE_TEXT_PATTERN = (
 LOG_VIEWER_FILE_LIST_TITLE = "Log viewer"
 
 # Django flash messages css classes
-MESSAGE_TAGS = {
-    messages.DEBUG: "bw-debug",
-    messages.INFO: "bw-info",
-    messages.SUCCESS: "bw-success",
-    messages.WARNING: "bw-warning",
-    messages.ERROR: "bw-error",
-}
+# MESSAGE_TAGS = {
+#     messages.DEBUG: "bw-debug",
+#     messages.INFO: "bw-info",
+#     messages.SUCCESS: "bw-success",
+#     messages.WARNING: "bw-warning",
+#     messages.ERROR: "bw-error",
+# }
 
 # django-defender configs
 # DEFENDER_USERNAME_FORM_FIELD = "email"
