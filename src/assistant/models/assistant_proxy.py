@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-#
+from django.utils import timezone
+
 from core.constants.users import (
     ASSISTANT_FULL_MANAGER_PERMISSION_WITH_MODEL_NAME,
-    ASSISTANT_FULL_MANAGER_PERMISSION_SHORT_NAME,
 )
-from django.utils.translation import gettext as _
-
-from .assistant import Assistant
+from assistant.models import Assistant
+from assistant.signals.signals import (
+    assistant_pre_soft_delete,
+    assistant_post_soft_delete,
+)
 
 
 class AssistantProxy(Assistant):
@@ -29,6 +32,21 @@ class AssistantProxy(Assistant):
 
     class Meta(Assistant.Meta):
         proxy = True
+
+    def delete(self):
+        """
+        Perform a soft delete and trigger custom signals.
+        """
+        # Trigger pre_soft_delete signal
+        assistant_pre_soft_delete.send(sender=self.__class__, instance=self)
+
+        # Perform soft delete
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
+        # Trigger post_soft_delete signal
+        assistant_post_soft_delete.send(sender=self.__class__, instance=self)
 
     def is_has_manager_permissions(self) -> bool:
         """Check if the assistant has full manager permissions.
