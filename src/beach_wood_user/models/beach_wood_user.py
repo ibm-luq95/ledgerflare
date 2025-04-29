@@ -82,6 +82,22 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
         else:
             return f"User - {self.email}"
 
+    def delete(self):
+        """
+        Soft delete the user.
+        """
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
+    def restore(self):
+        """
+        Restore the soft-deleted user.
+        """
+        self.is_deleted = False
+        self.deleted_at = None
+        self.save()
+
     @property
     def utils(self):
         from beach_wood_user.models.utils.ledgerflare_user_utils import (

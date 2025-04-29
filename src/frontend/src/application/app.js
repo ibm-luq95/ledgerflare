@@ -64,6 +64,7 @@ import "./beach_wood_user/bookkeeper.js";
 import "./beach_wood_user/manager.js";
 import "./beach_wood_user/cfo.js";
 import "./dashboard/notifications.js";
+import "./management/delete_staff.js";
 import { setFormInputsReadOnly } from "../utils/form_helpers";
 import { HSTabs } from "../../node_modules/preline/dist/preline.js";
 // import { HSTabs } from "../../node_modules/preline/dist/preline.js";

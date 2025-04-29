@@ -2,6 +2,7 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import DeleteView, ListView, FormView
@@ -15,6 +16,7 @@ from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
 from core.utils import debugging_print
+from core.utils.developments.debugging_print_object import DebuggingPrint
 from core.views.mixins import BWBaseListViewMixin, BWLoginRequiredMixin
 
 
@@ -239,7 +241,7 @@ class BookkeeperDeleteView(
     SuccessMessageMixin,
     DeleteView,
 ):
-    template_name = "core/crudl/delete.html"
+    template_name = "bookkeeper/management/delete.html"
     model = BookkeeperProxy
     success_message = _("Bookkeeper deleted successfully")
     success_url = reverse_lazy("dashboard:management_bookkeeper:list")
@@ -258,4 +260,18 @@ class BookkeeperDeleteView(
         context.setdefault("object", self.get_object())
         context.setdefault("object_name", "bookkeeper")
         context.setdefault("form_css_id", "bookkeeperDeleteForm")
+        bookkeeper: BookkeeperProxy = self.get_object()
+        user = bookkeeper.user
+        context.setdefault("assigned_assignments", user.assigned_assignments.all())
+        jobs = bookkeeper.get_user_jobs()
+        context.setdefault("clients", bookkeeper.clients.all())
+        context.setdefault("user_jobs", jobs)
         return context
+
+    #
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        user = BWUser.objects.get(pk=self.object.user.pk)
+        user.delete()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)

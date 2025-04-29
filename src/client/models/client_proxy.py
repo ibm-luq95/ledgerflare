@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-#
 from django.db import transaction
 from django.db.models import Q
+from django.urls import reverse_lazy
 
 from client.models import Client
 from client.models.managers.reports_manager import ClientReportsManager
@@ -130,3 +131,6 @@ class ClientProxy(Client, BWGetRelatedNotesAndDocuments):
     def get_all_past_due_jobs(self) -> BaseQuerySetMixin:
         jobs = self.jobs.filter(status=CON_PAST_DUE)
         return jobs
+
+    def get_absolute_url(self):
+        reverse_lazy("dashboard:client:details", kwargs={"pk": self.pk})

@@ -1,0 +1,65 @@
+{% extends "core/layouts/dashboard_content_base.html" %}
+
+{% load i18n %}
+
+{% block dashboard_content_block %}
+    <section>
+        {% bw_delete_form form_id=form_css_id object=object cancel_url=cancel_url object_name=object_name %}
+    </section>
+    <!-- h-64 overflow-y-auto p-4 border border-gray-300 rounded -->
+    <section class="my-3">
+        <!-- Card Section -->
+        <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+            <!-- Grid -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Card -->
+                <div class="flex flex-col gap-y-2 lg:gap-y-2 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
+                    <div class="inline-flex justify-center items-center">
+                        <span class="size-2 inline-block bg-gray-500 rounded-full me-2"></span>
+                        <span class="text-xs font-semibold uppercase text-gray-600 dark:text-neutral-400">
+                            {% translate "Jobs" %}
+                        </span>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ user_jobs.count }}
+                        </h3>
+                    </div>
+                </div>
+                <!-- End Card -->
+                <!-- Card -->
+                <div class="flex flex-col gap-y-2 lg:gap-y-2 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
+                    <div class="inline-flex justify-center items-center">
+                        <span class="size-2 inline-block bg-green-500 rounded-full me-2"></span>
+                        <span class="text-xs font-semibold uppercase text-gray-600 dark:text-neutral-400">
+                            {% translate "Assigned Assignments" %}
+                        </span>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ assigned_assignments.count }}
+                        </h3>
+                    </div>
+                </div>
+                <!-- End Card -->
+                <!-- Card -->
+                <div class="flex flex-col gap-y-2 lg:gap-y-2 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
+                    <div class="inline-flex justify-center items-center">
+                        <span class="size-2 inline-block bg-red-500 rounded-full me-2"></span>
+                        <span class="text-xs font-semibold uppercase text-gray-600 dark:text-neutral-400">
+                            {% translate "Clients" %}
+                        </span>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ clients.count }}
+                        </h3>
+                    </div>
+                </div>
+                <!-- End Card -->
+            </div>
+            <!-- End Grid -->
+        </div>
+        <!-- End Card Section -->
+    </section>
+{% endblock dashboard_content_block %}
