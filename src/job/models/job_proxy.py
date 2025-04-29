@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from django.db import transaction
 from django.db.models import Q, Manager
+from django.urls import reverse_lazy
 
 from beach_wood_user.models import BWUser
 from bookkeeper.models import BookkeeperProxy
@@ -40,6 +41,9 @@ class JobProxy(Job):
 
     class Meta(Job.Meta):
         proxy = True
+
+    def get_absolute_url(self):
+        return reverse_lazy("dashboard:job:details", kwargs={"pk": self.pk})
 
     def get_staff_discussions(self) -> list[BWUser] | None:
         users: list[BWUser] = []
