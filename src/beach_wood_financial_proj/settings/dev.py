@@ -40,6 +40,7 @@ DATABASES = {
         "HOST": config("DB_HOST", cast=str),
         "PORT": config("DB_PORT", cast=str),
         "CONN_MAX_AGE": None,
+        "ATOMIC_REQUESTS": True,
         "OPTIONS": {
             "client_encoding": config("DB_CLIENT_ENCODING", cast=str),
             "server_side_binding": True,
