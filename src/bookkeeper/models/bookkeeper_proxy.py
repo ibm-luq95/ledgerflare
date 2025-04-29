@@ -2,6 +2,10 @@
 import traceback
 from typing import Optional
 
+from django.utils import timezone
+
+from bookkeeper.signals.signals import bookkeeper_post_soft_delete, \
+    bookkeeper_pre_soft_delete
 from core.constants.status_labels import (
     CON_PAST_DUE,
     CON_STALLED,
@@ -33,11 +37,38 @@ class BookkeeperProxy(Bookkeeper):
     class Meta(Bookkeeper.Meta):
         proxy = True
 
+    def delete(self):
+        """
+        Perform a soft delete and trigger custom signals.
+        """
+        # Trigger pre_soft_delete signal
+        bookkeeper_pre_soft_delete.send(sender=self.__class__, instance=self)
+
+        # Perform soft delete
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
+        # Trigger post_soft_delete signal
+        bookkeeper_post_soft_delete.send(sender=self.__class__, instance=self)
+
     @property
     def get_bookkeeper(self) -> Bookkeeper:
+        """
+        Retrieves the original Bookkeeper instance associated with this proxy.
+
+        Returns:
+            Bookkeeper: The original Bookkeeper instance.
+        """
         return Bookkeeper.objects.get(pk=self.pk)
 
     def get_tasks_count(self):
+        """
+        Returns the total count of tasks associated with the user's jobs.
+
+        Returns:
+            int: The total number of tasks.
+        """
         all_tasks = []
         all_jobs = self.user.jobs.all()
         if all_jobs:
@@ -63,6 +94,12 @@ class BookkeeperProxy(Bookkeeper):
 
     @property
     def get_clients_total(self) -> int:
+        """
+        Returns the total number of unique clients associated with the user's jobs.
+
+        Returns:
+            int: The count of unique clients.
+        """
         total_list = set()
         jobs = self.jobs.all()
         if jobs:
@@ -71,6 +108,12 @@ class BookkeeperProxy(Bookkeeper):
         return len(total_list)
 
     def get_tasks(self) -> list:
+        """
+        Retrieves all tasks associated with the user's jobs.
+
+        Returns:
+            list: A list of tasks associated with the user's jobs.
+        """
         all_lists = []
         all_jobs = self.user.jobs.all()
         if all_jobs:
@@ -82,12 +125,27 @@ class BookkeeperProxy(Bookkeeper):
         return all_lists
 
     def get_all_jobs(self):
+        """
+        Retrieves all jobs managed by the user. including archived and completed
+
+        Returns:
+            QuerySet: A queryset of jobs managed by the user.
+        """
         from job.models import JobProxy
 
         all_jobs = JobProxy.original_objects.filter(managed_by=self.user)
         return all_jobs
 
     def get_user_jobs(self, is_archived: bool = False) -> BaseQuerySetMixin | None:
+        """
+        Retrieves jobs associated with the user.
+
+        Args:
+            is_archived (bool): If True, filters for archived jobs.
+
+        Returns:
+            QuerySet | None: A queryset of jobs or None if no jobs exist.
+        """
         if hasattr(self.user, "jobs"):
             if is_archived is True:
                 return self.user.jobs.filter(status__in=[CON_ARCHIVED, CON_COMPLETED])
@@ -97,12 +155,24 @@ class BookkeeperProxy(Bookkeeper):
             return None
 
     def get_past_due_jobs(self) -> BaseQuerySetMixin | None:
+        """
+        Retrieves jobs that are past due.
+
+        Returns:
+            QuerySet | None: A queryset of past due jobs or None if no such jobs exist.
+        """
         if hasattr(self.user, "jobs"):
             return self.user.jobs.filter(status=CON_PAST_DUE)
         else:
             return None
 
     def get_stats_jobs(self) -> BaseQuerySetMixin | None:
+        """
+        Retrieves jobs that require attention based on their state.
+
+        Returns:
+            QuerySet | None: A queryset of jobs needing attention or None if none exist.
+        """
         if hasattr(self.user, "jobs"):
             return self.user.jobs.filter(Q(state=CON_STALLED) | Q(state=CON_NEED_INFO))
         else:
@@ -111,6 +181,16 @@ class BookkeeperProxy(Bookkeeper):
     def get_all_related_items(
         self, custom_item_name: Optional[str] = None, is_archived: bool = False
     ) -> dict | list:
+        """
+        Retrieves all related tasks, documents, notes, and jobs associated with the user.
+
+        Args:
+            custom_item_name (Optional[str]): An optional name for custom items.
+            is_archived (bool): If True, includes archived items.
+
+        Returns:
+            dict | list: A dictionary of related items or a list based on the implementation.
+        """
         from job.models.job_proxy import JobProxy
         from note.models import Note
         from task.models.proxy_model import TaskProxy
