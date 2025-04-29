@@ -266,6 +266,7 @@ LANGUAGES = (("en", "English"),)
 # Django guardian configs
 GUARDIAN_MONKEY_PATCH = False
 AUTHENTICATION_BACKENDS = (
+    # "beach_wood_user.authentication_backend.SoftDeleteModelBackend",
     "django.contrib.auth.backends.ModelBackend",  # this is default
     "guardian.backends.ObjectPermissionBackend",
 )
