@@ -29,57 +29,6 @@
             </div>
             <div class="flex flex-row items-center justify-end gap-2">
                 <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">{{ request.user.get_user_type_display }}</span>
-                <div class="hs-dropdown [--strategy:absolute] relative inline-flex [--placement:bottom-right]">
-                    <button id="hs-dropdown-with-header"
-                            type="button"
-                            class="hs-dropdown-toggle inline-flex flex-shrink-0 justify-center items-center gap-2 h-[2.375rem] w-[2.375rem] rounded-full font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-xs dark:bg-gray-800 dark:hover:bg-slate-800 dark:text-gray-400 dark:hover:text-white dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800">
-                        <img class="inline-block h-[2.375rem] w-[2.375rem] rounded-full ring-2 ring-white dark:ring-gray-800"
-                             src="{% if request.user.get_staff_member_object.staff_object.profile.profile_picture %} {{ request.user.get_staff_member_object.staff_object.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %} {% endif %}"
-                             alt="{{ request.user.fullname }}" />
-                    </button>
-                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[15rem] bg-white shadow-md rounded-lg p-2 dark:bg-gray-800 dark:border dark:border-gray-700"
-                         aria-labelledby="hs-dropdown-with-header">
-                        <div class="px-5 py-3 -m-2 bg-gray-100 rounded-t-lg dark:bg-gray-700">
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                {% translate "Signed in as:" %}
-                            </p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 italic">
-                                {{ request.user.fullname }}
-                            </p>
-                            <p class="text-sm font-medium text-gray-800 dark:text-gray-300">
-                                {{ request.user.email|safe }}
-                            </p>
-                        </div>
-                        <div class="py-2 mt-2 first:pt-0 last:pb-0">
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                               href="#">
-                                <svg class="flex-none"
-                                     width="16"
-                                     height="16"
-                                     viewBox="0 0 16 16"
-                                     fill="currentColor">
-                                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
-                                </svg>
-                                {% translate "Assignments" %}
-                            </a>
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                               href="{% url 'dashboard:staff:staff-profile' request.user.pk %}">
-                                <i class="fa-regular fa-user"></i>
-                                {% translate "Profile" %}
-                            </a>
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-red-500 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                               href="{% url 'dashboard:staff:staff-update-password' request.user.pk %}">
-                                <i class="fa-solid fa-key"></i>
-                                {% translate "Change Password" %}
-                            </a>
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                               href="{% url 'auth:logout' %}">
-                                <i class="fa-solid fa-right-from-bracket"></i>
-                                {% translate "Logout" %}
-                            </a>
-                        </div>
-                    </div>
-                </div>
                 <div class="hs-dropdown relative [--placement:bottom-left] inline-flex"
                      id="notificationsDropdown">
                     <button type="button"
@@ -130,7 +79,9 @@
                                 {% translate "Total Notifications: " %} {{ request.user.utils.get_all_notifications|length }}
                             </p>
                             {% if debug is True %}
-                                <button type="button" id="setAllNotificationsReadBtn" disabled
+                                <button type="button"
+                                        id="setAllNotificationsReadBtn"
+                                        disabled
                                         class="bw-input py-1 px-2 -ml-2 inline-flex items-center gap-x-1 text-sm font-medium rounded-lg border border-transparent text-blue-600 hover:bg-blue-100 focus:outline-hidden focus:bg-blue-100 hover:text-blue-800 focus:outline-hidden focus:bg-blue-100 focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:bg-blue-800/30 dark:hover:text-blue-400 dark:focus:bg-blue-800/30 dark:focus:text-blue-400">
                                     {% translate "Set all as read" %}
                                 </button>
@@ -172,6 +123,57 @@
                                 <hr />
                             <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">All</a>
                             {% endcomment %}
+                        </div>
+                    </div>
+                </div>
+                <div class="hs-dropdown [--strategy:absolute] relative inline-flex [--placement:bottom-right]">
+                    <button id="hs-dropdown-with-header"
+                            type="button"
+                            class="hs-dropdown-toggle inline-flex flex-shrink-0 justify-center items-center gap-2 h-[2.375rem] w-[2.375rem] rounded-full font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-xs dark:bg-gray-800 dark:hover:bg-slate-800 dark:text-gray-400 dark:hover:text-white dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800">
+                        <img class="inline-block h-[2.375rem] w-[2.375rem] rounded-full ring-2 ring-white dark:ring-gray-800"
+                             src="{% if request.user.get_staff_member_object.staff_object.profile.profile_picture %} {{ request.user.get_staff_member_object.staff_object.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %} {% endif %}"
+                             alt="{{ request.user.fullname }}" />
+                    </button>
+                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[15rem] bg-white shadow-md rounded-lg p-2 dark:bg-gray-800 dark:border dark:border-gray-700"
+                         aria-labelledby="hs-dropdown-with-header">
+                        <div class="px-5 py-3 -m-2 bg-gray-100 rounded-t-lg dark:bg-gray-700">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {% translate "Signed in as:" %}
+                            </p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+                                {{ request.user.fullname }}
+                            </p>
+                            <p class="text-sm font-medium text-gray-800 dark:text-gray-300">
+                                {{ request.user.email|safe }}
+                            </p>
+                        </div>
+                        <div class="py-2 mt-2 first:pt-0 last:pb-0">
+                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                               href="#">
+                                <svg class="flex-none"
+                                     width="16"
+                                     height="16"
+                                     viewBox="0 0 16 16"
+                                     fill="currentColor">
+                                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
+                                </svg>
+                                {% translate "Assignments" %}
+                            </a>
+                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                               href="{% url 'dashboard:staff:staff-profile' request.user.pk %}">
+                                <i class="fa-regular fa-user"></i>
+                                {% translate "Profile" %}
+                            </a>
+                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-red-500 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                               href="{% url 'dashboard:staff:staff-update-password' request.user.pk %}">
+                                <i class="fa-solid fa-key"></i>
+                                {% translate "Change Password" %}
+                            </a>
+                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                               href="{% url 'auth:logout' %}">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                {% translate "Logout" %}
+                            </a>
                         </div>
                     </div>
                 </div>

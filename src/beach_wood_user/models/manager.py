@@ -6,7 +6,7 @@ from typing import Any
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import Permission
-from django.db import transaction
+from django.db import transaction, models
 from django.db.models import Q, QuerySet, Model
 from django.db.models.aggregates import Count
 from django.utils.translation import gettext as _
@@ -15,19 +15,27 @@ from core.models.querysets import BaseQuerySetMixin
 from core.utils.grab_env_file import grab_env_file
 
 
-class BeachWoodUserManager(BaseUserManager):
+class BeachWoodUserManager(BaseUserManager, models.Manager):
     """
     Custom user model manager where email is the unique identifiers
     for authentication instead of usernames.
     """
 
-    def get_queryset(self) -> BaseQuerySetMixin:
+    def get_queryset(self) -> QuerySet[Model | Any, Model | Any]:
         queryset = BaseQuerySetMixin(self.model, using=self._db).filter(is_deleted=False)
         return queryset
 
-    def all(self) -> QuerySet[Model | Any, Model | Any]:
-        qs = self.get_queryset()
-        return qs.filter(~Q(email="anonymoususer")).order_by("first_name")
+    def delete(self):
+        """
+        Soft delete all objects in the queryset.
+        """
+        return self.get_queryset().delete()
+
+    def restore(self):
+        """
+        Restore all soft-deleted objects in the queryset.
+        """
+        return self.get_queryset().restore()
 
     def create_user(self, email, password, **extra_fields):
         """

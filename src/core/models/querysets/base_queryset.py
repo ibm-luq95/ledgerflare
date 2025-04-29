@@ -24,3 +24,17 @@ class BaseQuerySetMixin(models.QuerySet):
             obj.deleted_at = None
             obj.is_deleted = False
             obj.save()
+
+    def filter(self, *args, **kwargs):
+        """
+        Override the `filter` method to exclude soft-deleted rows by default.
+        """
+        if "is_deleted" not in kwargs:
+            kwargs["is_deleted"] = False
+        return super().filter(*args, **kwargs)
+
+    def all(self):
+        """
+        Override the `all` method to exclude soft-deleted rows by default.
+        """
+        return self.filter(is_deleted=False)

@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-#
-# from .assistant import AssistantAdmin
+from .assistant import AssistantAdmin

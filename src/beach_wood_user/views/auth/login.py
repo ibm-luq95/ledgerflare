@@ -76,14 +76,14 @@ class BWLoginViewBW(SuccessMessageMixin, BWSiteSettingsViewMixin, FormView):
             user_type = form.cleaned_data.get("user_type")
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
-            user_check = BWUser.objects.filter(email=email)
+            user_check = BWUser.objects.get(email=email)
             # DebuggingPrint.pprint(locals())
             # raise Exception()
             if not user_check:
                 form.add_error("email", _("Email not exists!"))
                 return self.form_invalid(form)
             #     # raise ValidationError(f"Email not exists!", code="invalid")
-            user_check: BWUser | None = user_check.first()
+            user_check: BWUser = user_check
             check_user_type = user_check.user_type
             #
             # check if the user type came from the form equal the user type saved in the db
@@ -117,6 +117,9 @@ class BWLoginViewBW(SuccessMessageMixin, BWSiteSettingsViewMixin, FormView):
                 self.success_url = reverse_lazy("dashboard:cfo:home")
 
             return super().form_valid(form)
+        except BWUser.DoesNotExist:
+            form.add_error("email", _("Email not exists!"))
+            return self.form_invalid(form)
         except Exception:
             DebuggingPrint.get_console_obj().print_exception(show_locals=False)
             messages.error(self.request, _("Error while login"))

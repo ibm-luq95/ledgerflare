@@ -3,6 +3,7 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import DeleteView, ListView, FormView
@@ -253,7 +254,7 @@ class AssistantDeleteView(
     # permission_required = ["assistant.delete_assistant", "assistant.delete_assistantproxy"]
     permission_required = "assistant.delete_assistantproxy"
     permission_denied_message = _("You do not have permission to access this page.")
-    template_name = "core/crudl/delete.html"
+    template_name = "assistant/management/delete.html"
     model = AssistantProxy
     success_message = _("Assistant deleted successfully")
     success_url = reverse_lazy("dashboard:management_assistant:list")
@@ -267,3 +268,10 @@ class AssistantDeleteView(
         context.setdefault("object_name", "assistant")
         context.setdefault("form_css_id", "assistantDeleteForm")
         return context
+
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        user = BWUser.objects.get(pk=self.object.user.pk)
+        user.delete()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)

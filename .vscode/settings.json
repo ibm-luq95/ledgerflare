@@ -1,181 +1,21 @@
 {
-  // "css.validate": false,
-  // "less.validate": false,
-  // "scss.validate": false,
-  "editor.codeActionsOnSave": {
-    // "source.fixAll.eslint": "explicit",
-    // "source.fixAll.stylelint": "explicit"
-  },
-  // "eslint.validate": ["javascript"],
-  "editor.formatOnSave": false,
-
-  "black-formatter.args": [
-    "--config",
-    "${workspaceFolder}/pyproject.toml",
-    "-S",
-    "--verbose",
-    "--stdin-filename"
-  ],
-  "black-formatter.trace": "info",
-
-  "black-formatter.showNotification": "on",
-  "black-formatter.importStrategy": "fromEnvironment",
-  "isort.args": ["--settings-path", "${workspaceFolder}/pyproject.toml", "--color"],
-  "python.formatting.provider": "none",
-  "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter"
-  },
-  "python.analysis.typeCheckingMode": "standard",
-  "python.analysis.autoImportUserSymbols": true,
-  "python.analysis.completeFunctionParens": true,
-  "python.analysis.extraPaths": ["src/"],
-  "python.analysis.inlayHints.functionReturnTypes": true,
-  "python.analysis.inlayHints.pytestParameters": true,
-  "djangointellisense.projectRoot": "${workspaceFolder}/src",
-  "djangointellisense.settingsModule": "${workspaceFolder}/src/beach_wood_financial_proj/settings",
-  "djangointellisense.debugMessages": true,
-  "htmlhint.configFile": ".htmlhintrc",
+  "djlint.pythonPath": "/home/ibrahim-pc/.virtualenvs/beachwood_financial_venv_3.13/bin/python3",
+  "djlint.closeVoidTags": true,
+  "djlint.profile": "django",
+  "djlint.enableLinting": true,
+  "djlint.formatAttributeTemplateTags": true,
   "djlint.formatCss": true,
   "djlint.formatJs": true,
-  "python.linting.banditEnabled": false,
-  "python.linting.pycodestyleEnabled": false,
-  "autoDocstring.includeName": true,
-  "cSpell.words": [
-    "Beachwood",
-    "blockquote",
-    "cnfm",
-    "CSRFINPUTNAME",
-    "externalcss",
-    "filterset",
-    "fullname",
-    "Hiredis",
-    "icontact",
-    "levelname",
-    "localstorage",
-    "msgpack",
-    "radiobox",
-    "rangefilter",
-    "SUCCESSTIMEOUTSECS",
-    "TOASTSTIMEOUTSECS"
-  ],
-  // OLD
-  // "workbench.colorCustomizations": {
-  //   "titleBar.activeForeground": "#fff",
-  //   // "titleBar.inactiveForeground": "#ffffffcc",
-  //   "titleBar.activeBackground": "#3b83f68c"
-  //   // "titleBar.inactiveBackground": "#3F758DCC"
-  // },
-  // "workbench.colorCustomizations": {
-  //   "statusBar.background": "#3b83f68c",
-  //   "statusBar.foreground": "#e7e7e7",
-  //   "statusBarItem.hoverBackground": "#6ca2f88c",
-  //   "statusBarItem.remoteBackground": "#3b83f68c",
-  //   "statusBarItem.remoteForeground": "#e7e7e7",
-  //   "commandCenter.border": "#e7e7e799",
-  //   "titleBar.activeBackground": "#3b83f68c",
-  //   "titleBar.activeForeground": "#e7e7e7",
-  //   "titleBar.inactiveBackground": "#3b83f699",
-  //   "titleBar.inactiveForeground": "#e7e7e799",
-  //   "sash.hoverBorder": "#6ca2f88c"
-  // },
-  // "peacock.color": "#3b83f68c",
-  "files.readonlyInclude": {
-    "src/frontend/node_modules/**": true
-  },
-  "isort.importStrategy": "fromEnvironment",
-  "isort.logLevel": "warn",
-  "stylelint.stylelintPath": "./src/frontend/node_modules/stylelint/bin/stylelint.js",
-  "typescript.tsdk": "./src/frontend/node_modules/typescript/lib",
-  "stylelint.configFile": "${workspaceFolder}/.stylelintrc.json",
-  "stylelint.configBasedir": "./src/frontend/node_modules",
-  "tailwind-fold.autoFold": false,
-  "flake8.importStrategy": "fromEnvironment",
-  "flake8.path": ["${interpreter}", "-m", "flake8"],
-  "black-formatter.path": ["${interpreter}", "-m", "black"],
-  "isort.check": true,
-  "ruff.lint.run": "onSave",
-  "ruff.trace.server": "messages",
-  "ruff.showNotifications": "onError",
-  "pylint.importStrategy": "fromEnvironment",
-  "bandit.importStrategy": "fromEnvironment",
-  "html-css-class-completion.enableEmmetSupport": true,
-  "mypy-type-checker.importStrategy": "fromEnvironment",
-  "editor.defaultFormatter": null,
-  "mypy-type-checker.args": ["--config-file", "${workspaceFolder}/pyproject.toml"],
-  "python.analysis.diagnosticSeverityOverrides": {
-    // "reportUnboundVariable": "information",
-    // "reportImplicitStringConcatenation": "warning"
-    "reportOptionalMemberAccess": "warning"
-  },
-  "python.analysis.autoImportCompletions": true,
+  "djlint.lineBreakAfterMultilineTag": true,
+  "djlint.useGitignore": true,
+  "djlint.preserveLeadingSpace": false,
   "[html]": {
     "editor.defaultFormatter": "monosans.djlint"
   },
-  "autoDocstring.docstringFormat": "google",
-  "python.analysis.inlayHints.variableTypes": true,
-  "python.analysis.autoFormatStrings": true,
-  "files.autoSaveWhenNoErrors": false,
-  "files.autoSaveWorkspaceFilesOnly": false,
-  "files.autoSave": "onFocusChange",
-  "files.autoSaveDelay": 4000,
-  "codium.codeCompletion.enable": true,
-  "[nginx]": {
-    "editor.defaultFormatter": "ahmadalli.vscode-nginx-conf"
-  },
-  "djlint.configuration": "./pyproject.toml",
-  "files.associations": {
-    "**/views/**/*.html": "django-html",
-    "*.tpl": "django-html"
-  },
-  "files.refactoring.autoSave": false,
-  "auto-close-tag.SublimeText3Mode": true,
-  "autoimport.showNotifications": true,
-  "autopep8.importStrategy": "fromEnvironment",
-  "git.autorefresh": false,
-  "markdown.extension.preview.autoShowPreviewToSide": true,
-  "path-intellisense.autoSlashAfterDirectory": true,
-  "vue.autoInsert.dotValue": true,
-  "auto-close-tag.fullMode": true,
-  "auto-close-tag.insertSpaceBeforeSelfClosingTag": true,
-  "githubRepositories.autoFetch.interval": 600,
-  "autoDocstring.includeExtendedSummary": true,
-  "gitlens.plusFeatures.enabled": false,
-  "jsdoc-generator.generateDescriptionForReturns": true,
-  "jsdoc-generator.generateDescriptionForParameters": true,
-  "jsdoc-generator.generateDescriptionForTypeParameters": true,
-  "editor.tokenColorCustomizations": {
-  "textMateRules": [
-    {
-      "name": "JSDoc Comment",
-      "scope": "comment.block.documentation.js",
-      "settings": {
-        "foreground": "#6A9955"
-      }
-    }
-  ]
-},
-"djlint.noFunctionFormatting": false,
-"djlint.noSetFormatting": false,
-"djlint.preserveBlankLines": false,
-"djlint.preserveLeadingSpace": false,
-"djlint.useEditorIndentation": true,
-"djlint.enableLinting": true,
-"djlint.profile": "django",
-"djlint.lineBreakAfterMultilineTag": true,
-"djlint.formatAttributeTemplateTags": true,
-"djlint.closeVoidTags": true,
-"djlint.noLineAfterYaml": false,
-"djlint.useGitignore": true,
-"intellicodeCompletions.language.javascript": false,
-"intellicodeCompletions.language.python": false,
-"intellicodeCompletions.language.typescript": false
-  // config for extention: junstyle.vscode-django-support
-  // "files.associations": {
-  //   "**/templates/**/*.html": "django-html",
-  //   "*.tpl": "django-html"
-  // },
-  // "[django-html]": {
-  //   "editor.formatOnSave": true,
-  //   "editor.defaultFormatter": "junstyle.vscode-django-support"
-  // }
+  "chat.agent.enabled": true,
+  // "htmlhint.configFile": ".htmlhintrc",
+  "htmlhint.options": {
+    "--config": ".htmlhintrc"
+  }
+  // "djlint.preserveBlankLines": true
 }

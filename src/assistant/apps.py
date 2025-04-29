@@ -7,3 +7,4 @@ class AssistantConfig(AppConfig):
 
     def ready(self) -> None:
         import assistant.signals.assign_manager_permission
+        import assistant.signals.handlers

@@ -3,7 +3,7 @@
 {% if messages %}
     <div class="m-1">
         {% for message in messages %}
-            {% if message.tags == "bw-success" %}
+            {% if message.tags == "success" %}
                 <div class="hs-removing:translate-x-5 hs-removing:opacity-0 transition duration-300 bg-teal-50 border border-teal-200 rounded-md p-4"
                      role="alert">
                     <div class="flex">
@@ -20,11 +20,13 @@
                                   role="tooltip">{{ "success"|title }}</span>
                         </div>
                         <div class="ml-3">
-                            <div class="text-sm text-teal-800 font-medium">{{ message }}</div>
+                            <div class="text-sm text-teal-800 font-medium">
+                                {{ message }}
+                            </div>
                         </div>
                     </div>
                 </div>
-            {% elif message.tags == "bw-error" %}
+            {% elif message.tags == "error" %}
                 <div class="hs-removing:translate-x-5 hs-removing:opacity-0 transition duration-300 bg-red-50 border border-red-200 rounded-md p-4 my-1"
                      role="alert">
                     <div class="flex">
@@ -41,11 +43,13 @@
                                   role="tooltip">{{ "error"|title }}</span>
                         </div>
                         <div class="ml-3">
-                            <div class="text-sm text-red-800 font-semibold">{{ message }}</div>
+                            <div class="text-sm text-red-800 font-semibold">
+                                {{ message }}
+                            </div>
                         </div>
                     </div>
                 </div>
-            {% elif message.tags == "bw-info" %}
+            {% elif message.tags == "info" %}
                 <div class="hs-removing:translate-x-5 hs-removing:opacity-0 transition duration-300 bg-blue-50 border border-blue-200 text-blue-600 rounded-md p-4 my-1"
                      role="alert">
                     <div class="flex">
@@ -62,11 +66,13 @@
                                   role="tooltip">{{ "info"|title }}</span>
                         </div>
                         <div class="ml-3">
-                            <div class="text-sm text-blue-600 font-medium">{{ message }}</div>
+                            <div class="text-sm text-blue-600 font-medium">
+                                {{ message }}
+                            </div>
                         </div>
                     </div>
                 </div>
-            {% elif message.tags == "bw-warning" %}
+            {% elif message.tags == "warning" %}
                 <div class="hs-removing:translate-x-5 hs-removing:opacity-0 transition duration-300 bg-orange-50 border border-orange-200 rounded-md p-4 my-1"
                      role="alert">
                     <div class="flex">
@@ -76,11 +82,13 @@
                                   role="tooltip">{{ "warning"|title }}</span>
                         </div>
                         <div class="ml-3 mt-0.5">
-                            <div class="text-sm text-orange-600 font-semibold">{{ message }}</div>
+                            <div class="text-sm text-orange-600 font-semibold">
+                                {{ message }}
+                            </div>
                         </div>
                     </div>
                 </div>
-            {% elif message.tags == "bw-debug" %}
+            {% elif message.tags == "debug" %}
                 <div class="bg-yellow-50 my-1 border border-yellow-200 rounded-md p-4"
                      role="alert">
                     <div class="flex">
@@ -97,8 +105,12 @@
                                   role="tooltip">{{ "DEBUGGING"|title }}</span>
                         </div>
                         <div class="ml-4">
-                            <h3 class="text-sm text-yellow-800 font-semibold">DEBUGGING</h3>
-                            <div class="mt-1 text-sm text-yellow-700">{{ message }}</div>
+                            <h3 class="text-sm text-yellow-800 font-semibold">
+                                DEBUGGING
+                            </h3>
+                            <div class="mt-1 text-sm text-yellow-700">
+                                {{ message }}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -295,3 +296,10 @@ class ManagerDeleteView(
         context.setdefault("object_name", "manager")
         context.setdefault("form_css_id", "managerDeleteForm")
         return context
+
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        user = BWUser.objects.get(pk=self.object.user.pk)
+        user.delete()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)

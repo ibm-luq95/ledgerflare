@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-#
 from random import randint
+from typing import Any
 
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, QuerySet, Model
 from django.db.models.aggregates import Count
 
 from core.constants.status_labels import CON_COMPLETED, CON_ARCHIVED
@@ -28,21 +29,27 @@ class SoftDeleteManager(models.Manager):
 
     ALLOWED_STATUS = [CON_ARCHIVED, CON_COMPLETED]
 
-    def get_queryset(self) -> BaseQuerySetMixin:
+    # def get_queryset(self) -> BaseQuerySetMixin:
+    #     """
+    #     Returns a queryset of all instances of the model that are not marked as deleted.
+    #
+    #     Returns:
+    #         BaseQuerySetMixin: A queryset of instances of the model that are not marked as deleted.
+    #
+    #     """
+    #     queryset = BaseQuerySetMixin(self.model, using=self._db).filter(
+    #         Q(is_deleted=False)
+    #     )
+    #
+    #     return queryset
+
+    def get_queryset(self):
         """
-        Returns a queryset of all instances of the model that are not marked as deleted.
-
-        Returns:
-            BaseQuerySetMixin: A queryset of instances of the model that are not marked as deleted.
-
+        Return a custom QuerySet that excludes soft-deleted rows by default.
         """
-        queryset = BaseQuerySetMixin(self.model, using=self._db).filter(
-            Q(is_deleted=False)
-        )
+        return BaseQuerySetMixin(self.model, using=self._db).filter(is_deleted=False)
 
-        return queryset
-
-    def all(self) -> BaseQuerySetMixin:
+    def all(self) -> QuerySet[Any, Any] | QuerySet[Model | Any, Any]:
         """
         Returns a `BaseQuerySetMixin` object representing all instances of the model with a
         status of either `CON_ARCHIVED` or `CON_COMPLETED`, ordered by `created_at` in
@@ -61,14 +68,14 @@ class SoftDeleteManager(models.Manager):
             qs = qs.filter(~Q(status__in=self.ALLOWED_STATUS))
         return qs
 
-    def random(self):
+    def delete(self):
         """
-        Generates a random instance from the queryset.
-
-        Returns:
-            The randomly selected instance from the queryset.
-
+        Soft delete all objects in the queryset.
         """
-        count = self.aggregate(count=Count("id"))["count"]
-        random_index = randint(0, count - 1)
-        return self.all()[random_index]
+        return self.get_queryset().delete()
+
+    def restore(self):
+        """
+        Restore all soft-deleted objects in the queryset.
+        """
+        return self.get_queryset().restore()

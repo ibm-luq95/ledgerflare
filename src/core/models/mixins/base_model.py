@@ -100,15 +100,15 @@ class BaseModelMixin(DiffingMixin, GetModelInstanceAsDictMixin, models.Model):
                 columns_names.insert(0, field.verbose_name)
         return columns_names
 
-    def soft_delete(self):
-        """
-        Marks the model as deleted by setting the `is_deleted` field to `True` and
-        recording the deletion timestamp.
-        """
-        self.is_deleted = True
-        self.deleted_at = timezone.now()
-        self.save()
-
+    # def soft_delete(self):
+    #     """
+    #     Marks the model as deleted by setting the `is_deleted` field to `True` and
+    #     recording the deletion timestamp.
+    #     """
+    #     self.is_deleted = True
+    #     self.deleted_at = timezone.now()
+    #     self.save()
+    #
     def hard_delete(self):
         """
         Marks the model as deleted by calling the `delete` method on the `original_objects`
@@ -118,23 +118,15 @@ class BaseModelMixin(DiffingMixin, GetModelInstanceAsDictMixin, models.Model):
 
     def delete(self):
         """
-        Calls the soft_delete method to mark the model as deleted.
+        Soft delete the object.
         """
-        self.soft_delete()
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
 
     def restore(self):
         """
-        Restores a deleted model by setting the `is_deleted` field to `False` and clearing
-        the deletion timestamp.
-
-        This method is called when a model needs to be restored from a deleted state. It sets the `is_deleted` field to `False` to indicate that the model is no longer deleted. It also sets the `deleted_at` field to `None` to clear the deletion timestamp. Finally, it saves the model to persist the changes.
-
-        Parameters:
-            self (Model): The model instance to be restored.
-
-        Returns:
-            None
-
+        Restore the soft-deleted object.
         """
         self.is_deleted = False
         self.deleted_at = None
