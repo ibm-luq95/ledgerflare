@@ -16,6 +16,7 @@ from beach_wood_user.models import BWUser
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
+from core.utils.developments.debugging_print_object import DebuggingPrint
 from core.views.mixins import BWBaseListViewMixin, BWLoginRequiredMixin
 
 
@@ -106,11 +107,14 @@ class AssistantCreateView(
         """If the form is valid, save the associated model."""
         try:
             with transaction.atomic():
+                # DebuggingPrint.pprint(form.cleaned_data)
+                # raise Exception
                 user_details = {
                     "first_name": form.cleaned_data.get("first_name"),
                     "last_name": form.cleaned_data.get("last_name"),
                     "email": form.cleaned_data.get("email"),
                     "user_type": form.STAFF_MEMBER_TYPE,
+                    "password": form.cleaned_data.get("password"),
                 }
                 profile_details = {
                     "linkedin": form.cleaned_data.get("linkedin"),
@@ -123,8 +127,9 @@ class AssistantCreateView(
                     "bio": form.cleaned_data.get("bio"),
                     "profile_picture": form.cleaned_data.get("profile_picture"),
                 }
-                new_user = BWUser.objects.create(**user_details)
-                new_user.set_password(form.cleaned_data.get("password"))
+                # new_user = BWUser.objects.create(**user_details)
+                new_user = BWUser.objects.create_user(**user_details)
+                # new_user.set_password(form.cleaned_data.get("password"))
                 new_user.assistant.assistant_type = form.cleaned_data.get("assistant_type")
                 new_user.assistant.save()
                 for attr, value in profile_details.items():
