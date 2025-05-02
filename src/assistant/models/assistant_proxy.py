@@ -43,7 +43,7 @@ class AssistantProxy(Assistant):
         # Perform soft delete
         self.is_deleted = True
         self.deleted_at = timezone.now()
-        self.save()
+        self.save(update_fields=["is_deleted", "deleted_at"])
 
         # Trigger post_soft_delete signal
         assistant_post_soft_delete.send(sender=self.__class__, instance=self)
