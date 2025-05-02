@@ -256,7 +256,7 @@
             {# Start Assigned by #}
             <td class="h-px w-px whitespace-nowrap">
                 <div class="px-6 py-3">
-                    {% if object.assigned_to %}
+                    {% if object.assigned_by %}
                         <a href="{% url 'dashboard:staff:member-details' object.assigned_by.pk %}"
                            class="{{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} text-sm">
                             {{ object.assigned_by.fullname }}
