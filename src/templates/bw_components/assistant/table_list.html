@@ -126,7 +126,8 @@
             </th>
         {% endif %}
         <th scope="col" class="px-6 py-3 text-right disable-sort">
-            <div class="flex items-center gap-x-2"></div>
+            <div class="flex items-center gap-x-2">
+            </div>
         </th>
     </tr>
 {% endblock thead_block %}
@@ -150,9 +151,13 @@
             {% endif %}
             <td class="h-px w-px whitespace-nowrap">
                 <div class="px-6 py-3">
-                    <a href="{% url 'dashboard:staff:member-details' object.user.pk %}">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.user.fullname }}</span>
-                    </a>
+                    {% if object.user %}
+                        <a href="{% url 'dashboard:staff:member-details' object.user.pk %}">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.user.fullname }}</span>
+                        </a>
+                    {% else %}
+                        <span class="text-xs text-gray-600 dark:text-gray-400">{% translate "N/A" %}</span>
+                    {% endif %}
                 </div>
             </td>
             <td class="h-px w-px whitespace-nowrap">
