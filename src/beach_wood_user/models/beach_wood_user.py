@@ -15,7 +15,7 @@ from django.utils.translation import gettext as _
 from guardian.mixins import GuardianUserMixin
 
 from .manager import BeachWoodUserManager
-
+from beach_wood_user.signals.signals import bwuser_pre_soft_delete, bwuser_post_soft_delete
 
 # TODO: remove the custom logger before push (only for development)
 # ###### [Custom Logger] #########
@@ -84,11 +84,26 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
 
     def delete(self):
         """
+        Perform a soft delete and trigger custom signals.
+        """
+        # Trigger pre_soft_delete signal
+        bwuser_pre_soft_delete.send(sender=self.__class__, instance=self)
+
+        # Perform soft delete
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save(update_fields=["is_deleted", "deleted_at"])
+
+        # Trigger post_soft_delete signal
+        bwuser_post_soft_delete.send(sender=self.__class__, instance=self)
+
+    def delete(self):
+        """
         Soft delete the user.
         """
         self.is_deleted = True
         self.deleted_at = timezone.now()
-        self.save()
+        self.save(update_fields=["is_deleted", "deleted_at"])
 
     def restore(self):
         """
@@ -96,7 +111,7 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
         """
         self.is_deleted = False
         self.deleted_at = None
-        self.save()
+        self.save(update_fields=["is_deleted", "deleted_at"])
 
     @property
     def utils(self):

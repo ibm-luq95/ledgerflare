@@ -158,3 +158,4 @@ COMPONENTS = ComponentsSettings(
     reload_on_file_change=True,
     template_cache_size=2,
 )
+DJANGO_EASY_AUDIT_PROPAGATE_EXCEPTIONS = DEBUG
