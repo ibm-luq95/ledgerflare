@@ -83,7 +83,7 @@ class SpecialAssignmentListView(
             queryset |= self.request.user.requested_assignments.all()
         if self.request.user.user_type == CON_ASSISTANT:
             queryset = (
-                self.request.user.assistant.get_proxy_model().special_assignments.all()
+                self.request.user.assigned_assignments.all()
             )
             queryset |= self.request.user.requested_assignments.all()
         self.filterset = SpecialAssignmentFilter(self.request.GET, queryset=queryset)
