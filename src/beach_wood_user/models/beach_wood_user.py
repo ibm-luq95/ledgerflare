@@ -67,7 +67,22 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["user_type", "user_genre"]
 
-    objects = BeachWoodUserManager()
+    # objects = BeachWoodUserManager()
+    objects = models.Manager()
+
+    def natural_key(self) -> tuple[str]:
+        """
+        Return a tuple containing the user's email, used for natural key serialization.
+
+        This allows Django to uniquely identify a user without relying on the UUID PK,
+        which is essential when loading data across environments.
+
+        Returns
+        -------
+        tuple[str]
+            A single-element tuple containing the user's email.
+        """
+        return (self.email,)
 
     class Meta:
         verbose_name = _("Beach wood user")
@@ -81,6 +96,18 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
             return f"User - {full_info} - {self.user_type}"
         else:
             return f"User - {self.email}"
+
+    # def natural_key(self) -> tuple[str]:
+    #     """Use email as the natural key"""
+    #     return (self.email,)  # Must be tuple for compatibility
+    #
+    # @classmethod
+    # def get_by_natural_key(cls, email: str) -> "BWUser":
+    #     """Retrieve user by email"""
+    #     try:
+    #         return cls.objects.get(email=email)
+    #     except cls.DoesNotExist:
+    #         raise cls.DoesNotExist(f"{cls.__name__} with email={email} does not exist")
 
     def delete(self):
         """

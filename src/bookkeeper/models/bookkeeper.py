@@ -13,6 +13,23 @@ class Bookkeeper(BaseModelMixin, StaffMemberMixin, AccessProxyModelMixin):
     Meta class defines permissions for the bookkeeper user.
     """
 
+
+    def natural_key(self) -> tuple[str]:
+        """
+        Return the natural key of the related BWUser for consistent serialization.
+
+        This ensures that relationships are preserved across fixtures and environments,
+        even if UUIDs change.
+
+        Returns
+        -------
+        tuple[str]
+            A single-element tuple containing the email of the associated user.
+        """
+        return self.user.natural_key()
+
+    natural_key.dependencies = ["beach_wood_user.bwuser"]
+
     class Meta(BaseModelMixin.Meta, StaffMemberMixin.Meta):
         permissions = [
             ("bookkeeper_user", "Bookkeeper User"),
