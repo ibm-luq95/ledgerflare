@@ -67,8 +67,8 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["user_type", "user_genre"]
 
-    # objects = BeachWoodUserManager()
-    objects = models.Manager()
+    objects = BeachWoodUserManager()
+    # objects = models.Manager()
 
     def natural_key(self) -> tuple[str]:
         """
