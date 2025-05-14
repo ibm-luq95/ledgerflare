@@ -70,19 +70,19 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
     objects = BeachWoodUserManager()
     # objects = models.Manager()
 
-    def natural_key(self) -> tuple[str]:
-        """
-        Return a tuple containing the user's email, used for natural key serialization.
-
-        This allows Django to uniquely identify a user without relying on the UUID PK,
-        which is essential when loading data across environments.
-
-        Returns
-        -------
-        tuple[str]
-            A single-element tuple containing the user's email.
-        """
-        return (self.email,)
+    # def natural_key(self) -> tuple[str]:
+    #     """
+    #     Return a tuple containing the user's email, used for natural key serialization.
+    #
+    #     This allows Django to uniquely identify a user without relying on the UUID PK,
+    #     which is essential when loading data across environments.
+    #
+    #     Returns
+    #     -------
+    #     tuple[str]
+    #         A single-element tuple containing the user's email.
+    #     """
+    #     return (self.email,)
 
     class Meta:
         verbose_name = _("Beach wood user")
