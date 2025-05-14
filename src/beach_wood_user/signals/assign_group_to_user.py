@@ -7,12 +7,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
 
-from assistant.models import AssistantProxy
+from assistant.models import AssistantProxy, Assistant
 from beach_wood_user.helpers.permission_helper import PermissionHelper
 from beach_wood_user.models import Profile
 from beach_wood_user.models.beach_wood_user import BWUser
-from bookkeeper.models import BookkeeperProxy
-from cfo.models import CFOProxy
+from bookkeeper.models import BookkeeperProxy, Bookkeeper
+from cfo.models import CFOProxy, CFO
 from core.constants.status_labels import CON_ENABLED
 from core.constants.users import (
     BOOKKEEPER_GROUP_NAME,
@@ -21,7 +21,8 @@ from core.constants.users import (
     READONLY_NEW_STAFF_MEMBER_GROUP_NAME,
 )
 from core.utils import get_formatted_logger, debugging_print, colored_output_with_logging
-from manager.models import ManagerProxy
+from core.utils.developments.debugging_print_object import DebuggingPrint
+from manager.models import ManagerProxy, Manager
 from staff_briefcase.models import StaffBriefcase
 
 # TODO: remove the custom logger before push (only for development)
@@ -37,6 +38,7 @@ def assign_groups(sender, instance: BWUser, created: bool, **kwargs):
     try:
         if created:
             created_user = instance
+            DebuggingPrint.pprint(instance)
             user_type = created_user.user_type
 
             with transaction.atomic():
@@ -44,7 +46,7 @@ def assign_groups(sender, instance: BWUser, created: bool, **kwargs):
                     case "assistant":
                         group = ASSISTANT_GROUP_NAME
                         permission_codename = "assistant_user"
-                        assistant = AssistantProxy.objects.create(
+                        assistant = Assistant.objects.create(
                             user=created_user, profile=Profile.objects.create()
                         )
                         # # Create profile for new user
@@ -53,7 +55,7 @@ def assign_groups(sender, instance: BWUser, created: bool, **kwargs):
                     case "bookkeeper":
                         group = BOOKKEEPER_GROUP_NAME
                         permission_codename = "bookkeeper_user"
-                        bookkeeper = BookkeeperProxy.objects.create(
+                        bookkeeper = Bookkeeper.objects.create(
                             user=created_user, profile=Profile.objects.create()
                         )
                         # # Create profile for new user
@@ -62,14 +64,14 @@ def assign_groups(sender, instance: BWUser, created: bool, **kwargs):
                     case "manager":
                         group = MANAGER_GROUP_NAME
                         permission_codename = "manager_user"
-                        manager = ManagerProxy.objects.create(
+                        manager = Manager.objects.create(
                             user=created_user, profile=Profile.objects.create()
                         )
                     case "cfo":
-                        cfo = CFOProxy.objects.create(
+                        cfo = CFO.objects.create(
                             user=created_user, profile=Profile.objects.create()
                         )
-                        #print("DDDDD")
+                        # print("DDDDD")
                         # print(cfo.pro)
                 readonly_group = Group.objects.filter(
                     name=READONLY_NEW_STAFF_MEMBER_GROUP_NAME
