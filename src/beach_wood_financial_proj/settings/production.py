@@ -1,4 +1,7 @@
 from .base import *
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from django.db.models.signals import pre_init, post_init
 
 DEBUG = config("DEBUG", cast=bool)
 
@@ -59,3 +62,88 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 # SECURE_PROXY_SSL_HEADER = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+if config("SENTRY_IS_ENABLED", cast=bool) is True:
+    sentry_sdk.init(
+        dsn=config("SENTRY_SDK_DSN", cast=str),
+        integrations=[
+            DjangoIntegration(
+                transaction_style="url",
+                middleware_spans=True,
+                signals_spans=True,
+                signals_denylist=[
+                    pre_init,
+                    post_init,
+                ],
+                cache_spans=False,
+            )
+        ],
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+        environment="production",
+        send_default_pii=True,
+        # debug=True
+    )
+
+# Start from base logging
+LOGGING = LOGGING_BASE.copy()
+LOGGING["handlers"] = LOGGING["handlers"].copy()  # Allow adding new handlers
+
+# Add file handlers
+LOGGING["handlers"]["file_error"] = {
+    "level": "ERROR",
+    "class": "logging.FileHandler",
+    "filename": LOGS_FOLDER / "bw_errors.log",
+    "formatter": "verbose_json",
+}
+
+LOGGING["handlers"]["file_warning"] = {
+    "level": "WARNING",
+    "class": "logging.FileHandler",
+    "filename": LOGS_FOLDER / "bw_warning.log",
+    "formatter": "verbose_json",
+}
+
+LOGGING["handlers"]["file_app_rotating"] = {
+    "level": "INFO",
+    "class": "logging.handlers.TimedRotatingFileHandler",
+    "when": "midnight",
+    "interval": 1,
+    "backupCount": 7,
+    "filename": LOGS_FOLDER / "app.log",
+    "formatter": "verbose_json",
+}
+
+# 🔽 Admin email handler is COMMENTED OUT — disabled for now
+"""
+LOGGING["handlers"]["email_admin"] = {
+    "level": "ERROR",
+    "class": "django.utils.log.AdminEmailHandler",
+    "include_html": False,
+}
+"""
+
+# Update root logger to handle all uncaught logs
+LOGGING["root"] = {
+    "handlers": ["file_app_rotating", "file_warning", "file_error"],
+    "level": "INFO",
+}
+
+# bw_logger: main app logger
+LOGGING["loggers"]["bw_logger"] = {
+    "handlers": ["file_app_rotating", "file_warning", "file_error"],
+    "level": "INFO",
+    "propagate": False,
+}
+
+# Log django.request errors
+LOGGING["loggers"]["django.request"] = {
+    "handlers": ["file_error"],
+    "level": "ERROR",
+    "propagate": False,
+}
