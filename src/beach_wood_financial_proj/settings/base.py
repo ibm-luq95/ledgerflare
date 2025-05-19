@@ -10,13 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 import pprint
 from pathlib import Path
 from decouple import Config, RepositoryEnv, Csv
 import configparser
 from django.contrib.messages import constants as messages
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
+
 from django_components import ComponentsSettings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -264,7 +264,7 @@ LOCALE_PATHS = [BASE_DIR / "locale/"]
 LANGUAGES = (("en", "English"),)
 
 # Django guardian configs
-GUARDIAN_MONKEY_PATCH = False
+GUARDIAN_MONKEY_PATCH_USER = False
 AUTHENTICATION_BACKENDS = (
     # "beach_wood_user.authentication_backend.SoftDeleteModelBackend",
     "django.contrib.auth.backends.ModelBackend",  # this is default
@@ -391,9 +391,9 @@ LOG_VIEWER_PAGE_LENGTH = 25  # total log lines per-page
 LOG_VIEWER_MAX_READ_LINES = 1000  # total log lines will be read
 LOG_VIEWER_FILE_LIST_MAX_ITEMS_PER_PAGE = 25  # Max log files loaded in Datatable per page
 LOG_VIEWER_PATTERNS = ["[INFO]", "[DEBUG]", "[WARNING]", "[ERROR]", "[CRITICAL]"]
-LOG_VIEWER_EXCLUDE_TEXT_PATTERN = (
-    None  # String regex expression to exclude the log from line
-)
+# LOG_VIEWER_EXCLUDE_TEXT_PATTERN = (
+#     None  # String regex expression to exclude the log from line
+# )
 # Optionally you can set the next variables in order to customize the admin:
 LOG_VIEWER_FILE_LIST_TITLE = "Log viewer"
 
@@ -424,117 +424,117 @@ FILTERS_EMPTY_CHOICE_LABEL = ""
 # LOGGING = {
 #     "version": 1,
 #     "disable_existing_loggers": False,
-#     "root": {"level": "INFO", "handlers": ["file"]},
+#     "formatters": {
+#         # Console formatter (clean single-line)
+#         "console_format": {
+#             "format": "{name} at {asctime} ({levelname}) [{module}] ➜ {message}",
+#             "style": "{",
+#         },
+#         # File formatters (single \n)
+#         "verbose": {
+#             "format": "{name} at {asctime} ({levelname}) ({module}) :: {message}\n",
+#             "style": "{",
+#         },
+#         "large": {
+#             "format": (
+#                 "%(asctime)s  %(levelname)s  %(process)d  %(pathname)s  %(funcName)s "
+#                 " %(lineno)d  %(message)s\n"
+#             )
+#         },
+#         "tiny": {"format": "%(asctime)s  %(message)s\n"},
+#     },
+#     "filters": {
+#         "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
+#         "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
+#     },
 #     "handlers": {
-#         "file": {
+#         "console": {
+#             "level": "DEBUG",
+#             "class": "logging.StreamHandler",
+#             "formatter": "console_format",
+#             "filters": ["require_debug_true"],
+#         },
+#         "warning_file": {
 #             "level": "INFO",
-#             "class": "logging.FileHandler",
-#             "filename": BASE_DIR.parent / "logs" / "django_info.log",
-#             "formatter": "app",
+#             "class": "logging.handlers.TimedRotatingFileHandler",
+#             "when": "midnight",
+#             "backupCount": 7,
+#             "filename": BASE_DIR.parent / "logs" / "bw_warning.log",
+#             "formatter": "verbose",  # Single \n
+#             "encoding": "utf8",
+#         },
+#         "errors_file": {
+#             "level": "ERROR",
+#             "class": "logging.handlers.TimedRotatingFileHandler",
+#             "when": "midnight",
+#             "backupCount": 30,
+#             "filename": BASE_DIR.parent / "logs" / "bw_errors.log",
+#             "formatter": "large",  # Single \n
+#             "encoding": "utf8",
 #         },
 #     },
 #     "loggers": {
-#         "django": {"handlers": ["file"], "level": "INFO", "propagate": False},
-#     },
-#     "formatters": {
-#         "app": {
-#             "format": (
-#                 "%(asctime)s [%(levelname)-8s] " "(%(module)s.%(funcName)s) %(message)s"
-#             ),
-#             "datefmt": "%Y-%m-%d %H:%M:%S",
+#         "bw_logger": {
+#             "handlers": ["warning_file"],
+#             "level": "INFO",
+#             "propagate": False,
+#         },
+#         "bw_error_logger": {
+#             "handlers": ["errors_file"],
+#             "level": "ERROR",
+#             "propagate": False,
+#         },
+#         "django": {
+#             "handlers": ["console", "errors_file"],
+#             "level": "INFO",
+#             "propagate": False,
 #         },
 #     },
+#     "root": {
+#         "handlers": ["console", "errors_file"],
+#         "level": "WARNING",
+#     },
 # }
-LOGGING = {
-    # The version number of our log
+LOGS_FOLDER = BASE_DIR.parent / "logs"
+# print(LOGS_FOLDER)
+# print(LOGS_FOLDER.exists())
+os.makedirs(LOGS_FOLDER, exist_ok=True)
+# Base logging config (shared by all environments)
+LOGGING_BASE = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "large": {
-            "format": (
-                "%(asctime)s  %(levelname)s  %(process)d  %(pathname)s  %(funcName)s "
-                " %(lineno)d  %(message)s  "
-            )
-        },
-        "tiny": {"format": "%(asctime)s  %(message)s  "},
-        "verbose": {
-            # "format": "{levelname} {asctime} {module} {message}",
-            "format": "{name} at {asctime} ({levelname}) ({module}) :: {message}",
+        # Simple format for dev console output
+        "console": {
+            "format": "{levelname} {name} :: {message}",
             "style": "{",
+        },
+        # Structured JSON format for production logs
+        "verbose_json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": "%(asctime)s %(levelname)s %(name)s %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },
     "filters": {
-        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
         "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
     },
-    # django uses some of its own loggers for internal operations. In case you want to
-    # disable them just replace the
-    # False above with true.
-    # A handler for WARNING. It is basically writing the WARNING messages into a file
-    # called WARNING.log
     "handlers": {
-        "warning_file": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
-            "filename": BASE_DIR.parent / "logs" / "bw_warning.log",
-            "formatter": "verbose",
-        },
         "console": {
             "level": "INFO",
             "class": "logging.StreamHandler",
-            # "formatter": "verbose",
+            "formatter": "console",
             "filters": ["require_debug_true"],
         },
-        "errors_file": {
-            "level": "ERROR",
-            # "class": "logging.handlers.TimedRotatingFileHandler",
-            "class": "logging.FileHandler",
-            # "when": "midnight",
-            # "interval": 1,
-            "filename": BASE_DIR.parent / "logs" / "bw_errors.log",
-            "formatter": "large",
-            # "formatter": "verbose",
-        },
-        # "info_file": {
-        #     "level": "INFO",
-        #     "class": "logging.handlers.TimedRotatingFileHandler",
-        #     "when": "midnight",
-        #     "interval": 1,
-        #     "filename": BASE_DIR.parent / "logs" / "bw_info.log",
-        #     "formatter": "large",
-        # },
     },
-    # A logger for WARNING which has a handler called 'file'. A logger can have multiple
-    # handler
     "loggers": {
-        # notice the blank '', Usually you would put built in loggers like django or
-        # root here based on your needs
-        # "django": {
-        #     "handlers": [
-        #         "console",
-        #     ],  # notice how file variable is called in handler which has been defined
-        #     above
-        #     "level": "DEBUG",
-        # },
         "bw_logger": {
-            "handlers": ["warning_file"],
+            "handlers": ["console"],
             "level": "INFO",
-            "propagate": False,  # required to avoid double logging with root logger
-        },
-        "bw_error_logger": {
-            "handlers": ["errors_file"],
-            "level": "WARNING",
             "propagate": False,
         },
-        # "django.db.backends": {"level": "DEBUG", "handlers": ["console"]},
-        # "bw_info_logger": {
-        #     "handlers": ["info_file"],
-        #     "level": "INFO",
-        #     "propagate": False,
-        # },
     },
 }
-
 SESSION_TIMEOUT_REDIRECT = "/auth/login"
 ANONYMOUS_USER_NAME = None
 MANAGER_MAIN_EMAIL = config("MANAGER_MAIN_EMAIL", cast=str)
@@ -544,18 +544,3 @@ MANAGER_MAIN_EMAIL = config("MANAGER_MAIN_EMAIL", cast=str)
 
 
 # SENTRY configs
-if config("SENTRY_IS_ENABLED", cast=bool) is True:
-    sentry_sdk.init(
-        dsn=config("SENTRY_SDK_DSN", cast=str),
-        integrations=[DjangoIntegration()],
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        traces_sample_rate=1.0,
-        # Set profiles_sample_rate to 1.0 to profile 100%
-        # of sampled transactions.
-        # We recommend adjusting this value in production.
-        profiles_sample_rate=1.0,
-        environment="dev",
-        send_default_pii=True,
-        # debug=True
-    )
