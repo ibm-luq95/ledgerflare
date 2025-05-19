@@ -2,6 +2,15 @@ import mimetypes
 
 from .base import *
 
+# Add color formatter
+try:
+    from colorlog import ColoredFormatter
+
+    HAS_COLORLOG = True
+except ImportError:
+    HAS_COLORLOG = False
+
+
 mimetypes.add_type("application/javascript", ".js", True)
 
 DEBUG = config("DEBUG", cast=bool)
@@ -159,3 +168,58 @@ COMPONENTS = ComponentsSettings(
     template_cache_size=2,
 )
 DJANGO_EASY_AUDIT_PROPAGATE_EXCEPTIONS = DEBUG
+if HAS_COLORLOG:
+    LOGGING_BASE["formatters"]["dev_color"] = {
+        "()": "colorlog.ColoredFormatter",
+        "format": "{bold_black}{asctime}{reset} {log_color}{levelname}{reset} {blue}{name}{reset} :: {message}",
+        "style": "{",
+        "log_colors": {
+            "DEBUG": "cyan",
+            "INFO": "green",
+            "WARNING": "yellow",
+            "ERROR": "red",
+            "CRITICAL": "red,bg_white",
+        },
+    }
+
+    LOGGING_BASE["handlers"]["console"]["formatter"] = "dev_color"
+LOGGING = LOGGING_BASE.copy()
+
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "formatters": {
+#         "dev": {
+#             "format": (
+#                 "\033[36m{levelname}\033[0m \033[32m{asctime}\033[0m "
+#                 "\033[34m{module}\033[0m:\033[33m{lineno}\033[0m ➜ \033[37m{message}\033[0m"
+#             ),
+#             "style": "{",
+#             "datefmt": "%H:%M:%S",
+#         }
+#     },
+#     "handlers": {
+#         # Rich console output only
+#         "console": {
+#             "level": "DEBUG",
+#             "class": "logging.StreamHandler",
+#             "formatter": "dev",
+#         },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["console"],
+#             "level": "INFO",
+#             "propagate": False,
+#         },
+#         "myapp": {
+#             "handlers": ["console"],
+#             "level": "DEBUG",
+#             "propagate": False,
+#         },
+#     },
+#     "root": {
+#         "handlers": ["console"],
+#         "level": "DEBUG",
+#     },
+# }
