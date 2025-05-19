@@ -15,6 +15,7 @@ faker
 factory_boy
 inquirer
 phone-gen
+colorlog
 pip-chill
 pipdeptree
 prettyprinter
