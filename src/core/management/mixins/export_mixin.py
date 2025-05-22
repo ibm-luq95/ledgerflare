@@ -38,7 +38,7 @@ class ExportingCommandMixin(BaseCommand, CommandStdOutputMixin):
             self.exported_folder_path: PosixPath = PosixPath(exported_folder)
             if not self.exported_folder_path.exists():
                 DebuggingPrint.print("[red bold] Export directory not exists!")
-                quit(1)
+                return
             self.exported_folder_path: PosixPath = PosixPath(exported_folder) / PosixPath(
                 str(today_date)
             )
@@ -75,11 +75,11 @@ class ExportingCommandMixin(BaseCommand, CommandStdOutputMixin):
             )
         except decouple.decouple.UndefinedValueError:
             DebuggingPrint.print("[red bold] Export directory not exists!")
-            quit(1)
+            return
         except Exception as e:
             DebuggingPrint.print(e)
             traceback.print_exc()
-            quit(1)
+            return
 
     def handle(self, *args, **options):
         try:
@@ -126,4 +126,4 @@ class ExportingCommandMixin(BaseCommand, CommandStdOutputMixin):
 
         except Exception as ex:
             self.stdout_output("error", traceback.format_exc())
-
+            return
