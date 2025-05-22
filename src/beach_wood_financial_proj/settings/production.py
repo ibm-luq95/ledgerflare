@@ -56,9 +56,32 @@ SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", cast=bool)
 SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", cast=bool)
 SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", cast=bool)
 USE_X_FORWARDED_HOST = config("USE_X_FORWARDED_HOST", cast=bool)
+# --------------------------
+# 🕵️‍♂️ Session Security
+# --------------------------
+
+# Prevents JavaScript from accessing the session cookie (protects against XSS)
+SESSION_COOKIE_HTTPONLY = True
+
+# Session will expire after 1 hour (3600 seconds)
+# SESSION_COOKIE_AGE = 3600
+
+# Session will end when the user closes the browser
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# --------------------------
+# 🛡️ CSRF Protection
+# --------------------------
+
+# Prevents JavaScript from accessing the CSRF token cookie
+CSRF_COOKIE_HTTPONLY = True
+
+# Stores the CSRF token in the user session instead of a separate cookie
+CSRF_USE_SESSIONS = True
+# SESSION_COOKIE_AGE = 3600
 
 # OWSP recommendation security configs
 SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 SECURE_BROWSER_XSS_FILTER = True
 # SECURE_PROXY_SSL_HEADER = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
