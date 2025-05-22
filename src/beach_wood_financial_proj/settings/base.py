@@ -325,6 +325,14 @@ STATICFILES_DIRS = [
     BASE_DIR / "components",
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+# Webpack configs
+WEBPACK_LOADER = {
+    'MANIFEST_FILE': BASE_DIR / "frontend/build/manifest.json",
+    # "MANIFEST_FILE": BASE_DIR
+    # / "frontend"
+    # / "build"
+    # / "manifest.json"
+}
 
 # Media URLs
 MEDIA_ROOT = BASE_DIR / "media"
@@ -376,14 +384,7 @@ COMPRESS_LEVEL = config("COMPRESS_LEVEL", cast=int)
 # ENCRYPT_KEY
 ENCRYPT_KEY = bytes(config("ENCRYPT_KEY", cast=str), "ascii")  # type: ignore
 
-# Webpack configs
-WEBPACK_LOADER = {
-    # 'MANIFEST_FILE': BASE_DIR / "frontend/build/manifest.json",
-    "MANIFEST_FILE": BASE_DIR
-    / "frontend"
-    / "build"
-    / "manifest.json"
-}
+
 
 # Django log viewer package config
 LOG_VIEWER_FILES_DIR = BASE_DIR.parent / "logs"
