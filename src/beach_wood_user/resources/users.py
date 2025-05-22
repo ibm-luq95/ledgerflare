@@ -9,10 +9,10 @@ class UsersResource(resources.ModelResource):
     class Meta:
         model = BWUser
 
-    def before_import(self, dataset, **kwargs):
-        DebuggingPrint.pprint(dataset)
-        DebuggingPrint.pprint(kwargs)
-        print("Preparing to import data...")
+    # def before_import(self, dataset, **kwargs):
+    #     DebuggingPrint.pprint(dataset)
+    #     DebuggingPrint.pprint(kwargs)
+    #     print("Preparing to import data...")
 
 
     # def after_import(self, dataset, result, **kwargs):
