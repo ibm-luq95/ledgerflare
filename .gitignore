@@ -590,3 +590,4 @@ src/frontend/bun.lockb!/.env_dotenv
 .env_dotenv
 /Exported_From_CLI/
 /production_data/
+production_config_files
