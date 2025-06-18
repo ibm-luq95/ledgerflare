@@ -81,7 +81,7 @@ CSRF_USE_SESSIONS = True
 
 # OWSP recommendation security configs
 SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = "DENY"
 SECURE_BROWSER_XSS_FILTER = True
 # SECURE_PROXY_SSL_HEADER = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -137,6 +137,7 @@ LOGGING["handlers"]["file_app_rotating"] = {
     "class": "logging.handlers.TimedRotatingFileHandler",
     "when": "midnight",
     "interval": 1,
+    "delay": True,
     "backupCount": 7,
     "filename": LOGS_FOLDER / "app.log",
     "formatter": "verbose_json",
