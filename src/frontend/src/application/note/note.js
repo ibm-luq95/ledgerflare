@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           dataToSend: formInputs,
           url: currentTarget.action,
           token: currentTarget[CSRFINPUTNAME].value,
+          djangoRequest: true,
         };
         // alert("EEEe");
         // throw new Error("PAUSE");
