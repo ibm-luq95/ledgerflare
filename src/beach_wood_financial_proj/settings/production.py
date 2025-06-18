@@ -135,10 +135,10 @@ LOGGING["handlers"]["file_warning"] = {
 LOGGING["handlers"]["file_app_rotating"] = {
     "level": "INFO",
     "class": "logging.handlers.TimedRotatingFileHandler",
-    "when": "midnight",
-    "interval": 1,
-    "delay": True,
-    "backupCount": 7,
+    "when": "W0",  # Rotate every Monday (W0=Monday, W6=Sunday)
+    "interval": 1,  # Every 1 week (default, can be omitted)
+    "delay": True,  # Prevent errors if log file doesn't exist at startup
+    "backupCount": 6,  # Keep 7 weekly logs (~7 weeks of history)
     "filename": LOGS_FOLDER / "app.log",
     "formatter": "verbose_json",
 }
