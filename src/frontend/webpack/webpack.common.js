@@ -1,6 +1,7 @@
 const glob = require("glob");
 const { VueLoaderPlugin } = require("vue-loader");
 const Webpack = require("webpack");
+const Dotenv = require("dotenv-webpack");
 const Path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -27,9 +28,16 @@ module.exports = {
   },
 
   plugins: [
+    new Dotenv({
+      path: "./.env", // Path to .env file
+      safe: false, // If true, load '.env.example' to verify the .env variables are all set
+      systemvars: false, // If true, load all system environment variables
+      silent: false, // If true, all warnings will be suppressed
+      defaults: false, // If true, load '.env.defaults'
+    }),
     new Webpack.ProgressPlugin(),
     new Webpack.EnvironmentPlugin({
-      FETCHURLNAMEURL: "/core/api/fetch_url"
+      FETCHURLNAMEURL: "/core/api/fetch_url",
     }),
 
     /* new Webpack.ProvidePlugin({

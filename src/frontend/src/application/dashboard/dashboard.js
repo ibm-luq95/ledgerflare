@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
   //dashboard:manager:management_api:management-dashboard-api
   if (mgDashboardHWidgetElements.length > 0) {
     const urlName = fetchUrlPathByName(
-      "dashboard:manager:management_api:management-dashboard-api",
+      "dashboard:manager:management_api:management-dashboard-api"
     );
     urlName
       .then((data) => {
@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           method: "POST",
           // dataToSend: formInputs,
           url: data["urlPath"],
+          djangoRequest: true,
         };
         const request = sendRequest(requestOptions);
         request
@@ -48,7 +49,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
             });
             // setup chartjs
             const chartDashboardWrapper = document.querySelector(
-              "#chart-dashboard-wrapper",
+              "#chart-dashboard-wrapper"
             );
             const chartLoader = chartDashboardWrapper.querySelector(".loader-element");
             const jobChartWrapper =

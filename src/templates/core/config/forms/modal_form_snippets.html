@@ -4,16 +4,18 @@
 {% bw_split_form_hidden_and_not_inputs form_object=form as all_form_inputs %}
 <div class="grid sm:grid-cols-12 gap-2 sm:gap-4 first:pt-0 last:pb-0 first:border-transparent">
     {% for field in all_form_inputs.normal_inputs %}
-        <div class="sm:col-span-2">
+        <div class="sm:col-span-3">
             <label for="{{ field.id_for_label }}"
                    class="inline-block text-sm font-medium text-gray-500 mt-2.5">
                 {# {{ field.label }} - {{ field|field_type }} #}
                 {{ field.label }}
-                {% if field.field.required is True %}<span class="text-[14px] mx-1">*</span>{% endif %}
+                {% if field.field.required is True %}
+                    <span class="text-[14px] mx-1">*</span>
+                {% endif %}
             </label>
         </div>
         {% bw_get_form_widget_attrs_as_dict field.field as widget_attrs %}
-        <div class="sm:col-span-10">
+        <div class="sm:col-span-9">
             {# {{ field.value }} #}
             <!-- Radio -->
             {% if field|field_type == 'booleanfield' %}
@@ -35,7 +37,9 @@
                                            id="{{ choice.id_for_label }}"
                                            name="{{ choice.data.name }}"
                                            value="{{ choice.data.value }}"
-                                           {% if choice.data.selected is True %}checked{% endif %} />
+                                           {% if choice.data.selected is True %}
+                                               checked
+                                           {% endif %} />
                                 </div>
                                 <label for="{{ choice.id_for_label }}" class="ml-3">
                                     <span class="block text-sm font-semibold text-gray-800 dark:text-gray-300">{{ choice.choice_label }}</span>
@@ -58,22 +62,32 @@
                         {% if field.field.widget|bw_get_form_field_type == "Select" or field.field.widget|bw_get_form_field_type == "SelectMultiple" %}
                             <select id="{{ field.id_for_label }}"
                                     name="{{ field.name }}"
-                                    {% if field.field.widget|bw_get_form_field_type == "SelectMultiple" %}multiple{% endif %}
+                                    {% if field.field.widget|bw_get_form_field_type == "SelectMultiple" %}
+                                        multiple
+                                    {% endif %}
                                     class="py-2 px-3 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
                                 <!-- <option selected>Open this select menu</option> -->
                                 {% for choice in field %}
                                     <option value="{{ choice.data.value }}"
-                                            {% if choice.data.selected is True %}selected{% endif %}>{{ choice.choice_label }}</option>
+                                            {% if choice.data.selected is True %}
+                                                selected
+                                            {% endif %}>
+                                        {{ choice.choice_label }}
+                                    </option>
                                 {% endfor %}
                             </select>
                         {% elif field.field.widget|bw_get_form_field_type == "CheckboxSelectMultiple" %}
                             {% if field.field.widget.choices %}
                                 {% for choice in field %}
-                                    {% if forloop.first %}<div class="flex gap-x-6 mt-2.5">{% endif %}
+                                    {% if forloop.first %}
+                                        <div class="flex gap-x-6 mt-2.5">
+                                        {% endif %}
                                         <div class="flex">
                                             <input type="checkbox"
                                                    name="{{ field.name }}"
-                                                   {% if choice.data.selected is True %}checked{% endif %}
+                                                   {% if choice.data.selected is True %}
+                                                       checked
+                                                   {% endif %}
                                                    value="{{ choice.data.value }}"
                                                    class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                                                    id="{{ choice.data.attrs.id }}" />
@@ -86,7 +100,9 @@
                                         </div>
                                         <div class="flex gap-x-6 mt-2.5">
                                         {% endif %}
-                                        {% if forloop.last %}</div>{% endif %}
+                                        {% if forloop.last %}
+                                        </div>
+                                    {% endif %}
                                 {% endfor %}
                             {% endif %}
                         {% endif %}
@@ -109,12 +125,16 @@
             {% if field.errors %}
                 {% for error in field.errors %}
                     <p class="text-sm text-red-600 mt-2"
-                       id="{{ field.id_for_label|add:'-error' }}">{{ error }}</p>
+                       id="{{ field.id_for_label|add:'-error' }}">
+                        {{ error }}
+                    </p>
                 {% endfor %}
             {% endif %}
         </div>
     {% endfor %}
     {% if all_form_inputs.hidden_inputs %}
-        {% for hidden_input in all_form_inputs.hidden_inputs %}{{ hidden_input }}{% endfor %}
+        {% for hidden_input in all_form_inputs.hidden_inputs %}
+            {{ hidden_input }}
+        {% endfor %}
     {% endif %}
 </div>
