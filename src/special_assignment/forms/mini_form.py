@@ -3,6 +3,7 @@ from django import forms
 from django.utils.translation import gettext as _
 
 from beach_wood_user.models import BWUser
+from client.models import ClientProxy
 from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
 from core.constants.form import (
     PDF_MIME_TYPE,
@@ -21,14 +22,23 @@ from core.forms.mixins.base_form_mixin import BWBaseFormMixin
 from core.forms.mixins.js_modal_form_renderer_mixin import BWJSModalFormRendererMixin
 from core.forms.widgets import RichHTMLEditorWidget
 from core.utils import FileValidator
+from core.utils.developments.enhanced_debugging_print import (
+    ENHANCED_DEBUGGING_PRINT_INSTANCE,
+)
+from job.models import JobProxy
 
 file_validator = FileValidator(max_size=1024 * 1000, content_types=IMAGES_AND_DOCS_FT)
 
 
 class MiniSpecialAssignmentForm(BWJSModalFormRendererMixin, BWBaseFormMixin):
+
     def __init__(self, *args, **kwargs):
         super(BWBaseFormMixin, self).__init__(*args, **kwargs)
-        self.fields["assigned_by"].label = ""
+        initial_values: dict = kwargs.get("initial")
+        if initial_values.get("job"):
+            ENHANCED_DEBUGGING_PRINT_INSTANCE.display(locals())
+            self.fields["job"].initial = initial_values.get("job")
+        # self.fields["assigned_by"].label = ""
         self.fields.get("attachment").widget.attrs.update(
             {
                 "accept": (
@@ -40,6 +50,7 @@ class MiniSpecialAssignmentForm(BWJSModalFormRendererMixin, BWBaseFormMixin):
             }
         )
 
+    field_order = ["job", "client"]
     assigned_to = forms.ModelChoiceField(
         queryset=BWUser.objects.all(), required=True, label=_("Assigned to")
     )
@@ -51,5 +62,11 @@ class MiniSpecialAssignmentForm(BWJSModalFormRendererMixin, BWBaseFormMixin):
         label=_("Attachment"), required=False, validators=[file_validator]
     )
     assigned_by = forms.UUIDField(widget=forms.HiddenInput)
-    client = forms.UUIDField(widget=forms.HiddenInput, required=False)
-    job = forms.UUIDField(widget=forms.HiddenInput, required=False)
+    # client = forms.UUIDField(widget=forms.HiddenInput, required=False)
+    client = forms.ModelChoiceField(
+        ClientProxy.objects.all(), required=False, label=_("Client")
+    )
+    # job = forms.UUIDField(widget=forms.HiddenInput, required=False)
+    job = forms.ModelChoiceField(
+        queryset=JobProxy.original_objects.all(), required=False, label=_("Job")
+    )
