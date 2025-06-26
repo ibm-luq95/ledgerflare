@@ -15,18 +15,20 @@ from core.utils.developments.debugging_print_object import DebuggingPrint
 from core.views.mixins import BWLoginRequiredMixin, BWManagerAccessMixin
 from document.models import Document
 from note.models import Note
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils.decorators import method_decorator
 from special_assignment.models import SpecialAssignmentProxy
 from task.models import TaskProxy
 
 logger = get_formatted_logger("bw_error_logger")
 
-
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class DashboardViewBW(
     BWLoginRequiredMixin, BWManagerAccessMixin, BWSiteSettingsViewMixin, TemplateView
 ):
     template_name = "dashboard/manager/dashboard.html"
     http_method_names = ["get"]
-
+    
     def get_context_data(self, **kwargs):
         try:
             # Call the base implementation first to get a context
