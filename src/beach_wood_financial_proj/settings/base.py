@@ -129,7 +129,7 @@ MIDDLEWARE = [
     "core.middleware.MultiHostMiddleware",
     "maintenance_mode.middleware.MaintenanceModeMiddleware",
     "easyaudit.middleware.easyaudit.EasyAuditMiddleware",
-    "django_components.middleware.ComponentDependencyMiddleware",
+    # "django_components.middleware.ComponentDependencyMiddleware",
     # "django.middleware.cache.FetchFromCacheMiddleware",  # new for the cache,
     # not working with django-valkey package
 ]

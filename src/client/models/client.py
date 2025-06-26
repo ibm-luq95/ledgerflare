@@ -30,6 +30,7 @@ class Client(BaseModelMixin, AccessProxyModelMixin):
     bookkeepers = models.ManyToManyField(
         to="bookkeeper.BookkeeperProxy", related_name="clients", blank=True
     )
+    cfos = models.ManyToManyField(to="cfo.CfoProxy", related_name="clients", blank=True)
     important_contacts = models.ManyToManyField(
         to=ImportantContact, related_name="client", blank=True
     )

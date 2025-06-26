@@ -103,6 +103,7 @@ class ClientForm(BaseModelFormMixin, RemoveFieldsMixin):
         # fields = "__all__"
         widgets = {
             "bookkeepers": forms.CheckboxSelectMultiple(),
+            "cfos": forms.CheckboxSelectMultiple(),
             "important_contacts": forms.CheckboxSelectMultiple(),
             # "categories": CustomCheckboxSelectMultiple(),
             "categories": forms.CheckboxSelectMultiple(),

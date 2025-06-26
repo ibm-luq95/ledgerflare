@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-#
+import re
+
 from django.core import validators
 from django.db import models
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 # from client.models import Client
 from core.choices import ImportantContactLabelsEnum
 from core.models.mixins import BaseModelMixin
+
+
+def validate_postcode(value):
+    if value:
+        pattern = r"^\d{5}(-\d{4})?$"  # e.g. 12345 or 12345-6789
+        if not re.match(pattern, value.upper()):
+            raise ValidationError("Invalid postcode format.")
 
 
 class ImportantContact(BaseModelMixin):
@@ -36,7 +46,7 @@ class ImportantContact(BaseModelMixin):
         max_length=10,
         null=True,
         blank=True,
-        validators=[validators.integer_validator],
+        validators=[validate_postcode],
     )
     contact_phone = models.CharField(_("phone"), max_length=80, null=False, blank=True)
     contact_website = models.URLField(_("website"), null=True, blank=True)

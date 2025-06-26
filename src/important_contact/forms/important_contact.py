@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-#
 # from client.models import Client
 from core.forms import BaseModelFormMixin
+from django import forms
 from important_contact.models import ImportantContact
 
 
@@ -42,3 +43,6 @@ class ImportantContactForm(BaseModelFormMixin):
 
     class Meta(BaseModelFormMixin.Meta):
         model = ImportantContact
+        widgets = {
+            "contact_postcode": forms.NumberInput(attrs={"placeholder": "e.g. 12345"})
+        }

@@ -13,6 +13,7 @@ from django.views.generic import (
 
 from client.filters import ClientFilter
 from client.forms import ClientForm, ClientMiniForm, AssignBookkeeperForm
+from client.forms.assign_cfo import AssignCFOForm
 from client.models import ClientProxy
 from client_account.forms import ClientAccountForm
 from client_category.forms import ClientCategoryForm
@@ -263,6 +264,9 @@ class ClientDetailsView(
         client_assign_bookkeeper_form = AssignBookkeeperForm(
             renderer=BWFormRenderer(), client=self.get_object()
         )
+        client_assign_cfo_form = AssignCFOForm(
+            renderer=BWFormRenderer(), client=self.get_object()
+        )
         context.setdefault("job_form", job_form)
         # context.setdefault("job_status_choices", JobStatusEnum.choices)
         context.setdefault("task_form", task_form)
@@ -274,6 +278,7 @@ class ClientDetailsView(
         context.setdefault("special_assignment_form", special_assignment_form)
         context.setdefault("client_account_form", client_account_form)
         context.setdefault("client_assign_bookkeeper_form", client_assign_bookkeeper_form)
+        context.setdefault("client_assign_cfo_form", client_assign_cfo_form)
         return context
 
     def test_func(self) -> bool:
