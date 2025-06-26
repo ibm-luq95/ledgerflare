@@ -44,8 +44,10 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
     const { signal } = controller;
 
     // Get and validate CSRF token with comprehensive debugging
-    // const csrfToken = getCSRFToken();
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const csrfToken = getCSRFToken();
+    // const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    // const metaCsrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
     const debugInfo = generateCSRFDebugInfo(csrfToken);
 
     console.log("CSRF Token Debug:", debugInfo);
@@ -302,28 +304,32 @@ const getCSRFTokenFromForm = () => {
 
 /**
  * Robust CSRF token getter with multiple fallback strategies.
- * Tries cookie first, then meta tag, then form input.
+ * Validates token length for Django compliance (64 chars).
  *
- * @returns {string|null} CSRF token from any available source
+ * @returns {string|null} Valid CSRF token or null
  */
 const getCSRFToken = () => {
-  // Define token sources with their retrieval methods
   const tokenSources = [
     { name: "cookie", getter: () => getCookieFetchUrlPathByName("csrftoken") },
     { name: "meta tag", getter: getCSRFTokenFromMeta },
     { name: "form input", getter: getCSRFTokenFromForm },
   ];
 
-  // Try each source until we find a valid token
   for (const { name, getter } of tokenSources) {
-    const token = getter();
-    if (token) {
-      console.log(`Using CSRF token from ${name}`);
-      return token;
+    try {
+      const token = getter();
+      if (token && token.length === 64) {
+        console.log(`✅ CSRF token from ${name}:`, token.substring(0, 8) + "...");
+        return token;
+      } else if (token) {
+        console.warn(`⚠️ Token from ${name} is invalid length: ${token.length}`);
+      }
+    } catch (e) {
+      console.warn(`❌ Error reading CSRF token from ${name}:`, e);
     }
   }
 
-  console.warn("No CSRF token found in any source");
+  console.error("🚫 No valid CSRF token found");
   return null;
 };
 
