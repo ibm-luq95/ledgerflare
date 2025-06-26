@@ -13,8 +13,12 @@
                 <div class="flex items-center gap-2">
                     <div class="flex flex-col dark:bg-gray-800 dark:shadow-slate-700/[.7]">
                         <div class="p-4 md:p-1">
-                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">{{ object.name }}</h3>
-                            <p class="mt-2 text-gray-800 dark:text-gray-400 text-sm">{{ object.industry }}</p>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">
+                                {{ object.name }}
+                            </h3>
+                            <p class="mt-2 text-gray-800 dark:text-gray-400 text-sm">
+                                {{ object.industry }}
+                            </p>
                             <a class="mt-1 inline-flex items-center gap-2 text-sm font-medium text-blue-500 hover:text-blue-700"
                                href="mailto:{{ object.email }}">
                                 {{ object.email }}
@@ -201,7 +205,9 @@
                         <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
                             <div class="flex justify-between p-4 md:p-5 gap-x-3">
                                 <div>
-                                    <p class="text-xs tracking-wide text-gray-500 uppercase">{% translate "Jobs" %}</p>
+                                    <p class="text-xs tracking-wide text-gray-500 uppercase">
+                                        {% translate "Jobs" %}
+                                    </p>
                                     <div class="flex items-center mt-1 gap-x-1">
                                         <h3 class="text-xl font-medium text-gray-800 sm:text-2xl dark:text-gray-200">
                                             {{ object.jobs.count }}
@@ -222,7 +228,9 @@
                         <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
                             <div class="flex justify-between p-4 md:p-5 gap-x-3">
                                 <div>
-                                    <p class="text-xs tracking-wide text-gray-500 uppercase">{% translate "Tasks" %}</p>
+                                    <p class="text-xs tracking-wide text-gray-500 uppercase">
+                                        {% translate "Tasks" %}
+                                    </p>
                                     <div class="flex items-center mt-1 gap-x-1">
                                         <h3 class="mt-1 text-xl font-medium text-gray-800 dark:text-gray-200">
                                             {{ object.get_total_tasks_for_all_jobs }}
@@ -274,7 +282,9 @@
                         <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
                             <div class="flex justify-between p-4 md:p-5 gap-x-3">
                                 <div>
-                                    <p class="text-xs tracking-wide text-red-500 uppercase">{% translate "Past Due Jobs" %}</p>
+                                    <p class="text-xs tracking-wide text-red-500 uppercase">
+                                        {% translate "Past Due Jobs" %}
+                                    </p>
                                     <div class="flex items-center mt-1 gap-x-1">
                                         <h3 class="mt-1 text-xl font-medium text-red-600 dark:text-gray-200">
                                             {{ object.get_all_past_due_jobs.count }}
@@ -295,7 +305,9 @@
                         <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
                             <div class="flex justify-between p-4 md:p-5 gap-x-3">
                                 <div>
-                                    <p class="text-xs tracking-wide text-gray-500 uppercase">{% translate "Contacts" %}</p>
+                                    <p class="text-xs tracking-wide text-gray-500 uppercase">
+                                        {% translate "Contacts" %}
+                                    </p>
                                     <div class="flex items-center mt-1 gap-x-1">
                                         <h3 class="text-xl font-medium text-gray-800 sm:text-2xl dark:text-gray-200">
                                             {{ object.important_contacts.count }}
@@ -326,7 +338,7 @@
                 {# End Widget Ros #}
                 {# Start Second Row #}
                 <section id="second-row-block">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-3 gap-4">
                         {# {% if object.bookkeepers.all %} #}
                         <div>
                             <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
@@ -367,7 +379,56 @@
                                     {% else %}
                                         <div class="flex flex-auto flex-col justify-center items-center p-4 md:p-5">
                                             <i class="fa-solid fa-users w-10 h-10 text-gray-500"></i>
-                                            <p class="mt-1 text-sm text-gray-800 dark:text-gray-300">{% translate "No bookkeepers" %}</p>
+                                            <p class="mt-1 text-sm text-gray-800 dark:text-gray-300">
+                                                {% translate "No bookkeepers" %}
+                                            </p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
+                                <div class="p-5 pr-1">
+                                    <div class="flex justify-between">
+                                        <div>
+                                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+                                                <i class="fa-solid fa-user-tie mr-2"></i>
+                                                {% translate "CFOs" %} ({{ object.cfos.count }})
+                                            </h3>
+                                        </div>
+                                        <div>
+                                            <div class="hs-tooltip inline-block">
+                                                <button type="button"
+                                                        id="addCfoBtn"
+                                                        data-hs-overlay="#addCfoModal"
+                                                        class="{{ BW_FULL_INPUT_CSS_CLASSES }} hs-tooltip-toggle mx-5 h-[2rem] w-[2rem] inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-blue-900 dark:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                                                    <i class="fa-solid fa-user-plus"></i>
+                                                    <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
+                                                          role="tooltip">{% translate "Assign cfo(s) to " %} {{ object.name }}</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if object.cfos.all %}
+                                        <ul class="max-w-xs flex flex-col divide-y divide-gray-200 dark:divide-gray-700 mt-2">
+                                            {% for cfo in object.cfos.all %}
+                                                <li class="inline-flex items-center gap-x-2 py-3 text-sm font-medium text-gray-800 dark:text-white">
+                                                    <a href="{% url 'dashboard:staff:member-details' cfo.user.pk %}">{{ cfo.user.fullname }}</a>
+                                                    <a class="{{ BW_PRELINE_PRIMARY_ANCHOR_TAG_DEFAULT_COLOR }}"
+                                                       href="{% url 'dashboard:staff:member-details' cfo.user.pk %}"
+                                                       target="_blank">
+                                                        <i class="fa-solid fa-arrow-up-right-from-square text-[12px]"></i>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <div class="flex flex-auto flex-col justify-center items-center p-4 md:p-5">
+                                            <i class="fa-solid fa-user-tie w-10 h-10 text-gray-500"></i>
+                                            <p class="mt-1 text-sm text-gray-800 dark:text-gray-300">
+                                                {% translate "No CFOs" %}
+                                            </p>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -478,7 +539,9 @@
                 {% endcomment %}
                 <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]">
                     <div class="p-4 md:p-5">
-                        <h3 class="text-3xl font-bold dark:text-white">{% translate "Client details" %}</h3>
+                        <h3 class="text-3xl font-bold dark:text-white">
+                            {% translate "Client details" %}
+                        </h3>
                         <hr class="border-1 my-3" />
                         <dl class="grid sm:grid-cols-3 gap-1 sm:gap-3">
                             <dt class="sm:col-span-1 font-semibold text-sm md:text-base lg:text-lg  dark:text-white">
@@ -594,7 +657,9 @@
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white">
                                 {% if object.description %}
-                                    <p>{{ object.description|safe }}</p>
+                                    <p>
+                                        {{ object.description|safe }}
+                                    </p>
                                 {% else %}
                                     {% translate "N/A" %}
                                 {% endif %}
@@ -814,5 +879,8 @@
     {# Start Add bookkeeper to client modal #}
     {% bw_js_modal modal_css_id="addBookkeeperModal" modal_size="md" modal_title="Assign bookkeeper" is_submit_btn_enabled=True is_form_modal=True form_object=client_assign_bookkeeper_form is_upload_form=False form_id="assignBookkeeperClientForm" form_submit_text="Assign" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:client:api:client-api-router-assign-bookkeeper" custom_styled_checkboxes=True is_only_checkbox_form=True %}
     {# End Add bookkeeper to client modal #}
+    {# Start Add CFO to client modal #}
+    {% bw_js_modal modal_css_id="addCfoModal" modal_size="md" modal_title="Assign CFOs" is_submit_btn_enabled=True is_form_modal=True form_object=client_assign_cfo_form is_upload_form=False form_id="assignCfoClientForm" form_submit_text="Assign" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:client:api:client-api-router-assign-cfo" custom_styled_checkboxes=True is_only_checkbox_form=True %}
+    {# End Add CFO to client modal #}
     {# End tabs #}
 {% endblock dashboard_content_block %}
