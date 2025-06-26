@@ -330,7 +330,7 @@ const getCSRFToken = () => {
   }
 
   console.error("🚫 No valid CSRF token found");
-  return null;
+  return document.querySelector('meta[name="csrf-token"]')?.content;
 };
 
 /**
