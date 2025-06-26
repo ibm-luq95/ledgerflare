@@ -15,6 +15,7 @@ mimetypes.add_type("application/javascript", ".js", True)
 
 DEBUG = config("DEBUG", cast=bool)
 
+CSRF_USE_SESSIONS = False
 
 INSTALLED_APPS = INSTALLED_APPS + [
     "django.contrib.admindocs",
