@@ -5,6 +5,7 @@ import { getCookie } from "../cookie";
 
 /**
  * Fetches the URL path by name from backend.
+ * Optimized for Cloudflare compatibility.
  *
  * @param {string} urlName - The name of the URL.
  * @param {string|null} pk - The primary key (optional).
@@ -13,40 +14,97 @@ import { getCookie } from "../cookie";
  */
 const fetchUrlPathByName = async (urlName, pk = null) => {
   try {
-    const controller = new AbortController(); // the AbortController
+    const controller = new AbortController();
     const { signal } = controller;
+
+    // Cloudflare-friendly headers
     const headers = new Headers({
       "Content-Type": "application/json;charset=utf-8",
       Accept: "application/json",
       "X-Requested-With": "XMLHttpRequest",
       "X-CSRFToken": getCookie("csrftoken"),
+      // Cloudflare-specific headers to avoid bot detection
+      "User-Agent": "Mozilla/5.0 (compatible; API-Client)",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+      // Help identify as legitimate browser request
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-origin",
     });
+
     const dataToSend = { urlName: urlName };
     if (pk) {
       dataToSend["pk"] = pk;
     }
 
+    // Cloudflare-optimized fetch options
     const fetchOptions = {
       method: "POST",
-      mode: "same-origin",
+      mode: "same-origin", // Good for Cloudflare
       credentials: "include",
       cache: "no-cache",
-      body: JSON.stringify(dataToSend),
-    };
-    const request = new Request(FETCHURLNAMEURL, {
       headers: headers,
       signal: signal,
-    });
-    const response = await fetch(request, fetchOptions);
+      body: JSON.stringify(dataToSend),
+      // Add referrer policy to help with Cloudflare security checks
+      referrerPolicy: "same-origin",
+    };
+
+    // Add small delay to avoid rate limiting (optional)
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const response = await fetch(FETCHURLNAMEURL, fetchOptions);
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // Enhanced error handling for Cloudflare-specific errors
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      let errorDetails = {
+        status: response.status,
+        statusText: response.statusText,
+        url: FETCHURLNAMEURL,
+      };
+
+      // Check if it's a Cloudflare error
+      const cfRay = response.headers.get("CF-Ray");
+      if (cfRay) {
+        errorDetails.cloudflareRay = cfRay;
+        errorMessage += ` (Cloudflare Ray: ${cfRay})`;
+      }
+
+      // Try to get response body for more details
+      try {
+        const errorBody = await response.text();
+        if (errorBody.includes("cloudflare") || errorBody.includes("Cloudflare")) {
+          errorDetails.cloudflareError = true;
+          errorMessage += " - Blocked by Cloudflare security";
+        }
+        errorDetails.responseBody = errorBody;
+      } catch (e) {
+        // Ignore if we can't read the response body
+      }
+
+      console.error("Fetch error details:", errorDetails);
+      throw new Error(errorMessage);
     }
+
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error(error);
+    // Enhanced error logging for debugging Cloudflare issues
+    if (error.name === "AbortError") {
+      console.error("Request was aborted");
+    } else if (error.message.includes("Failed to fetch")) {
+      console.error("Network error - possibly blocked by Cloudflare:", error);
+    } else {
+      console.error("Request error:", error);
+    }
+
+    // Re-throw the error so calling code can handle it
+    throw error;
   }
-}; /**
+};
+/**
  * Sends a request to the specified URL with the given options.
  *
  * @param {Object} options - The options for the request.
