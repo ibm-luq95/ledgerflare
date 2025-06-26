@@ -47,7 +47,6 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
     console.error(error);
   }
 };
-
 /**
  * Sends a request to the specified URL with the given options.
  *
@@ -69,13 +68,29 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
  * @param {string} [options.csrfToken] - Optional CSRF token override.
  * @returns {Promise} A promise that resolves with the response data or rejects with an error as a JSON object.
  */
+
+// Helper function to get CSRF token from cookies
+// function getCookie(name) {
+//     let cookieValue = null;
+//     if (document.cookie && document.cookie !== '') {
+//         const cookies = document.cookie.split(';');
+//         for (let i = 0; i < cookies.length; i++) {
+//             const cookie = cookies[i].trim();
+//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
+//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+//                 break;
+//             }
+//         }
+//     }
+//     return cookieValue;
+// }
+
 const sendRequest = (options) => {
   const environment =
     process.env.STAGE_ENVIRONMENT !== undefined
       ? process.env.STAGE_ENVIRONMENT
       : "production";
   const debug = process.env.DEBUG ? process.env.DEBUG === "true" : false;
-
   // Feature: Debugging and Logging
   if (environment === "development" && options.debug) {
     console.log(`[${options.method || "GET"}] Sending request to ${options.url}`, {
@@ -119,12 +134,10 @@ const sendRequest = (options) => {
     setTimeout(() => controller.abort(), options.timeout);
   }
 
-  // Feature: Dynamic Headers (Environment-Specific + Cloudflare-friendly)
+  // Feature: Dynamic Headers (Environment-Specific)
   const headers = new Headers({
     Accept: "application/json",
     "X-Requested-With": "XMLHttpRequest",
-    "User-Agent": "Mozilla/5.0 (compatible; API-Client)", // Helps with Cloudflare
-    "Cache-Control": "no-cache",
   });
 
   // Only set Content-Type if dataToSend is not FormData
