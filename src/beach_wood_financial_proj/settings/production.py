@@ -76,7 +76,7 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
 # Stores the CSRF token in the user session instead of a separate cookie
-CSRF_USE_SESSIONS = True
+CSRF_USE_SESSIONS = False
 # SESSION_COOKIE_AGE = 3600
 
 # OWSP recommendation security configs
