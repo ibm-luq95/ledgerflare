@@ -22,7 +22,7 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
       "Content-Type": "application/json;charset=utf-8",
       Accept: "application/json",
       "X-Requested-With": "XMLHttpRequest",
-      "X-CSRFToken": getCookie("csrftoken"),
+      "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content ,
       // Cloudflare-specific headers to avoid bot detection
       "User-Agent": "Mozilla/5.0 (compatible; API-Client)",
       "Cache-Control": "no-cache",
