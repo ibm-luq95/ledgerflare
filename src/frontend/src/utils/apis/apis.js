@@ -3,7 +3,6 @@
 import { FETCHURLNAMEURL } from "../constants";
 import { getCookie } from "../cookie";
 
-const metaCsrfToken = document.querySelector('meta[name="csrf-token"]').content;
 // alert(csrfToken);
 
 /**
@@ -46,7 +45,7 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
 
     // Get and validate CSRF token with comprehensive debugging
     // const csrfToken = getCSRFToken();
-    const csrfToken = metaCsrfToken;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
     const debugInfo = generateCSRFDebugInfo(csrfToken);
 
     console.log("CSRF Token Debug:", debugInfo);
