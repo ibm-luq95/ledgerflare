@@ -58,7 +58,7 @@ class FetchUrlApiView(APIView):
                 status=status.HTTP_200_OK,
             )
         except APIException as ex:
-            logger.error(ex)
+            logger.error(traceback.format_exc())
             response_data = {
                 "status": status.HTTP_400_BAD_REQUEST,
                 "user_error_msg": ex.default_detail,
