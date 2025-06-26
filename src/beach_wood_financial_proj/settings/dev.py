@@ -171,7 +171,11 @@ DJANGO_EASY_AUDIT_PROPAGATE_EXCEPTIONS = DEBUG
 if HAS_COLORLOG:
     LOGGING_BASE["formatters"]["dev_color"] = {
         "()": "colorlog.ColoredFormatter",
-        "format": "{bold_black}{asctime}{reset} {log_color}{levelname}{reset} {blue}{name}{reset} :: {message}",
+        "format": (
+            "{bold_black}{asctime}{reset} {log_color}{levelname}{reset} "
+            "{blue}{pathname}:{lineno}{reset} :: {message}\n"
+            "{log_color}Stack Trace:{reset} {exc_info}"  # New: Adds stack trace
+        ),
         "style": "{",
         "log_colors": {
             "DEBUG": "cyan",
