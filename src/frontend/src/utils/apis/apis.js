@@ -8,7 +8,7 @@ function getCSRFToken() {
   // console.log(input);
   // console.log(input.value);
   // Method 1: From cookie
-  let token = getCookie("csrftoken");
+  let token = getCookie("csrfmiddlewaretoken");
 
   // Method 2: From DOM
   if (!token) {
