@@ -129,6 +129,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           },
           url: currentTarget.action,
           token: currentTarget[CSRFINPUTNAME].value,
+          djangoRequest: true,
         };
         const request = sendRequest(requestOptions);
         request
@@ -205,6 +206,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           },
           url: currentTarget.action,
           token: currentTarget[CSRFINPUTNAME].value,
+          djangoRequest: true,
         };
         const request = sendRequest(requestOptions);
         request

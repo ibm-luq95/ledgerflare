@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
             : currentTarget.method,
           dataToSend: formInputs,
           url: currentTarget.action,
+          djangoRequest: true,
           token: currentTarget[CSRFINPUTNAME].value,
         };
         console.log(formInputs);
