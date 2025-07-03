@@ -49,19 +49,19 @@ DATABASES = {
 }
 
 # Django production deployment settings
-CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", cast=bool)
-SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", cast=bool)
-SECURE_HSTS_INCLUDE_SUBDOMAINS = config("SECURE_HSTS_INCLUDE_SUBDOMAINS", cast=bool)
-SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", cast=bool)
-SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", cast=bool)
-SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", cast=bool)
-USE_X_FORWARDED_HOST = config("USE_X_FORWARDED_HOST", cast=bool)
+# CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", cast=bool)
+# SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", cast=bool)
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = config("SECURE_HSTS_INCLUDE_SUBDOMAINS", cast=bool)
+# SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", cast=bool)
+# SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", cast=bool)
+# SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", cast=bool)
+# USE_X_FORWARDED_HOST = config("USE_X_FORWARDED_HOST", cast=bool)
 # --------------------------
 # 🕵️‍♂️ Session Security
 # --------------------------
 
 # Prevents JavaScript from accessing the session cookie (protects against XSS)
-SESSION_COOKIE_HTTPONLY = True
+# SESSION_COOKIE_HTTPONLY = True
 
 # Session will expire after 1 hour (3600 seconds)
 # SESSION_COOKIE_AGE = 3600
@@ -73,20 +73,20 @@ SESSION_COOKIE_HTTPONLY = True
 # --------------------------
 
 # Prevents JavaScript from accessing the CSRF token cookie
-CSRF_COOKIE_HTTPONLY = True
-
-# Stores the CSRF token in the user session instead of a separate cookie
-CSRF_USE_SESSIONS = True
-# SESSION_COOKIE_AGE = 3600
-
-# OWSP recommendation security configs
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = "DENY"
-SECURE_BROWSER_XSS_FILTER = True
-CSRF_COOKIE_NAME = 'csrftoken'
-CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
-# SECURE_PROXY_SSL_HEADER = True
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# CSRF_COOKIE_HTTPONLY = True
+#
+# # Stores the CSRF token in the user session instead of a separate cookie
+# CSRF_USE_SESSIONS = True
+# # SESSION_COOKIE_AGE = 3600
+#
+# # OWSP recommendation security configs
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# X_FRAME_OPTIONS = "DENY"
+# SECURE_BROWSER_XSS_FILTER = True
+# CSRF_COOKIE_NAME = 'csrftoken'
+# CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+# # SECURE_PROXY_SSL_HEADER = True
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 if config("SENTRY_IS_ENABLED", cast=bool) is True:
     sentry_sdk.init(
@@ -173,3 +173,13 @@ LOGGING["loggers"]["django.request"] = {
     "level": "ERROR",
     "propagate": False,
 }
+
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
+SECURE_HSTS_SECONDS = 31536000  # One year in seconds
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_SSL_REDIRECT = True
