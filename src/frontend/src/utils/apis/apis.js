@@ -9,7 +9,7 @@ function getCSRFToken() {
 
   // Method 2: From DOM
   if (!token) {
-    const input = document.querySelector("[name=csrfmiddlewaretoken]");
+    const input = document.querySelector("[name=csrftoken]");
     token = input ? input.value : null;
   }
 
