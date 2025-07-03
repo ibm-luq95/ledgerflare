@@ -21,6 +21,7 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
       "X-Requested-With": "XMLHttpRequest",
       "X-CSRFToken": getCookie("csrftoken"),
     });
+    console.log(headers.get("X-CSRFToken"))
     const dataToSend = { urlName: urlName };
     if (pk) {
       dataToSend["pk"] = pk;
