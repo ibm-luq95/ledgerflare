@@ -2,7 +2,19 @@
 
 import { FETCHURLNAMEURL } from "../constants";
 import { getCookie } from "../cookie";
+// Try both methods
+function getCSRFToken() {
+  // Method 1: From cookie
+  let token = getCookie("csrftoken");
 
+  // Method 2: From DOM
+  if (!token) {
+    const input = document.querySelector("[name=csrfmiddlewaretoken]");
+    token = input ? input.value : null;
+  }
+
+  return token;
+}
 /**
  * Fetches the URL path by name from backend.
  *
@@ -19,9 +31,10 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
       "Content-Type": "application/json;charset=utf-8",
       Accept: "application/json",
       "X-Requested-With": "XMLHttpRequest",
-      "X-CSRFToken": getCookie("csrftoken"),
+      // "X-CSRFToken": getCookie("csrftoken"),
+      "X-CSRFToken": getCSRFToken()
     });
-    console.log(headers.get("X-CSRFToken"))
+    console.log(headers.get("X-CSRFToken"));
     const dataToSend = { urlName: urlName };
     if (pk) {
       dataToSend["pk"] = pk;
