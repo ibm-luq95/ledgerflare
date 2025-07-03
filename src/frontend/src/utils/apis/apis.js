@@ -4,12 +4,15 @@ import { FETCHURLNAMEURL } from "../constants";
 import { getCookie } from "../cookie";
 // Try both methods
 function getCSRFToken() {
+  let input = document.querySelector("[name=csrfmiddlewaretoken]")
+  // console.log(input);
+  // console.log(input.value);
   // Method 1: From cookie
   let token = getCookie("csrftoken");
 
   // Method 2: From DOM
   if (!token) {
-    const input = document.querySelector("[name=csrftoken]");
+    const input = document.querySelector("[name=csrfmiddlewaretoken]");
     token = input ? input.value : null;
   }
 
@@ -25,6 +28,7 @@ function getCSRFToken() {
  */
 const fetchUrlPathByName = async (urlName, pk = null) => {
   try {
+    getCSRFToken()
     const controller = new AbortController(); // the AbortController
     const { signal } = controller;
     const headers = new Headers({
