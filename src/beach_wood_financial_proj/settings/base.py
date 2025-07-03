@@ -118,9 +118,9 @@ MIDDLEWARE = [
     # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
-    "django_session_timeout.middleware.SessionTimeoutMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "django_session_timeout.middleware.SessionTimeoutMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     # "defender.middleware.FailedLoginMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -327,7 +327,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # Webpack configs
 WEBPACK_LOADER = {
-    'MANIFEST_FILE': BASE_DIR / "frontend/build/manifest.json",
+    "MANIFEST_FILE": BASE_DIR / "frontend/build/manifest.json",
     # "MANIFEST_FILE": BASE_DIR
     # / "frontend"
     # / "build"
@@ -383,7 +383,6 @@ COMPRESS_LEVEL = config("COMPRESS_LEVEL", cast=int)
 
 # ENCRYPT_KEY
 ENCRYPT_KEY = bytes(config("ENCRYPT_KEY", cast=str), "ascii")  # type: ignore
-
 
 
 # Django log viewer package config
