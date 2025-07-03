@@ -183,3 +183,7 @@ SECURE_HSTS_SECONDS = 31536000  # One year in seconds
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_SSL_REDIRECT = True
+CSRF_TRUSTED_ORIGINS = [
+    'https://app.ledgerflare.com/',
+    # Add other allowed domains
+]
