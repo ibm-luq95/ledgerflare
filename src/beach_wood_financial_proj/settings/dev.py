@@ -29,8 +29,8 @@ INSTALLED_APPS = INSTALLED_APPS + [
     # "request_viewer",
 ]
 # INSTALLED_APPS.insert(0, "django_pdb")
-CSRF_COOKIE_NAME = 'csrftoken'
-CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+# CSRF_COOKIE_NAME = 'csrftoken'
+# CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 MIDDLEWARE = MIDDLEWARE + [
     # "request_viewer.middleware.RequestViewerMiddleware",
     # "request_viewer.middleware.ExceptionMiddleware",
