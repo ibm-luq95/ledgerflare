@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
         const requestOptions = {
           method: currentTarget.method,
           dataToSend: formInputs,
+          djangoRequest: true,
           url: currentTarget.action,
           token: currentTarget[CSRFINPUTNAME].value,
         };
@@ -96,6 +97,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
               : currentTarget.method,
             dataToSend: formInputs,
             url: urlData["urlPath"],
+            djangoRequest: true,
             token: currentTarget[CSRFINPUTNAME].value,
           };
           const request = sendRequest(requestOptions);

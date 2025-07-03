@@ -83,6 +83,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
             : "POST",
           dataToSend: formInputs,
           url: currentTarget.action,
+          djangoRequest: true,
           token: currentTarget[CSRFINPUTNAME].value,
         };
         if (formInputs["is_scheduled"]) {
