@@ -211,7 +211,12 @@ CSRF_TRUSTED_ORIGINS = ["https://app.ledgerflare.com"]
 CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"  # This is the default
 
 # OPTION 1: Remove CSRF_COOKIE_DOMAIN completely (recommended to try first)
-CSRF_COOKIE_DOMAIN = None  # Let Django handle it automatically
+# CSRF_COOKIE_DOMAIN = None  # Let Django handle it automatically
+
+# CSRF_COOKIE_DOMAIN = "app.ledgerflare.com"
+
+CSRF_COOKIE_DOMAIN = "app.ledgerflare.com"
+SESSION_COOKIE_DOMAIN = "app.ledgerflare.com"
 
 # OPTION 2: Match your exact subdomain (recommended)
 # CSRF_COOKIE_DOMAIN = 'app.ledgerflare.com'  # Exact domain match
