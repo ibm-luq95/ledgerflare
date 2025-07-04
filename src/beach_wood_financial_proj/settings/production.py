@@ -201,12 +201,14 @@ SECURE_HSTS_PRELOAD = True
 # Cookie Security
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "None"  # For cross-origin requests
+# SESSION_COOKIE_SAMESITE = "Lax"
 
 # CSRF Settings
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = False  # Set to False so JavaScript can access it
-CSRF_COOKIE_SAMESITE = "Lax"
+# CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "None"
 CSRF_TRUSTED_ORIGINS = ["https://app.ledgerflare.com"]
 CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"  # This is the default
 
@@ -253,3 +255,35 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 #         },
 #     },
 # }
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "https://app.ledgerflare.com ",  # Your live frontend URL
+]
+
+# Optional: Lock down allowed headers
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+# Only allow necessary HTTP methods
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+    "HEAD",
+]
+
+# Optional: If you want to log blocked origins
+CORS_REPLACE_HTTPS_REFERER = True
