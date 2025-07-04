@@ -188,3 +188,4 @@ LOGGING["loggers"]["django.request"] = {
 #     # Add other allowed domains
 # ]
 CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
