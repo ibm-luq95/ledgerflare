@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           // dataToSend: formInputs,
           url: data["urlPath"],
           djangoRequest: true,
-          csrfToken: document.querySelector("[name=csrfmiddlewaretoken]").value,
+          // csrfToken: document.querySelector("[name=csrfmiddlewaretoken]").value,
         };
         const request = sendRequest(requestOptions);
         request
