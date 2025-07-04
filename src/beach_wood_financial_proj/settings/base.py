@@ -48,12 +48,12 @@ DEFAULT_FROM_EMAIL = (
     "",
 )  # Default email address for automated correspondence from the site manager(s). This address is used in the From: header of outgoing emails and can take any format valid in the chosen email sending protocol.
 
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 
-PROD_HOST_NAME = config("PROD_HOST_NAME", str)
-if PROD_HOST_NAME:
-    ALLOWED_HOSTS.append(PROD_HOST_NAME)
-    CSRF_TRUSTED_ORIGINS.append(f"https://{PROD_HOST_NAME}")
+# CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
+# PROD_HOST_NAME = config("PROD_HOST_NAME", str)
+# if PROD_HOST_NAME:
+#     ALLOWED_HOSTS.append(PROD_HOST_NAME)
+#     CSRF_TRUSTED_ORIGINS.append(f"https://{PROD_HOST_NAME}")
 
 # Application definition
 
@@ -110,28 +110,87 @@ INSTALLED_APPS = [
     "staff_briefcase.apps.StaffBriefcaseConfig",
 ]
 
+# MIDDLEWARE = [
+#     # "django.middleware.cache.UpdateCacheMiddleware",  # new for the cache, not working
+#     # with django-valkey package
+#     "django.middleware.common.BrokenLinkEmailsMiddleware",
+#     "django.middleware.security.SecurityMiddleware",
+#     # "whitenoise.middleware.WhiteNoiseMiddleware",
+#     "django.contrib.sessions.middleware.SessionMiddleware",
+#     "django.middleware.locale.LocaleMiddleware",
+#     "django.middleware.common.CommonMiddleware",
+#     "django.middleware.csrf.CsrfViewMiddleware",
+#     "django_session_timeout.middleware.SessionTimeoutMiddleware",
+#     "django.contrib.auth.middleware.AuthenticationMiddleware",
+#     # "defender.middleware.FailedLoginMiddleware",
+#     "django.contrib.messages.middleware.MessageMiddleware",
+#     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+#     "bookkeeper.middleware.CheckAllowedLoginMiddleware",  # TODO: Enable it
+#     "core.middleware.MultiHostMiddleware",
+#     "maintenance_mode.middleware.MaintenanceModeMiddleware",
+#     "easyaudit.middleware.easyaudit.EasyAuditMiddleware",
+#     # "django_components.middleware.ComponentDependencyMiddleware",
+#     # "django.middleware.cache.FetchFromCacheMiddleware",  # new for the cache,
+#     # not working with django-valkey package
+# ]
+
 MIDDLEWARE = [
-    # "django.middleware.cache.UpdateCacheMiddleware",  # new for the cache, not working
-    # with django-valkey package
-    "django.middleware.common.BrokenLinkEmailsMiddleware",
+    # 1. Cache middleware (if enabled) - must be first
+    # "django.middleware.cache.UpdateCacheMiddleware",
+    
+    # 2. Security middleware - should be very early
     "django.middleware.security.SecurityMiddleware",
+    
+    # 3. Static files middleware - early for performance
     # "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django_session_timeout.middleware.SessionTimeoutMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    # "defender.middleware.FailedLoginMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "bookkeeper.middleware.CheckAllowedLoginMiddleware",  # TODO: Enable it
-    "core.middleware.MultiHostMiddleware",
+    
+    # 4. Maintenance mode - early to catch all requests
     "maintenance_mode.middleware.MaintenanceModeMiddleware",
+    
+    # 5. Session middleware - required for many other middlewares
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    
+    # 6. Locale middleware - after sessions
+    "django.middleware.locale.LocaleMiddleware",
+    
+    # 7. Common middleware - handles basic request processing
+    "django.middleware.common.CommonMiddleware",
+    
+    # 8. CSRF middleware - after common, before auth
+    "django.middleware.csrf.CsrfViewMiddleware",
+    
+    # 9. Authentication middleware - after sessions and CSRF
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    
+    # 10. Session timeout - after auth to check authenticated users
+    "django_session_timeout.middleware.SessionTimeoutMiddleware",
+    
+    # 11. Failed login middleware - after auth
+    # "defender.middleware.FailedLoginMiddleware",
+    
+    # 12. Messages middleware - after auth for user-specific messages
+    "django.contrib.messages.middleware.MessageMiddleware",
+    
+    # 13. Clickjacking protection - security header middleware
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    
+    # 14. Custom login check - after auth and messages
+    "bookkeeper.middleware.CheckAllowedLoginMiddleware",
+    
+    # 15. Multi-host middleware - application-specific logic
+    "core.middleware.MultiHostMiddleware",
+    
+    # 16. Audit middleware - should be late to capture processed requests
     "easyaudit.middleware.easyaudit.EasyAuditMiddleware",
+    
+    # 17. Component dependency middleware - application-specific
     # "django_components.middleware.ComponentDependencyMiddleware",
-    # "django.middleware.cache.FetchFromCacheMiddleware",  # new for the cache,
-    # not working with django-valkey package
+    
+    # 18. Broken link emails - should be very late
+    "django.middleware.common.BrokenLinkEmailsMiddleware",
+    
+    # 19. Cache fetch middleware (if enabled) - must be last
+    # "django.middleware.cache.FetchFromCacheMiddleware",
 ]
 
 ROOT_URLCONF = "beach_wood_financial_proj.urls"
@@ -317,7 +376,7 @@ MAINTENANCE_MODE_IGNORE_SUPERUSER = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-DJANGO_CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
+
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static/",
