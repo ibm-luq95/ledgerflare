@@ -201,14 +201,14 @@ SECURE_HSTS_PRELOAD = True
 # Cookie Security
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = "Lax"
 
 # CSRF Settings
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = False  # Set to False so JavaScript can access it
-CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_TRUSTED_ORIGINS = ['https://app.ledgerflare.com']
-CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'  # This is the default
+CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_TRUSTED_ORIGINS = ["https://app.ledgerflare.com"]
+CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"  # This is the default
 
 # OPTION 1: Remove CSRF_COOKIE_DOMAIN completely (recommended to try first)
 CSRF_COOKIE_DOMAIN = None  # Let Django handle it automatically
@@ -220,15 +220,17 @@ CSRF_COOKIE_DOMAIN = None  # Let Django handle it automatically
 # CSRF_COOKIE_DOMAIN = '.ledgerflare.com'  # Only if you have multiple subdomains
 
 # Cookie name (default is 'csrftoken')
-CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_COOKIE_NAME = "csrftoken"
 
 # Clickjacking Protection
-X_FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = "DENY"
 
 # Additional Security Headers
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Additional debugging settings (remove after fixing)
 # LOGGING = {
