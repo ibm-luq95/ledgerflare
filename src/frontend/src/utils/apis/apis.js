@@ -84,7 +84,10 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
       signal: signal,
     };
 
-    const response = await fetch(FETCHURLNAMEURL, fetchOptions);
+    const response = await fetch(
+      "https://app.ledgerflare.com/core/api/fetch_url",
+      fetchOptions
+    );
 
     if (!response.ok) {
       // Log response details for debugging
