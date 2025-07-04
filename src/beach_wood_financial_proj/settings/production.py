@@ -175,15 +175,15 @@ LOGGING["loggers"]["django.request"] = {
 }
 
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_HTTPONLY = True
-# SESSION_COOKIE_HTTPONLY = True
-SECURE_HSTS_SECONDS = 31536000  # One year in seconds
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = True
-CSRF_TRUSTED_ORIGINS = [
-    'https://app.ledgerflare.com/',
-    # Add other allowed domains
-]
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# # CSRF_COOKIE_HTTPONLY = True
+# # SESSION_COOKIE_HTTPONLY = True
+# SECURE_HSTS_SECONDS = 31536000  # One year in seconds
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+# SECURE_SSL_REDIRECT = True
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://app.ledgerflare.com/',
+#     # Add other allowed domains
+# ]
