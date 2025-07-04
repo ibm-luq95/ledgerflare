@@ -14,7 +14,6 @@ function debugCSRFToken() {
   console.log("Form input:", getCSRFTokenFromForm());
   console.log("Current token being used:", getCSRFToken());
 }
-
 // Method 3: Get CSRF token from form input (if available)
 function getCSRFTokenFromForm() {
   const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
@@ -25,11 +24,20 @@ function getCSRFToken() {
   // First try to get from meta tag
   const metaTag = document.querySelector('meta[name="csrf-token"]');
   if (metaTag) {
-    return metaTag.getAttribute("content");
+    const token = metaTag.getAttribute("content");
+    if (token && token.length > 0) {
+      return token;
+    }
   }
 
   // Fallback to cookie method
-  return getCookie("csrftoken");
+  const cookieToken = getCookie("csrftoken");
+  if (cookieToken && cookieToken.length > 0) {
+    return cookieToken;
+  }
+
+  console.warn("CSRF token not found in meta tag or cookie");
+  return null;
 }
 // Updated fetchUrlPathByName function with better error handling
 const fetchUrlPathByName = async (urlName, pk = null) => {
@@ -37,22 +45,28 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
     const controller = new AbortController();
     const { signal } = controller;
 
-    // Get CSRF token
+    // Get CSRF token with validation
     const csrfToken = getCSRFToken();
-
-    // Debug: Log the token (remove in production)
-    console.log("CSRF Token:", csrfToken);
 
     if (!csrfToken) {
       throw new Error("CSRF token not found");
     }
 
+    // Validate token length (Django CSRF tokens are typically 32 or 64 characters)
+    if (csrfToken.length < 32) {
+      console.error("CSRF token too short:", csrfToken.length, "characters");
+      throw new Error("Invalid CSRF token length");
+    }
+
+    // Debug: Log the token (remove in production)
+    console.log("CSRF Token length:", csrfToken.length);
+    console.log("CSRF Token:", csrfToken.substring(0, 8) + "...");
+
     const headers = new Headers({
-      "Content-Type": "application/json;charset=utf-8",
+      "Content-Type": "application/json",
       Accept: "application/json",
       "X-Requested-With": "XMLHttpRequest",
-      // "X-CSRFToken": csrfToken,
-      "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+      "X-CSRFToken": csrfToken, // Note: DRF expects "X-CSRFToken" (capital T)
     });
 
     const dataToSend = { urlName: urlName };
@@ -76,7 +90,17 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
       // Log response details for debugging
       const responseText = await response.text();
       console.error("Response status:", response.status);
+      console.error("Response headers:", [...response.headers.entries()]);
       console.error("Response text:", responseText);
+
+      // Try to parse error response
+      try {
+        const errorData = JSON.parse(responseText);
+        console.error("Error details:", errorData);
+      } catch (e) {
+        console.error("Could not parse error response");
+      }
+
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
@@ -89,6 +113,7 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
     throw error;
   }
 };
+
 /**
  * Sends a request to the specified URL with the given options.
  *

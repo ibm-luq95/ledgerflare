@@ -208,6 +208,7 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = False  # Set to False so JavaScript can access it
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = ['https://app.ledgerflare.com']
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'  # This is the default
 
 # OPTION 1: Remove CSRF_COOKIE_DOMAIN completely (recommended to try first)
 # CSRF_COOKIE_DOMAIN = None  # Let Django handle it automatically
