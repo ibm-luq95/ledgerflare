@@ -187,3 +187,4 @@ LOGGING["loggers"]["django.request"] = {
 #     'https://app.ledgerflare.com/',
 #     # Add other allowed domains
 # ]
+CSRF_COOKIE_SECURE = True

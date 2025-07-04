@@ -229,3 +229,4 @@ LOGGING = LOGGING_BASE.copy()
 #         "level": "DEBUG",
 #     },
 # }
+DJANGO_CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
