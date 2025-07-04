@@ -52,7 +52,7 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
       Accept: "application/json",
       "X-Requested-With": "XMLHttpRequest",
       // "X-CSRFToken": csrfToken,
-      "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content"),
+      "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
     });
 
     const dataToSend = { urlName: urlName };
