@@ -17,7 +17,7 @@ from core.utils import get_formatted_logger
 logger = get_formatted_logger()
 
 
-@method_decorator(csrf_protect, name="dispatch")
+# @method_decorator(csrf_protect, name="dispatch")
 class FetchUrlApiView(APIView):
     """
     API view for fetching URL paths based on input data.
