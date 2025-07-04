@@ -2,6 +2,8 @@
 {% nospaces %}
 <html lang="en" class="h-full">
     <head>
+        <!-- CSRF Token Meta Tag - Add this to your base template -->
+        <meta name="csrf-token" content="{{ csrf_token }}" />
 
         {% include "core/inc/meta_tags.html" with get_web_app_settings=get_web_app_settings %}
 
@@ -35,7 +37,6 @@
         {# End Toasts #}
         <!-- Content -->
         <div class="w-full px-4 pt-4 sm:px-6 md:px-8 lg:pl-72">
-            {% csrf_token %}
             {# Start Flash Message #}
 
             {% include "components/inc/messages.html" %}
@@ -46,6 +47,10 @@
         </div>
         <!-- End Content -->
         <!-- ========== END MAIN CONTENT ========== -->
+        <script>
+            // Make CSRF token available globally
+            window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        </script>
 
         {% include "core/inc/js.html" %}
 

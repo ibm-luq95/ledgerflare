@@ -2,43 +2,40 @@
 
 import { FETCHURLNAMEURL } from "../constants";
 import { getCookie } from "../cookie";
-// Try both methods
+// Method 2: Get CSRF token from meta tag (recommended for production)
 function getCSRFToken() {
-  let input = document.querySelector("[name=csrfmiddlewaretoken]")
-  // console.log(input);
-  // console.log(input.value);
-  // Method 1: From cookie
-  let token = getCookie("csrfmiddlewaretoken");
-
-  // Method 2: From DOM
-  if (!token) {
-    const input = document.querySelector("[name=csrfmiddlewaretoken]");
-    token = input ? input.value : null;
+  // First try to get from meta tag
+  const metaTag = document.querySelector('meta[name="csrf-token"]');
+  if (metaTag) {
+    return metaTag.getAttribute("content");
   }
 
-  return token;
+  // Fallback to cookie method
+  return getCookie("csrftoken");
 }
-/**
- * Fetches the URL path by name from backend.
- *
- * @param {string} urlName - The name of the URL.
- * @param {string|null} pk - The primary key (optional).
- * @returns {Promise} - A promise that resolves to the fetched data.
- * @throws {Error} - If there is an HTTP error.
- */
+// Updated fetchUrlPathByName function with better error handling
 const fetchUrlPathByName = async (urlName, pk = null) => {
   try {
-    getCSRFToken()
-    const controller = new AbortController(); // the AbortController
+    const controller = new AbortController();
     const { signal } = controller;
+
+    // Get CSRF token
+    const csrfToken = getCSRFToken();
+
+    // Debug: Log the token (remove in production)
+    console.log("CSRF Token:", csrfToken);
+
+    if (!csrfToken) {
+      throw new Error("CSRF token not found");
+    }
+
     const headers = new Headers({
       "Content-Type": "application/json;charset=utf-8",
       Accept: "application/json",
       "X-Requested-With": "XMLHttpRequest",
-      // "X-CSRFToken": getCookie("csrftoken"),
-      "X-CSRFToken": getCSRFToken()
+      "X-CSRFToken": csrfToken,
     });
-    console.log(headers.get("X-CSRFToken"));
+
     const dataToSend = { urlName: urlName };
     if (pk) {
       dataToSend["pk"] = pk;
@@ -49,20 +46,28 @@ const fetchUrlPathByName = async (urlName, pk = null) => {
       mode: "same-origin",
       credentials: "include",
       cache: "no-cache",
-      body: JSON.stringify(dataToSend),
-    };
-    const request = new Request(FETCHURLNAMEURL, {
       headers: headers,
+      body: JSON.stringify(dataToSend),
       signal: signal,
-    });
-    const response = await fetch(request, fetchOptions);
+    };
+
+    const response = await fetch(FETCHURLNAMEURL, fetchOptions);
+
     if (!response.ok) {
+      // Log response details for debugging
+      const responseText = await response.text();
+      console.error("Response status:", response.status);
+      console.error("Response text:", responseText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error(error);
+    console.error("Fetch error:", error);
+    // Call debug function to help troubleshoot
+    debugCSRFToken();
+    throw error;
   }
 };
 /**
