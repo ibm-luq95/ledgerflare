@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "maintenance_mode",
     "import_export",
     "django_filters",
+    "corsheaders",
     "rest_framework",
     "drf_standardized_errors",
     "widget_tweaks",
@@ -137,58 +138,42 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     # 1. Cache middleware (if enabled) - must be first
     # "django.middleware.cache.UpdateCacheMiddleware",
-    
     # 2. Security middleware - should be very early
     "django.middleware.security.SecurityMiddleware",
-    
+    # 3. Cors middleware - must come early, before SessionMiddleware
+    "corsheaders.middleware.CorsMiddleware",  # <-- ADD IT HERE
     # 3. Static files middleware - early for performance
     # "whitenoise.middleware.WhiteNoiseMiddleware",
-    
     # 4. Maintenance mode - early to catch all requests
     "maintenance_mode.middleware.MaintenanceModeMiddleware",
-    
     # 5. Session middleware - required for many other middlewares
     "django.contrib.sessions.middleware.SessionMiddleware",
-    
     # 6. Locale middleware - after sessions
     "django.middleware.locale.LocaleMiddleware",
-    
     # 7. Common middleware - handles basic request processing
     "django.middleware.common.CommonMiddleware",
-    
     # 8. CSRF middleware - after common, before auth
     "django.middleware.csrf.CsrfViewMiddleware",
-    
     # 9. Authentication middleware - after sessions and CSRF
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    
     # 10. Session timeout - after auth to check authenticated users
     "django_session_timeout.middleware.SessionTimeoutMiddleware",
-    
     # 11. Failed login middleware - after auth
     # "defender.middleware.FailedLoginMiddleware",
-    
     # 12. Messages middleware - after auth for user-specific messages
     "django.contrib.messages.middleware.MessageMiddleware",
-    
     # 13. Clickjacking protection - security header middleware
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    
     # 14. Custom login check - after auth and messages
     "bookkeeper.middleware.CheckAllowedLoginMiddleware",
-    
     # 15. Multi-host middleware - application-specific logic
     "core.middleware.MultiHostMiddleware",
-    
     # 16. Audit middleware - should be late to capture processed requests
     "easyaudit.middleware.easyaudit.EasyAuditMiddleware",
-    
     # 17. Component dependency middleware - application-specific
     # "django_components.middleware.ComponentDependencyMiddleware",
-    
     # 18. Broken link emails - should be very late
     "django.middleware.common.BrokenLinkEmailsMiddleware",
-    
     # 19. Cache fetch middleware (if enabled) - must be last
     # "django.middleware.cache.FetchFromCacheMiddleware",
 ]
