@@ -213,7 +213,7 @@ CSRF_TRUSTED_ORIGINS = ['https://app.ledgerflare.com']
 # CSRF_COOKIE_DOMAIN = None  # Let Django handle it automatically
 
 # OPTION 2: Match your exact subdomain (recommended)
-CSRF_COOKIE_DOMAIN = 'app.ledgerflare.com'  # Exact domain match
+# CSRF_COOKIE_DOMAIN = 'app.ledgerflare.com'  # Exact domain match
 
 # OPTION 3: If you need multiple subdomains, keep parent domain
 # CSRF_COOKIE_DOMAIN = '.ledgerflare.com'  # Only if you have multiple subdomains
