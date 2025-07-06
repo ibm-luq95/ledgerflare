@@ -3,6 +3,7 @@
 import { sendRequest } from "../../utils/apis/apis";
 import { BWRequestApi } from "../../utils/apis/bw_request";
 import { bwCleanApiError } from "../../utils/apis/clean_errors";
+import { RequestHandler } from "../../utils/apis/request_handler";
 import { UploadFileRequest } from "../../utils/apis/upload_file";
 import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants";
 import {
@@ -61,7 +62,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
         // throw new Error("PAUSE");
         // console.warn(requestOptions);
         // throw new Error("Wait");
-        const request = sendRequest(requestOptions);
+        const request = RequestHandler.sendRequest(requestOptions);
         request
           .then((data) => {
             // console.log(bwI18Helper.t("jobs"));

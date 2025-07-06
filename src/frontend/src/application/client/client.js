@@ -1,6 +1,7 @@
 "use strict";
 import { sendRequest } from "../../utils/apis/apis";
 import { bwCleanApiError } from "../../utils/apis/clean_errors";
+import { RequestHandler } from "../../utils/apis/request_handler";
 import { UploadFileRequest } from "../../utils/apis/upload_file";
 import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants";
 import {
@@ -131,7 +132,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           token: currentTarget[CSRFINPUTNAME].value,
           djangoRequest: true,
         };
-        const request = sendRequest(requestOptions);
+        const request = RequestHandler.sendRequest(requestOptions);
         request
           .then((data) => {
             showToastNotification(data["success_msg"], "success");
@@ -208,7 +209,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           token: currentTarget[CSRFINPUTNAME].value,
           djangoRequest: true,
         };
-        const request = sendRequest(requestOptions);
+        const request = RequestHandler.sendRequest(requestOptions);
         request
           .then((data) => {
             showToastNotification(data["success_msg"], "success");

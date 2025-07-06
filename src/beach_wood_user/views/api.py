@@ -5,6 +5,7 @@ from django.contrib.auth.models import Permission
 from django.db.transaction import atomic
 from rest_framework import permissions
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -22,6 +23,7 @@ logger = get_formatted_logger()
 class UpdateStaffPermissionsApiView(APIView):
     permission_classes = (permissions.IsAuthenticated, ManagerApiPermission)
     http_method_names = ["post"]
+    authentication_classes = [TokenAuthentication]
 
     def post(self, request: Request, *args, **kwargs):
         try:
@@ -48,6 +50,7 @@ class UpdateStaffPermissionsApiView(APIView):
 class AssignClientToBookkeeperApiView(APIView):
     permission_classes = (permissions.IsAuthenticated, ManagerApiPermission)
     http_method_names = ["post"]
+    authentication_classes = [TokenAuthentication]
 
     def post(self, request: Request, *args, **kwargs):
         try:

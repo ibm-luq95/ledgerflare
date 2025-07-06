@@ -4,6 +4,7 @@ from typing import Literal
 
 from django.db.transaction import atomic
 from rest_framework import permissions, parsers, status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,6 +25,7 @@ class DiscussionNotificationsApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     perm_slug = "discussion.discussionnotifications"
     http_method_names = ["post"]
+    authentication_classes = [TokenAuthentication]
 
     def post(self, request: Request, *args, **kwargs):
         try:
@@ -66,6 +68,7 @@ class DiscussionViewSet(ModelViewSet):
     parser_classes = [parsers.FormParser, parsers.MultiPartParser]
     perm_slug = "discussion.discussion"
     queryset = DiscussionProxy.objects.all()
+    authentication_classes = [TokenAuthentication]
 
 
 # class CreateDiscussionApiView(APIView):
