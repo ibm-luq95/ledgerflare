@@ -2,6 +2,7 @@
 
 import { sendRequest } from "../../utils/apis/apis";
 import { bwCleanApiError } from "../../utils/apis/clean_errors";
+import { RequestHandler } from "../../utils/apis/request_handler";
 import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants";
 import {
   disableAndEnableFieldsetItems,
@@ -37,8 +38,8 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           djangoRequest: true,
           token: currentTarget[CSRFINPUTNAME].value,
         };
-        console.log(formInputs);
-        const request = sendRequest(requestOptions);
+        // console.log(formInputs);
+        const request = RequestHandler.sendRequest(requestOptions);
         request
           .then((data) => {
             // console.log(bwI18Helper.t("jobs"));

@@ -2,6 +2,8 @@
 
 import { fetchUrlPathByName, sendRequest } from "../../utils/apis/apis";
 import { bwCleanApiError } from "../../utils/apis/clean_errors";
+import { SecureUrlFetcher } from "../../utils/apis/fetch_by_name";
+import { RequestHandler } from "../../utils/apis/request_handler";
 import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants";
 import {
   disableAndEnableFieldsetItems,
@@ -12,7 +14,7 @@ import { showToastNotification } from "../../utils/toasts";
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const assignedClientsForm = document.querySelector("form#assignedClientsForm");
   const permissionsUpdateMiniForm = document.querySelector(
-    "form#permissionsUpdateMiniForm",
+    "form#permissionsUpdateMiniForm"
   );
   if (assignedClientsForm) {
     assignedClientsForm.addEventListener("submit", (event) => {
@@ -20,7 +22,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
       const currentTarget = event.currentTarget;
       try {
         const assignedClientsInputs = document.querySelectorAll(
-          "input[name='assignedClients']:checked",
+          "input[name='assignedClients']:checked"
         );
         const formInputs = formInputSerializer({
           formElement: currentTarget,
@@ -33,7 +35,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           url: currentTarget.action,
           token: currentTarget[CSRFINPUTNAME].value,
         };
-        const request = sendRequest(requestOptions);
+        const request = RequestHandler.sendRequest(requestOptions);
         request
           .then((data) => {
             // console.log(bwI18Helper.t("jobs"));
@@ -50,7 +52,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
               er.forEach((erElement) => {
                 showToastNotification(
                   `Error: ${erElement["detail"]} - ${erElement["attr"]}`,
-                  "danger",
+                  "danger"
                 );
               });
             } else {
@@ -88,7 +90,9 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
         formElement: permissionsUpdateMiniForm,
         state: "disable",
       });
-      const urlName = fetchUrlPathByName("dashboard:staff:update-permissions");
+      const urlName = SecureUrlFetcher.fetchUrlPathByName(
+        "dashboard:staff:update-permissions"
+      );
       urlName
         .then((urlData) => {
           const requestOptions = {
@@ -100,7 +104,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
             djangoRequest: true,
             token: currentTarget[CSRFINPUTNAME].value,
           };
-          const request = sendRequest(requestOptions);
+          const request = RequestHandler.sendRequest(requestOptions);
           request
             .then((data) => {
               showToastNotification("Permissions update successfully", "success");
