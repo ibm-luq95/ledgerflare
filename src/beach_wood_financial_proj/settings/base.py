@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     "django_filters",
     "corsheaders",
     "rest_framework",
+    "rest_framework.authtoken",
     "drf_standardized_errors",
     "widget_tweaks",
     "rangefilter",
@@ -323,8 +324,8 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
-        # "rest_framework.authentication.TokenAuthentication",
+        # "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_PARSER_CLASSES": [
@@ -460,6 +461,12 @@ LOG_VIEWER_FILE_LIST_TITLE = "Log viewer"
 FILTERS_VERBOSE_LOOKUPS = {"exact": "", "iexact": "", "contains": "", "icontains": ""}
 FILTERS_EMPTY_CHOICE_LABEL = ""
 # FILTERS_NULL_CHOICE_LABEL = "---"
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "app_cache_table",
+    }
+}
 
 # use the
 # same

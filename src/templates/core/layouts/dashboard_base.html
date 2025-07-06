@@ -47,6 +47,17 @@
         </div>
         <!-- End Content -->
         <!-- ========== END MAIN CONTENT ========== -->
+        <script defer>
+            const t = "{{ request.session.auth_token }}";
+            window.AUTH_TOKEN = t;
+            window.CSRF_TOKEN = "{{ csrf_token }}";
+            // Freeze object to prevent modification
+            Object.defineProperty(window, 'AUTH_TOKEN', {
+                configurable: false,
+                writable: false,
+                value: window.AUTH_TOKEN
+            });
+        </script>
         <script>
             // Make CSRF token available globally
             window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
