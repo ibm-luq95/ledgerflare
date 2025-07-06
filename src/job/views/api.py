@@ -4,6 +4,7 @@ import traceback
 from django.utils.translation import gettext as _
 from rest_framework import permissions
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import APIException
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -21,6 +22,7 @@ logger = get_formatted_logger()
 class JobViewSet(ModelViewSet):
     serializer_class = JobSerializer
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
+    authentication_classes = [TokenAuthentication]
     perm_slug = "job.job"
     queryset = JobProxy.original_objects.all()
 
@@ -28,6 +30,7 @@ class JobViewSet(ModelViewSet):
 class UpdateJobApiView(APIView):
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     perm_slug = "job.job"
+    authentication_classes = [TokenAuthentication]
 
     def put(self, request: Request, *args, **kwargs):
         try:

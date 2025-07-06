@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-#
 
 from rest_framework import permissions, parsers
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.viewsets import ModelViewSet
 
 from core.api.permissions import BaseApiPermissionMixin
@@ -17,6 +18,7 @@ class DocumentViewSet(ModelViewSet):
         parsers.FormParser,
         parsers.MultiPartParser,
     ]
+    authentication_classes = [TokenAuthentication]
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     perm_slug = "document.document"
     queryset = Document.objects.all()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-#
 
 from rest_framework import permissions, parsers, status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -18,6 +19,7 @@ class SpecialAssignmentViewSet(ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     parser_classes = [parsers.FormParser, parsers.MultiPartParser]
     perm_slug = "special_assignment.specialassignment"
+    authentication_classes = [TokenAuthentication]
     queryset = SpecialAssignmentProxy.objects.all()
 
     # def create(self, request, *args, **kwargs):
