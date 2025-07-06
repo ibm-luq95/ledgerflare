@@ -286,4 +286,4 @@ CORS_ALLOW_METHODS = [
 ]
 
 # Optional: If you want to log blocked origins
-CORS_REPLACE_HTTPS_REFERER = True
+# CORS_REPLACE_HTTPS_REFERER = True
