@@ -1,6 +1,7 @@
 "use strict";
 
 import { fetchUrlPathByName, sendRequest } from "../../utils/apis/apis";
+import { SecureUrlFetcher } from "../../utils/apis/fetch_by_name";
 import { FETCHURLNAMEURL } from "../../utils/constants";
 import Chart, { elements } from "chart.js/auto";
 
@@ -8,6 +9,14 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const mgDashboardHWidgetElements = document.querySelectorAll(".mg-dashboard-h-widget");
   //data-widget-name="jobs"
   //dashboard:manager:management_api:management-dashboard-api
+  SecureUrlFetcher.fetchUrlPathByName(
+    "dashboard:manager:management_api:management-dashboard-api"
+  )
+    .then((data) => {
+      console.warn(data)
+    })
+    .catch((error) => console.error("Fetch failed:", error));
+  throw new Error("DF");
   if (mgDashboardHWidgetElements.length > 0) {
     const urlName = fetchUrlPathByName(
       "dashboard:manager:management_api:management-dashboard-api"
