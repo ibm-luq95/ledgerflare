@@ -39,9 +39,14 @@ class UploadFileRequest {
       // this.ajaxObject.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       this.ajaxObject.setRequestHeader("X-Requested-With", "XMLHttpRequest");
       this.ajaxObject.setRequestHeader("Accept", "application/json");
+      // this.ajaxObject.setRequestHeader("Cache-Control", "no-cache");
       this.ajaxObject.setRequestHeader("Cache-Control", "no-cache");
       // this.ajaxObject.setRequestHeader("Access-Control-Allow-Origin", "*");
       this.ajaxObject.setRequestHeader("X-CSRFToken", this.csrfToken);
+      const authToken = window.AUTH_TOKEN;
+      if (authToken) {
+        this.ajaxObject.setRequestHeader("Authorization", `Token ${authToken}`);
+      }
       // console.log(this.csrfToken);
       this.ajaxObject.withCredentials = true;
       // this.ajaxObject.timeout = 60;
@@ -68,7 +73,7 @@ class UploadFileRequest {
           this.ajaxObject.upload.addEventListener(
             "progress",
             this.uploadProgressHandler,
-            false,
+            false
           );
           // set upload error handler
         }
@@ -92,7 +97,7 @@ class UploadFileRequest {
             console.warn("Load event!");
             console.log(event);
           },
-          false,
+          false
         );
         this.ajaxObject.send(this.formData);
         // eslint-disable-next-line no-unused-vars
