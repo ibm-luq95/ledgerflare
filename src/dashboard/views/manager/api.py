@@ -3,6 +3,7 @@ import traceback
 
 from rest_framework import permissions
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +22,7 @@ logger = get_formatted_logger()
 class ManagementDashboardApiView(APIView):
     permission_classes = (permissions.IsAuthenticated, ManagerApiPermission)
     http_method_names = ["post"]
+    authentication_classes = [TokenAuthentication]
 
     def post(self, request: Request, *args, **kwargs):
         try:
