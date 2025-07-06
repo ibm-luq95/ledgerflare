@@ -165,7 +165,9 @@
                         <div class="flex flex-col border rounded-xl dark:border-gray-800">
                             <div class="p-4 md:p-5">
                                 <div class="flex items-center gap-x-2">
-                                    <p class="text-sm font-semibold text-gray-500">{% translate "Tasks" %}</p>
+                                    <p class="text-sm font-semibold text-gray-500">
+                                        {% translate "Tasks" %}
+                                    </p>
                                     <div class="hs-tooltip">
                                         <div class="hs-tooltip-toggle">
                                             <svg class="flex-shrink-0 w-4 h-4 text-gray-500"
@@ -213,7 +215,9 @@
                         <div class="flex flex-col border rounded-xl dark:border-gray-800">
                             <div class="p-4 md:p-5">
                                 <div class="flex items-center gap-x-2">
-                                    <p class="text-sm font-semibold text-gray-500">{% translate "Requested assignments" %}</p>
+                                    <p class="text-sm font-semibold text-gray-500">
+                                        {% translate "Requested assignments" %}
+                                    </p>
                                     <div class="hs-tooltip">
                                         <div class="hs-tooltip-toggle">
                                             <svg class="flex-shrink-0 w-4 h-4 text-gray-500"
@@ -374,7 +378,8 @@
                                     <!-- Icon -->
                                     <div class="relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-gray-200 dark:after:bg-gray-700">
                                         <div class="relative z-10 w-7 h-7 flex justify-center items-center">
-                                            <div class="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-600"></div>
+                                            <div class="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-600">
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- End Icon -->
@@ -441,7 +446,8 @@
                                 <!-- Icon -->
                                 <div class="relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-gray-200 dark:after:bg-gray-700">
                                     <div class="relative z-10 w-7 h-7 flex justify-center items-center">
-                                        <div class="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-600"></div>
+                                        <div class="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-600">
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- End Icon -->
@@ -449,7 +455,9 @@
                                 <div class="grow pt-0.5 pb-6">
                                     {# {{ activity.get_event_type_display }} #}
                                     <h3 class="flex gap-x-1.5 font-semibold text-sm text-gray-800 dark:text-white
-                                               {% if activity.is_custom_deleted %}line-through text-red-400{% endif %}">
+                                               {% if activity.is_custom_deleted %}
+                                                   line-through text-red-400
+                                               {% endif %}">
                                         {% if activity.get_event_type_display == "Create" or activity.get_event_type_display == "Many-to-Many Add" %}
                                             <i class="inline-block text-sm mr-1 fa-solid fa-plus relative top-1 text-teal-400"></i>
                                         {% endif %}
@@ -510,3 +518,6 @@
     </div>
     <!-- End Lists Cards -->
 {% endblock dashboard_content_block %}
+{% block externaljs %}
+   
+{% endblock externaljs %}
