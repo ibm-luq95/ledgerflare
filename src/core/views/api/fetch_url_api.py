@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_protect
@@ -34,7 +34,7 @@ class FetchUrlApiView(APIView):
     """
 
     permission_classes = (permissions.IsAuthenticated,)
-    # authentication_classes = [SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
 
     def post(self, request: Request, *args, **kwargs):
         """
