@@ -4,6 +4,7 @@ from django.http import HttpRequest
 from django.utils.translation import gettext as _
 
 from rest_framework import permissions, parsers, status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -24,6 +25,7 @@ class ClientViewSet(ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     parser_classes = [parsers.FormParser, parsers.MultiPartParser]
     perm_slug = "client.client"
+    authentication_classes = [TokenAuthentication]
     queryset = ClientProxy.objects.all()
     http_method_names = ["post", "patch"]
 
