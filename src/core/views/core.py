@@ -3,6 +3,8 @@ import json
 
 from django.conf import settings
 from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404
 from django.template import Template, Context
 from django.urls import reverse_lazy
 
@@ -31,3 +33,14 @@ def js_settings(request):
         content_type="application/javascript; charset=UTF-8",
     )
     return response
+
+
+# views.py
+
+
+def custom_404_view(request):
+    return render(request, "core/errors/404.html", status=404)
+
+
+def custom_500_view(request):
+    return render(request, "core/errors/500.html", status=404)
