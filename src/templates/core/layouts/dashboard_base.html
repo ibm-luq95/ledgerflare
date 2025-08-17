@@ -20,15 +20,19 @@
     </head>
     <body class="bg-gray-50 dark:bg-slate-900 h-full relative">
         <!-- ========== HEADER ========== -->
+        {% if request.user.is_authenticated %}
 
-        {% include "components/inc/dashboard/top_navbar.html" %}
+            {% include "components/inc/dashboard/top_navbar.html" %}
 
+        {% endif %}
         <!-- ========== END HEADER ========== -->
         <!-- ========== MAIN CONTENT ========== -->
         <!-- Start left side bar -->
+        {% if request.user.is_authenticated %}
 
-        {% include "components/inc/dashboard/left_side.html" %}
+            {% include "components/inc/dashboard/left_side.html" %}
 
+        {% endif %}
         <!-- End left side bar -->
         {# Start Toasts #}
 
@@ -36,7 +40,8 @@
 
         {# End Toasts #}
         <!-- Content -->
-        <div class="w-full px-4 pt-4 sm:px-6 md:px-8 lg:pl-72">
+         <div class="w-full px-4 pt-4 sm:px-6 md:px-8 {% if request.user.is_authenticated %} lg:pl-72 {% endif %}">
+        
             {# Start Flash Message #}
 
             {% include "components/inc/messages.html" %}
