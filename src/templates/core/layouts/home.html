@@ -29,7 +29,9 @@
             <!-- ========== END ANNOUNCEMENT BANNER ========== -->
             {% endcomment %}
             <!-- ========== MAIN CONTENT ========== -->
-            <main id="home-content" role="main" class="bg-gray-50 dark:bg-slate-900 h-full relative">
+            <main id="home-content"
+                  role="main"
+                  class="bg-gray-50 dark:bg-slate-900 h-full relative">
                 {# Start Flash Message #}
 
                 {% include "components/inc/messages.html" %}
@@ -48,6 +50,7 @@
             {# {% include "components/inc/cookie_banner.html" %} #}
             <!-- ========== END COOKIE BANNER ========== -->
         </div>
+        <script src="{% url 'js_settings' %}" type="text/javascript"></script>
 
         {% include "core/inc/js.html" %}
 
