@@ -1,5 +1,4 @@
 {
-  "djlint.pythonPath": "/home/ibrahim-pc/.virtualenvs/beachwood_financial_venv_3.13/bin/python3",
   "djlint.closeVoidTags": true,
   "djlint.profile": "django",
   "djlint.enableLinting": true,
@@ -16,6 +15,25 @@
   // "htmlhint.configFile": ".htmlhintrc",
   "htmlhint.options": {
     "--config": ".htmlhintrc"
-  }
+  },
+  "djlint.useNewLinterOutputParser": true,
   // "djlint.preserveBlankLines": true
+  "djlint.useVenv": false,
+  "djlint.pythonPath": "/home/ibrahim-pc/.pyenv/versions/3.13.7/bin/python3",
+  "windsurfPyright.analysis.inlayHints.variableTypes": true,
+  "windsurfPyright.analysis.inlayHints.genericTypes": true,
+  "windsurfPyright.analysis.inlayHints.functionReturnTypes": true,
+  "windsurfPyright.analysis.inlayHints.callArgumentNamesMatching": true,
+  "windsurfPyright.analysis.inlayHints.callArgumentNames": true,
+  "windsurfPyright.analysis.include": [
+    "./src"
+  ],
+  "windsurfPyright.analysis.typeCheckingMode": "basic",
+  "npm-intellisense.importQuotes": "\"",
+  "path-intellisense.showHiddenFiles": true,
+  "ruff.format.preview": true,
+  "ruff.lineLength": 88,
+  "ruff.trace.server": "messages",
+  "ruff.configuration": "",
+
 }
