@@ -1,33 +1,50 @@
 const glob = require("glob");
-const { VueLoaderPlugin } = require("vue-loader");
-const Webpack = require("webpack");
-const Dotenv = require("dotenv-webpack");
 const Path = require("path");
+const { VueLoaderPlugin } = require("vue-loader");
+const Dotenv = require("dotenv-webpack");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const WebpackAssetsManifest = require("webpack-assets-manifest");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { WebpackAssetsManifest } = require("webpack-assets-manifest");
+const { ProvidePlugin } = require("webpack");
 
 const getEntryObject = () => {
   const entries = {};
-  glob.sync(Path.join(__dirname, "../src/application/*.js")).forEach((path) => {
-    const name = Path.basename(path, ".js");
-    entries[name] = path;
+  // for javascript/typescript entry file
+  glob.sync(Path.join(__dirname, "../src/application/*.{js,ts}")).forEach((path) => {
+    const name = Path.basename(path);
+    const extension = Path.extname(path);
+    const entryName = name.replace(extension, "");
+    if (entryName in entries) {
+      throw new Error(`Entry file conflict: ${entryName}`);
+    }
+    entries[entryName] = path;
   });
   return entries;
 };
 
 module.exports = {
-  entry: getEntryObject(),
+  entry: {
+    ...getEntryObject(),
+    // Add a new entry point for ApexCharts and its Preline helper
+    "apexcharts-helper": [
+      Path.resolve(__dirname, "../node_modules/apexcharts/dist/apexcharts.min.js"),
+      Path.resolve(__dirname, "../node_modules/@preline/helper-apexcharts/index.js"),
+    ],
+  },
   output: {
     path: Path.join(__dirname, "../build"),
     filename: "js/[name].js",
     publicPath: "/static/",
     assetModuleFilename: "[path][name][ext]",
   },
-
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+    },
+    runtimeChunk: "single",
+  },
   plugins: [
+    new VueLoaderPlugin(),
     new Dotenv({
       path: "./.env", // Path to .env file
       safe: false, // If true, load '.env.example' to verify the .env variables are all set
@@ -35,15 +52,9 @@ module.exports = {
       silent: false, // If true, all warnings will be suppressed
       defaults: false, // If true, load '.env.defaults'
     }),
-    new Webpack.ProgressPlugin(),
-    new Webpack.EnvironmentPlugin({
-      FETCHURLNAMEURL: "/core/api/fetch_url",
+    new ProvidePlugin({
+      process: "process/browser",
     }),
-
-    /* new Webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-    }), */
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [{ from: Path.resolve(__dirname, "../vendors"), to: "vendors" }],
@@ -54,16 +65,21 @@ module.exports = {
       writeToDisk: true,
       publicPath: true,
     }),
-    new VueLoaderPlugin(),
   ],
   resolve: {
     alias: {
       "~": Path.resolve(__dirname, "../src"),
-      // jQuery: Path.resolve(__dirname, "../node_modules/jquery"),
+    },
+    fallback: {
+      process: require.resolve("process/browser"),
     },
   },
   module: {
     rules: [
+      {
+        test: /\.vue$/,
+        loader: "vue-loader",
+      },
       {
         test: /\.mjs$/,
         include: /node_modules/,
@@ -74,8 +90,15 @@ module.exports = {
         type: "asset",
       },
       {
-        test: /\.vue$/,
-        loader: "vue-loader",
+        test: /\.worker\.js$/,
+        use: {
+          loader: "worker-loader",
+          options: {
+            worker: {
+              target: "webworker", // Critical: Set worker target
+            },
+          },
+        },
       },
     ],
   },
