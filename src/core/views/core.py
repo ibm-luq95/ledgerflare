@@ -6,33 +6,40 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.template import Template, Context
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.utils.safestring import mark_safe
 
-JS_SETTINGS_TEMPLATE = """
-window.settings = JSON.parse('{{ json_data|escapejs }}');
-"""
+# JavaScript template: directly assign JSON as JS object
+JS_SETTINGS_TEMPLATE_STR = "window.settings = {{ json_data }};"
+
+# Compile once at startup
+JS_SETTINGS_TEMPLATE = Template(JS_SETTINGS_TEMPLATE_STR)
 
 
-# @cache_page(60 * 15)
+# @cache_page(60 * 15)  # Cache for 15 minutes
+# @vary_on_headers("Cookie")  # Vary by login state (different user = different cache)
 def js_settings(request):
+    """
+    Returns a JavaScript file that sets `window.settings` with selected Django settings and request data.
+    """
+    # Build the data dictionary
     data = {
-        # "MEDIA_URL": settings.MEDIA_URL,
-        # "STATIC_URL": settings.STATIC_URL,
         "DEBUG": settings.DEBUG,
-        "FETCHURLNAMEURL": str(reverse_lazy("core:api:fetch-url")),
-        "CURRENTUSER": str(request.user.pk),
-        # "LANGUAGES": settings.LANGUAGES,
-        # "DEFAULT_LANGUAGE_CODE": settings.LANGUAGE_CODE,
-        # "CURRENT_LANGUAGE_CODE": request.LANGUAGE_CODE,
+        "FETCHURLNAMEURL": reverse("core:api:fetch-url"),  # Ensure this URL name exists
+        "CURRENTUSER": str(request.user.pk) if request.user.is_authenticated else None,
     }
+
+    # Serialize to JSON string
     json_data = json.dumps(data)
-    template = Template(JS_SETTINGS_TEMPLATE)
-    context = Context({"json_data": json_data})
-    response = HttpResponse(
-        content=template.render(context),
+
+    # Render template with trusted (safe) JSON
+    context = Context({"json_data": mark_safe(json_data)})
+    content = JS_SETTINGS_TEMPLATE.render(context)
+
+    return HttpResponse(
+        content=content,
         content_type="application/javascript; charset=UTF-8",
     )
-    return response
 
 
 # views.py
