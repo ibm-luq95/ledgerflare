@@ -1,4 +1,4 @@
-from typing import Any, Literal, Optional, List
+from typing import Any, Literal, Optional, List, TypedDict, NotRequired
 
 from django.conf import settings
 from rich import print
@@ -9,7 +9,14 @@ from rich.table import Table
 from rich.pretty import pprint
 from rich.tree import Tree
 
-from core.utils.developments.debugging_print_types import DPOTableOptions
+class DPOTableOptions(TypedDict):
+    title: str
+    caption: NotRequired[str]
+    show_header: NotRequired[bool]
+    show_footer: NotRequired[bool]
+    show_lines: NotRequired[bool]
+    highlight: NotRequired[bool]
+    safe_box: NotRequired[bool]
 
 
 class DebuggingPrint:
