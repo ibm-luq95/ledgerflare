@@ -4,10 +4,11 @@ window.jQuery = $;
 window.$ = $;
 import _ from "lodash";
 import Dropzone from "dropzone";
+import "../styles/base.css";
 import "../styles/index.scss";
 import "../styles/dashboard.scss";
-import "simplelightbox/dist/simple-lightbox.css";
-import SimpleLightbox from "simplelightbox";
+// import SimpleLightbox from 'simplelightbox';
+// import 'simplelightbox/dist/simple-lightbox.css';
 // import "preline";
 import "../../node_modules/preline/dist/preline.js";
 // import "../styles/tinymce.scss";
@@ -46,7 +47,7 @@ import "./special_assignment/special_assignment.js";
 import "./task/task.js";
 import "./document/document.js";
 import "./note/note.js";
-import "./cfo/dashboard.js";
+// import "./cfo/dashboard.js";
 import "./discussion/discussion.js";
 import "./job/job.js";
 import "./important_contact/important_contact.js";
@@ -65,7 +66,7 @@ import "./beach_wood_user/manager.js";
 import "./beach_wood_user/cfo.js";
 import "./dashboard/notifications.js";
 import "./management/delete_staff.js";
-import { setFormInputsReadOnly } from "../utils/form_helpers";
+import { setFormInputsReadOnly } from "../utils/form_helpers.js";
 import { HSTabs } from "../../node_modules/preline/dist/preline.js";
 // import { HSTabs } from "../../node_modules/preline/dist/preline.js";
 
@@ -86,10 +87,10 @@ window.document.addEventListener("DOMContentLoaded", function () {
     });
   }
   hljs.highlightAll();
-  let gallery = new SimpleLightbox(".gallery a", {
-    overlayOpacity: 0.9,
-    download: true,
-  });
+  // let gallery = new SimpleLightbox(".gallery a", {
+  //   overlayOpacity: 0.9,
+  //   download: true,
+  // });
   const bwfInputs = document.querySelectorAll(".bw-input");
   const bwDisabledLinks = document.querySelectorAll("a.bw-disabled-anchor");
   const allDisabledCssClassed = ["disabled:opacity-75", "cursor-not-allowed"];
@@ -108,7 +109,7 @@ window.document.addEventListener("DOMContentLoaded", function () {
     const dataAttrs = input.dataset;
     const checkKeepDisabled = Object.prototype.hasOwnProperty.call(
       dataAttrs,
-      "keepDisabled",
+      "keepDisabled"
     );
     if (checkKeepDisabled === true) {
       const keepDisabled = dataAttrs["keepDisabled"];
@@ -154,7 +155,7 @@ window.document.addEventListener("DOMContentLoaded", function () {
         } else {
           btn.classList.add("hidden");
         }
-      },
+      }
     );
   }
   const resetFilterBtn = document.querySelector("button#resetFilterBtn");
