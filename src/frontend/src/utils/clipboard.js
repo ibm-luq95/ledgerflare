@@ -1,7 +1,7 @@
 "use strict";
 
-import { capitalizedFirstLetter } from "./helpers";
-import { showToastNotification } from "./toasts";
+import { capitalizedFirstLetter } from "./helpers.js";
+import { showToastNotification } from "./toasts.js";
 
 /**
  * Copies the given text to the clipboard and displays a notification.

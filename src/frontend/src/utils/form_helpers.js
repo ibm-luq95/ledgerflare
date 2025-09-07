@@ -1,8 +1,8 @@
 "use strict";
 
-import { DEBUG } from "./constants";
-import { orderObjectItems } from "./helpers";
-import { SessionStorageManagement } from "./storage";
+import { DEBUG } from "./constants.js";
+import { orderObjectItems } from "./helpers.js";
+import { SessionStorageManagement } from "./storage.js";
 
 /**
  * Enable or disable form fieldset items with form's submit button

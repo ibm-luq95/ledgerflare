@@ -1,15 +1,14 @@
 "use strict";
 
-import { sendRequest } from "../../utils/apis/apis";
-import { bwCleanApiError } from "../../utils/apis/clean_errors";
-import { RequestHandler } from "../../utils/apis/request_handler";
-import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants";
+import { bwCleanApiError } from "../../utils/apis/clean_errors.js";
+import { RequestHandler } from "../../utils/apis/request_handler.js";
+import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants.js";
 import {
   disableAndEnableFieldsetItems,
   formInputSerializer,
-} from "../../utils/form_helpers";
+} from "../../utils/form_helpers.js";
 // import { bwI18Helper } from "../../utils/i18_helper";
-import { showToastNotification } from "../../utils/toasts";
+import { showToastNotification } from "../../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const updateJobStatusStateForm = document.querySelector(

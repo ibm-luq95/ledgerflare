@@ -15,7 +15,7 @@ const sendRequest = async (options) => {
     if (!(options.dataToSend instanceof FormData)) {
       headers.set(
         "Content-Type",
-        options.contentType || "application/json;charset=utf-8",
+        options.contentType || "application/json;charset=utf-8"
       );
     }
 
@@ -47,7 +47,7 @@ const sendRequest = async (options) => {
       }
 
       throw new Error(
-        errorData.message || errorData.detail || `HTTP error! status: ${response.status}`,
+        errorData.message || errorData.detail || `HTTP error! status: ${response.status}`
       );
     }
 
@@ -94,3 +94,4 @@ onmessage = async (message) => {
     });
   }
 };
+export default Worker;

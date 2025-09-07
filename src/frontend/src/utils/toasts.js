@@ -1,7 +1,7 @@
 "use strict";
 
-import { TOASTSTIMEOUTSECS } from "./constants";
-import { getIconForToasts } from "./icons";
+import { TOASTSTIMEOUTSECS } from "./constants.js";
+import { getIconForToasts } from "./icons.js";
 
 /**
  * Displays a toast notification with the given message and notification type.

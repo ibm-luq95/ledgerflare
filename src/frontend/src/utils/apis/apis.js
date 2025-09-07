@@ -1,7 +1,7 @@
 "use strict";
 
-import { FETCHURLNAMEURL } from "../constants";
-import { getCookie } from "../cookie";
+import { FETCHURLNAMEURL } from "../constants.js";
+import { getCookie } from "../cookie.js";
 
 // Debug function to check all CSRF token sources
 function debugCSRFToken() {

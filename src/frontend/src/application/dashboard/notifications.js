@@ -1,6 +1,7 @@
 "use strict";
-import Worker from "worker-loader!./notifications_worker.js";
-import { getCookie } from "../../utils/cookie";
+// import Worker from "worker-loader!./notifications_worker.js";
+import Worker from './notifications_worker.js';
+import { getCookie } from "../../utils/cookie.js";
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const allNotificationItems = document.querySelectorAll("a.notificationsItem");
   const setAllNotificationsReadBtn = document.querySelector(

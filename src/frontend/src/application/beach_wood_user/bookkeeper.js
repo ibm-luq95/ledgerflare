@@ -1,6 +1,6 @@
 "use strict";
 
-import FilterPersistence from "../../utils/forms/filterform";
+import FilterPersistence from "../../utils/forms/filterform.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const filterForm = document.getElementById("bookkeepersFilterForm");

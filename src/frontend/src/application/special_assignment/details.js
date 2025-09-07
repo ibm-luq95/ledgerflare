@@ -1,11 +1,11 @@
 "use strict";
 
-import { bwCleanApiError } from "../../utils/apis/clean_errors";
+import { bwCleanApiError } from "../../utils/apis/clean_errors.js";
 import { UploadFileRequest } from "../../utils/apis/upload_file.js";
 import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants.js";
 import { getCookie } from "../../utils/cookie.js";
 import { formInputSerializer } from "../../utils/form_helpers.js";
-import { showToastNotification } from "../../utils/toasts";
+import { showToastNotification } from "../../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const replyForm = document.querySelector("form#replyForm");
