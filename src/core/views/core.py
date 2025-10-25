@@ -1,13 +1,16 @@
-# -*- coding: utf-8 -*-#
 import json
 
 from django.conf import settings
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
 from django.http import Http404
-from django.template import Template, Context
-from django.urls import reverse_lazy, reverse
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render
+from django.template import Context
+from django.template import Template
+from django.urls import reverse
+from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
+
 
 # JavaScript template: directly assign JSON as JS object
 JS_SETTINGS_TEMPLATE_STR = "window.settings = {{ json_data }};"
