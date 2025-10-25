@@ -19,7 +19,7 @@
                 <div class="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-2">
                     <div>
                         <!-- Card -->
-                        <div class="flex flex-col mb-1 bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
+                        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                             <div class="flex justify-between p-4 md:p-5 gap-x-3">
                                 <div>
                                     <a href=""
@@ -52,7 +52,7 @@
                         <!-- End Card -->
                         <div>
                             <!-- Card -->
-                            <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
+                            <div class="flex mt-2 flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                                 <div class="flex justify-between p-4 md:p-5 gap-x-3">
                                     <div>
                                         <a href="{% url 'dashboard:client:list' %}"
@@ -87,7 +87,7 @@
                     <div>
                         <div>
                             <!-- Card -->
-                            <div class="flex flex-col mb-1 bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
+                            <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                                 <div class="flex justify-between p-4 md:p-5 gap-x-3">
                                     <div>
                                         <a href="{% url 'dashboard:job:list' %}"
@@ -112,7 +112,7 @@
                         </div>
                         <div>
                             <!-- Card -->
-                            <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
+                            <div class="mt-2 flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                                 <div class="flex justify-between p-4 md:p-5 gap-x-3">
                                     <div>
                                         <a href="{% url 'dashboard:special_assignment:list' %}"
@@ -139,7 +139,7 @@
                 </div>
             </div>
             <div class="lg:w-52 md:w-52 sm:w-auto text-center h-full">
-                <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
+                <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                     <div id="chart-dashboard-wrapper" class="text-center">
                         <div class="loader-element relative  animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-gray-800 rounded-full dark:text-white"
                              role="status"
@@ -158,19 +158,19 @@
                 </div>
             </div>
             <div class="h-full grow">
-                <div class="flex flex-col h-48 bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
+                <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                     <!-- Grid -->
                     <div class="grid h-full sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
                         <!-- Card -->
-                        <div class="flex flex-col border rounded-xl dark:border-gray-800">
+                        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                             <div class="p-4 md:p-5">
                                 <div class="flex items-center gap-x-2">
-                                    <p class="text-sm font-semibold text-gray-500">
+                                    <p class="text-sm font-semibold text-gray-500 dark:text-neutral-500">
                                         {% translate "Tasks" %}
                                     </p>
                                     <div class="hs-tooltip">
                                         <div class="hs-tooltip-toggle">
-                                            <svg class="flex-shrink-0 w-4 h-4 text-gray-500"
+                                            <svg class="shrink-0 size-4 text-gray-500 dark:text-neutral-500"
                                                  xmlns="http://www.w3.org/2000/svg"
                                                  width="24"
                                                  height="24"
@@ -184,70 +184,36 @@
                                                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                                                 <path d="M12 17h.01" />
                                             </svg>
-                                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm dark:bg-slate-700"
-                                                  role="tooltip">{% translate "The number of tasks" %}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h3 class="mt-2 text-2xl sm:text-3xl lg:text-4xl text-gray-800 dark:text-gray-200">
-                                    <span class="font-semibold">{{ tasks_count|intcomma }}</span>
-                                </h3>
-                                <a class="mt-4 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                                   href="{% url 'dashboard:task:list' %}">
-                                    {% translate "All" %}
-                                    <svg class="flex-shrink-0 size-4"
-                                         xmlns="http://www.w3.org/2000/svg"
-                                         width="24"
-                                         height="24"
-                                         viewBox="0 0 24 24"
-                                         fill="none"
-                                         stroke="currentColor"
-                                         stroke-width="2"
-                                         stroke-linecap="round"
-                                         stroke-linejoin="round">
-                                        <path d="m9 18 6-6-6-6" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                        <!-- End Card -->
-                        <!-- Card -->
-                        <div class="flex flex-col border rounded-xl dark:border-gray-800">
-                            <div class="p-4 md:p-5">
-                                <div class="flex items-center gap-x-2">
-                                    <p class="text-sm font-semibold text-gray-500">
-                                        {% translate "Requested assignments" %}
-                                    </p>
-                                    <div class="hs-tooltip">
-                                        <div class="hs-tooltip-toggle">
-                                            <svg class="flex-shrink-0 w-4 h-4 text-gray-500"
-                                                 xmlns="http://www.w3.org/2000/svg"
-                                                 width="24"
-                                                 height="24"
-                                                 viewBox="0 0 24 24"
-                                                 fill="none"
-                                                 stroke="currentColor"
-                                                 stroke-width="2"
-                                                 stroke-linecap="round"
-                                                 stroke-linejoin="round">
-                                                <circle cx="12" cy="12" r="10" />
-                                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                                                <path d="M12 17h.01" />
-                                            </svg>
-                                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm dark:bg-slate-700"
+                                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-2xs dark:bg-neutral-700"
                                                   role="tooltip">
-                                                {% translate "The number of requested assignments" %}
+                                                {% translate "Total Tasks" %}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                                <h3 class="mt-2 text-2xl sm:text-3xl lg:text-4xl text-gray-800 dark:text-gray-200">
-                                    <span class="font-semibold">{{ requested_special_assignments_count|intcomma }}</span> <!-- <span class="text-gray-500">/ 10</span> -->
+                                <h3 class="mt-2 text-2xl sm:text-3xl lg:text-4xl text-gray-800 dark:text-neutral-200">
+                                    <span class="font-semibold">{{ tasks_count|intcomma }}</span> 
+                                    {# <span class="text-gray-500 dark:text-neutral-500">/ 100</span> #}
                                 </h3>
-                                <a class="mt-4 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                                   href="{% url 'dashboard:special_assignment:requested' %}">
-                                    {% translate "All" %}
-                                    <svg class="flex-shrink-0 size-4"
+                            </div>
+                        </div>
+                        <!-- End Card -->
+                        <!-- Card -->
+                        <!-- Card -->
+                        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
+                            <div class="p-4 md:p-5 flex justify-between gap-x-3">
+                                <div>
+                                    <p class="text-xs uppercase text-gray-500 dark:text-neutral-500">
+                                        {% translate "Requested assignments" %}
+                                    </p>
+                                    <div class="mt-1 flex items-center gap-x-2">
+                                        <h3 class="mt-1 text-xl font-medium text-gray-800 dark:text-neutral-200">
+                                            {{ requested_special_assignments_count|intcomma }}
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="shrink-0 flex justify-center items-center size-11 bg-blue-600 text-white rounded-full dark:bg-blue-900 dark:text-blue-200">
+                                    <svg class="shrink-0 size-5"
                                          xmlns="http://www.w3.org/2000/svg"
                                          width="24"
                                          height="24"
@@ -257,12 +223,30 @@
                                          stroke-width="2"
                                          stroke-linecap="round"
                                          stroke-linejoin="round">
-                                        <path d="m9 18 6-6-6-6" />
+                                        <path d="M5 22h14" />
+                                        <path d="M5 2h14" />
+                                        <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" />
+                                        <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
                                     </svg>
-                                </a>
+                                </div>
                             </div>
+                            <a class="py-3 px-4 md:px-5 inline-flex justify-between items-center text-sm text-gray-600 border-t border-gray-200 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 rounded-b-xl dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                               href="{% url 'dashboard:special_assignment:requested' %}">
+                                {% translate "View" %}
+                                <svg class="shrink-0 size-4"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
+                            </a>
                         </div>
-                        <!-- End Card -->
                         {% comment  %}
                             <!-- Card -->
                         <div class="flex flex-col border rounded-xl dark:border-gray-800">
@@ -301,14 +285,14 @@
     <div class="flex flex-row gap-2">
         <div class="w-1/3">
             {% if clients %}
-                <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]">
+                <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                     <div class="px-4 pt-3 pb-3 md:px-5">
                         <h3 class="mb-2 text-lg font-bold text-gray-800 dark:text-white">
                             {% translate "Clients" %}
                         </h3>
                         <ul class="flex flex-col">
                             {% for client in clients %}
-                                <li class="inline-flex items-center gap-x-3.5 py-3 px-4 text-sm font-medium bg-white border border-gray-200 text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-slate-900 dark:border-gray-700 dark:text-white hover:bg-gray-100 transition-all dark:hover:bg-white/[.05]">
+                                <li class="inline-flex items-center gap-x-2 py-3 px-4 text-sm font-medium bg-white border border-gray-200 text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-neutral-900 dark:border-neutral-700 dark:text-white">
                                     <svg class="flex-shrink-0 w-4 h-4"
                                          xmlns="http://www.w3.org/2000/svg"
                                          width="24"
@@ -355,7 +339,7 @@
             {% endif %}
         </div>
         <div class="w-1/3">
-            <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]">
+            <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                 <div class="px-4 pt-3 pb-3 md:px-5">
                     <h3 class="text-lg font-bold text-gray-800 dark:text-white">
                         {% translate "Last assignments" %}
@@ -428,7 +412,7 @@
             </div>
         </div>
         <div class="grow">
-            <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]">
+            <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
                 <div class="px-4 pt-3 pb-3 md:px-5">
                     <h3 class="text-lg font-bold text-gray-800 dark:text-white">
                         {% translate "Last activities" %}
