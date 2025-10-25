@@ -18,7 +18,7 @@
         {% block externalcss %}
         {% endblock externalcss %}
     </head>
-    <body class="bg-gray-50 dark:bg-slate-900 h-full relative">
+    <body class="bg-gray-50 dark:bg-neutral-900 hs-overlay-body-open hs-overlay-body-open:overflow-hidden">
         <!-- ========== HEADER ========== -->
         {% if request.user.is_authenticated %}
 
@@ -29,9 +29,15 @@
         <!-- ========== MAIN CONTENT ========== -->
         <!-- Start left side bar -->
         {% if request.user.is_authenticated %}
+            {% if request.resolver_match.view_name == "dashboard:client:details" or request.resolver_match.view_name == "dashboard:client:transactions" or request.resolver_match.view_name == "dashboard:client:journal_entry" or request.resolver_match.view_name == "dashboard:client:bank_register" or request.resolver_match.view_name == "dashboard:client:chart_of_accounts" or request.resolver_match.view_name == "dashboard:client:expense_create" %}
 
-            {% include "components/inc/dashboard/left_side.html" %}
+                {% include "components/inc/dashboard/client_left_sidebar.html" %}
 
+            {% else %}
+
+                {% include "components/inc/dashboard/left_side.html" %}
+
+            {% endif %}
         {% endif %}
         <!-- End left side bar -->
         {# Start Toasts #}
@@ -40,8 +46,7 @@
 
         {# End Toasts #}
         <!-- Content -->
-         <div class="w-full px-4 pt-4 sm:px-6 md:px-8 {% if request.user.is_authenticated %} lg:pl-72 {% endif %}">
-        
+        <div class="sm:hs-overlay-layout-open:ms-64 py-3 min-h-160 transition-all duration-300">
             {# Start Flash Message #}
 
             {% include "components/inc/messages.html" %}
