@@ -1,0 +1,570 @@
+{% extends "core/layouts/dashboard_content_base.html" %}
+
+{% load i18n %}
+
+{% block externalcss %}
+    <!-- Font Awesome -->
+    <style>
+        .responsive-table-container {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Sticky header for scroll */
+        .responsive-table-container thead th {
+            position: sticky;
+            top: 0;
+            background: #f9fafb;
+            z-index: 10;
+        }
+
+        .dark .responsive-table-container thead th {
+            background: #1f2937;
+        }
+
+        /* Print styles */
+        @media print {
+
+            .print-ignore,
+            .toolbar-btn,
+            .hs-dropdown,
+            .pagination-controls,
+            input,
+            button:not(.print-only) {
+                display: none !important;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            table {
+                font-size: 12px !important;
+            }
+
+            .bg-white,
+            .dark\:bg-neutral-900 {
+                background: white !important;
+            }
+
+            .text-gray-900,
+            .dark\:text-white {
+                color: black !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .responsive-table th,
+            .responsive-table td {
+                padding-left: 8px;
+                padding-right: 8px;
+                font-size: 0.75rem;
+            }
+
+            .toolbar-btn {
+                padding: 0.375rem !important;
+                font-size: 0.75rem !important;
+            }
+        }
+    </style>
+{% endblock externalcss %}
+{% block dashboard_content_block %}
+    <section id="bank_register" class="w-full px-4 sm:px-6 py-6">
+        <!-- 🔹 Main Header Card -->
+        <div class="bg-white border border-gray-200 shadow-sm rounded-xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-700 mb-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap">
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">
+                        {% translate "Bank Register" %}
+                    </h1>
+                    <div class="hs-dropdown [--auto-close:inside] relative inline-flex">
+                        <button id="account-filter"
+                                type="button"
+                                class="inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 py-2 px-3 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-700 print-ignore">
+                            {% translate "Business Checking" %}
+                            <svg class="shrink-0 size-4"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6">
+                                </path>
+                            </svg>
+                        </button>
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration-300 hidden min-w-44 z-10 bg-white shadow-lg rounded-lg p-2 mt-2 dark:bg-neutral-800 print-ignore"
+                             aria-labelledby="account-filter">
+                            <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                               href="#">
+                                {% translate "Business Checking" %}
+                            </a>
+                            <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                               href="#">
+                                {% translate "Payroll Account" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:items-end sm:gap-6 w-full md:w-auto">
+                    <div class="text-center sm:text-left mb-3 sm:mb-0">
+                        <p class="text-xs text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                            {% trans "Current Balance" %}
+                        </p>
+                        <p class="text-lg font-bold text-gray-900 dark:text-white">
+                            $2,450.75
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-center sm:items-end">
+                        <button class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition transform active:scale-95 print-ignore">
+                            {% translate "Calculate" %}
+                        </button>
+                        <div class="mt-2 text-center sm:text-right">
+                            <p class="text-xs text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                                <em>{% trans "Ending Balance" %}</em>
+                            </p>
+                            <p class="text-lg font-bold text-green-600 dark:text-green-400">
+                                $2,320.25
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 🔹 Compact Summary + Toolbar + Pagination ABOVE -->
+        <div class="flex mb-3 flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+            <div class="mb-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-sm text-blue-800 dark:text-blue-200">
+                    <span>
+                        <span class="font-medium">{% trans "Account:" %}</span> Business Checking •
+                        <span class="font-medium">{% trans "Period:" %}</span> Apr 1 – Apr 30, 2025
+                    </span>
+                    <span class="font-semibold">
+                        {% trans "Total Transactions:" %} <span class="text-blue-900 dark:text-white">42</span>
+                    </span>
+                </div>
+            </div>
+            <!-- 🔹 Toolbar -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 print-ignore">
+                <div class="flex flex-wrap gap-2">
+                    <button aria-label="{% translate 'Print bank register' %}"
+                            class="toolbar-btn inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-700">
+                        <i class="fas fa-print text-gray-500 dark:text-neutral-400"
+                           aria-hidden="true"></i>
+                        <span class="hidden xs:inline">{% translate "Print" %}</span>
+                    </button>
+                    <button aria-label="{% translate 'Export transactions' %}"
+                            class="toolbar-btn inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-700">
+                        <i class="fas fa-file-export text-gray-500 dark:text-neutral-400"
+                           aria-hidden="true"></i>
+                        <span class="hidden xs:inline">{% translate "Export" %}</span>
+                    </button>
+                    <button aria-label="{% translate 'Add new transaction' %}"
+                            class="toolbar-btn inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-700">
+                        <i class="fas fa-plus text-gray-500 dark:text-neutral-400"
+                           aria-hidden="true"></i>
+                        <span class="hidden xs:inline">{% translate "Add Transaction" %}</span>
+                    </button>
+                </div>
+                <div class="relative">
+                    <input type="text"
+                           placeholder="{% translate 'Search transactions...' %}"
+                           class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white print-ignore" />
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm dark:text-neutral-500"
+                       aria-hidden="true"></i>
+                </div>
+            </div>
+            <!-- 🔹 Pagination ABOVE Table -->
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pagination-controls print-ignore">
+                <div class="text-sm text-gray-700 dark:text-neutral-300">
+                    {% blocktrans with start=1 end=10 total=42 %}Showing <span class="font-medium">{{ start }}</span> to <span class="font-medium">{{ end }}</span> of <span class="font-medium">{{ total }}</span> results{% endblocktrans %}
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:bg-neutral-800">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <label for="page-input-top" class="sr-only">
+                            {% translate "Go to page" %}
+                        </label>
+                        <input type="number"
+                               id="page-input-top"
+                               min="1"
+                               max="5"
+                               value="1"
+                               class="w-16 text-center text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" />
+                        <span class="text-sm text-gray-500 dark:text-neutral-400">/ 5</span>
+                    </div>
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:bg-neutral-800">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 🔹 Table -->
+        <div class="overflow-hidden rounded-lg shadow-sm border border-gray-200 dark:border-neutral-700">
+            <div class="responsive-table-container overflow-x-auto">
+                <table class="responsive-table min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                    <thead class="bg-gray-50 dark:bg-neutral-800">
+                        <tr>
+                            <th scope="col"
+                                class="px-3 py-3 text-center text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap">
+                                {% translate "Rec" %}
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap">
+                                {% translate "Date" %}
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap">
+                                {% translate "Ref / Type" %}
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
+                                {% translate "Payee / Account" %}
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
+                                {% translate "Memo" %}
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap">
+                                {% translate "Class / Business" %}
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap text-right">
+                                {% translate "Payment" %}
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap text-right">
+                                {% translate "Deposit" %}
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap text-right">
+                                {% translate "Balance" %}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-gray-800">
+                        {% for i in "0123456789"|make_list %}
+                            <tr class="hover:bg-gray-50 dark:hover:bg-neutral-800/70 transition-colors">
+                                <!-- Reconciled Column -->
+                                <td class="px-3 py-4 text-center">
+                                    {% if forloop.counter|divisibleby:2 %}
+                                        <i class="fas fa-check-circle text-green-500 dark:text-green-400"
+                                           title="{% translate 'Reconciled' %}"
+                                           aria-label="{% translate 'Reconciled' %}"></i>
+                                    {% else %}
+                                        <i class="far fa-circle text-gray-400 dark:text-neutral-500"
+                                           title="{% translate 'Not reconciled' %}"
+                                           aria-label="{% translate 'Not reconciled' %}"></i>
+                                    {% endif %}
+                                </td>
+                                <!-- Date -->
+                                <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                    {% if forloop.counter == 1 %}
+                                        Apr 01, 2025
+                                    {% elif forloop.counter == 2 %}
+                                        Apr 02, 2025
+                                    {% elif forloop.counter == 3 %}
+                                        Apr 03, 2025
+                                    {% elif forloop.counter == 4 %}
+                                        Apr 04, 2025
+                                    {% elif forloop.counter == 5 %}
+                                        Apr 05, 2025
+                                    {% elif forloop.counter == 6 %}
+                                        Apr 06, 2025
+                                    {% elif forloop.counter == 7 %}
+                                        Apr 07, 2025
+                                    {% elif forloop.counter == 8 %}
+                                        Apr 08, 2025
+                                    {% elif forloop.counter == 9 %}
+                                        Apr 09, 2025
+                                    {% else %}
+                                        Apr 10, 2025
+                                    {% endif %}
+                                </td>
+                                <!-- Ref / Type -->
+                                <td class="px-3 py-4 text-sm text-gray-600 dark:text-neutral-300">
+                                    {% if forloop.counter == 3 or forloop.counter == 6 or forloop.counter == 9 %}
+                                        <span class="inline-flex items-center gap-1 py-1 px-2 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
+                                            {% if forloop.counter == 3 %}
+                                                1003
+                                            {% elif forloop.counter == 6 %}
+                                                1006
+                                            {% else %}
+                                                1009
+                                            {% endif %}
+                                            <span class="w-1 h-1 rounded-full bg-emerald-500 mx-1"></span> {% translate "Deposit" %}
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-1 py-1 px-2 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200">
+                                            {% if forloop.counter == 1 %}
+                                                1001
+                                            {% elif forloop.counter == 2 %}
+                                                1002
+                                            {% elif forloop.counter == 4 %}
+                                                1004
+                                            {% elif forloop.counter == 5 %}
+                                                1005
+                                            {% elif forloop.counter == 7 %}
+                                                1007
+                                            {% elif forloop.counter == 8 %}
+                                                1008
+                                            {% else %}
+                                                1010
+                                            {% endif %}
+                                            <span class="w-1 h-1 rounded-full bg-red-500 mx-1"></span> {% translate "Check" %}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <!-- Payee / Account -->
+                                <td class="px-3 py-4 text-sm text-gray-600 dark:text-neutral-300">
+                                    {% if forloop.counter == 1 %}
+                                        Office Depot
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Office Supplies</span>
+                                    {% elif forloop.counter == 2 %}
+                                        Acme Corp
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Sales Income</span>
+                                    {% elif forloop.counter == 3 %}
+                                        City Utilities
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Utilities</span>
+                                    {% elif forloop.counter == 4 %}
+                                        Payroll - April
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Salaries</span>
+                                    {% elif forloop.counter == 5 %}
+                                        Cloud Services Inc
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">SaaS Subscription</span>
+                                    {% elif forloop.counter == 6 %}
+                                        Client Payment #456
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Accounts Receivable</span>
+                                    {% elif forloop.counter == 7 %}
+                                        Marketing Agency
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Advertising</span>
+                                    {% elif forloop.counter == 8 %}
+                                        Internet Provider
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Internet</span>
+                                    {% elif forloop.counter == 9 %}
+                                        Office Cleaning Co
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Cleaning Services</span>
+                                    {% else %}
+                                        Software License Co
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Software License</span>
+                                    {% endif %}
+                                </td>
+                                <!-- Memo -->
+                                <td class="px-3 py-4 text-sm text-gray-600 dark:text-neutral-300 max-w-[140px] sm:max-w-none break-words">
+                                    {% if forloop.counter == 1 %}
+                                        Monthly office supplies
+                                    {% elif forloop.counter == 2 %}
+                                        Invoice #INV-2025-042
+                                    {% elif forloop.counter == 3 %}
+                                        Electric & water bill
+                                    {% elif forloop.counter == 4 %}
+                                        April payroll processing
+                                    {% elif forloop.counter == 5 %}
+                                        Annual cloud storage plan
+                                    {% elif forloop.counter == 6 %}
+                                        Payment for services rendered
+                                    {% elif forloop.counter == 7 %}
+                                        Q2 digital ad campaign
+                                    {% elif forloop.counter == 8 %}
+                                        High-speed business internet
+                                    {% elif forloop.counter == 9 %}
+                                        Bi-weekly office cleaning
+                                    {% else %}
+                                        Annual software renewal
+                                    {% endif %}
+                                </td>
+                                <!-- Class / Business -->
+                                <td class="px-3 py-4 text-sm text-gray-600 dark:text-neutral-300">
+                                    {% if forloop.counter == 1 %}
+                                        Office
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% elif forloop.counter == 2 %}
+                                        Sales
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% elif forloop.counter == 3 %}
+                                        Utilities
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% elif forloop.counter == 4 %}
+                                        HR
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% elif forloop.counter == 5 %}
+                                        IT
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% elif forloop.counter == 6 %}
+                                        Accounts Receivable
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% elif forloop.counter == 7 %}
+                                        Marketing
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% elif forloop.counter == 8 %}
+                                        IT
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% elif forloop.counter == 9 %}
+                                        Facilities
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% else %}
+                                        IT
+                                        <br />
+                                        <span class="text-xs text-gray-500 dark:text-neutral-400">Business A</span>
+                                    {% endif %}
+                                </td>
+                                <!-- Payment -->
+                                <td class="px-3 py-4 text-sm text-right font-medium">
+                                    {% if forloop.counter == 3 or forloop.counter == 6 or forloop.counter == 9 %}
+                                        <span class="text-gray-500 dark:text-neutral-400">—</span>
+                                    {% elif forloop.counter == 1 %}
+                                        <span class="text-red-600 dark:text-red-400">$150.00</span>
+                                    {% elif forloop.counter == 2 %}
+                                        <span class="text-red-600 dark:text-red-400">$200.00</span>
+                                    {% elif forloop.counter == 4 %}
+                                        <span class="text-red-600 dark:text-red-400">$3,200.00</span>
+                                    {% elif forloop.counter == 5 %}
+                                        <span class="text-red-600 dark:text-red-400">$99.99</span>
+                                    {% elif forloop.counter == 7 %}
+                                        <span class="text-red-600 dark:text-red-400">$1,500.00</span>
+                                    {% elif forloop.counter == 8 %}
+                                        <span class="text-red-600 dark:text-red-400">$89.99</span>
+                                    {% elif forloop.counter == 9 %}
+                                        <span class="text-red-600 dark:text-red-400">$120.00</span>
+                                    {% else %}
+                                        <span class="text-red-600 dark:text-red-400">$299.00</span>
+                                    {% endif %}
+                                </td>
+                                <!-- Deposit -->
+                                <td class="px-3 py-4 text-sm text-right font-medium">
+                                    {% if forloop.counter == 3 %}
+                                        <span class="text-emerald-600 dark:text-emerald-400">$530.00</span>
+                                    {% elif forloop.counter == 6 %}
+                                        <span class="text-emerald-600 dark:text-emerald-400">$2,100.00</span>
+                                    {% elif forloop.counter == 9 %}
+                                        <span class="text-emerald-600 dark:text-emerald-400">$850.00</span>
+                                    {% else %}
+                                        <span class="text-gray-500 dark:text-neutral-400">—</span>
+                                    {% endif %}
+                                </td>
+                                <!-- Balance (with improved negative display) -->
+                                <td class="px-3 py-4 text-sm font-medium text-right">
+                                    {% if forloop.counter == 4 or forloop.counter == 5 or forloop.counter == 7 or forloop.counter == 8 %}
+                                        <span class="text-red-600 dark:text-red-400">
+                                            (
+                                            {% if forloop.counter == 4 %}
+                                                569.25
+                                            {% elif forloop.counter == 5 %}
+                                                669.24
+                                            {% elif forloop.counter == 7 %}
+                                                70.24
+                                            {% else %}
+                                                160.23
+                                            {% endif %}
+                                            )
+                                        </span>
+                                    {% elif forloop.counter == 1 %}
+                                        <span class="text-gray-900 dark:text-white">$2,300.75</span>
+                                    {% elif forloop.counter == 2 %}
+                                        <span class="text-gray-900 dark:text-white">$2,100.75</span>
+                                    {% elif forloop.counter == 3 %}
+                                        <span class="text-gray-900 dark:text-white">$2,630.75</span>
+                                    {% elif forloop.counter == 6 %}
+                                        <span class="text-gray-900 dark:text-white">$1,430.76</span>
+                                    {% elif forloop.counter == 9 %}
+                                        <span class="text-gray-900 dark:text-white">$689.77</span>
+                                    {% else %}
+                                        <span class="text-gray-900 dark:text-white">$390.77</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 🔹 Pagination BELOW Table -->
+        <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pagination-controls print-ignore">
+            <div class="text-sm text-gray-700 dark:text-neutral-300">
+                {% blocktrans with start=1 end=10 total=42 %}Showing <span class="font-medium">{{ start }}</span> to <span class="font-medium">{{ end }}</span> of <span class="font-medium">{{ total }}</span> results{% endblocktrans %}
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:bg-neutral-800">
+                    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <div class="flex items-center gap-2">
+                    <label for="page-input-bottom" class="sr-only">
+                        {% translate "Go to page" %}
+                    </label>
+                    <input type="number"
+                           id="page-input-bottom"
+                           min="1"
+                           max="5"
+                           value="1"
+                           class="w-16 text-center text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" />
+                    <span class="text-sm text-gray-500 dark:text-neutral-400">/ 5</span>
+                </div>
+                <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:bg-neutral-800">
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- Enhanced JS: Pagination sync + Enter key support -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof HSDropdown !== 'undefined') {
+                HSDropdown.autoInit();
+            }
+
+            const topInput = document.getElementById('page-input-top');
+            const bottomInput = document.getElementById('page-input-bottom');
+
+            const syncInputs = (from, to) => {
+                let val = parseInt(from.value) || 1;
+                val = Math.max(1, Math.min(5, val));
+                from.value = val;
+                to.value = val;
+            };
+
+            if (topInput && bottomInput) {
+                // Sync on change
+                topInput.addEventListener('change', () => syncInputs(topInput, bottomInput));
+                bottomInput.addEventListener('change', () => syncInputs(bottomInput, topInput));
+
+                // Support Enter key
+                const handleKeydown = (input) => {
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            input.dispatchEvent(new Event('change'));
+                        }
+                    });
+                };
+                handleKeydown(topInput);
+                handleKeydown(bottomInput);
+            }
+        });
+    </script>
+{% endblock dashboard_content_block %}
