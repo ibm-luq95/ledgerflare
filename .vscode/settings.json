@@ -1,7 +1,6 @@
 {
   "djlint.closeVoidTags": true,
   "djlint.profile": "django",
-  "djlint.enableLinting": true,
   "djlint.formatAttributeTemplateTags": true,
   "djlint.formatCss": true,
   "djlint.formatJs": true,
@@ -25,15 +24,173 @@
   "windsurfPyright.analysis.inlayHints.functionReturnTypes": true,
   "windsurfPyright.analysis.inlayHints.callArgumentNamesMatching": true,
   "windsurfPyright.analysis.inlayHints.callArgumentNames": true,
-  "windsurfPyright.analysis.include": [
-    "./src"
-  ],
+  "windsurfPyright.analysis.include": ["./src"],
   "windsurfPyright.analysis.typeCheckingMode": "basic",
   "npm-intellisense.importQuotes": "\"",
   "path-intellisense.showHiddenFiles": true,
   "ruff.format.preview": true,
   "ruff.lineLength": 88,
   "ruff.trace.server": "messages",
-  "ruff.configuration": "",
+  "ruff.configuration": "./pyproject.toml",
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true, // #1 Performance win for Node.js
+    "**/.venv/**": true, // #1 Performance win for Python
+    "**/venv/**": true,
+    "**/env/**": true,
+    "**/__pycache__/**": true,
+    "**/.yarn/cache/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/staticfiles/**": true,
+    "**/media/**": true,
+    "**/.cache/**": true,
+    "**/tmp/**": true
+  },
+  // FOLDERS TO EXCLUDE FROM SEARCH (SPEEDS UP FIND IN FILES)
+  "search.exclude": {
+    // Inherit all the patterns from files.exclude
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.venv": true,
+    "**/venv": true,
+    "**/env": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/staticfiles": true,
+    "**/media": true,
+    "**/logs": true,
+    "**/.yarn/cache": true,
+    "**/.cache": true,
+    "**/tmp": true
+    // Add any other large directories you never need to search
+  },
+  // FILES & FOLDERS TO HIDE FROM THE EXPLORER SIDEBAR
+  "files.exclude": {
+    // Version Control
+    "**/.git": true,
+    "**/.hg": true,
+    "**/.svn": true,
+    "**/CVS": true,
 
+    // Python - Compiled Bytecode and Caches
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/*.pyo": true,
+    "**/*.pyd": true,
+    "**/*.so": true,
+    "**/*.egg-info": true, // Python package metadata
+
+    // Python - Testing and Analysis Caches
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/.hypothesis": true, // Property-based testing cache
+
+    // Python - Environments (CRITICAL TO EXCLUDE)
+    "**/.venv": true,
+    "**/venv": true,
+    "**/env": true,
+    "**/ENV": true,
+    "**/virtualenv": true,
+
+    // Django Specific
+    "**/staticfiles": true, // Collected static files
+    "**/media": true, // User-uploaded media files (in development)
+
+    // Node.js - Dependencies and Build Artifacts
+    "**/node_modules": true,
+    "**/npm-debug.log*": true,
+    "**/yarn-debug.log*": true,
+    "**/yarn-error.log*": true,
+    "**/.yarn/cache": true, // Yarn 2+ cache
+    "**/.yarn/unplugged": true, // Yarn 2+ unplugged dependencies
+    "**/.yarn/install-state.gz": true,
+    "**/dist": true, // Common build output (e.g., for Vue/React apps)
+    "**/build": true, // Common build output
+    "**/.parcel-cache": true, // Parcel bundler cache
+    "**/.webpack": true, // Webpack cache
+    "**/.turbo": true, // Turborepo cache
+    "**/.eslintcache": true, // ESLint cache
+
+    // Logs
+    "**/logs": true,
+    "**/*.log": true,
+
+    // OS and Editor Generated Files
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/Desktop.ini": true,
+    "**/.idea": true, // PyCharm/IntelliJ config (if you ever use it)
+    "**/.vscode-test": true, // VS Code test directories
+
+    // Runtime & Temporary Files
+    "**/tmp": true,
+    "**/temp": true,
+    "**/*.tmp": true,
+    "**/*.temp": true,
+    "**/.cache": true, // General application cache
+
+    // Optional: Package lock files (uncomment if you don't need to see them)
+    // "**/package-lock.json": true,
+    // "**/yarn.lock": true,
+    // "**/pnpm-lock.yaml": true,
+
+    // Keep .vscode folder visible for workspace settings
+    ".vscode": false
+  },
+  "python.defaultInterpreterPath": "/run/media/ibrahim-pc/Primary/P_IBM/MY_Projects/Freelancing/Albert_Salazar/Beach_Wood_Financial/.venv/bin/python3",
+  "python.terminal.executeInFileDir": true,
+  "python.terminal.focusAfterLaunch": true,
+  "autoDocstring.docstringFormat": "sphinx",
+  "autoDocstring.includeName": true,
+  "autoDocstring.startOnNewLine": true,
+  "python.analysis.autoFormatStrings": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.inlayHints.callArgumentNames": "partial",
+  "python.analysis.inlayHints.functionReturnTypes": true,
+  "python.analysis.inlayHints.pytestParameters": true,
+  "python.analysis.inlayHints.variableTypes": true,
+  // "python.analysis.logLevel": "Trace",
+  "python.analysis.languageServerMode": "full",
+  "ruff.lint.preview": true,
+  "python.analysis.generateWithTypeAnnotation": true,
+  "python.analysis.includeAliasesFromUserFiles": true,
+  "python.analysis.packageIndexDepths": [
+    {
+      "name": "django",
+      "depth": 5,
+      "includeAllSymbols": true
+    }
+  ],
+  "auto-close-tag.SublimeText3Mode": true,
+  "python.analysis.enableTroubleshootMissingImports": true,
+  "python.analysis.regenerateStdLibIndices": true,
+  "python.analysis.supportDocstringTemplate": true,
+  "djlint.configuration": "pyproject.toml",
+  // "djlint.ignore": ["*.py"],
+  "djlint.formatLanguages": [
+    "django-html",
+    "jinja",
+    "jinja-html",
+    "nj",
+    "njk",
+    "nunjucks",
+    "twig",
+    "handlebars",
+    "hbs",
+    "mustache",
+    "html"
+  ],
+  "[html][django-html][handlebars][hbs][mustache][jinja][jinja-html][nj][njk][nunjucks][twig]": {
+    "editor.defaultFormatter": "monosans.djlint"
+  },
+  "eslint.run": "onSave",
+  "eslint.workingDirectories": [
+    "${workspaceFolder}"
+  ]
 }
