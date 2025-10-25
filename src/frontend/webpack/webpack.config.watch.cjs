@@ -29,7 +29,14 @@ module.exports = merge(common, {
   plugins: [
     new Webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("development"),
+      // Vue 3 compile-time feature flags (for esm-bundler build)
+      "__VUE_OPTIONS_API__": JSON.stringify(true),
+      "__VUE_PROD_DEVTOOLS__": JSON.stringify(true),
+      "__VUE_PROD_HYDRATION_MISMATCH_DETAILS__": JSON.stringify(true),
     }),
+    // new Webpack.DefinePlugin({
+    // "process.env.NODE_ENV": JSON.stringify("development"),
+    // }),
     new StylelintPlugin({
       files: Path.resolve(__dirname, "../src/**/*.s?(a|c)ss"),
     }),
@@ -54,12 +61,13 @@ module.exports = merge(common, {
         include: Path.resolve(__dirname, "../src"),
         loader: "babel-loader",
       }, */
+      // ✅ FIXED JS RULE
       {
         test: /\.js$/,
         include: Path.resolve(__dirname, "../src"),
-        loader: "esbuild-loader", // replace loader for the js files
+        resourceQuery: { not: [/vue/] }, // ← excludes Vue internal modules
+        loader: "esbuild-loader",
         options: {
-          // we can pass options as we like
           target: ["es2017"],
         },
       },
