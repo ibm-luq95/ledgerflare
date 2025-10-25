@@ -66,6 +66,8 @@ import "./beach_wood_user/manager.js";
 import "./beach_wood_user/cfo.js";
 import "./dashboard/notifications.js";
 import "./management/delete_staff.js";
+import { initJournalEntryModule } from "./client/journal_entry.js";
+// import "../styles/datatable.css";
 import { setFormInputsReadOnly } from "../utils/form_helpers.js";
 import { HSTabs } from "../../node_modules/preline/dist/preline.js";
 // import { HSTabs } from "../../node_modules/preline/dist/preline.js";
@@ -73,8 +75,10 @@ import { HSTabs } from "../../node_modules/preline/dist/preline.js";
 window.document.addEventListener("DOMContentLoaded", function () {
   window.HSStaticMethods.autoInit();
   // Datatables config
-  const dataTablesInputs = document.querySelectorAll(".dt-container thead input");
-
+  const dataTablesInputs = document.querySelectorAll(
+    ".dt-container thead input",
+  );
+  initJournalEntryModule();
   dataTablesInputs.forEach((input) => {
     input.addEventListener("keydown", function (evt) {
       if ((evt.metaKey || evt.ctrlKey) && evt.key === "a") this.select();
@@ -109,7 +113,7 @@ window.document.addEventListener("DOMContentLoaded", function () {
     const dataAttrs = input.dataset;
     const checkKeepDisabled = Object.prototype.hasOwnProperty.call(
       dataAttrs,
-      "keepDisabled"
+      "keepDisabled",
     );
     if (checkKeepDisabled === true) {
       const keepDisabled = dataAttrs["keepDisabled"];
@@ -144,18 +148,22 @@ window.document.addEventListener("DOMContentLoaded", function () {
     // console.log(evt);
     console.log("Close");
   }); */
-  const staffDetailsPermissionsTabs = HSTabs.getInstance("#staffDetailsPermissionsTabs");
+  const staffDetailsPermissionsTabs = HSTabs.getInstance(
+    "#staffDetailsPermissionsTabs",
+  );
   if (staffDetailsPermissionsTabs) {
     staffDetailsPermissionsTabs.on(
       "change",
       ({ staffDetailsPermissionsTabs, prev, current }) => {
-        const btn = document.querySelector("button#updatePermissionsStaffDetailsBtn");
+        const btn = document.querySelector(
+          "button#updatePermissionsStaffDetailsBtn",
+        );
         if (current === "#permissions-tab") {
           btn.classList.remove("hidden");
         } else {
           btn.classList.add("hidden");
         }
-      }
+      },
     );
   }
   const resetFilterBtn = document.querySelector("button#resetFilterBtn");
@@ -174,4 +182,223 @@ window.document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+  // This code should be added to <head>.
+  // It's used to prevent page load glitches.
+  const html = document.querySelector("html");
+  const isLightOrAuto =
+    localStorage.getItem("hs_theme") === "light" ||
+    (localStorage.getItem("hs_theme") === "auto" &&
+      !window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const isDarkOrAuto =
+    localStorage.getItem("hs_theme") === "dark" ||
+    (localStorage.getItem("hs_theme") === "auto" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  if (isLightOrAuto && html.classList.contains("dark"))
+    html.classList.remove("dark");
+  else if (isDarkOrAuto && html.classList.contains("light"))
+    html.classList.remove("light");
+  else if (isDarkOrAuto && !html.classList.contains("dark"))
+    html.classList.add("dark");
+  else if (isLightOrAuto && !html.classList.contains("light"))
+    html.classList.add("light");
 });
+(function () {
+  "use strict";
+
+  // Country data
+  const countryData = [
+    {
+      name: "United States",
+      flag: "🇺🇸",
+      terms: "united states us usa america american",
+    },
+    {
+      name: "United Kingdom",
+      flag: "🇬🇧",
+      terms: "united kingdom uk england britain british",
+    },
+    { name: "Canada", flag: "🇨🇦", terms: "canada canadian" },
+    { name: "Australia", flag: "🇦🇺", terms: "australia australian aussie" },
+    { name: "Germany", flag: "🇩🇪", terms: "germany german deutschland" },
+    { name: "France", flag: "🇫🇷", terms: "france french" },
+    { name: "Japan", flag: "🇯🇵", terms: "japan japanese nippon" },
+    { name: "South Korea", flag: "🇰🇷", terms: "south korea korean korea" },
+    { name: "Brazil", flag: "🇧🇷", terms: "brazil brazilian brasil" },
+    { name: "India", flag: "🇮🇳", terms: "india indian bharat" },
+    { name: "China", flag: "🇨🇳", terms: "china chinese" },
+    { name: "Mexico", flag: "🇲🇽", terms: "mexico mexican" },
+    { name: "Spain", flag: "🇪🇸", terms: "spain spanish españa" },
+    { name: "Italy", flag: "🇮🇹", terms: "italy italian italia" },
+    { name: "Netherlands", flag: "🇳🇱", terms: "netherlands dutch holland" },
+  ];
+
+  // Get elements
+  const searchInput = document.getElementById("search-input");
+  const dropdownList = document.getElementById("dropdown-list");
+  const countryList = document.getElementById("country-list");
+  const noMatches = document.getElementById("no-matches");
+  const displayValue = document.getElementById("display-value");
+  const arrowIcon = document.getElementById("arrow-icon");
+
+  let isDropdownOpen = false;
+  let currentSelection = -1;
+  let filteredData = [];
+
+  // Build country option HTML
+  function buildCountryOption(country, index) {
+    return `
+                    <div class="country-option py-2 px-3 cursor-pointer hover:bg-gray-100 flex items-center transition-colors duration-150" 
+                         data-country="${country.name}" 
+                         data-index="${index}">
+                        <span class="text-2xl mr-3">${country.flag}</span>
+                        <span class="text-sm font-medium text-gray-800">${country.name}</span>
+                    </div>
+                `;
+  }
+
+  // Filter and display countries
+  function updateCountryList(searchTerm) {
+    if (searchTerm.trim() === "") {
+      filteredData = countryData.slice();
+    } else {
+      const term = searchTerm.toLowerCase();
+      filteredData = countryData.filter(
+        (country) => country.terms.toLowerCase().indexOf(term) !== -1,
+      );
+    }
+
+    if (filteredData.length === 0) {
+      countryList.innerHTML = "";
+      noMatches.classList.remove("hidden");
+    } else {
+      noMatches.classList.add("hidden");
+
+      let html =
+        '<div class="py-2 px-3 text-xs font-medium uppercase text-gray-800 bg-gray-100 sticky top-0">Actions</div>';
+      filteredData.forEach((country, index) => {
+        html += buildCountryOption(country, index);
+      });
+      countryList.innerHTML = html;
+    }
+
+    currentSelection = -1;
+    updateSelection();
+  }
+
+  // Update visual selection
+  function updateSelection() {
+    const options = countryList.querySelectorAll(".country-option");
+    options.forEach((option, index) => {
+      if (index === currentSelection) {
+        option.classList.add("bg-blue-100");
+        option.scrollIntoView({ block: "nearest" });
+      } else {
+        option.classList.remove("bg-blue-100");
+      }
+    });
+  }
+
+  // Open/close dropdown
+  function toggleDropdown(show) {
+    isDropdownOpen = show;
+    if (isDropdownOpen) {
+      dropdownList.classList.remove("hidden");
+      arrowIcon.style.transform = "rotate(180deg)";
+    } else {
+      dropdownList.classList.add("hidden");
+      arrowIcon.style.transform = "rotate(0deg)";
+      currentSelection = -1;
+    }
+  }
+
+  // Select a country
+  function selectCountry(countryName) {
+    searchInput.value = countryName;
+    // displayValue.textContent = countryName;
+    alert(countryName);
+    toggleDropdown(false);
+  }
+
+  if (searchInput) {
+    // Event: Input focus
+    searchInput.addEventListener("focus", function () {
+      updateCountryList(this.value);
+      toggleDropdown(true);
+    });
+
+    // Event: Input typing
+    searchInput.addEventListener("input", function () {
+      updateCountryList(this.value);
+      if (!isDropdownOpen) {
+        toggleDropdown(true);
+      }
+    });
+
+    // Event: Keyboard navigation
+    searchInput.addEventListener("keydown", function (e) {
+      if (
+        !isDropdownOpen &&
+        (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter")
+      ) {
+        e.preventDefault();
+        updateCountryList(this.value);
+        toggleDropdown(true);
+        return;
+      }
+
+      if (isDropdownOpen) {
+        const maxIndex = filteredData.length - 1;
+
+        switch (e.key) {
+          case "ArrowDown":
+            e.preventDefault();
+            currentSelection =
+              currentSelection < maxIndex ? currentSelection + 1 : maxIndex;
+            updateSelection();
+            break;
+
+          case "ArrowUp":
+            e.preventDefault();
+            currentSelection =
+              currentSelection > -1 ? currentSelection - 1 : -1;
+            updateSelection();
+            break;
+
+          case "Enter":
+            e.preventDefault();
+            if (currentSelection >= 0 && filteredData[currentSelection]) {
+              selectCountry(filteredData[currentSelection].name);
+            }
+            break;
+
+          case "Escape":
+            e.preventDefault();
+            toggleDropdown(false);
+            break;
+        }
+      }
+    });
+  }
+
+  if (countryList) {
+    // Event: Click on country option
+    countryList.addEventListener("click", function (e) {
+      const option = e.target.closest(".country-option");
+      if (option) {
+        const countryName = option.getAttribute("data-country");
+        selectCountry(countryName);
+      }
+    });
+  }
+
+  // Event: Click outside to close
+  document.addEventListener("click", function (e) {
+    if (!document.getElementById("combobox-wrapper").contains(e.target)) {
+      toggleDropdown(false);
+    }
+  });
+
+  // Initialize
+  updateCountryList("");
+})();
