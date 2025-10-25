@@ -4,52 +4,11 @@ version = "1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "apscheduler>=3.11.0",
-    "colorama>=0.4.6",
-    "crispy-tailwind>=1.0.3",
-    "cryptography>=45.0.4",
-    "django>=5.2.3",
-    "django-admin-rangefilter>=0.13.2",
-    "django-components>=0.141.0",
-    "django-cors-headers>=4.7.0",
-    "django-crispy-forms>=2.4",
-    "django-defender>=0.9.8",
-    "django-easy-audit>=1.3.7",
-    "django-extensions>=4.1",
-    "django-filter>=25.1",
-    "django-guardian>=3.0.0",
-    "django-import-export>=4.3.7",
-    "django-log-viewer>=1.1.8",
-    "django-maintenance-mode>=0.22.0",
-    "django-redis>=6.0.0",
-    "django-session-timeout>=0.1.0",
-    "django-valkey>=0.2.1",
-    "django-widget-tweaks>=1.5.0",
-    "djangorestframework>=3.16.0",
-    "drf-standardized-errors>=0.15.0",
-    "gunicorn>=23.0.0",
-    "hiredis>=3.2.1",
-    "numpy>=2.3.1",
-    "pandas>=2.3.0",
-    "pillow>=11.2.1",
-    "prettytable>=3.16.0",
-    "psycopg[binary]>=3.2.9",
-    "python-decouple>=3.8",
-    "python-json-logger>=3.3.0",
-    "python-magic>=0.4.27",
-    "python-webpack-boilerplate>=1.0.4",
-    "pyyaml>=6.0.2",
-    "redis>=6.2.0",
-    "requests>=2.32.4",
-    "sentry-sdk[django]>=2.30.0",
-    "stringcase>=1.2.0",
-    "whitenoise>=6.9.0",
-]
+dependencies = []
 
 [tool.black]
 line-length = 91
-target-version = ['py313']  # Updated to Python 3.13
+target-version = ['py313'] # Updated to Python 3.13
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -67,31 +26,36 @@ exclude = '''
 '''
 
 [tool.isort]
-py_version = 313  # Updated to Python 3.13
+py_version = 313 # Updated to Python 3.13
 profile = "django"
 line_length = 91
 force_single_line = true
 use_parentheses = true
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
-known_first_party = ["your_project_name"]  # Replace with your project's name
-known_third_party = ["django", "numpy", "pandas"]  # Add your third-party dependencies
+known_first_party = ["your_project_name"] # Replace with your project's name
+known_third_party = [
+    "django",
+    "numpy",
+    "pandas",
+] # Add your third-party dependencies
 
 [tool.djlint]
 profile = "django"
-extension = "html.dj"
+extension = "html,djhtml"
 indent = 4
-exclude = ".venv,venv,.tox"
+# exclude directories and file patterns (comma separated)
+exclude = ".venv,venv,.tox,build,dist,node_modules,src,src/**,**/*.py,**/__pycache__,**/migrations/**"
 blank_line_after_tag = "load,extends,include"
 blank_line_before_tag = "load,extends,include"
 max_line_length = 95
 format_attribute_template_tags = true
 format_js = true
 format_css = true
-ignore = "H006"
+ignore = "H006, H014"
 
 [tool.ruff]
 line-length = 91
-target-version = "py313"  # Updated to Python 3.13
+target-version = "py313" # Updated to Python 3.13
 indent-width = 4
 exclude = [
     ".bzr",
@@ -119,8 +83,50 @@ exclude = [
 extend-exclude = ["docs", "test", "tests"]
 
 [tool.ruff.lint]
-select = ["F", "E", "B", "I", "UP", "SIM"]
-ignore = ["D", "CPY", "T20", "DOC", "PGH"]
+# select = ["F", "E", "B", "I", "UP", "SIM"]
+# ignore = ["D", "CPY", "T20", "DOC", "PGH"]
+select = [
+    'A',     # flake8-builtins
+    'ASYNC', # https://docs.astral.sh/ruff/rules/#flake8-async-async
+    'B',     # flake8-bugbear
+    'BLE',   # flake8-blind-except
+    'C4',    # unnecessary comprehensions, map()
+    'COM',   # flake8-commas
+    'DTZ',   # flake8-datetimez
+    'E',     # pycodestyle
+    'ERA',   # No commented out code
+    'EXE',   # flake8-executable
+    'F',     # pyflakes
+    'FLY',   # flynt
+    'G',     # flake8-logging-format
+    'I',     # isort
+    'ICN',   # https://github.com/joaopalmeiro/flake8-import-conventions
+    'ISC',   # https://pypi.org/project/flake8-implicit-str-concat/
+    'LOG',   # flake8-logging
+    'PERF',  # perflint
+    'PIE',   # https://pypi.org/project/flake8-pie/
+    'PLC',   # Pylint conventions
+    'PLE',   # Pylint error
+    'PLW',   # Pylint warnings
+    'PT',    # https://pypi.org/project/flake8-pytest-style/
+    'PTH',   # flake8 use pathlib
+    'RET',   # https://pypi.org/project/flake8-return/
+    'RUF',   # Ruff rules
+    'S',     # https://docs.astral.sh/ruff/rules/#flake8-bandit-s
+    'SIM',   # https://pypi.org/project/flake8-simplify/
+    'T',     # flake8-debugger
+    'TRY',   # tryceratops
+    'UP',    # pyupgrade
+    'W',     # pycodestyle
+    "UP",
+    #'ARG',  # flake8 unused arguments (not really helpful, unused func args are common and ok)
+    # 'D', # pydocstyle (too much)
+    #'N',  # pep8-naming (too opinionated)
+    #'NPY', # numpy
+    #'PD', # pandas
+    'PL', # Full Pylint (too much)
+    #'PLR',  # Pylint refactor (too much/too opinionated)
+]
 fixable = ["ALL"]
 unfixable = []
 preview = true
@@ -144,7 +150,7 @@ preview = true
 docstring-code-format = true
 
 [tool.mypy]
-python_version = "3.13"  # Updated to Python 3.13
+python_version = "3.13"             # Updated to Python 3.13
 ignore_missing_imports = true
 follow_imports = "silent"
 no_implicit_optional = true
@@ -165,7 +171,7 @@ exclude = ["docs", "test", "tests"]
 
 [tool.bandit]
 targets = ["."]
-skips = ["B101"]  # Example: Skip assert statement checks
+skips = ["B101"] # Example: Skip assert statement checks
 
 [tool.docformatter]
 wrap-summaries = 91
@@ -175,89 +181,3 @@ blank = true
 pre-summary-newline = true
 pre-summary-space = true
 make-summary-multi-line = true
-
-[tool.pre-commit-config]
-repos = [
-    { repo = "https://github.com/astral-sh/ruff-pre-commit", rev = "v0.0.290", hooks = [{ id = "ruff", args = ["--fix"] }] },
-    { repo = "https://github.com/psf/black", rev = "23.10.0", hooks = [{ id = "black" }] },
-    { repo = "https://github.com/pre-commit/mirrors-isort", rev = "5.12.0", hooks = [{ id = "isort" }] },
-    { repo = "https://github.com/myint/docformatter", rev = "v1.5.0", hooks = [{ id = "docformatter", args = ["--wrap-summaries=91", "--wrap-descriptions=91"] }] },
-    { repo = "https://github.com/PyCQA/bandit", rev = "1.7.5", hooks = [{ id = "bandit" }] },
-]
-
-[dependency-groups]
-dev = [
-    "autopep8>=2.3.2",
-    "bandit>=1.8.5",
-    "black>=25.1.0",
-    "bpython>=0.25",
-    "colorlog>=6.9.0",
-    "curlylint>=0.13.1",
-    "djade>=1.4.0",
-    "django-admin-cli>=0.1.1",
-    "django-anonymous>=0.4.0",
-    "django-debug-permissions>=1.0.0",
-    "django-debug-toolbar>=5.2.0",
-    "django-debug-toolbar-template-profiler>=2.1.0",
-    "django-debugtools>=2.0",
-    "django-filter-stubs>=0.1.3",
-    "django-model-info>=2024.11.5",
-    "django-pdb>=0.6.2",
-    "django-request-viewer>=1.0.3",
-    "django-silk>=5.4.0",
-    "django-stubs>=5.2.1",
-    "django-stubs-ext>=5.2.1",
-    "djangorestframework-stubs[compatible-mypy]>=1.4.0",
-    "djangorestframework-types>=0.9.0",
-    "djhtml>=3.0.8",
-    "djipsum>=1.1.5",
-    "djlint>=1.36.4",
-    "docformatter>=1.7.7",
-    "docutils>=0.21.2",
-    "drf-typed>=0.3.0",
-    "factory-boy>=3.3.3",
-    "faker>=37.4.0",
-    "flake8>=7.3.0",
-    "gprof2dot>=2025.4.14",
-    "inquirer>=3.4.0",
-    "isort>=6.0.1",
-    "lxml-stubs>=0.5.1",
-    "mypy>=1.16.1",
-    "mypy-extensions>=1.1.0",
-    "pdbpp>=0.11.6",
-    "pep8>=1.7.1",
-    "phone-gen>=3.0.20",
-    "pip-chill>=1.0.3",
-    "pipdeptree>=2.26.1",
-    "prettyprinter>=0.18.0",
-    "pycodestyle>=2.14.0",
-    "pydocstyle>=6.3.0",
-    "pydot>=4.0.1",
-    "pygraphviz>=1.14",
-    "pylama>=8.4.1",
-    "pylint>=3.3.7",
-    "pylint-django>=2.6.1",
-    "pyparsing>=3.2.3",
-    "pypika>=0.48.9",
-    "python-decouple-typed>=3.11.0",
-    "remote-pdb>=2.1.0",
-    "rich>=14.0.0",
-    "ruff>=0.12.0",
-    "termcolor>=3.1.0",
-    "tqdm-stubs>=0.2.1",
-    "typed-argument-parser>=1.10.1",
-    "types-requests>=2.32.4.20250611",
-    "werkzeug>=3.1.3",
-    "yapf>=0.43.0",
-]
-documentation = [
-    "autotyping>=24.9.0",
-    "infer-types>=1.0.0",
-    "monkeytype>=23.3.0",
-    "sphinx>=8.2.3",
-]
-production = [
-    "python-json-logger>=3.3.0",
-]
-
-
