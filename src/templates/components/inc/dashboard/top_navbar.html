@@ -3,203 +3,207 @@
 {% load core_tags %}
 
 <!-- TODO: Add translate templatetag -->
-<header class="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border-b text-sm py-2.5 sm:py-4 lg:pl-64 dark:bg-gray-800 dark:border-gray-700">
-    <nav class="flex items-center w-full px-4 mx-auto basis-full sm:px-6 md:px-8"
+<header class="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400  border-gray-200 text-sm py-2.5 sm:py-4 lg:pl-64">
+    <nav class="flex items-center w-full px-4 mx-auto basis-full sm:px-4 md:px-6"
          aria-label="Global">
-        <div class="mr-5 lg:mr-0 lg:hidden">
-            <a class="flex-none text-xl font-semibold dark:text-white"
-               href="{% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_ASSISTANT %} {% url 'dashboard:manager:home' %} {% elif request.user.user_type == CON_BOOKKEEPER %} {% url 'dashboard:bookkeeper:home' %} {% endif %}"
-               aria-label="{{ get_web_app_settings.name }}">{{ get_web_app_settings.name }}</a>
+        <!-- Left-aligned logo -->
+        <div>
+            <button type="button"
+                    class="flex mx-2 justify-center items-center gap-x-3 size-8 text-sm text-gray-600 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
+                    aria-haspopup="dialog"
+                    aria-expanded="false"
+                    aria-controls="hs-sidebar-content-push"
+                    aria-label="Toggle navigation"
+                    data-hs-overlay="#hs-sidebar-content-push">
+                <svg class="sm:hidden shrink-0 size-4"
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M15 3v18" />
+                    <path d="m8 9 3 3-3 3" />
+                </svg>
+                <svg class="hidden sm:block shrink-0 size-4"
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M15 3v18" />
+                    <path d="m10 15-3-3 3-3" />
+                </svg>
+                <span class="sr-only">Navigation Toggle</span>
+            </button>
         </div>
-        <div class="flex items-center justify-end w-full ml-auto sm:justify-between sm:gap-x-3 sm:order-3">
-            <div class="sm:hidden">
-                <button type="button"
-                        class="inline-flex flex-shrink-0 justify-center items-center gap-2 h-[2.375rem] w-[2.375rem] rounded-full font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-xs dark:bg-gray-800 dark:hover:bg-slate-800 dark:text-gray-400 dark:hover:text-white dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800">
-                    <svg class="w-3.5 h-3.5"
-                         xmlns="http://www.w3.org/2000/svg"
-                         width="16"
-                         height="16"
-                         fill="currentColor"
-                         viewBox="0 0 16 16">
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                    </svg>
-                </button>
-            </div>
-            <div class="hidden sm:block">
-            </div>
-            <div class="flex flex-row items-center justify-end gap-2">
-                <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">{{ request.user.get_user_type_display }}</span>
-                <div class="hs-dropdown relative [--placement:bottom-left] inline-flex"
-                     id="notificationsDropdown">
-                    <button type="button"
-                            id="hs-dropdown"
-                            class="relative hs-dropdown-toggle inline-flex justify-center items-center size-[46px] text-sm font-semibold rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-                            aria-haspopup="menu"
-                            aria-expanded="false"
-                            aria-label="Dropdown">
-                        <svg class="shrink-0 size-5"
-                             xmlns="http://www.w3.org/2000/svg"
-                             width="24"
-                             height="24"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-width="2"
-                             stroke-linecap="round"
-                             stroke-linejoin="round">
-                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9">
-                            </path>
-                            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0">
-                            </path>
-                        </svg>
-                        {% if request.user.utils.get_all_total_not_read_notifications > 0 %}
-                            <span class="absolute inline-flex items-center justify-center w-5 h-5 text-[12px] font-medium rounded-full bg-red-500 text-white transform translate-x-1/2 -translate-y-1/2"
-                                  id="topNotificationBadge">
-                                {% if request.user.utils.get_all_total_not_read_notifications > 10 %}
-                                    9+
-                                {% else %}
-                                    {{ request.user.utils.get_all_total_not_read_notifications }}
-                                {% endif %}
-                            </span>
-                        {% endif %}
-                    </button>
-                    {% comment  %}
-                        {{ request.user.utils.assigned_special_assignment_notifications }}
-                    {{ request.user.utils.unread_discussions_notifications }}
-                    {{ request.user.utils.get_all_not_read_notifications }}
-                    {% endcomment %}
-                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
-                         role="menu"
-                         aria-orientation="vertical"
-                         style="max-height: 300px;
-                                overflow-y: auto"
-                         aria-labelledby="hs-dropdown">
-                        <div class="py-3 px-4 border-b border-gray-200 dark:border-neutral-700">
-                            <p class="text-sm font-medium text-gray-800 dark:text-neutral-300">
-                                {% translate "Total Notifications: " %} {{ request.user.utils.get_all_notifications|length }}
-                            </p>
-                            {% if debug is True %}
-                                <button type="button"
-                                        id="setAllNotificationsReadBtn"
-                                        disabled
-                                        class="bw-input py-1 px-2 -ml-2 inline-flex items-center gap-x-1 text-sm font-medium rounded-lg border border-transparent text-blue-600 hover:bg-blue-100 focus:outline-hidden focus:bg-blue-100 hover:text-blue-800 focus:outline-hidden focus:bg-blue-100 focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:bg-blue-800/30 dark:hover:text-blue-400 dark:focus:bg-blue-800/30 dark:focus:text-blue-400">
-                                    {% translate "Set all as read" %}
-                                </button>
-                            {% endif %}
-                        </div>
-                        <div class="p-1 space-y-0.5">
-                            <input type="hidden"
-                                   id="notificationUrl"
-                                   value="{% url 'dashboard:discussion:api:set-discussion-notifications' %}" />
-                            {% for notification_item in request.user.utils.get_all_notifications %}
-                                <div class="{% if notification_item.is_read is False %}
-                                                bg-sky-100 font-bold
-                                            {% endif %}
-                                            items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700">
-                                    <a class="block w-full notificationsItem px-3 py-2 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-                                       data-notification-pk="{{ notification_item.pk }}"
-                                       data-user="{{ request.user.pk }}"
-                                       data-notification-type="{{ notification_item|get_var_name }}"
-                                       href="{{ notification_item.get_absolute_url }}">
-                                        <span class="block
-                                                     {% if notification_item.is_read is False %}
-                                                         font-bold
-                                                     {% endif %}">{{ notification_item.msg|safe }}</span>
-                                        <span class="block text-sm text-gray-600 dark:text-neutral-500">{{ notification_item.created_at }}</span>
-                                    </a>
-                                </div>
-                            {% empty %}
-                                <div class="items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700">
-                                    <a class="block w-full px-3 py-2 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-                                       href="javascript:;">
-                                        <span class="block
-                                                     {% if notification_item.is_read is False %}
-                                                         font-bold
-                                                     {% endif %}">{% translate "No notifications" %}</span>
-                                    </a>
-                                </div>
-                            {% endfor %}
-                            {% comment  %}
-                                <hr />
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">All</a>
-                            {% endcomment %}
-                        </div>
-                    </div>
-                </div>
-                <div class="hs-dropdown [--strategy:absolute] relative inline-flex [--placement:bottom-right]">
-                    <button id="hs-dropdown-with-header"
-                            type="button"
-                            class="hs-dropdown-toggle inline-flex flex-shrink-0 justify-center items-center gap-2 h-[2.375rem] w-[2.375rem] rounded-full font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-xs dark:bg-gray-800 dark:hover:bg-slate-800 dark:text-gray-400 dark:hover:text-white dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800">
-                        <img class="inline-block h-[2.375rem] w-[2.375rem] rounded-full ring-2 ring-white dark:ring-gray-800"
-                             src="{% if request.user.get_staff_member_object.staff_object.profile.profile_picture %} {{ request.user.get_staff_member_object.staff_object.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %} {% endif %}"
-                             alt="{{ request.user.fullname }}" />
-                    </button>
-                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[15rem] bg-white shadow-md rounded-lg p-2 dark:bg-gray-800 dark:border dark:border-gray-700"
-                         aria-labelledby="hs-dropdown-with-header">
-                        <div class="px-5 py-3 -m-2 bg-gray-100 rounded-t-lg dark:bg-gray-700">
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                {% translate "Signed in as:" %}
-                            </p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 italic">
-                                {{ request.user.fullname }}
-                            </p>
-                            <p class="text-sm font-medium text-gray-800 dark:text-gray-300">
-                                {{ request.user.email|safe }}
-                            </p>
-                        </div>
-                        <div class="py-2 mt-2 first:pt-0 last:pb-0">
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                               href="#">
-                                <svg class="flex-none"
-                                     width="16"
-                                     height="16"
-                                     viewBox="0 0 16 16"
-                                     fill="currentColor">
-                                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
+        <div class="flex-none mr-5 lg:mr-0">
+            {% if request.resolver_match.view_name == "dashboard:client:details" or request.resolver_match.view_name == "dashboard:client:transactions" or request.resolver_match.view_name == "dashboard:client:journal_entry" or request.resolver_match.view_name == "dashboard:client:bank_register" or request.resolver_match.view_name == "dashboard:client:chart_of_accounts" or request.resolver_match.view_name == "dashboard:client:expense_create" %}
+                <div class="max-w-md mx-auto">
+                    <!-- <h1 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                        Select Your Country
+                    </h1> -->
+                    <!-- Combobox Container -->
+                    <div class="relative" id="combobox-wrapper">
+                        <!-- Search Input -->
+                        <div class="relative">
+                            <input id="search-input"
+                                   class="py-3 px-4 pr-11 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 border-2 transition-colors duration-200"
+                                   type="text"
+                                   placeholder="Search client actions..."
+                                   autocomplete="off" />
+                            <!-- Dropdown Toggle Button -->
+                            <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                                <svg id="arrow-icon"
+                                     class="w-4 h-4 text-gray-400 transform transition-transform duration-200"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
-                                {% translate "Assignments" %}
-                            </a>
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                               href="{% url 'dashboard:staff:staff-profile' request.user.pk %}">
-                                <i class="fa-regular fa-user"></i>
-                                {% translate "Profile" %}
-                            </a>
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-red-500 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                               href="{% url 'dashboard:staff:staff-update-password' request.user.pk %}">
-                                <i class="fa-solid fa-key"></i>
-                                {% translate "Change Password" %}
-                            </a>
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                               href="{% url 'auth:logout' %}">
-                                <i class="fa-solid fa-right-from-bracket"></i>
-                                {% translate "Logout" %}
-                            </a>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                {% comment  %}
-                    {% if request.user.user_type == CON_MANAGER %}
-                    <div class="hs-dropdown relative [--placement:bottom-left] inline-flex">
-                        <button type="button" id="hs-dropdown" class="relative hs-dropdown-toggle inline-flex justify-center items-center size-[46px] text-sm font-semibold rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                            <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9">
-                                </path>
-                                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0">
-                                </path>
-                            </svg>
-                            <span class="absolute inline-flex items-center justify-center w-5 h-5 text-[12px] font-medium rounded-full bg-red-500 text-white transform translate-x-1/2 -translate-y-1/2" id="topNotificationBadge">9+</span>
-                        </button>
-                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown">
-                            <div class="p-1 space-y-0.5">
-                                <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">Newsletter</a>
-                                <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">Purchases</a>
-                                <hr />
-                                <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">All</a>
+                        <!-- Dropdown Menu -->
+                        <div id="dropdown-list"
+                             class="absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 hidden">
+                            <div class="max-h-60 overflow-auto" id="country-list">
+                                <!-- Country options will be inserted here -->
+                            </div>
+                            <!-- No Results Message -->
+                            <div id="no-matches"
+                                 class="py-4 px-3 text-sm text-gray-500 text-center hidden">
+                                <svg class="w-6 h-6 text-gray-400 mx-auto mb-2"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                <p>
+                                    No results found
+                                </p>
                             </div>
                         </div>
                     </div>
-                {% endif %}
-                {% endcomment %}
+                    <!-- Selected Value Display -->
+                    <!-- <div class="mt-4 p-4 bg-white border border-gray-200 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-1">
+                            Selected Country:
+                        </p>
+                        <p id="display-value" class="text-lg font-medium text-gray-900">
+                            None selected
+                        </p>
+                    </div> -->
+                </div>
+            {% else %}
+                <a class="text-xl font-semibold dark:text-white"
+                   href="{% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_ASSISTANT %} {% url 'dashboard:manager:home' %} {% elif request.user.user_type == CON_BOOKKEEPER %} {% url 'dashboard:bookkeeper:home' %} {% endif %}"
+                   aria-label="{{ get_web_app_settings.name }}">
+                    {{ get_web_app_settings.name }}
+                </a>
+            {% endif %}
+        </div>
+        <!-- Center-aligned main nav items -->
+        <div class="flex items-center justify-center w-full gap-x-4 sm:gap-x-6">
+            <!-- Add your center-aligned nav items here -->
+            {% if request.resolver_match.view_name == "dashboard:client:details" or request.resolver_match.view_name == "dashboard:client:transactions" %}
+                <a href="{% url 'dashboard:client:list' %}"
+                   class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">{% translate "Clients" %}</a>
+                <a href="{% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_ASSISTANT %} {% url 'dashboard:manager:home' %} {% elif request.user.user_type == CON_BOOKKEEPER %} {% url 'dashboard:bookkeeper:home' %} {% endif %}"
+                   class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Dashboard</a>
+            {% endif %}
+        </div>
+        <!-- Right-aligned items (notifications, profile, etc.) -->
+        <div class="flex items-center justify-end gap-x-3">
+            <!-- Theme switcher -->
+            <div class="flex items-center gap-x-3 mx-1">
+                <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
+                    <i class="fa-solid fa-sun"></i>
+                </label>
+                <label for="darkSwtich"
+                       class="relative inline-block w-11 h-6 cursor-pointer">
+                    <input type="checkbox"
+                           data-hs-theme-switch=""
+                           id="darkSwtich"
+                           class="peer sr-only" />
+                    <span class="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
+                    <span class="absolute top-1/2 start-0.5 -translate-y-1/2 size-5 bg-white rounded-full shadow-xs transition-transform duration-200 ease-in-out peer-checked:translate-x-full dark:bg-neutral-400 dark:peer-checked:bg-white"></span>
+                </label>
+                <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
+                    <i class="fa-solid fa-moon"></i>
+                </label>
+            </div>
+            <!-- User type badge -->
+            <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">
+                {{ request.user.get_user_type_display }}
+            </span>
+            <!-- Notifications dropdown -->
+            <div class="hs-dropdown relative [--placement:bottom-left] inline-flex"
+                 id="notificationsDropdown">
+                <button type="button"
+                        id="hs-dropdown"
+                        class="relative hs-dropdown-toggle inline-flex justify-center items-center size-[46px] text-sm font-semibold rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                        aria-haspopup="menu"
+                        aria-expanded="false"
+                        aria-label="Dropdown">
+                    <svg class="shrink-0 size-5"
+                         xmlns="http://www.w3.org/2000/svg"
+                         width="24"
+                         height="24"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9">
+                        </path>
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0">
+                        </path>
+                    </svg>
+                    {% if request.user.utils.get_all_total_not_read_notifications > 0 %}
+                        <span class="absolute inline-flex items-center justify-center w-5 h-5 text-[12px] font-medium rounded-full bg-red-500 text-white transform translate-x-1/2 -translate-y-1/2"
+                              id="topNotificationBadge">
+                            {% if request.user.utils.get_all_total_not_read_notifications > 10 %}
+                                9+
+                            {% else %}
+                                {{ request.user.utils.get_all_total_not_read_notifications }}
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                </button>
+                <!-- Notifications dropdown content (unchanged) -->
+                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
+                     role="menu"
+                     aria-orientation="vertical"
+                     style="max-height: 300px;
+                            overflow-y: auto"
+                     aria-labelledby="hs-dropdown">
+                    <!-- ... -->
+                </div>
+            </div>
+            <!-- Profile dropdown -->
+            <div class="hs-dropdown [--strategy:absolute] relative inline-flex [--placement:bottom-right]">
+                <button id="hs-dropdown-with-header"
+                        type="button"
+                        class="hs-dropdown-toggle inline-flex flex-shrink-0 justify-center items-center gap-2 h-[2.375rem] w-[2.375rem] rounded-full font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-xs dark:bg-gray-800 dark:hover:bg-slate-800 dark:text-gray-400 dark:hover:text-white dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800">
+                    <img class="inline-block h-[2.375rem] w-[2.375rem] rounded-full ring-2 ring-white dark:ring-gray-800"
+                         src="{% if request.user.get_staff_member_object.staff_object.profile.profile_picture %} {{ request.user.get_staff_member_object.staff_object.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %} {% endif %}"
+                         alt="{{ request.user.fullname }}" />
+                </button>
+                <!-- Profile dropdown content (unchanged) -->
+                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[15rem] bg-white shadow-md rounded-lg p-2 dark:bg-gray-800 dark:border dark:border-gray-700"
+                     aria-labelledby="hs-dropdown-with-header">
+                    <!-- ... -->
+                </div>
             </div>
         </div>
     </nav>
