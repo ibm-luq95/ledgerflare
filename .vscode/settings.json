@@ -10,7 +10,7 @@
   "[html]": {
     "editor.defaultFormatter": "monosans.djlint"
   },
-  "chat.agent.enabled": true,
+  "chat.agent.enabled": false,
   // "htmlhint.configFile": ".htmlhintrc",
   "htmlhint.options": {
     "--config": ".htmlhintrc"
@@ -18,7 +18,7 @@
   "djlint.useNewLinterOutputParser": true,
   // "djlint.preserveBlankLines": true
   "djlint.useVenv": false,
-  "djlint.pythonPath": "/home/ibrahim-pc/.pyenv/versions/3.13.7/bin/python3",
+  "djlint.pythonPath": "/home/ibrahim-pc/.virtualenvs/Leadger_Flear_Venv3.13/bin/python3",
   "windsurfPyright.analysis.inlayHints.variableTypes": true,
   "windsurfPyright.analysis.inlayHints.genericTypes": true,
   "windsurfPyright.analysis.inlayHints.functionReturnTypes": true,
@@ -143,7 +143,7 @@
     // Keep .vscode folder visible for workspace settings
     ".vscode": false
   },
-  "python.defaultInterpreterPath": "/run/media/ibrahim-pc/Primary/P_IBM/MY_Projects/Freelancing/Albert_Salazar/Beach_Wood_Financial/.venv/bin/python3",
+  "python.defaultInterpreterPath": "/home/ibrahim-pc/.virtualenvs/Leadger_Flear_Venv3.13/bin/python3",
   "python.terminal.executeInFileDir": true,
   "python.terminal.focusAfterLaunch": true,
   "autoDocstring.docstringFormat": "sphinx",
@@ -163,6 +163,11 @@
   "python.analysis.packageIndexDepths": [
     {
       "name": "django",
+      "depth": 5,
+      "includeAllSymbols": true
+    },
+    {
+      "name": "rich",
       "depth": 5,
       "includeAllSymbols": true
     }
@@ -190,7 +195,5 @@
     "editor.defaultFormatter": "monosans.djlint"
   },
   "eslint.run": "onSave",
-  "eslint.workingDirectories": [
-    "${workspaceFolder}"
-  ]
+  "eslint.workingDirectories": ["${workspaceFolder}"]
 }
