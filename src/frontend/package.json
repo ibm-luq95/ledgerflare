@@ -89,7 +89,6 @@
     "@preline/datepicker": "^3.2.3",
     "@preline/dropdown": "^3.2.3",
     "@preline/file-upload": "^3.2.3",
-    "@preline/helper-apexcharts": "^3.2.3",
     "@preline/input-number": "^3.2.3",
     "@preline/overlay": "^3.2.3",
     "@preline/range-slider": "^3.2.3",
