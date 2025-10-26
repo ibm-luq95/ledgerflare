@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "Webpack boilerplate for Django & Flask",
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack --config webpack/webpack.config.prod.js",
+    "build": "cross-env NODE_ENV=production webpack --config webpack/webpack.config.prod.cjs",
     "start": "webpack serve --config webpack/webpack.config.dev.js",
     "watch": "cross-env NODE_ENV=dev webpack --watch --config webpack/webpack.config.watch.cjs",
     "tailwindcss": "tailwindcss -i ./src/styles/index.scss -o ./build/css/app.css --watch"
