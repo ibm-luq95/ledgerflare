@@ -45,12 +45,16 @@ module.exports = merge(common, {
         },
       },
       {
-        test: /\.s?css/i,
+        test: /\.s?css$/i,
         use: [
           MiniCssExtractPlugin.loader,
-          "css-loader",
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+            },
+          },
           "postcss-loader",
-          "sass-loader",
         ],
       },
       {
