@@ -26,10 +26,10 @@ module.exports = {
   entry: {
     ...getEntryObject(),
     // Add a new entry point for ApexCharts and its Preline helper
-    "apexcharts-helper": [
-      Path.resolve(__dirname, "../node_modules/apexcharts/dist/apexcharts.min.js"),
-      Path.resolve(__dirname, "../node_modules/@preline/helper-apexcharts/index.js"),
-    ],
+    // "apexcharts-helper": [
+    //   Path.resolve(__dirname, "../node_modules/apexcharts/dist/apexcharts.min.js"),
+    //   Path.resolve(__dirname, "../node_modules/@preline/helper-apexcharts/index.js"),
+    // ],
   },
   output: {
     path: Path.join(__dirname, "../build"),
