@@ -21,7 +21,9 @@
                 <div class="mt-2 text-sm text-red-700">
                     <ul class="list-disc space-y-1 pl-5">
                         {% for error in form.errors %}
-                            <li>{% translate "Error in: " %} {{ error }}</li>
+                            <li>
+                                {% translate "Error in: " %} {{ error }}
+                            </li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -30,70 +32,81 @@
     </div>
 {% endif %}
 {% bw_split_form_hidden_and_not_inputs form_object=form as all_form_inputs %}
-<div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
-    <div class="p-4 md:p-5">
+<div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
+    <div class="p-4 sm:p-7">
         {% if form_title %}
-            <h3 class="text-lg my-2 font-bold text-gray-800 dark:text-white">{{ form_title }}</h3>
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+                {{ form_title }}
+            </h3>
         {% endif %}
         {% if form_subtitle %}
-            <p class="mb-4 text-gray-500 dark:text-gray-400">{{ form_subtitle }}</p>
+            <p class="mt-1 text-sm text-gray-600 dark:text-neutral-400">
+                {{ form_subtitle }}
+            </p>
         {% endif %}
-        <hr class="mt-2 mb-5" />
+        {% if form_title or form_subtitle %}
+            <div class="mt-5 border-t border-gray-200 dark:border-neutral-700">
+            </div>
+        {% endif %}
         {# Start Form #}
         <form id="{{ form_id }}"
-              {% if extra_form_css_classes %}class="{{ extra_form_css_classes }}"{% endif %}
+              {% if extra_form_css_classes %}
+                  class="{{ extra_form_css_classes }} mt-5"
+              {% else %}
+                  class="mt-5"
+              {% endif %}
               method="{{ form_method }}"
               action="{{ form_action_url }}"
-              {% if is_upload_form == True %}enctype="multipart/form-data"{% endif %}>
+              {% if is_upload_form == True %}
+                  enctype="multipart/form-data"
+              {% endif %}>
             <fieldset form="{{ form_id }}">
                 {% csrf_token %}
-                <!-- Grid -->
-                <div class="grid grid-cols-12 gap-4 sm:gap-6">
+                <!-- Horizontal Form Grid -->
+                <div class="space-y-5">
                     {% for field in all_form_inputs.normal_inputs %}
-                        <div class="col-span-2">
-                            {% bw_label html_for=field.auto_id lbl_text=field.label is_required=field.field.required %}
-                        </div>
-                        <!-- End Col -->
-                        <div class="col-span-10">
-                            {% bw_get_form_widget_attrs_as_dict field.field as widget_attrs %}
-                            {# {{ input.field|bw_get_form_field_type }} #}
-                            <div class="relative">
-                                {% comment %}
-                                {{ field|field_type }}
-                                {% endcomment %}
-                                <!-- Boolean Field -->
+                        <div class="grid sm:grid-cols-12 gap-2 sm:gap-4 sm:items-start">
+                            <!-- Label Column (spans 3 columns on sm+ screens) -->
+                            <div class="sm:col-span-2">
+                                {% bw_label html_for=field.auto_id lbl_text=field.label is_required=field.field.required %}
+                            </div>
+                            <!-- Input Column (spans 9 columns on sm+ screens) -->
+                            <div class="sm:col-span-9">
+                                {% bw_get_form_widget_attrs_as_dict field.field as widget_attrs %}
                                 {% if field|field_type == 'booleanfield' %}
                                     {% bw_switch bound_field=field css_classes=BW_FULL_INPUT_CSS_CLASSES %}
-                                {% elif field|field_type == 'datefield' or field|field_type == 'emailfield' or field|field_type == "passwordfield" or field|field_type == "charfield" or field|field_type == 'datetimefield' or field|field_type == 'urlfield' or field|field_type == "decimalfield" or field|field_type == "integerfield" or field|field_type == "slugfield" or field|field_type == "uuidfield" or field|field_type == "urlfield" %}
+                                {% elif field|field_type in 'datefield,emailfield,passwordfield,charfield,datetimefield,urlfield,decimalfield,integerfield,slugfield,uuidfield' %}
                                     {% render_field field class+=BW_PRELINE_TEXT_INPUT_CSS_CLASSES placeholder=widget_attrs.placeholder %}
                                 {% elif field|field_type == "modelmultiplechoicefield" or field|field_type == "multiplechoicefield" or field|field_type == "modelchoicefield" %}
                                     {% if field.field.widget.choices %}
                                         {% if field.field.widget|bw_get_form_field_type == "Select" or field.field.widget|bw_get_form_field_type == "SelectMultiple" %}
-                                            {% with select_multiple=field.field.widget|bw_get_form_field_type %}
-                                                {% render_field field class+=BW_PRELINE_TEXT_INPUT_CSS_CLASSES placeholder=widget_attrs.placeholder %}
-                                            {% endwith %}
-                                        {% elif field.field.widget|bw_get_form_field_type == "CheckboxSelectMultiple" or field.field|bw_get_form_field_type == "MultipleChoiceField" %}
-                                            {% for checkbox_field in field %}
-                                                {% bw_checkbox field=checkbox_field css_classes=BW_PRELINE_CHECKBOX_CSS_CLASSES %}
-                                            {% endfor %}
+                                            {% render_field field class+=BW_PRELINE_TEXT_INPUT_CSS_CLASSES placeholder=widget_attrs.placeholder %}
+                                        {% elif field.field.widget|bw_get_form_field_type == "CheckboxSelectMultiple" %}
+                                            <div class="space-y-2">
+                                                {% for checkbox_field in field %}
+                                                    {% bw_checkbox field=checkbox_field css_classes=BW_PRELINE_CHECKBOX_CSS_CLASSES %}
+                                                {% endfor %}
+                                            </div>
                                         {% endif %}
                                     {% else %}
-                                        <p class="text-yellow-500 font-semibold text-[14px] relative top-2">
+                                        <p class="text-sm text-yellow-600 dark:text-yellow-500">
                                             {% translate "No - "|add:field.label %}
                                         </p>
                                     {% endif %}
                                 {% else %}
                                     {% render_field field class+=BW_PRELINE_TEXT_INPUT_CSS_CLASSES placeholder=widget_attrs.placeholder %}
                                 {% endif %}
+                                <!-- Help Text -->
                                 {% if field.help_text and field|field_type != 'booleanfield' %}
-                                    <p class="text-sm text-gray-600 mt-2"
+                                    <p class="mt-2 text-sm text-gray-500 dark:text-neutral-500"
                                        id="{{ field.id_for_label|add:'helper' }}">
                                         {{ field.help_text|safe }}
                                     </p>
                                 {% endif %}
+                                <!-- Error Messages -->
                                 {% if field.errors %}
                                     {% for error in field.errors %}
-                                        <p class="text-sm text-red-600 mt-2"
+                                        <p class="mt-2 text-sm text-red-600 dark:text-red-500"
                                            id="{{ field.id_for_label|add:'error' }}">
                                             {{ error }}
                                         </p>
@@ -103,46 +116,45 @@
                         </div>
                     {% endfor %}
                     {% if current_password %}
-                        <div class="col-span-2">{% bw_label lbl_text="Current Password:" %}</div>
-                        <div class="col-span-10">
-                            <div class="relative pt-2">
-                                <p class="font-mono text-sm">{{ current_password }}</p>
+                        <div class="grid sm:grid-cols-12 gap-2 sm:gap-4 sm:items-start">
+                            <div class="sm:col-span-3">
+                                {% bw_label lbl_text="Current Password:" %}
+                            </div>
+                            <div class="sm:col-span-9">
+                                <p class="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm font-mono bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400">
+                                    {{ current_password }}
+                                </p>
                             </div>
                         </div>
                     {% endif %}
                 </div>
+                <!-- Hidden Inputs -->
                 {% if all_form_inputs.hidden_inputs %}
-                    {% for hidden_input in all_form_inputs.hidden_inputs %}{{ hidden_input }}{% endfor %}
+                    {% for hidden_input in all_form_inputs.hidden_inputs %}
+                        {{ hidden_input }}
+                    {% endfor %}
                 {% endif %}
-                <!-- End Grid -->
             </fieldset>
         </form>
         {# End Form #}
     </div>
     {% if is_btns_enabled is True %}
-        <div class="bg-gray-50 text-right border-t rounded-b-xl py-3 px-4 md:py-3 md:px-5 dark:bg-slate-900 dark:border-gray-700">
-            <div class="mt-1 flex justify-end gap-x-2">
-                <div class="hs-tooltip inline-block">
-                    {% if hide_back_btn is False %}
-                        <a href="{{ request.META.HTTP_REFERER }}"
-                           disabled
-                           id="formBackBtn"
-                           class="hs-tooltip-toggle {{ BW_FULL_INPUT_CSS_CLASSES }} py-3 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
-                            <i class="fa-solid fa-arrow-left w-3.5 h-3.5"></i>
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                  role="tooltip">{% translate "Back" %}</span>
-                        </a>
-                    {% endif %}
-                </div>
-                {% if hide_submit_btn is False %}
-                    <button type="submit"
-                            disabled
-                            form="{{ form_id }}"
-                            class="{{ BW_FULL_INPUT_CSS_CLASSES }} py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold align-middle bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
-                        {{ submit_btn_text }}
-                    </button>
-                {% endif %}
-            </div>
+        <div class="flex justify-end items-center gap-x-2 py-3 px-4 bg-gray-50 border-t border-gray-200 dark:bg-neutral-800 dark:border-neutral-700">
+            {% if hide_back_btn is False %}
+                <a href="{{ request.META.HTTP_REFERER }}"
+                   id="formBackBtn"
+                   class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
+                    <i class="fa-solid fa-arrow-left flex-shrink-0 size-4"></i>
+                    {% translate "Back" %}
+                </a>
+            {% endif %}
+            {% if hide_submit_btn is False %}
+                <button type="submit"
+                        form="{{ form_id }}"
+                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                    {{ submit_btn_text }}
+                </button>
+            {% endif %}
         </div>
     {% endif %}
 </div>
