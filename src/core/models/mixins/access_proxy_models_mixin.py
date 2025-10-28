@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-#
-from django.db import models
 from typing import Optional
+
+from django.db import models
 from django.db.models import Model
 
 
 class AccessProxyModelMixin(models.Model):
-    """
-    Abstract base class that provides a method to retrieve the proxy model for a given
+    """Abstract base class that provides a method to retrieve the proxy model for a given
     instance.
 
     This class is meant to be used as a mixin for other models that have corresponding proxy models.
@@ -27,8 +26,7 @@ class AccessProxyModelMixin(models.Model):
         abstract = True
 
     def get_proxy_model(self) -> Optional[Model]:
-        """
-        Retrieves the proxy model for the current instance.
+        """Retrieves the proxy model for the current instance.
 
         This method checks the model name of the current instance and retrieves the corresponding proxy model.
         The proxy models are imported dynamically based on the model name.
@@ -52,6 +50,10 @@ class AccessProxyModelMixin(models.Model):
                 from assistant.models.assistant_proxy import AssistantProxy
 
                 model = AssistantProxy.objects.get(pk=self.pk)
+            case "cfo":
+                from cfo.models.proxy import CFOProxy
+
+                model = CFOProxy.objects.get(pk=self.pk)
             case "job":
                 from job.models.job_proxy import JobProxy
 
