@@ -1,21 +1,32 @@
 from django.conf import settings
-from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import Http404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView
+from django.views.generic import DeleteView
+from django.views.generic import DetailView
+from django.views.generic import ListView
+from django.views.generic import UpdateView
 
 from core.cache import BWSiteSettingsViewMixin
-from core.choices import JobStatusEnum, JobStateEnum
+from core.choices import JobStateEnum
+from core.choices import JobStatusEnum
 from core.config.forms import BWFormRenderer
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
-from core.constants.status_labels import CON_ARCHIVED, CON_COMPLETED, CON_DRAFT
-from core.constants.users import CON_BOOKKEEPER, CON_ASSISTANT, CON_MANAGER
+from core.constants.status_labels import CON_ARCHIVED
+from core.constants.status_labels import CON_COMPLETED
+from core.constants.status_labels import CON_DRAFT
+from core.constants.users import CON_ASSISTANT
+from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_MANAGER
 from core.utils.developments.debugging_print_object import DebuggingPrint
-from core.views.mixins import BWLoginRequiredMixin, BWBaseListViewMixin
+from core.views.mixins import BWBaseListViewMixin
+from core.views.mixins import BWLoginRequiredMixin
 from core.views.mixins.update_previous_mixin import UpdateReturnPreviousMixin
 from discussion.forms import DiscussionMiniForm
 from document.forms import DocumentForm
