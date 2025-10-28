@@ -31,7 +31,7 @@
   "ruff.format.preview": true,
   "ruff.lineLength": 88,
   "ruff.trace.server": "messages",
-  "ruff.configuration": "./pyproject.toml",
+  "ruff.configuration": "./ruff.toml",
   "files.watcherExclude": {
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,

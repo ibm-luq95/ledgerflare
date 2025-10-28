@@ -136,18 +136,8 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "__init__.py" = ["E402"]
 "**/{tests,docs,tools}/*" = ["E402"]
 
-[tool.ruff.lint.isort]
-force-single-line = true
-force-sort-within-sections = false
-lines-after-imports = 2
 
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
-preview = true
-docstring-code-format = true
+
 
 [tool.mypy]
 python_version = "3.13"             # Updated to Python 3.13
