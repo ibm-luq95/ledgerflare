@@ -9,11 +9,18 @@ from __future__ import annotations
 import inspect
 import json
 from contextlib import contextmanager
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from dataclasses import field
 from datetime import datetime
-from enum import Enum, auto
+from enum import Enum
+from enum import auto
 from functools import singledispatch
-from typing import Any, Final, Literal, Protocol, Self, TypeAlias
+from typing import Any
+from typing import Final
+from typing import Literal
+from typing import Protocol
+from typing import Self
+from typing import TypeAlias
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
@@ -27,12 +34,16 @@ from rich.markdown import Markdown
 from rich.markup import escape
 from rich.panel import Panel
 from rich.pretty import Pretty
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.prompt import Confirm, Prompt
+from rich.progress import Progress
+from rich.progress import SpinnerColumn
+from rich.progress import TextColumn
+from rich.prompt import Confirm
+from rich.prompt import Prompt
 from rich.status import Status
 from rich.syntax import Syntax
 from rich.table import Table
 from rich.tree import Tree
+
 
 # Type aliases
 JSONSerializable: TypeAlias = (
@@ -407,6 +418,7 @@ class EnhancedDebuggingPrint:
         --------
         :meth:`display_django_model`: Specialized Django model display
         :meth:`display_queryset`: Django QuerySet display method
+
         """
         if not self.is_debugging:
             return
