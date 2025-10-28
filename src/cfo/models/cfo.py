@@ -1,9 +1,10 @@
-from core.models.mixins import BaseModelMixin, StaffMemberMixin
+from core.models.mixins import BaseModelMixin
+from core.models.mixins import StaffMemberMixin
 from core.models.mixins.access_proxy_models_mixin import AccessProxyModelMixin
 
 
 class CFO(BaseModelMixin, StaffMemberMixin, AccessProxyModelMixin):
-    """CFO model
+    """CFO model.
 
     Represents a CFO in the application.
     Inherits from BaseModelMixin, StaffMemberMixin, and AccessProxyModelMixin.
