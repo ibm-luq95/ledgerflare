@@ -1,3 +1,6 @@
+from core.utils.developments.enhanced_debugging_print import ENHANCED_DEBUGGING_PRINT_INSTANCE
+from core.utils.developments.enhanced_debugging_print import EnhancedDebuggingPrint
+from core.constants.users import CON_CFO
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -120,6 +123,10 @@ class ClientListView(
         queryset = super().get_queryset()
         if self.request.user.user_type == CON_BOOKKEEPER:
             queryset = self.request.user.bookkeeper.get_proxy_model().clients.all()
+        if self.request.user.user_type == CON_CFO:
+            # ENHANCED_DEBUGGING_PRINT_INSTANCE.display_django_model(self.request.user)
+            # ENHANCED_DEBUGGING_PRINT_INSTANCE.console.print(self.request.user.cfo)
+            queryset = self.request.user.cfo.get_proxy_model().clients.all()
         self.filterset = ClientFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
