@@ -137,8 +137,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "**/{tests,docs,tools}/*" = ["E402"]
 
 
-
-
 [tool.mypy]
 python_version = "3.13"             # Updated to Python 3.13
 ignore_missing_imports = true
@@ -164,9 +162,8 @@ targets = ["."]
 skips = ["B101"] # Example: Skip assert statement checks
 
 [tool.docformatter]
-wrap-summaries = 91
-wrap-descriptions = 91
-black = true
+wrap-summaries = 82
+wrap-descriptions = 81
 blank = true
 pre-summary-newline = true
 pre-summary-space = true
