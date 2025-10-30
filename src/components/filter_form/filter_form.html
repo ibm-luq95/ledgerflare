@@ -1,9 +1,9 @@
 {% load widget_tweaks bw_form_helpers %}
 {% load i18n %}
 
-<div class="mt-3 flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
+<div class="mt-2 flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
     <div class="p-4 md:p-5">
-        <h3 class="text-lg border-b mb-3 pb-2 font-bold text-gray-800 dark:text-white">
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white">
             {{ filter_form_title }}
         </h3>
         <form method="{{ filter_form_method }}"
@@ -161,8 +161,8 @@
                 </fieldset>
             </form>
         </div>
-        <div class="bg-gray-100 border-t rounded-b-xl py-2 px-4 md:py-2 md:px-5 dark:bg-gray-800 dark:border-gray-700">
-            <div class="flex flex-row-reverse">
+        <div class="bg-gray-100 border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700">
+            <div class="flex flex-row-reverse justify-end">
                 <div class="hs-tooltip inline-block">
                     <button type="submit"
                             {% if is_disabled is True %}
