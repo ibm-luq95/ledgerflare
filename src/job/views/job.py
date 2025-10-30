@@ -23,7 +23,9 @@ from core.constants.status_labels import CON_COMPLETED
 from core.constants.status_labels import CON_DRAFT
 from core.constants.users import CON_ASSISTANT
 from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_CFO
 from core.constants.users import CON_MANAGER
+from core.models.querysets.base_queryset import BaseQuerySetMixin
 from core.utils.developments.debugging_print_object import DebuggingPrint
 from core.views.mixins import BWBaseListViewMixin
 from core.views.mixins import BWLoginRequiredMixin
@@ -33,6 +35,7 @@ from document.forms import DocumentForm
 from job.filters import JobFilter
 from job.filters.job_visibility_form import JobVisibilityForm
 from job.forms import JobForm
+from job.models import Job
 from job.models import JobProxy
 from job_category.forms import JobCategoryForm
 from job_category.models import JobCategory
@@ -140,7 +143,15 @@ class JobListView(
             if show_all_jobs:
                 queryset = self.request.user.bookkeeper.get_proxy_model().get_all_jobs()
             else:
-                queryset = self.request.user.bookkeeper.get_proxy_model().get_user_jobs()
+                queryset = (
+                    self.request.user.bookkeeper.get_proxy_model().get_user_jobs()
+                )
+        elif self.request.user.user_type == CON_CFO:
+            clients = self.request.user.cfo.get_proxy_model().clients.all()
+            jobs = Job.objects.none()
+            for client in clients:
+                jobs |= client.jobs.all()
+            queryset = jobs
 
         self.filterset = JobFilter(self.request.GET, queryset=queryset)
 
@@ -244,7 +255,7 @@ class JobDetailsView(
         # debugging_print(self.request.user.get_staff_member_object)
         # debugging_print(discussion_initial_data)
         discussion_form = DiscussionMiniForm(
-            initial=discussion_initial_data,
+            initial=discussion_initial_data
             # removed_fields=["special_assignment", "replies"],
         )
         context.setdefault("job_update_form", job_update_form)
@@ -258,8 +269,7 @@ class JobDetailsView(
         return context
 
     def get_object(self, queryset=None):
-        """
-        Return the object the view is displaying.
+        """Return the object the view is displaying.
         Require `self.queryset` and a `pk` or `slug` argument in the URLconf.
         Subclasses can override this to return any object.
         """
@@ -278,7 +288,6 @@ class JobDetailsView(
             queryset = queryset.filter(**{slug_field: slug})
         # If none of those are defined, it's an error.
         if pk is None and slug is None:
-
             raise AttributeError(
                 _(
                     "Generic detail view %s must be called with either an object pk or a slug in the URLconf."
