@@ -3,9 +3,11 @@ crispy-tailwind
 apscheduler
 cryptography
 Django
+django-cors-headers
 django-admin-rangefilter
 django-components
 django-crispy-forms
+python-json-logger
 django-extensions
 django-filter
 django-import-export

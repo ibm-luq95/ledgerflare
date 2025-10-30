@@ -27,7 +27,6 @@
 
 .instagram-social-icon-link {
   &:hover {
-    // color: #833ab4;
     color: #c13584;
   }
 }
@@ -51,8 +50,6 @@
 }
 
 .bw-js-modal {
-  // background-color: rgba(0 0 0 / 50%);
-  // background-color: rgba(255, 255, 255, 0.5);
   background-color: rgba(0, 0, 0, 0.4); /* More visible transparency */
   backdrop-filter: blur(1px); /* Stronger blur effect */
 }

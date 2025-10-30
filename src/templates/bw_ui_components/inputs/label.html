@@ -1,5 +1,9 @@
 {% load i18n %}
 
 <label for="{{ html_for }}"
-       class="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">{{ lbl_text }}</label>
-{% if is_required %}<span class="ml-1 text-sm">*</span>{% endif %}
+       class="inline-block text-sm font-medium dark:text-white">
+       {{ lbl_text }}
+</label>
+{% if is_required %}
+       <span class="ml-1 text-sm">*</span>
+{% endif %}

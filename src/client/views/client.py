@@ -1,18 +1,18 @@
-# -*- coding: utf-8 -*-#
-from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    UpdateView,
-)
+from django.views.generic import CreateView
+from django.views.generic import DeleteView
+from django.views.generic import DetailView
+from django.views.generic import ListView
+from django.views.generic import UpdateView
 
 from client.filters import ClientFilter
-from client.forms import ClientForm, ClientMiniForm, AssignBookkeeperForm
+from client.forms import AssignBookkeeperForm
+from client.forms import ClientForm
+from client.forms import ClientMiniForm
 from client.forms.assign_cfo import AssignCFOForm
 from client.models import ClientProxy
 from client_account.forms import ClientAccountForm
@@ -24,8 +24,16 @@ from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
 from core.constants.identity import LedgerFlareIdentity
 from core.constants.status_labels import CON_ENABLED
-from core.constants.users import CON_BOOKKEEPER, CON_MANAGER, CON_ASSISTANT
-from core.views.mixins import BWBaseListViewMixin, BWLoginRequiredMixin
+from core.constants.users import CON_ASSISTANT
+from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_CFO
+from core.constants.users import CON_MANAGER
+from core.utils.developments.enhanced_debugging_print import (
+    ENHANCED_DEBUGGING_PRINT_INSTANCE,
+)
+from core.utils.developments.enhanced_debugging_print import EnhancedDebuggingPrint
+from core.views.mixins import BWBaseListViewMixin
+from core.views.mixins import BWLoginRequiredMixin
 from core.views.mixins.base_list_view import BWSectionDescriptionHelperMixin
 from document.forms import DocumentForm
 
@@ -82,7 +90,9 @@ class ClientListView(
         context.setdefault(
             "info_details",
             {
-                "tooltip_txt": BW_INFO_MODAL_CSS_CLASSES.get("client").get("tooltip_txt"),
+                "tooltip_txt": BW_INFO_MODAL_CSS_CLASSES.get("client").get(
+                    "tooltip_txt"
+                ),
                 "modal_css_id": BW_INFO_MODAL_CSS_CLASSES.get("client").get("cssID"),
             },
         )
@@ -115,6 +125,10 @@ class ClientListView(
         queryset = super().get_queryset()
         if self.request.user.user_type == CON_BOOKKEEPER:
             queryset = self.request.user.bookkeeper.get_proxy_model().clients.all()
+        if self.request.user.user_type == CON_CFO:
+            # ENHANCED_DEBUGGING_PRINT_INSTANCE.display_django_model(self.request.user)
+            # ENHANCED_DEBUGGING_PRINT_INSTANCE.console.print(self.request.user.cfo)
+            queryset = self.request.user.cfo.get_proxy_model().clients.all()
         self.filterset = ClientFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
@@ -223,15 +237,20 @@ class ClientDetailsView(
         context = super().get_context_data(**kwargs)
         context.setdefault("title", _(f"Client - {self.get_object().name}"))
         job_form = JobMiniForm(
-            initial={"client": self.get_object().pk}, client=self.get_object()
+            initial={"client": self.get_object().pk}, client=self.get_object(),
         )
         important_contact_form = ImportantContactForm(
-            initial={"client": self.get_object()}, renderer=BWFormRenderer()
+            initial={"client": self.get_object()}, renderer=BWFormRenderer(),
         )
         client_form = ClientForm(
             instance=self.get_object(),
             renderer=BWFormRenderer(),
-            removed_fields=["categories", "bookkeepers", "important_contacts", "status"],
+            removed_fields=[
+                "categories",
+                "bookkeepers",
+                "important_contacts",
+                "status",
+            ],
         )
         client_mini_form = ClientMiniForm()
         task_form = TaskForm(
@@ -254,7 +273,10 @@ class ClientDetailsView(
         )
         special_assignment_form = MiniSpecialAssignmentForm(
             renderer=BWFormRenderer(),
-            initial={"assigned_by": self.request.user.pk, "client": self.get_object().pk},
+            initial={
+                "assigned_by": self.request.user.pk,
+                "client": self.get_object().pk,
+            },
         )
         client_account_form = ClientAccountForm(
             initial={"client": self.get_object(), "status": CON_ENABLED},
@@ -277,13 +299,15 @@ class ClientDetailsView(
         context.setdefault("client_mini_form", client_mini_form)
         context.setdefault("special_assignment_form", special_assignment_form)
         context.setdefault("client_account_form", client_account_form)
-        context.setdefault("client_assign_bookkeeper_form", client_assign_bookkeeper_form)
+        context.setdefault(
+            "client_assign_bookkeeper_form", client_assign_bookkeeper_form
+        )
         context.setdefault("client_assign_cfo_form", client_assign_cfo_form)
         return context
 
     def test_func(self) -> bool:
         user_type = self.request.user.user_type
-        if user_type == CON_MANAGER or user_type == CON_ASSISTANT:
+        if user_type in {CON_MANAGER, CON_ASSISTANT}:
             return True
         else:
             bookkeeper = self.request.user.bookkeeper

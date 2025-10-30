@@ -1,9 +1,9 @@
 "use strict";
 
-import { fetchUrlPathByName, sendRequest } from "../../utils/apis/apis";
-import { SecureUrlFetcher } from "../../utils/apis/fetch_by_name";
-import { RequestHandler } from "../../utils/apis/request_handler";
-import { FETCHURLNAMEURL } from "../../utils/constants";
+import { fetchUrlPathByName, sendRequest } from "../../utils/apis/apis.js";
+import { SecureUrlFetcher } from "../../utils/apis/fetch_by_name.js";
+import { RequestHandler } from "../../utils/apis/request_handler.js";
+import { FETCHURLNAMEURL } from "../../utils/constants.js";
 import Chart, { elements } from "chart.js/auto";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
@@ -56,8 +56,9 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
             const chartLoader = chartDashboardWrapper.querySelector(".loader-element");
             const jobChartWrapper =
               chartDashboardWrapper.querySelector("#jobChartWrapper");
-            // console.log(chartLoader);
+            console.log(chartLoader.classList);
             // console.log(jobChartWrapper);
+            chartLoader.classList.remove("inline-block");
             chartLoader.classList.add("hidden");
             const emptyJobsCard = document.querySelector("#emptyJobsCard");
 

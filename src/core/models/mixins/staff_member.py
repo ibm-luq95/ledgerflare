@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -10,8 +9,7 @@ from core.models.querysets import BaseQuerySetMixin
 
 
 class StaffMemberMixin(models.Model):
-    """
-    A mixin class for staff members.
+    """A mixin class for staff members.
 
     Fields:
         user (OneToOneField): One-to-one relationship with the AUTH_USER_MODEL.

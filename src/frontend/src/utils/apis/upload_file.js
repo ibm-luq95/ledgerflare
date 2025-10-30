@@ -1,6 +1,6 @@
 "use strict";
 
-import { showToastNotification } from "../toasts";
+import { showToastNotification } from "../toasts.js";
 
 /**
  * Represents a request for uploading files.

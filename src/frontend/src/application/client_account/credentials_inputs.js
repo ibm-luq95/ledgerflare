@@ -1,7 +1,7 @@
 "use strict";
 
-import { addTxtToClipboardWithNotification } from "../../utils/clipboard";
-import { convertStrToBool } from "../../utils/helpers";
+import { addTxtToClipboardWithNotification } from "../../utils/clipboard.js";
+import { convertStrToBool } from "../../utils/helpers.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const caCredentialsBtns = document.querySelectorAll("button.ca-credentials-btn");

@@ -1,0 +1,53 @@
+// tailwind.config.js for Tailwind CSS v4
+import path from "path";
+import chalk from "chalk";
+import { fileURLToPath } from "url";
+
+// __dirname fix for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const pwd = process.env.PWD;
+const pwdParent = path.dirname(pwd);
+const srcDir = path.join(pwdParent, "src");
+const frontendDir = path.join(srcDir, "frontend");
+
+console.log("#########################################################");
+console.warn(pwd);
+console.log("#########################################################");
+
+// We can add current project paths here
+const projectPaths = [
+  path.join(pwdParent, "node_modules", "preline", "dist", "*.js"),
+  path.join(pwdParent, "templates", "**", "*.html"),
+  path.join(pwdParent, "static", "**", "*.js"),
+  path.join(pwdParent, "components", "**", "*.js"),
+  path.join(pwdParent, "components", "**", "*.html"),
+  // add js file paths if you need
+];
+
+const contentPaths = [...projectPaths];
+console.log(`tailwindcss will scan ${contentPaths}`);
+
+export default {
+  // Tailwind CSS v4 uses @source instead of content
+  content: contentPaths,
+
+  theme: {
+    extend: {},
+  },
+
+  // Many plugins are now built-in to Tailwind CSS v4
+  plugins: [
+    // Check if preline has v4 compatibility
+    async () => {
+      try {
+        const preline = await import("preline/plugin");
+        return preline.default || preline;
+      } catch (error) {
+        console.warn(chalk.yellow("Warning: Could not load preline plugin"));
+        return null;
+      }
+    },
+  ].filter(Boolean),
+};

@@ -7,6 +7,12 @@ from django.utils.translation import gettext as _
 from django.views.generic import RedirectView
 from django.views.i18n import JavaScriptCatalog
 
+from core.views.core import custom_404_view, custom_500_view
+
+# Custom 404 error view
+handler404 = "core.views.error_404"
+# Custom 500 error view
+handler500 = "core.views.error_500"
 
 static_and_media_path_urls = static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
@@ -38,12 +44,9 @@ if settings.DEBUG:
     # )
     urlpatterns.append(path("admin/", admin.site.urls))
     urlpatterns.append(path("admin/doc/", include("django.contrib.admindocs.urls")))
+    urlpatterns.append(path("test-500/", custom_500_view))
+    urlpatterns.append(path("test-404/", custom_404_view))
     # urlpatterns.append(path("silk/", include("silk.urls", namespace="silk")))
     # urlpatterns.append(path("admin/", admin.site.urls))
 else:
     urlpatterns.append(path("secret/", admin.site.urls))
-
-# Custom 404 error view
-handler404 = "core.views.error_404"
-# Custom 500 error view
-# handler500 = 'my_app.views.error_500'
