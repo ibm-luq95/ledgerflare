@@ -129,12 +129,8 @@
                 <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
                     <i class="fa-solid fa-sun"></i>
                 </label>
-                <label for="darkSwtich"
-                       class="relative inline-block w-11 h-6 cursor-pointer">
-                    <input type="checkbox"
-                           data-hs-theme-switch=""
-                           id="darkSwtich"
-                           class="peer sr-only" />
+                <label for="darkSwtich" class="relative inline-block w-11 h-6 cursor-pointer">
+                    <input type="checkbox" data-hs-theme-switch="" id="darkSwtich" class="peer sr-only" />
                     <span class="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
                     <span class="absolute top-1/2 start-0.5 -translate-y-1/2 size-5 bg-white rounded-full shadow-xs transition-transform duration-200 ease-in-out peer-checked:translate-x-full dark:bg-neutral-400 dark:peer-checked:bg-white"></span>
                 </label>
@@ -148,6 +144,7 @@
                 {{ request.user.get_user_type_display }}
             </span>
             <!-- Notifications dropdown -->
+            <!-- Notifications dropdown content (unchanged) -->
             <div class="hs-dropdown relative [--placement:bottom-left] inline-flex"
                  id="notificationsDropdown">
                 <button type="button"
@@ -182,16 +179,70 @@
                         </span>
                     {% endif %}
                 </button>
-                <!-- Notifications dropdown content (unchanged) -->
+                {% comment  %}
+                        {{ request.user.utils.assigned_special_assignment_notifications }}
+                    {{ request.user.utils.unread_discussions_notifications }}
+                    {{ request.user.utils.get_all_not_read_notifications }}
+                {% endcomment %}
                 <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
                      role="menu"
                      aria-orientation="vertical"
                      style="max-height: 300px;
                             overflow-y: auto"
                      aria-labelledby="hs-dropdown">
-                    <!-- ... -->
+                    <div class="py-3 px-4 border-b border-gray-200 dark:border-neutral-700">
+                        <p class="text-sm font-medium text-gray-800 dark:text-neutral-300">
+                            {% translate "Total Notifications: " %} {{ request.user.utils.get_all_notifications|length }}
+                        </p>
+                        {% if debug is True %}
+                            <button type="button"
+                                    id="setAllNotificationsReadBtn"
+                                    disabled
+                                    class="bw-input py-1 px-2 -ml-2 inline-flex items-center gap-x-1 text-sm font-medium rounded-lg border border-transparent text-blue-600 hover:bg-blue-100 focus:outline-hidden focus:bg-blue-100 hover:text-blue-800 focus:outline-hidden focus:bg-blue-100 focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:bg-blue-800/30 dark:hover:text-blue-400 dark:focus:bg-blue-800/30 dark:focus:text-blue-400">
+                                {% translate "Set all as read" %}
+                            </button>
+                        {% endif %}
+                    </div>
+                    <div class="p-1 space-y-0.5">
+                        <input type="hidden"
+                               id="notificationUrl"
+                               value="{% url 'dashboard:discussion:api:set-discussion-notifications' %}" />
+                        {% for notification_item in request.user.utils.get_all_notifications %}
+                            <div class="{% if notification_item.is_read is False %}
+                                            bg-sky-100 font-bold
+                                        {% endif %}
+                                        items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700">
+                                <a class="block w-full notificationsItem px-3 py-2 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                                   data-notification-pk="{{ notification_item.pk }}"
+                                   data-user="{{ request.user.pk }}"
+                                   data-notification-type="{{ notification_item|get_var_name }}"
+                                   href="{{ notification_item.get_absolute_url }}">
+                                    <span class="block
+                                                 {% if notification_item.is_read is False %}
+                                                     font-bold
+                                                 {% endif %}">{{ notification_item.msg|safe }}</span>
+                                    <span class="block text-sm text-gray-600 dark:text-neutral-500">{{ notification_item.created_at }}</span>
+                                </a>
+                            </div>
+                        {% empty %}
+                            <div class="items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700">
+                                <a class="block w-full px-3 py-2 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                                   href="javascript:;">
+                                    <span class="block
+                                                 {% if notification_item.is_read is False %}
+                                                     font-bold
+                                                 {% endif %}">{% translate "No notifications" %}</span>
+                                </a>
+                            </div>
+                        {% endfor %}
+                        {% comment  %}
+                                <hr />
+                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">All</a>
+                        {% endcomment %}
+                    </div>
                 </div>
             </div>
+            <!-- Notifications dropdown content (unchanged) -->
             <!-- Profile dropdown -->
             <div class="hs-dropdown [--strategy:absolute] relative inline-flex [--placement:bottom-right]">
                 <button id="hs-dropdown-with-header"
@@ -201,10 +252,47 @@
                          src="{% if request.user.get_staff_member_object.staff_object.profile.profile_picture %} {{ request.user.get_staff_member_object.staff_object.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %} {% endif %}"
                          alt="{{ request.user.fullname }}" />
                 </button>
-                <!-- Profile dropdown content (unchanged) -->
                 <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[15rem] bg-white shadow-md rounded-lg p-2 dark:bg-gray-800 dark:border dark:border-gray-700"
                      aria-labelledby="hs-dropdown-with-header">
-                    <!-- ... -->
+                    <div class="px-5 py-3 -m-2 bg-gray-100 rounded-t-lg dark:bg-gray-700">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            {% translate "Signed in as:" %}
+                        </p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+                            {{ request.user.fullname }}
+                        </p>
+                        <p class="text-sm font-medium text-gray-800 dark:text-gray-300">
+                            {{ request.user.email|safe }}
+                        </p>
+                    </div>
+                    <div class="py-2 mt-2 first:pt-0 last:pb-0">
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                           href="#">
+                            <svg class="flex-none"
+                                 width="16"
+                                 height="16"
+                                 viewBox="0 0 16 16"
+                                 fill="currentColor">
+                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
+                            </svg>
+                            {% translate "Assignments" %}
+                        </a>
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                           href="{% url 'dashboard:staff:staff-profile' request.user.pk %}">
+                            <i class="fa-regular fa-user"></i>
+                            {% translate "Profile" %}
+                        </a>
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-red-500 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                           href="{% url 'dashboard:staff:staff-update-password' request.user.pk %}">
+                            <i class="fa-solid fa-key"></i>
+                            {% translate "Change Password" %}
+                        </a>
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                           href="{% url 'auth:logout' %}">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            {% translate "Logout" %}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
