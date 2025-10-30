@@ -144,7 +144,7 @@
                 {{ request.user.get_user_type_display }}
             </span>
             <!-- Notifications dropdown -->
-            <!-- Notifications dropdown content (unchanged) -->
+            <!-- Notifications dropdown -->
             <div class="hs-dropdown relative [--placement:bottom-left] inline-flex"
                  id="notificationsDropdown">
                 <button type="button"
@@ -179,70 +179,59 @@
                         </span>
                     {% endif %}
                 </button>
-                {% comment  %}
-                        {{ request.user.utils.assigned_special_assignment_notifications }}
-                    {{ request.user.utils.unread_discussions_notifications }}
-                    {{ request.user.utils.get_all_not_read_notifications }}
-                {% endcomment %}
-                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
+                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-72 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
                      role="menu"
                      aria-orientation="vertical"
-                     style="max-height: 300px;
-                            overflow-y: auto"
                      aria-labelledby="hs-dropdown">
+                    <!-- Header -->
                     <div class="py-3 px-4 border-b border-gray-200 dark:border-neutral-700">
                         <p class="text-sm font-medium text-gray-800 dark:text-neutral-300">
-                            {% translate "Total Notifications: " %} {{ request.user.utils.get_all_notifications|length }}
+                            {% translate "Total Notifications:" %} {{ request.user.utils.get_all_notifications|length }}
                         </p>
                         {% if debug is True %}
                             <button type="button"
                                     id="setAllNotificationsReadBtn"
                                     disabled
-                                    class="bw-input py-1 px-2 -ml-2 inline-flex items-center gap-x-1 text-sm font-medium rounded-lg border border-transparent text-blue-600 hover:bg-blue-100 focus:outline-hidden focus:bg-blue-100 hover:text-blue-800 focus:outline-hidden focus:bg-blue-100 focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:bg-blue-800/30 dark:hover:text-blue-400 dark:focus:bg-blue-800/30 dark:focus:text-blue-400">
+                                    class="bw-input py-1 px-2 -ml-2 inline-flex items-center gap-x-1 text-sm font-medium rounded-lg border border-transparent text-blue-600 hover:bg-blue-100 focus:outline-hidden focus:bg-blue-100 hover:text-blue-800 dark:text-blue-500 dark:hover:bg-blue-800/30 dark:hover:text-blue-400">
                                 {% translate "Set all as read" %}
                             </button>
                         {% endif %}
                     </div>
-                    <div class="p-1 space-y-0.5">
+                    <!-- Scrollable notifications list -->
+                    <div class="max-h-72 overflow-y-auto p-1 space-y-0.5">
                         <input type="hidden"
                                id="notificationUrl"
                                value="{% url 'dashboard:discussion:api:set-discussion-notifications' %}" />
                         {% for notification_item in request.user.utils.get_all_notifications %}
-                            <div class="{% if notification_item.is_read is False %}
+                            <div class="{% if not notification_item.is_read %}
                                             bg-sky-100 font-bold
                                         {% endif %}
-                                        items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700">
-                                <a class="block w-full notificationsItem px-3 py-2 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                                        items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
+                                <a class="block w-full notificationsItem px-3 py-2 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
                                    data-notification-pk="{{ notification_item.pk }}"
                                    data-user="{{ request.user.pk }}"
                                    data-notification-type="{{ notification_item|get_var_name }}"
                                    href="{{ notification_item.get_absolute_url }}">
                                     <span class="block
-                                                 {% if notification_item.is_read is False %}
+                                                 {% if not notification_item.is_read %}
                                                      font-bold
-                                                 {% endif %}">{{ notification_item.msg|safe }}</span>
-                                    <span class="block text-sm text-gray-600 dark:text-neutral-500">{{ notification_item.created_at }}</span>
+                                                 {% endif %}">
+                                        {{ notification_item.msg|safe }}
+                                    </span>
+                                    <span class="block text-xs text-gray-600 dark:text-neutral-500">
+                                        {{ notification_item.created_at }}
+                                    </span>
                                 </a>
                             </div>
                         {% empty %}
-                            <div class="items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700">
-                                <a class="block w-full px-3 py-2 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-                                   href="javascript:;">
-                                    <span class="block
-                                                 {% if notification_item.is_read is False %}
-                                                     font-bold
-                                                 {% endif %}">{% translate "No notifications" %}</span>
-                                </a>
+                            <div class="items-center py-3 px-3 rounded-lg text-sm text-gray-500 dark:text-neutral-400 text-center">
+                                {% translate "No notifications" %}
                             </div>
                         {% endfor %}
-                        {% comment  %}
-                                <hr />
-                            <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">All</a>
-                        {% endcomment %}
                     </div>
                 </div>
             </div>
-            <!-- Notifications dropdown content (unchanged) -->
+            <!-- End Notifications dropdown -->
             <!-- Profile dropdown -->
             <div class="hs-dropdown [--strategy:absolute] relative inline-flex [--placement:bottom-right]">
                 <button id="hs-dropdown-with-header"
