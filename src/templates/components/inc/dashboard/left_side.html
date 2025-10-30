@@ -11,8 +11,11 @@
         <header class=" p-4 flex justify-between items-center gap-x-2">
             <a class="flex-none font-semibold text-xl text-black focus:outline-hidden focus:opacity-80 dark:text-white"
                href="{% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_ASSISTANT %} {% url 'dashboard:manager:home' %} {% elif request.user.user_type == CON_BOOKKEEPER %} {% url 'dashboard:bookkeeper:home' %} {% elif request.user.user_type == CON_CFO %} {% url 'dashboard:cfo:home' %} {% endif %}"
-               aria-label="Brand">
-                <img src="{% if get_web_app_settings.logo %} {{ get_web_app_settings.logo.url }} {% endif %}"
+               aria-label="{{ get_web_app_settings.name }}">
+                <img class="w-28 h-auto"
+                     width="116"
+                     height="32"
+                     src="{% if get_web_app_settings.logo %} {{ get_web_app_settings.logo.url }} {% endif %}"
                      alt="{{ get_web_app_settings.name }}" />
             </a>
             <div class="lg:hidden -me-2">
@@ -448,7 +451,9 @@
                                     <li>
                                         <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                                            href="{% url 'dashboard:archive:documents:list' %}">
-                                            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                                            <svg class="size-4"
+                                                 xmlns="http://www.w3.org/2000/svg"
+                                                 viewBox="0 0 640 640">
                                                 <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
                                                 <path d="M480 576L192 576C139 576 96 533 96 480L96 160C96 107 139 64 192 64L496 64C522.5 64 544 85.5 544 112L544 400C544 420.9 530.6 438.7 512 445.3L512 512C529.7 512 544 526.3 544 544C544 561.7 529.7 576 512 576L480 576zM192 448C174.3 448 160 462.3 160 480C160 497.7 174.3 512 192 512L448 512L448 448L192 448zM224 216C224 229.3 234.7 240 248 240L424 240C437.3 240 448 229.3 448 216C448 202.7 437.3 192 424 192L248 192C234.7 192 224 202.7 224 216zM248 288C234.7 288 224 298.7 224 312C224 325.3 234.7 336 248 336L424 336C437.3 336 448 325.3 448 312C448 298.7 437.3 288 424 288L248 288z" />
                                             </svg>
