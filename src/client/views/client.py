@@ -1,6 +1,3 @@
-from core.utils.developments.enhanced_debugging_print import ENHANCED_DEBUGGING_PRINT_INSTANCE
-from core.utils.developments.enhanced_debugging_print import EnhancedDebuggingPrint
-from core.constants.users import CON_CFO
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -29,7 +26,12 @@ from core.constants.identity import LedgerFlareIdentity
 from core.constants.status_labels import CON_ENABLED
 from core.constants.users import CON_ASSISTANT
 from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_CFO
 from core.constants.users import CON_MANAGER
+from core.utils.developments.enhanced_debugging_print import (
+    ENHANCED_DEBUGGING_PRINT_INSTANCE,
+)
+from core.utils.developments.enhanced_debugging_print import EnhancedDebuggingPrint
 from core.views.mixins import BWBaseListViewMixin
 from core.views.mixins import BWLoginRequiredMixin
 from core.views.mixins.base_list_view import BWSectionDescriptionHelperMixin
@@ -235,10 +237,10 @@ class ClientDetailsView(
         context = super().get_context_data(**kwargs)
         context.setdefault("title", _(f"Client - {self.get_object().name}"))
         job_form = JobMiniForm(
-            initial={"client": self.get_object().pk}, client=self.get_object()
+            initial={"client": self.get_object().pk}, client=self.get_object(),
         )
         important_contact_form = ImportantContactForm(
-            initial={"client": self.get_object()}, renderer=BWFormRenderer()
+            initial={"client": self.get_object()}, renderer=BWFormRenderer(),
         )
         client_form = ClientForm(
             instance=self.get_object(),
@@ -305,7 +307,7 @@ class ClientDetailsView(
 
     def test_func(self) -> bool:
         user_type = self.request.user.user_type
-        if user_type == CON_MANAGER or user_type == CON_ASSISTANT:
+        if user_type in {CON_MANAGER, CON_ASSISTANT}:
             return True
         else:
             bookkeeper = self.request.user.bookkeeper
