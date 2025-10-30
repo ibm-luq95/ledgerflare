@@ -255,6 +255,7 @@ class BookkeeperDeleteView(
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
+        # raise Exception("dd")
         context.setdefault("title", _("Delete bookkeeper"))
         context.setdefault("cancel_url", "dashboard:management_bookkeeper:list")
         context.setdefault("object", self.get_object())

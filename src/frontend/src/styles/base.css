@@ -1,0 +1,59 @@
+/*import tailwindcss and disable automatic source detection*/
+@import "tailwindcss" source(none);
+@custom-variant dark (&:where(.dark, .dark *));
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/aspect-ratio";
+@plugin "@tailwindcss/typography";
+/* Preline UI */
+@source "../../node_modules/preline/dist/*.js";
+@import "../../node_modules/preline/variants.css";
+
+/*register frontend directory*/
+@source "../../";
+@source "../";
+
+/* @plugin "daisyui"; */
+
+/*register django templates*/
+@source "../../../templates/**/*.html";
+.jumbotron {
+  /*should be relative path of the entry css file*/
+  background-image: url("../../vendors/images/sample.jpg");
+  background-size: cover;
+}
+
+@layer components {
+  .btn-blue {
+    @apply inline-flex items-center;
+    @apply px-4 py-2;
+    @apply font-semibold rounded-lg shadow-md;
+    @apply text-white bg-blue-500;
+    @apply hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400/50;
+  }
+}
+
+/* Adds pointer cursor to buttons */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* Plugins */
+/* @plugin "@tailwindcss/forms"; */
+/* Defaults hover styles on all devices */
+@custom-variant hover (&:hover);
+
+.highlight {
+  background-color: #fef3c7;
+  font-weight: 600;
+}
+
+.dropdown-open {
+  display: block;
+}
+
+.dropdown-closed {
+  display: none;
+}

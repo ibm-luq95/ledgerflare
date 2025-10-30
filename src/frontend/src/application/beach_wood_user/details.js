@@ -1,15 +1,14 @@
 "use strict";
 
-import { fetchUrlPathByName, sendRequest } from "../../utils/apis/apis";
-import { bwCleanApiError } from "../../utils/apis/clean_errors";
-import { SecureUrlFetcher } from "../../utils/apis/fetch_by_name";
-import { RequestHandler } from "../../utils/apis/request_handler";
-import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants";
+import { bwCleanApiError } from "../../utils/apis/clean_errors.js";
+import { SecureUrlFetcher } from "../../utils/apis/fetch_by_name.js";
+import { RequestHandler } from "../../utils/apis/request_handler.js";
+import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants.js";
 import {
   disableAndEnableFieldsetItems,
   formInputSerializer,
-} from "../../utils/form_helpers";
-import { showToastNotification } from "../../utils/toasts";
+} from "../../utils/form_helpers.js";
+import { showToastNotification } from "../../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const assignedClientsForm = document.querySelector("form#assignedClientsForm");

@@ -3,7 +3,7 @@
  * @module authHandler
  */
 
-import { FETCHURLNAMEURL } from "../constants";
+import { FETCHURLNAMEURL } from "../constants.js";
 
 /**
  * Custom error for authentication-related issues.
@@ -134,6 +134,9 @@ class SecureUrlFetcher {
    * @throws {AuthError} If the fetch operation fails due to authentication issues.
    */
   static async fetchUrlPathByName(urlName, pk = null) {
+    if (!urlName) {
+      throw new Error("URL name is required");
+    }
     const authToken = AuthTokenHandler.getAuthToken();
     if (!authToken) {
       throw new AuthError("Authentication token not found");

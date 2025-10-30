@@ -1,11 +1,12 @@
 {% load webpack_loader static %}
-
+<script type="module" src="{% static 'js/custom/my-data-table-component.js' %}"></script>
 <script src="{% static 'js/tinymce/tinymce.min.js' %}"
         referrerpolicy="origin"></script>
+
 {% comment  %}
 {% javascript_pack "app" attrs='charset="UTF-8"' %}
-{% endcomment %}
 {% javascript_pack "app" %}
+{% endcomment %}
+{% javascript_pack 'app' 'app_vue' attrs='defer' %}
 <script type="text/javascript" src="{% url 'javascript-catalog' %}" defer></script>
-<script src="{% url 'js_settings' %}" defer></script>
 {% component_js_dependencies %}

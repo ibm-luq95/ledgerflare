@@ -1,17 +1,17 @@
 "use strict";
 
-import { bwCleanApiError } from "../../utils/apis/clean_errors";
-import { UploadFileRequest } from "../../utils/apis/upload_file";
-import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants";
+import { bwCleanApiError } from "../../utils/apis/clean_errors.js";
+import { UploadFileRequest } from "../../utils/apis/upload_file.js";
+import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants.js";
 import {
   disableAndEnableFieldsetItems,
   formInputSerializer,
-} from "../../utils/form_helpers";
-import { showToastNotification } from "../../utils/toasts";
+} from "../../utils/form_helpers.js";
+import { showToastNotification } from "../../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const createBriefcaseDocumentForm = document.querySelector(
-    "form#createBriefcaseDocumentForm",
+    "form#createBriefcaseDocumentForm"
   );
   if (createBriefcaseDocumentForm) {
     createBriefcaseDocumentForm.addEventListener("submit", (event) => {
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
         formInputs,
         currentTarget.elements[CSRFINPUTNAME].value,
         currentTarget.method,
-        false,
+        false
       );
       const request = uploadRequest.sendRequest();
       request
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
             er.forEach((erElement) => {
               showToastNotification(
                 `Error: ${erElement["detail"]} - ${erElement["attr"]}`,
-                "danger",
+                "danger"
               );
             });
           } else {

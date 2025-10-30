@@ -1,0 +1,414 @@
+{% extends "core/layouts/dashboard_content_base.html" %}
+
+{% load i18n %}
+
+{% block externalcss %}
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
+    <style>
+        .responsive-table-container {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Sticky header */
+        .responsive-table-container thead th {
+            position: sticky;
+            top: 0;
+            background: #f9fafb;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .dark .responsive-table-container thead th {
+            background: #1f2937;
+        }
+
+        @media (max-width: 480px) {
+
+            .responsive-table th,
+            .responsive-table td {
+                padding-left: 8px;
+                padding-right: 8px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+{% endblock externalcss %}
+{% block dashboard_content_block %}
+    <section id="chart_of_accounts" class="w-full px-4 sm:px-6 py-6">
+        <!-- 🔹 Main Header Card -->
+        <div class="bg-white border border-gray-200 shadow-sm rounded-xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-700 mb-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">
+                        {% translate "Chart of Accounts" %}
+                    </h1>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400">
+                        {% translate "Manage your financial accounts and categories" %}
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <!-- Run Report (Outline Button) -->
+                    <button aria-label="{% translate 'Run financial report' %}"
+                            class="print-ignore inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-transparent border border-blue-600 rounded-lg hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-900/20">
+                        <i class="fas fa-chart-line" aria-hidden="true"></i>
+                        {% translate "Run Report" %}
+                    </button>
+                    <!-- New Action Dropdown -->
+                    <div class="hs-dropdown [--auto-close:inside] relative inline-flex print-ignore">
+                        <button id="new-action-dropdown"
+                                type="button"
+                                class="inline-flex items-center gap-x-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-700 dark:hover:bg-blue-600">
+                            {% translate "New Action" %}
+                            <svg class="shrink-0 size-4"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6">
+                                </path>
+                            </svg>
+                        </button>
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration-300 hidden min-w-44 z-10 bg-white shadow-lg rounded-lg p-2 mt-2 dark:bg-neutral-800"
+                             aria-labelledby="new-action-dropdown">
+                            <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                               href="#">
+                                <i class="fas fa-plus text-blue-500 dark:text-blue-400"></i>
+                                {% translate "New Account" %}
+                            </a>
+                            <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                               href="#">
+                                <i class="fas fa-folder-plus text-blue-500 dark:text-blue-400"></i>
+                                {% translate "New Category" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 🔹 Summary + Toolbar + Pagination ABOVE -->
+        <div class="flex mb-3 flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+            <div class="mb-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-sm text-blue-800 dark:text-blue-200">
+                    <span>
+                        <span class="font-medium">{% trans "Total Accounts:" %}</span> 28
+                    </span>
+                    <span>
+                        <span class="font-medium">{% trans "Last Updated:" %}</span> Apr 10, 2025
+                    </span>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 print-ignore">
+                <div class="flex flex-wrap gap-2">
+                    <button aria-label="{% translate 'Export chart of accounts' %}"
+                            class="toolbar-btn inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-700">
+                        <i class="fas fa-file-export text-gray-500 dark:text-neutral-400"
+                           aria-hidden="true"></i>
+                        <span class="hidden xs:inline">{% translate "Export" %}</span>
+                    </button>
+                </div>
+                <div class="relative">
+                    <input type="text"
+                           placeholder="{% translate 'Search accounts...' %}"
+                           class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" />
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm dark:text-neutral-500"
+                       aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pagination-controls print-ignore">
+                <div class="text-sm text-gray-700 dark:text-neutral-300">
+                    {% blocktrans with start=1 end=10 total=28 %}Showing <span class="font-medium">{{ start }}</span> to <span class="font-medium">{{ end }}</span> of <span class="font-medium">{{ total }}</span> accounts{% endblocktrans %}
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:bg-neutral-800">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <label for="page-input-top" class="sr-only">
+                            {% translate "Go to page" %}
+                        </label>
+                        <input type="number"
+                               id="page-input-top"
+                               min="1"
+                               max="3"
+                               value="1"
+                               class="w-16 text-center text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" />
+                        <span class="text-sm text-gray-500 dark:text-neutral-400">/ 3</span>
+                    </div>
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:bg-neutral-800">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 🔹 Table -->
+        <div class="overflow-hidden rounded-lg shadow-sm border border-gray-200 dark:border-neutral-700">
+            <div class="responsive-table-container overflow-x-auto">
+                <table class="responsive-table min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                    <thead class="bg-gray-50 dark:bg-neutral-800">
+                        <tr>
+                            <th scope="col"
+                                class="px-3 py-3 text-center text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap">
+                                <input type="checkbox"
+                                       class="rounded text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600" />
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap">
+                                {% translate "Name" %} <i class="fas fa-sort text-xs ml-1"></i>
+                            </th>
+                            <!-- 🔸 Account Type header with exclamation icon -->
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1">
+                                    {% translate "Account Type" %}
+                                    <i class="fas fa-exclamation-circle text-yellow-500 text-xs"
+                                       title="{% translate 'Accounts marked for review' %}"
+                                       aria-label="{% translate 'Attention: some accounts require review' %}"></i>
+                                </span>
+                                <i class="fas fa-sort text-xs ml-1"></i>
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap">
+                                {% translate "Detail Type" %} <i class="fas fa-sort text-xs ml-1"></i>
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap text-right">
+                                {% translate "Balance" %} <i class="fas fa-sort text-xs ml-1"></i>
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap text-right">
+                                {% translate "Bank Balance" %} <i class="fas fa-sort text-xs ml-1"></i>
+                            </th>
+                            <th scope="col"
+                                class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider whitespace-nowrap text-right">
+                                {% translate "Actions" %}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-gray-800">
+                        {% for i in "0123456789"|make_list %}
+                            <tr class="hover:bg-gray-50 dark:hover:bg-neutral-800/70 transition-colors">
+                                <td class="px-3 py-4 text-center">
+                                    <input type="checkbox"
+                                           class="rounded text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600" />
+                                </td>
+                                <td class="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                                    {% if forloop.counter == 1 %}
+                                        Checking Account
+                                    {% elif forloop.counter == 2 %}
+                                        Savings Account
+                                    {% elif forloop.counter == 3 %}
+                                        Accounts Receivable
+                                    {% elif forloop.counter == 4 %}
+                                        Inventory
+                                    {% elif forloop.counter == 5 %}
+                                        Office Equipment
+                                    {% elif forloop.counter == 6 %}
+                                        Accounts Payable
+                                    {% elif forloop.counter == 7 %}
+                                        Credit Card
+                                    {% elif forloop.counter == 8 %}
+                                        Sales Revenue
+                                    {% elif forloop.counter == 9 %}
+                                        Rent Expense
+                                    {% else %}
+                                        Utilities Expense
+                                    {% endif %}
+                                </td>
+                                <!-- 🔸 Account Type (no icon in rows — only in header) -->
+                                <td class="px-3 py-4 text-sm text-gray-600 dark:text-neutral-300">
+                                    {% if forloop.counter <= 5 %}
+                                        Asset
+                                    {% elif forloop.counter <= 7 %}
+                                        Liability
+                                    {% elif forloop.counter == 8 %}
+                                        Income
+                                    {% else %}
+                                        Expense
+                                    {% endif %}
+                                </td>
+                                <td class="px-3 py-4 text-sm text-gray-600 dark:text-neutral-300">
+                                    {% if forloop.counter == 1 %}
+                                        Bank
+                                    {% elif forloop.counter == 2 %}
+                                        Bank
+                                    {% elif forloop.counter == 3 %}
+                                        Receivable
+                                    {% elif forloop.counter == 4 %}
+                                        Inventory
+                                    {% elif forloop.counter == 5 %}
+                                        Fixed Asset
+                                    {% elif forloop.counter == 6 %}
+                                        Payable
+                                    {% elif forloop.counter == 7 %}
+                                        Credit Card
+                                    {% elif forloop.counter == 8 %}
+                                        Revenue
+                                    {% elif forloop.counter == 9 %}
+                                        Operating Expense
+                                    {% else %}
+                                        Operating Expense
+                                    {% endif %}
+                                </td>
+                                <td class="px-3 py-4 text-sm font-medium text-right">
+                                    {% if forloop.counter == 1 %}
+                                        <span class="text-green-600 dark:text-green-400">$2,450.75</span>
+                                    {% elif forloop.counter == 2 %}
+                                        <span class="text-green-600 dark:text-green-400">$5,200.00</span>
+                                    {% elif forloop.counter == 3 %}
+                                        <span class="text-green-600 dark:text-green-400">$3,100.00</span>
+                                    {% elif forloop.counter == 4 %}
+                                        <span class="text-gray-900 dark:text-white">$1,800.00</span>
+                                    {% elif forloop.counter == 5 %}
+                                        <span class="text-gray-900 dark:text-white">$4,500.00</span>
+                                    {% elif forloop.counter == 6 %}
+                                        <span class="text-red-600 dark:text-red-400">($1,200.00)</span>
+                                    {% elif forloop.counter == 7 %}
+                                        <span class="text-red-600 dark:text-red-400">($850.50)</span>
+                                    {% elif forloop.counter == 8 %}
+                                        <span class="text-green-600 dark:text-green-400">$12,500.00</span>
+                                    {% elif forloop.counter == 9 %}
+                                        <span class="text-red-600 dark:text-red-400">($1,200.00)</span>
+                                    {% else %}
+                                        <span class="text-red-600 dark:text-red-400">($320.75)</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-3 py-4 text-sm text-gray-600 dark:text-neutral-300 text-right">
+                                    {% if forloop.counter == 1 %}
+                                        $2,450.75
+                                    {% elif forloop.counter == 2 %}
+                                        $5,200.00
+                                    {% elif forloop.counter == 3 %}
+                                        —
+                                    {% elif forloop.counter == 4 %}
+                                        —
+                                    {% elif forloop.counter == 5 %}
+                                        —
+                                    {% elif forloop.counter == 6 %}
+                                        —
+                                    {% elif forloop.counter == 7 %}
+                                        ($850.50)
+                                    {% elif forloop.counter == 8 %}
+                                        —
+                                    {% elif forloop.counter == 9 %}
+                                        —
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                                <td class="px-3 py-4 text-right text-sm">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="#"
+                                           class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+                                            {% translate "View Register" %}
+                                        </a>
+                                        <div class="hs-dropdown [--auto-close:inside] relative inline-flex">
+                                            <button type="button"
+                                                    class="text-gray-500 hover:text-gray-700 dark:text-neutral-400 dark:hover:text-neutral-300">
+                                                <i class="fas fa-chevron-down text-xs"></i>
+                                            </button>
+                                            <div class="hs-dropdown-menu transition-[opacity,margin] duration-300 hidden min-w-36 z-10 bg-white shadow-lg rounded-lg p-2 mt-1 dark:bg-neutral-800">
+                                                <a class="block py-1.5 px-3 rounded text-sm text-gray-800 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700"
+                                                   href="#">
+                                                    {% translate "Edit" %}
+                                                </a>
+                                                <a class="block py-1.5 px-3 rounded text-sm text-gray-800 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700"
+                                                   href="#">
+                                                    {% translate "Delete" %}
+                                                </a>
+                                                <a class="block py-1.5 px-3 rounded text-sm text-gray-800 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700"
+                                                   href="#">
+                                                    {% translate "Run Report" %}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 🔹 Pagination BELOW -->
+        <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pagination-controls print-ignore">
+            <div class="text-sm text-gray-700 dark:text-neutral-300">
+                {% blocktrans with start=1 end=10 total=28 %}Showing <span class="font-medium">{{ start }}</span> to <span class="font-medium">{{ end }}</span> of <span class="font-medium">{{ total }}</span> accounts{% endblocktrans %}
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:bg-neutral-800">
+                    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <div class="flex items-center gap-2">
+                    <label for="page-input-bottom" class="sr-only">
+                        {% translate "Go to page" %}
+                    </label>
+                    <input type="number"
+                           id="page-input-bottom"
+                           min="1"
+                           max="3"
+                           value="1"
+                           class="w-16 text-center text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" />
+                    <span class="text-sm text-gray-500 dark:text-neutral-400">/ 3</span>
+                </div>
+                <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:bg-neutral-800">
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof HSDropdown !== 'undefined') {
+                HSDropdown.autoInit();
+            }
+
+            // Pagination sync
+            const top = document.getElementById('page-input-top');
+            const bottom = document.getElementById('page-input-bottom');
+            if (top && bottom) {
+                const sync = (from, to) => {
+                    let val = parseInt(from.value) || 1;
+                    val = Math.max(1, Math.min(3, val));
+                    from.value = val;
+                    to.value = val;
+                };
+                top.addEventListener('change', () => sync(top, bottom));
+                bottom.addEventListener('change', () => sync(bottom, top));
+
+                [top, bottom].forEach(input => {
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            input.dispatchEvent(new Event('change'));
+                        }
+                    });
+                });
+            }
+
+            // Optional: Sort icon cycling
+            document.querySelectorAll('.responsive-table-container thead th').forEach(th => {
+                const sortIcon = th.querySelector('.fa-sort');
+                if (sortIcon) {
+                    th.addEventListener('click', () => {
+                        if (sortIcon.classList.contains('fa-sort')) {
+                            sortIcon.classList.replace('fa-sort', 'fa-sort-up');
+                        } else if (sortIcon.classList.contains('fa-sort-up')) {
+                            sortIcon.classList.replace('fa-sort-up', 'fa-sort-down');
+                        } else {
+                            sortIcon.classList.replace('fa-sort-down', 'fa-sort');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock dashboard_content_block %}

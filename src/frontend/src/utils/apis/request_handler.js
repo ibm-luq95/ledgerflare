@@ -1,4 +1,4 @@
-import { getCookie } from "../cookie";
+import { getCookie } from "../cookie.js";
 
 /**
  * Custom error for request-related issues.

@@ -74,12 +74,10 @@ DATABASES = {
 # DATABASES["default"]["OPTIONS"].update({"read_default_file": "/opt/lampp/etc/my.cnf"})
 # DATABASES["default"]["OPTIONS"].update({"read_default_file": "/etc/my.cnf"})
 
-TEMPLATES[0]["OPTIONS"]["builtins"].extend(
-    [
-        "debugtools.templatetags.debugtools_tags",
-        "core.templatetags.development_tags",
-    ]
-)
+TEMPLATES[0]["OPTIONS"]["builtins"].extend([
+    "debugtools.templatetags.debugtools_tags",
+    "core.templatetags.development_tags",
+])
 
 # DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
 # Djagno Debug Toolbar
@@ -112,7 +110,10 @@ def show_toolbar(request):
     return True
 
 
-DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": show_toolbar, "IS_RUNNING_TESTS": False}
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+    "IS_RUNNING_TESTS": False,
+}
 
 GRAPH_MODELS = {"all_applications": True, "group_models": True}
 # GRAPH_MODELS = {'app_labels': ["client"]}
@@ -167,7 +168,8 @@ TEMPLATES[0]["OPTIONS"]["debug"] = DEBUG
 COMPONENTS = ComponentsSettings(
     autodiscover=True,
     reload_on_file_change=True,
-    template_cache_size=2,
+    # cache=None,
+    # template_cache_size=1,
 )
 DJANGO_EASY_AUDIT_PROPAGATE_EXCEPTIONS = DEBUG
 if HAS_COLORLOG:

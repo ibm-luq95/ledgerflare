@@ -1,0 +1,164 @@
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+# Same as Black.
+line-length = 88
+indent-width = 4
+# Assume Python 3.13
+target-version = "py313"
+
+
+[lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = [
+    'A',     # flake8-builtins
+    'ASYNC', # https://docs.astral.sh/ruff/rules/#flake8-async-async
+    'B',     # flake8-bugbear
+    'BLE',   # flake8-blind-except
+    'C4',    # unnecessary comprehensions, map()
+    'COM',   # flake8-commas
+    'DTZ',   # flake8-datetimez
+    'E',     # pycodestyle
+    'ERA',   # No commented out code
+    'EXE',   # flake8-executable
+    'F',     # pyflakes
+    'FLY',   # flynt
+    'G',     # flake8-logging-format
+    'I',     # isort
+    'ICN',   # https://github.com/joaopalmeiro/flake8-import-conventions
+    'ISC',   # https://pypi.org/project/flake8-implicit-str-concat/
+    'LOG',   # flake8-logging
+    'PERF',  # perflint
+    'PIE',   # https://pypi.org/project/flake8-pie/
+    'PLC',   # Pylint conventions
+    'PLE',   # Pylint error
+    'PLW',   # Pylint warnings
+    'PT',    # https://pypi.org/project/flake8-pytest-style/
+    'PTH',   # flake8 use pathlib
+    'RET',   # https://pypi.org/project/flake8-return/
+    'RUF',   # Ruff rules
+    'S',     # https://docs.astral.sh/ruff/rules/#flake8-bandit-s
+    'SIM',   # https://pypi.org/project/flake8-simplify/
+    'T',     # flake8-debugger
+    'TRY',   # tryceratops
+    'UP',    # pyupgrade
+    'W',     # pycodestyle
+    "UP",
+    #'ARG',  # flake8 unused arguments (not really helpful, unused func args are common and ok)
+    # 'D', # pydocstyle (too much)
+    #'N',  # pep8-naming (too opinionated)
+    #'NPY', # numpy
+    #'PD', # pandas
+    'PL', # Full Pylint (too much)
+    #'PLR',  # Pylint refactor (too much/too opinionated)
+]
+ignore = [
+    "B027",
+    "FBT003",
+    "C901",
+    "PLR0911",
+    "PLR0912",
+    "PLR0913",
+    "PLR0915",
+    "T201",
+    "FIX002",
+    "TID252",
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107",
+    "G003",
+    "G004",
+    "S603",
+    "S607",
+    "ERA001",
+    "PLC0415",
+    "F401",
+    "D205",
+    "PLR6301",
+]
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+
+# 4. Ignore `E402` (import violations) in all `__init__.py` files, and in selected subdirectories.
+[lint.per-file-ignores]
+"tests/**/*" = ["PLR2004", "S101", "TID252"]
+"src/tests/**/*" = ["PLR2004", "S101", "TID252", "D100", "D103"]
+"**/settings/*.py" = ["E501", "F403", "F405"]
+"**/settings.py" = ["E501", "F403", "F405"]
+"**/models.py" = ["PLR0913", "DJ008"]
+"__init__.py" = ["F401"]
+"src/**/__init__.py" = ["F401"]
+"conftest.py" = ["D100", "D103"]
+"scripts/**" = ["T201"]
+"src/scripts/**" = ["T201"]
+"**/migrations/**" = ["ALL"]
+"src/**/migrations/**" = ["ALL"]
+"**/management/commands/**" = ["T201"]
+"src/**/management/commands/**" = ["T201"]
+
+
+[format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+preview = true
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = true
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"
+
+
+[lint.isort]
+force-single-line = true
+force-sort-within-sections = false
+lines-after-imports = 2

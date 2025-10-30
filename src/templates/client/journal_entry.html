@@ -1,0 +1,340 @@
+{% extends "core/layouts/dashboard_content_base.html" %}
+
+{% load i18n %}
+
+{% block externalcss %}
+    <style>
+        #calculateBtn.scale-110 {
+            transform: scale(1.1);
+            transition: transform 0.3s, color 0.3s;
+        }
+    </style>
+{% endblock externalcss %}
+{% block dashboard_content_block %}
+    <section id="clientJournalEntry">
+        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+            <div class="flex">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+                    {% translate "Journal Entry" %}
+                </h3>
+            </div>
+            <div class="py-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600">
+                {% translate "Add new journal entry" %}
+            </div>
+            <div class="flex flex-col sm:flex-row justify-between gap-4 mt-2">
+                <div class="w-full sm:w-auto">
+                    <div class="max-w-xs">
+                        <label for="journal-date"
+                               class="block text-sm font-medium mb-2 dark:text-white">
+                            {% translate "Date" %}
+                        </label>
+                        <input type="date"
+                               id="journal-date"
+                               class="py-1.5 sm:py-2 px-3 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" />
+                    </div>
+                </div>
+                <div class="w-full sm:w-auto">
+                    <div>
+                        <label for="journal-number"
+                               class="block text-sm font-medium mb-2 dark:text-white">
+                            {% translate "Journal No." %}
+                        </label>
+                        <input type="text"
+                               id="journal-number"
+                               class="py-1.5 sm:py-2 px-3 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" />
+                        <div class="mt-2">
+                            <input type="checkbox"
+                                   class="shrink-0 mt-0.5 border-gray-200 rounded-sm text-blue-600 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                                   id="auto-journal-number" />
+                            <label for="auto-journal-number"
+                                   class="text-sm text-gray-500 ms-3 dark:text-neutral-400">
+                                {% translate "Auto-generate journal number" %}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Responsive Table Container -->
+            <div class="mt-5 overflow-x-auto">
+                <table id="journal-table"
+                       class="min-w-full border border-gray-200 dark:border-neutral-700 table-fixed">
+                    <thead>
+                        <tr>
+                            <th scope="col"
+                                class="border border-gray-200 w-10 px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase dark:border-neutral-700 dark:text-neutral-500">
+                                #
+                            </th>
+                            <th scope="col"
+                                class="border border-gray-200 w-32 px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:border-neutral-700 dark:text-neutral-500">
+                                {% translate "Account" %}
+                            </th>
+                            <th scope="col"
+                                class="border border-gray-200 w-32 px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:border-neutral-700 dark:text-neutral-500">
+                                {% translate "Debits" %}
+                            </th>
+                            <th scope="col"
+                                class="border border-gray-200 w-32 px-3 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:border-neutral-700 dark:text-neutral-500">
+                                {% translate "Credits" %}
+                            </th>
+                            <th scope="col"
+                                class="border border-gray-200 w-32 px-3 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:border-neutral-700 dark:text-neutral-500">
+                                {% translate "Description" %}
+                            </th>
+                            <th scope="col"
+                                class="border border-gray-200 w-32 px-3 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:border-neutral-700 dark:text-neutral-500">
+                                {% translate "Name" %}
+                            </th>
+                            <th scope="col"
+                                class="border border-gray-200 w-32 px-3 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:border-neutral-700 dark:text-neutral-500">
+                                {% translate "Store" %}
+                            </th>
+                            <th scope="col"
+                                class="border border-gray-200 w-12 px-2 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:border-neutral-700 dark:text-neutral-500">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="journal-rows">
+                        {% for i in "12345" %}
+                            <tr data-row-id="{{ forloop.counter }}">
+                                <td class="border border-gray-200 w-10 px-2 py-3 text-sm font-medium text-gray-800 dark:border-neutral-700 dark:text-neutral-200 text-center whitespace-nowrap">
+                                    {{ forloop.counter }}
+                                </td>
+                                <td class="border border-gray-200 w-32 px-3 py-3 text-sm text-gray-800 dark:border-neutral-700 dark:text-neutral-200">
+                                    <input type="text"
+                                           name="account_{{ forloop.counter }}"
+                                           class="py-1.5 px-2 block w-full border-gray-200 rounded text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500"
+                                           placeholder="{% translate 'Account' %}" />
+                                </td>
+                                <td class="border border-gray-200 w-32 px-3 py-3 text-sm text-gray-800 dark:border-neutral-700 dark:text-neutral-200">
+                                    <input type="text"
+                                           name="debit_{{ forloop.counter }}"
+                                           class="py-1.5 px-2 block w-full border-gray-200 rounded text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 text-end"
+                                           placeholder="0.00" />
+                                </td>
+                                <td class="border border-gray-200 w-32 px-3 py-3 text-sm text-gray-800 dark:border-neutral-700 dark:text-neutral-200">
+                                    <input type="text"
+                                           name="credit_{{ forloop.counter }}"
+                                           class="py-1.5 px-2 block w-full border-gray-200 rounded text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 text-end"
+                                           placeholder="0.00" />
+                                </td>
+                                <td class="border border-gray-200 w-32 px-3 py-3 text-sm text-gray-800 dark:border-neutral-700 dark:text-neutral-200">
+                                    <input type="text"
+                                           name="description_{{ forloop.counter }}"
+                                           class="py-1.5 px-2 block w-full border-gray-200 rounded text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500"
+                                           placeholder="{% translate 'Description' %}" />
+                                </td>
+                                <td class="border border-gray-200 w-32 px-3 py-3 text-sm text-gray-800 dark:border-neutral-700 dark:text-neutral-200">
+                                    <input type="text"
+                                           name="name_{{ forloop.counter }}"
+                                           class="py-1.5 px-2 block w-full border-gray-200 rounded text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500"
+                                           placeholder="{% translate 'Name' %}" />
+                                </td>
+                                <td class="border border-gray-200 w-32 px-3 py-3 text-sm text-gray-800 dark:border-neutral-700 dark:text-neutral-200">
+                                    <input type="text"
+                                           name="store_{{ forloop.counter }}"
+                                           class="py-1.5 px-2 block w-full border-gray-200 rounded text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500"
+                                           placeholder="{% translate 'Store' %}" />
+                                </td>
+                                <td class="border border-gray-200 w-12 px-2 py-3 text-end text-sm font-medium dark:border-neutral-700">
+                                    <button type="button"
+                                            class="inline-flex items-center justify-center w-8 h-8 text-gray-500 hover:text-red-600 rounded-full hover:bg-red-50 focus:outline-none dark:text-neutral-400 dark:hover:text-red-500 dark:hover:bg-red-500/10 remove-row">
+                                        <i class="fa-solid fa-trash text-xs"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-gray-50 dark:bg-neutral-800">
+                            <td class="border border-gray-200 w-10 px-2 py-3 text-sm font-medium text-gray-800 dark:border-neutral-700 dark:text-neutral-200 text-center">
+                                —
+                            </td>
+                            <td class="border border-gray-200 px-3 py-3 text-sm text-gray-800 dark:border-neutral-700 dark:text-neutral-200 font-medium">
+                                {% translate "Total" %}
+                            </td>
+                            <td class="border border-gray-200 px-3 py-3 text-sm text-gray-800 dark:border-neutral-700 dark:text-neutral-200 text-end font-medium text-green-600 dark:text-green-400">
+                                0.00
+                            </td>
+                            <td class="border border-gray-200 px-3 py-3 text-sm text-gray-800 dark:border-neutral-700 dark:text-neutral-200 text-end font-medium text-red-600 dark:text-red-400">
+                                0.00
+                            </td>
+                            <td colspan="3"
+                                class="border border-gray-200 px-3 py-3 text-sm text-gray-500 dark:border-neutral-700 dark:text-neutral-400">
+                                {% translate "Balanced" %}
+                            </td>
+                            <td class="border border-gray-200 w-12 px-2 py-3 text-end text-sm font-medium dark:border-neutral-700">
+                                <button type="button"
+                                        id="calculateBtn"
+                                        class="inline-flex items-center gap-x-1 text-sm font-semibold text-blue-600 hover:text-blue-800 focus:outline-none dark:text-blue-500 dark:hover:text-blue-400">
+                                    <i class="fa-solid fa-calculator text-xs"></i>
+                                    {% translate "Calculate" %}
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="mt-5 flex flex-col sm:flex-row justify-end gap-3">
+                <button type="button"
+                        id="addRowBtn"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:hover:text-white dark:focus:bg-white/20 dark:focus:text-white">
+                    {% translate "Add new row" %}
+                </button>
+                <button type="button"
+                        id="cleanRowsBtn"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-50 text-red-700 hover:bg-red-100 focus:outline-hidden focus:bg-red-100 disabled:opacity-50 disabled:pointer-events-none dark:bg-red-500/10 dark:text-red-500 dark:hover:bg-red-500/20 dark:focus:bg-red-500/20">
+                    {% translate "Clean all rows" %}
+                </button>
+            </div>
+            <div class="py-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600">
+                {% translate "Extra" %}
+            </div>
+            <div id="ExtraInputs" class="flex flex-col sm:flex-row gap-4 mt-2">
+                <div class="flex-1 min-w-0">
+                    <div id="hs-file-upload-to-destroy"
+                         data-hs-file-upload='{ "url": "/upload", "autoProcessQueue": false,"uploadMultiple": false, "acceptedFiles": ".csv,.xls,.xlsx,.zip,.pdf,.jpg,.jpeg,.png", "extensions": { "default": { "class": "shrink-0 size-5" }, "xls": { "class": "shrink-0 size-5" }, "zip": { "class": "shrink-0 size-5" }, "csv": { "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"m5 12-3 3 3 3\"/><path d=\"m9 18 3-3-3-3\"/></svg>", "class": "shrink-0 size-5" } } }'>
+                        <template data-hs-file-upload-preview="">
+                            <div class="p-3 bg-white border border-solid border-gray-300 rounded-xl dark:bg-neutral-800 dark:border-neutral-600">
+                                <div class="mb-1 flex justify-between items-center">
+                                    <div class="flex items-center gap-x-3">
+                                        <span class="size-10 flex justify-center items-center border border-gray-200 text-gray-500 rounded-lg dark:border-neutral-700 dark:text-neutral-500"
+                                              data-hs-file-upload-file-icon="">
+                                            <img class="rounded-lg hidden" data-dz-thumbnail="" />
+                                        </span>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">
+                                                <span class="truncate inline-block max-w-75 align-bottom"
+                                                      data-hs-file-upload-file-name=""></span>.<span data-hs-file-upload-file-ext=""></span>
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-neutral-500"
+                                               data-hs-file-upload-file-size="">
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-x-2">
+                                        <button type="button"
+                                                class="text-gray-500 hover:text-gray-800 focus:outline-hidden focus:text-gray-800 dark:text-neutral-500 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
+                                                data-hs-file-upload-remove="">
+                                            <svg class="shrink-0 size-4"
+                                                 xmlns="http://www.w3.org/2000/svg"
+                                                 width="24"
+                                                 height="24"
+                                                 viewBox="0 0 24 24"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="2"
+                                                 stroke-linecap="round"
+                                                 stroke-linejoin="round">
+                                                <path d="M3 6h18">
+                                                </path>
+                                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6">
+                                                </path>
+                                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2">
+                                                </path>
+                                                <line x1="10" x2="10" y1="11" y2="17"></line>
+                                                <line x1="14" x2="14" y1="11" y2="17"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-x-3 whitespace-nowrap">
+                                    <div class="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700"
+                                         role="progressbar"
+                                         aria-valuenow="0"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100"
+                                         data-hs-file-upload-progress-bar="">
+                                        <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap transition-all duration-500 hs-file-upload-complete:bg-green-500"
+                                             style="width: 0"
+                                             data-hs-file-upload-progress-bar-pane="">
+                                        </div>
+                                    </div>
+                                    <div class="w-10 text-end">
+                                        <span class="text-sm text-gray-800 dark:text-white">
+                                            <span data-hs-file-upload-progress-bar-value="">0</span>%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <div class="cursor-pointer p-12 flex justify-center bg-white border border-dashed border-gray-300 rounded-xl dark:bg-neutral-800 dark:border-neutral-600"
+                             data-hs-file-upload-trigger="">
+                            <div class="text-center">
+                                <span class="inline-flex justify-center items-center size-16">
+                                    <svg class="shrink-0 w-16 h-auto"
+                                         width="71"
+                                         height="51"
+                                         viewBox="0 0 71 51"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6.55172 8.74547L17.7131 6.88524V40.7377L12.8018 41.7717C9.51306 42.464 6.29705 40.3203 5.67081 37.0184L1.64319 15.7818C1.01599 12.4748 3.23148 9.29884 6.55172 8.74547Z" stroke="currentColor" stroke-width="2" class="stroke-blue-600 dark:stroke-blue-500">
+                                        </path>
+                                        <path d="M64.4483 8.74547L53.2869 6.88524V40.7377L58.1982 41.7717C61.4869 42.464 64.703 40.3203 65.3292 37.0184L69.3568 15.7818C69.984 12.4748 67.7685 9.29884 64.4483 8.74547Z" stroke="currentColor" stroke-width="2" class="stroke-blue-600 dark:stroke-blue-500">
+                                        </path>
+                                        <g filter="url(#filter4)">
+                                        <rect x="17.5656" y="1" width="35.8689" height="42.7541" rx="5" stroke="currentColor" stroke-width="2" class="stroke-blue-600 dark:stroke-blue-500" shape-rendering="crispEdges"></rect>
+                                        </g>
+                                        <path d="M39.4826 33.0893C40.2331 33.9529 41.5385 34.0028 42.3537 33.2426L42.5099 33.0796L47.7453 26.976L53.4347 33.0981V38.7544C53.4346 41.5156 51.1959 43.7542 48.4347 43.7544H22.5656C19.8043 43.7544 17.5657 41.5157 17.5656 38.7544V35.2934L29.9728 22.145L39.4826 33.0893Z" class="fill-blue-50 stroke-blue-600 dark:fill-blue-900/50 dark:stroke-blue-500" fill="currentColor" stroke="currentColor" stroke-width="2">
+                                        </path>
+                                        <circle cx="40.0902" cy="14.3443" r="4.16393" class="fill-blue-50 stroke-blue-600 dark:fill-blue-900/50 dark:stroke-blue-500" fill="currentColor" stroke="currentColor" stroke-width="2"></circle>
+                                        <defs>
+                                        <filter id="filter4" x="13.5656" y="0" width="43.8689" height="50.7541" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                        <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+                                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix>
+                                        <feOffset dy="3"></feOffset>
+                                        <feGaussianBlur stdDeviation="1.5"></feGaussianBlur>
+                                        <feComposite in2="hardAlpha" operator="out"></feComposite>
+                                        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0"></feColorMatrix>
+                                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect4"></feBlend>
+                                        <feBlend mode="normal" in="SourceGraphic" in2="effect4" result="shape"></feBlend>
+                                        </filter>
+                                        </defs>
+                                    </svg>
+                                </span>
+                                <div class="mt-4 flex flex-wrap justify-center text-sm/6 text-gray-600">
+                                    <span class="pe-1 font-medium text-gray-800 dark:text-neutral-200">
+                                        {% translate "Drop your attachments here" %}
+                                    </span>
+                                    <span class="bg-white font-semibold text-blue-600 hover:text-blue-700 rounded-lg decoration-2 hover:underline focus-within:outline-hidden focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 dark:bg-neutral-800 dark:text-blue-500 dark:hover:text-blue-600">browse</span>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-400 dark:text-neutral-400">
+                                    {% translate "Pick a file up to 2MB." %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 space-y-2 empty:mt-0" data-hs-file-upload-previews="">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="max-w-full">
+                        <label for="textarea-label"
+                               class="block text-sm font-medium mb-2 dark:text-white">
+                            {% translate "Memo" %}
+                        </label>
+                        <textarea id="textarea-label"
+                                  name="memo"
+                                  class="py-2 px-3 sm:py-3 sm:px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                                  rows="8"
+                                  placeholder="{% translate 'Enter memo...' %}"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ✅ Sticky Bottom Navbar (perfectly aligned with card content) -->
+        <div class="sticky bottom-0 mt-6 py-3 bg-white border-t border-gray-200 dark:bg-neutral-900 dark:border-neutral-700 z-10">
+            <div class="flex justify-between gap-3">
+                <button type="button"
+                        id="cancelBtn"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:hover:text-white dark:focus:bg-white/20 dark:focus:text-white">
+                    {% translate "Cancel" %}
+                </button>
+                <button type="button"
+                        id="saveBtn"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-teal-500 text-white hover:bg-teal-600 focus:outline-hidden focus:bg-teal-600 disabled:opacity-50 disabled:pointer-events-none">
+                    {% translate "Save" %}
+                </button>
+            </div>
+        </div>
+    </section>
+{% endblock dashboard_content_block %}

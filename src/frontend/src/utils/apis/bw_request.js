@@ -1,9 +1,9 @@
 "use strict";
 
-import { CSRFINPUTNAME } from "../constants";
-import { getCookie } from "../cookie";
-import { disableAndEnableFieldsetItems, formInputSerializer } from "../form_helpers";
-import { capitalizeFirstLetter } from "../helpers";
+import { CSRFINPUTNAME } from "../constants.js";
+import { getCookie } from "../cookie.js";
+import { disableAndEnableFieldsetItems, formInputSerializer } from "../form_helpers.js";
+import { capitalizeFirstLetter } from "../helpers.js";
 
 class BWRequestApi {
   #requestOptions = {

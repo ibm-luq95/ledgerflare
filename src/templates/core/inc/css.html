@@ -1,3 +1,7 @@
 {% load webpack_loader static %}
-{% stylesheet_pack 'app' %}
+
+{% comment  %}
+    {% stylesheet_pack 'app' %}
+{% endcomment %}
+{% stylesheet_pack 'app' 'app_vue' %}
 {% component_css_dependencies %}

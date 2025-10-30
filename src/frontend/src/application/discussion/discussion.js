@@ -1,13 +1,13 @@
 "use strict";
 
-import { bwCleanApiError } from "../../utils/apis/clean_errors";
-import { UploadFileRequest } from "../../utils/apis/upload_file";
-import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants";
+import { bwCleanApiError } from "../../utils/apis/clean_errors.js";
+import { UploadFileRequest } from "../../utils/apis/upload_file.js";
+import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants.js";
 import {
   disableAndEnableFieldsetItems,
   formInputSerializer,
-} from "../../utils/form_helpers";
-import { showToastNotification } from "../../utils/toasts";
+} from "../../utils/form_helpers.js";
+import { showToastNotification } from "../../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const chatbox = document.getElementById("chatbox");

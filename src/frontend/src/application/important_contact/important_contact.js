@@ -1,15 +1,14 @@
 "use strict";
 
-import { sendRequest } from "../../utils/apis/apis";
-import { bwCleanApiError } from "../../utils/apis/clean_errors";
-import { RequestHandler } from "../../utils/apis/request_handler";
-import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants";
+import { bwCleanApiError } from "../../utils/apis/clean_errors.js";
+import { RequestHandler } from "../../utils/apis/request_handler.js";
+import { CSRFINPUTNAME, SUCCESSTIMEOUTSECS } from "../../utils/constants.js";
 import {
   disableAndEnableFieldsetItems,
   formInputSerializer,
-} from "../../utils/form_helpers";
-import FilterPersistence from "../../utils/forms/filterform";
-import { showToastNotification } from "../../utils/toasts";
+} from "../../utils/form_helpers.js";
+import FilterPersistence from "../../utils/forms/filterform.js";
+import { showToastNotification } from "../../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const filterForm = document.getElementById("importantContactFilterForm");

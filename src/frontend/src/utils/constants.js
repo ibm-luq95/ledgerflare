@@ -25,6 +25,7 @@ const TOASTSTIMEOUTSECS = 2500; // Toasts notifications timeout
 // console.log(global.window.settings);
 // const DEBUG = window.settings["DEBUG"];
 const DEBUG = true; // Check if the code in debugging mode
+// alert(window.settings["FETCHURLNAMEURL"])
 // const FETCHURLNAMEURL = window.settings["FETCHURLNAMEURL"];
 const FETCHURLNAMEURL = new URL(process.env.FETCHURLNAMEURL, baseUrl); // This url will use in any time need to grab custom url from backend
 const CURRENTUSER = "";

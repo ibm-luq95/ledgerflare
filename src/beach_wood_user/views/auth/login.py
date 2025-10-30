@@ -1,39 +1,52 @@
 """beach_wood_user/auth/views.py - Secure login view with DRF token integration"""
 
 from __future__ import annotations
-from typing import Any, Dict, Optional, TypeVar, cast
-from dataclasses import asdict
-from datetime import datetime
-from functools import lru_cache
+
 import logging
 import re
 import secrets
-from ipaddress import ip_address
 from collections import defaultdict
+from dataclasses import asdict
+from datetime import datetime
+from functools import lru_cache
+from ipaddress import ip_address
+from typing import Any
+from typing import Dict
+from typing import Optional
+from typing import TypeVar
+from typing import cast
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
+from django.contrib.auth import login
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect, render
-from django.urls import reverse_lazy, reverse
-from django.views import View
-from django.views.generic.edit import FormMixin
-from django.views.decorators.csrf import csrf_protect
-from django.utils.decorators import method_decorator
-from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import PermissionDenied, ValidationError
-from django.db import transaction
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.http import HttpRequest
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.urls import reverse
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
+from django.views import View
+from django.views.decorators.csrf import csrf_protect
+from django.views.generic.edit import FormMixin
 
 # Rest of imports remain the same
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
+
 from beach_wood_user.forms import BWLoginForm
 from beach_wood_user.models import BWUser
 from core.cache import BWSiteSettingsViewMixin
 from core.utils.grab_env_file import grab_env_file
+
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T")
@@ -299,7 +312,7 @@ class BWLoginViewBW(SuccessMessageMixin, BWSiteSettingsViewMixin, FormMixin, Vie
 
     def _validate_credentials(
         self, email: str, submitted_user_type: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Validate that the submitted credentials are valid.
 

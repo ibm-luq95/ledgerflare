@@ -14,6 +14,8 @@ if stage == "DOCKER_DEV":
     env_path = cwd / ".env" / ".env_docker"  # For docker
 else:
     env_path = cwd / ".env" / ".env"  # For local
+env_path = cwd / ".env" / ".env"  # For local
+# print(env_path)
 
 
 # check if .env file not exists

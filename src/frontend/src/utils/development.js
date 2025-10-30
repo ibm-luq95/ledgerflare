@@ -1,6 +1,6 @@
 "use strict";
 
-import { DEBUG } from "./constants";
+import { DEBUG } from "./constants.js";
 
 /**
  * Debugging print only if DEBUG is enabled, development only
