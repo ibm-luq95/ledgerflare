@@ -124,7 +124,8 @@
         <!-- Right-aligned items (notifications, profile, etc.) -->
         <div class="flex items-center justify-end gap-x-3">
             <!-- Theme switcher -->
-            <div class="flex items-center gap-x-3 mx-1">
+            {% comment  %}
+                <div class="flex items-center gap-x-3 mx-1">
                 <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
                     <i class="fa-solid fa-sun"></i>
                 </label>
@@ -141,6 +142,7 @@
                     <i class="fa-solid fa-moon"></i>
                 </label>
             </div>
+            {% endcomment %}
             <!-- User type badge -->
             <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">
                 {{ request.user.get_user_type_display }}
