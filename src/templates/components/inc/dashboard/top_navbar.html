@@ -143,7 +143,25 @@
             <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">
                 {{ request.user.get_user_type_display }}
             </span>
-            <!-- Notifications dropdown -->
+            {% if debug %}
+                <div class="flex items-center gap-x-3 mx-1">
+                    <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
+                        <i class="fa-solid fa-sun"></i>
+                    </label>
+                    <label for="darkSwtich"
+                           class="relative inline-block w-11 h-6 cursor-pointer">
+                        <input type="checkbox"
+                               data-hs-theme-switch=""
+                               id="darkSwtich"
+                               class="peer sr-only" />
+                        <span class="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
+                        <span class="absolute top-1/2 start-0.5 -translate-y-1/2 size-5 bg-white rounded-full shadow-xs transition-transform duration-200 ease-in-out peer-checked:translate-x-full dark:bg-neutral-400 dark:peer-checked:bg-white"></span>
+                    </label>
+                    <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
+                        <i class="fa-solid fa-moon"></i>
+                    </label>
+                </div>
+            {% endif %}
             <!-- Notifications dropdown -->
             <div class="hs-dropdown relative [--placement:bottom-left] inline-flex"
                  id="notificationsDropdown">
