@@ -592,3 +592,4 @@ src/frontend/bun.lockb!/.env_dotenv
 /production_data/
 production_config_files
 uv.lock
+.direnv
