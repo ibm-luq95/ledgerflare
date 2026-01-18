@@ -28,7 +28,7 @@
                 </button>
             </div>
             <div class="p-4 overflow-y-auto">
-                <nav class="relative z-0 flex border rounded-xl overflow-hidden dark:border-gray-700"
+                <nav class="relative z-0 flex border border-gray-200 rounded-xl overflow-hidden dark:border-neutral-700"
                      aria-label="Tabs"
                      role="tablist">
                     <button type="button"
@@ -135,7 +135,7 @@
                                 </div>
                                 {% endcomment %}
                             </article>
-                            {% component "bw_form" form_id=filter_categories.categories_add_form_css_id form_action_url=filter_categories.category_filter_form_action_url form_method="POST" form=filter_categories_dict.categories_add_form perms=perms is_btns_enabled=False form_title="Add new category" extra_form_css_classes=filter_categories.categories_add_form_css_class %}{% endcomponent %}
+                            {% component "bw_form" form_id=filter_categories.categories_add_form_css_id form_action_url=filter_categories.category_filter_form_action_url form_method="POST" form=filter_categories_dict.categories_add_form is_btns_enabled=False form_title="Add new category" extra_form_css_classes=filter_categories.categories_add_form_css_class %}{% endcomponent %}
                         </section>
                     </div>
                 </div>
