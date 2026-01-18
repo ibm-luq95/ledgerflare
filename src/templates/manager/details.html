@@ -136,7 +136,9 @@
               </div>
             </div>
             <div>
-              <p class="text-gray-600 text-[14px] italic">{{ object.created_at|date }}</p>
+              <p class="text-gray-600 text-[14px] italic">
+                {{ object.created_at|date }}
+              </p>
             </div>
           </div>
           <div class="flex items-center mt-1 gap-x-1">
@@ -154,7 +156,9 @@
               </div>
             </div>
             <div>
-              <p class="text-gray-600 text-[14px] italic">{{ object.user.last_login }}</p>
+              <p class="text-gray-600 text-[14px] italic">
+                {{ object.user.last_login }}
+              </p>
             </div>
           </div>
           <hr class="my-3" />
@@ -178,7 +182,9 @@
               {% translate "Biography" %}
             </h3>
             <article class="mt-4">
-              <p class="mt-3 text-gray-500 dark:text-gray-400">{{ object.profile.bio|safe }}</p>
+              <p class="mt-3 text-gray-500 dark:text-gray-400">
+                {{ object.profile.bio|safe }}
+              </p>
               <!-- Social Brands -->
               <div class="mt-3 space-x-1">
                 {% if object.profile.linkedin %}
@@ -221,17 +227,21 @@
             </article>
           </div>
         </div>
-        <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400 mt-1">
+        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 mt-1">
           {# Start Grid #}
           <div class="grid sm:grid-cols-2 lg:grid-cols-2 gap-1 sm:gap-1">
             <!-- Card -->
             <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
               <div class="py-4 md:py-5 px-3">
                 <div class="flex items-center gap-x-2">
-                  <p class="text-xs uppercase tracking-wide text-gray-500">{% translate "Tasks" %}</p>
+                  <p class="text-xs uppercase tracking-wide text-gray-500">
+                    {% translate "Tasks" %}
+                  </p>
                 </div>
                 <div class="mt-1 flex items-center">
-                  <h3 class="text-lg sm:text-lg font-medium text-gray-800 dark:text-gray-200">72,540</h3>
+                  <h3 class="text-lg sm:text-lg font-medium text-gray-800 dark:text-gray-200">
+                    72,540
+                  </h3>
                 </div>
               </div>
             </div>
@@ -240,10 +250,14 @@
             <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
               <div class="py-4 md:py-5 px-3">
                 <div class="flex items-center gap-x-2">
-                  <p class="text-xs uppercase tracking-wide text-gray-500">{% translate "Jobs" %}</p>
+                  <p class="text-xs uppercase tracking-wide text-gray-500">
+                    {% translate "Jobs" %}
+                  </p>
                 </div>
                 <div class="mt-1 flex items-center">
-                  <h3 class="text-lg sm:text-lg font-medium text-gray-800 dark:text-gray-200">21,32</h3>
+                  <h3 class="text-lg sm:text-lg font-medium text-gray-800 dark:text-gray-200">
+                    21,32
+                  </h3>
                 </div>
               </div>
             </div>
@@ -256,10 +270,14 @@
             <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
               <div class="py-4 md:py-5 px-3">
                 <div class="flex items-center gap-x-2">
-                  <p class="text-xs uppercase tracking-wide text-gray-500">{% translate "Clients" %}</p>
+                  <p class="text-xs uppercase tracking-wide text-gray-500">
+                    {% translate "Clients" %}
+                  </p>
                 </div>
                 <div class="mt-1 flex items-center">
-                  <h3 class="text-lg sm:text-lg font-medium text-gray-800 dark:text-gray-200">1,444</h3>
+                  <h3 class="text-lg sm:text-lg font-medium text-gray-800 dark:text-gray-200">
+                    1,444
+                  </h3>
                 </div>
               </div>
             </div>
@@ -268,10 +286,14 @@
             <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
               <div class="py-4 md:py-5 px-3">
                 <div class="flex items-center gap-x-2">
-                  <p class="text-xs uppercase tracking-wide text-gray-500">{% translate "Assignments" %}</p>
+                  <p class="text-xs uppercase tracking-wide text-gray-500">
+                    {% translate "Assignments" %}
+                  </p>
                 </div>
                 <div class="mt-1 flex items-center">
-                  <h3 class="text-lg sm:text-lg font-medium text-gray-800 dark:text-gray-200">2,540</h3>
+                  <h3 class="text-lg sm:text-lg font-medium text-gray-800 dark:text-gray-200">
+                    2,540
+                  </h3>
                 </div>
               </div>
             </div>
@@ -282,7 +304,7 @@
       </div>
       {# End Left Aside #}
       <div class="col-span-3">
-        <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400">
+        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
           <div class="grid grid-flow-row-dense lg:grid-cols-2 md:grid-cols-1 grid-rows-1 gap-2">
             <div>
               <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
@@ -495,33 +517,41 @@
           <hr class="my-6" />
           <div class="grid grid-cols-12 gap-4 mt-4">
             <div class="col-span-12">
-              <nav class="relative z-0 flex border rounded-xl overflow-hidden dark:border-gray-700"
+              <nav class="relative z-0 flex border border-gray-200 rounded-xl overflow-hidden dark:border-neutral-700"
                    aria-label="Tabs"
                    role="tablist">
                 <button type="button"
-                        class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-l-0 border-l border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-400 active"
+                        class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400 active"
                         id="bar-with-underline-item-1"
                         data-hs-tab="#clients-tab"
                         aria-controls="clients-tab"
-                        role="tab">{% translate "Clients" %}</button>
+                        role="tab">
+                  {% translate "Clients" %}
+                </button>
                 <button type="button"
-                        class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-l-0 border-l border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-400 dark:hover:text-gray-300"
+                        class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400 dark:hover:text-gray-300"
                         id="bar-with-underline-item-2"
                         data-hs-tab="#jobs-tab"
                         aria-controls="jobs-tab"
-                        role="tab">{% translate "Jobs" %}</button>
+                        role="tab">
+                  {% translate "Jobs" %}
+                </button>
                 <button type="button"
-                        class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-l-0 border-l border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-400 dark:hover:text-gray-300"
+                        class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400 dark:hover:text-gray-300"
                         id="bar-with-underline-item-3"
                         data-hs-tab="#assignments-tab"
                         aria-controls="assignments-tab"
-                        role="tab">{% translate "Assignments" %}</button>
+                        role="tab">
+                  {% translate "Assignments" %}
+                </button>
                 <button type="button"
-                        class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-l-0 border-l border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-400 dark:hover:text-gray-300"
+                        class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400 dark:hover:text-gray-300"
                         id="bar-with-underline-item-3"
                         data-hs-tab="#add-clients-tab"
                         aria-controls="add-clients-tab"
-                        role="tab">{% translate "Add clients" %}</button>
+                        role="tab">
+                  {% translate "Add clients" %}
+                </button>
               </nav>
               <div class="mt-3">
                 <div id="clients-tab"
@@ -537,7 +567,9 @@
                             <!-- Header -->
                             <div class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700">
                               <div>
-                                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{% translate "Clients" %}</h2>
+                                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                                  {% translate "Clients" %}
+                                </h2>
                                 {% comment  %}
                               <p class="text-sm text-gray-600 dark:text-gray-400">
                                 Create teams, edit, download and more.
@@ -658,7 +690,8 @@
                                       </div>
                                     </a>
                                   </th>
-                                  <th scope="col" class="px-6 py-3 text-right"></th>
+                                  <th scope="col" class="px-6 py-3 text-right">
+                                  </th>
                                 </tr>
                               </thead>
                               <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -693,12 +726,16 @@
                                   </td>
                                   <td class="h-px w-px whitespace-nowrap">
                                     <div class="px-6 py-2">
-                                      <p class="text-sm text-gray-500">2</p>
+                                      <p class="text-sm text-gray-500">
+                                        2
+                                      </p>
                                     </div>
                                   </td>
                                   <td class="h-px w-px whitespace-nowrap">
                                     <div class="px-6 py-2">
-                                      <p class="text-sm text-gray-500">33</p>
+                                      <p class="text-sm text-gray-500">
+                                        33
+                                      </p>
                                     </div>
                                   </td>
                                   <td class="h-px w-px whitespace-nowrap">
@@ -791,7 +828,9 @@
                         <ellipse cx="172.608" cy="117.872" rx="9" ry="12" class="fill-gray-400 dark:fill-white" fill="currentColor" />
                         <path d="M194.339 147.588C189.547 148.866 189.114 142.999 189.728 138.038C189.918 136.501 191.738 135.958 192.749 137.131C196.12 141.047 199.165 146.301 194.339 147.588Z" class="fill-gray-400 dark:fill-white" fill="currentColor" />
                       </svg>
-                      <p class="mt-5 text-sm text-gray-500 dark:text-gray-500">No data to show</p>
+                      <p class="mt-5 text-sm text-gray-500 dark:text-gray-500">
+                        No data to show
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -830,7 +869,9 @@
                                 <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z" />
                               </svg>
                             </div>
-                            <h2 class="mt-5 font-semibold text-gray-800 dark:text-white">{% translate "No assignments" %}</h2>
+                            <h2 class="mt-5 font-semibold text-gray-800 dark:text-white">
+                              {% translate "No assignments" %}
+                            </h2>
                             {% comment  %}
                               <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                               Draft an invoice and send it to a customer.
@@ -903,7 +944,9 @@
                   <!-- Card -->
                   <div class="bg-white rounded-xl shadow p-4 sm:p-7 dark:bg-slate-900">
                     <div class="mb-8">
-                      <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">Assign</h2>
+                      <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">
+                        Assign
+                      </h2>
                       <p class="text-sm text-gray-600 dark:text-gray-400">
                         {% translate "Assign this bookkeeper to clients-tab" %}
                       </p>
