@@ -7,8 +7,11 @@ requires-python = ">=3.13"
 dependencies = []
 
 [tool.black]
-line-length = 91
+line-length = 85
 target-version = ['py313'] # Updated to Python 3.13
+preview = true
+unstable-feature = true
+unstable = true
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -28,7 +31,7 @@ exclude = '''
 [tool.isort]
 py_version = 313 # Updated to Python 3.13
 profile = "django"
-line_length = 91
+line_length = 85
 force_single_line = true
 use_parentheses = true
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
