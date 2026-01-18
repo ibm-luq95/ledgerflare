@@ -1,18 +1,16 @@
-# -*- coding: utf-8 -*-#
 from __future__ import annotations
 
 from django.db import transaction
-from django.db.models import Q, Manager
+from django.db.models import Manager
+from django.db.models import Q
 from django.urls import reverse_lazy
 
 from beach_wood_user.models import BWUser
 from bookkeeper.models import BookkeeperProxy
-from core.constants.status_labels import (
-    CON_ARCHIVED,
-    CON_COMPLETED,
-    CON_ENABLED,
-    CON_NOT_STARTED,
-)
+from core.constants.status_labels import CON_ARCHIVED
+from core.constants.status_labels import CON_COMPLETED
+from core.constants.status_labels import CON_ENABLED
+from core.constants.status_labels import CON_NOT_STARTED
 from core.utils.developments.debugging_print_object import DebuggingPrint
 from job.models import Job
 
