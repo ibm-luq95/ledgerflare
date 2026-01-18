@@ -19,7 +19,7 @@ colorlog
 pip-chill
 pipdeptree
 prettyprinter
-pygraphviz
+# pygraphviz
 pyparsing
 pdbpp
 pydot

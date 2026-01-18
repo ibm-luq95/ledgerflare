@@ -9,19 +9,23 @@
 
 {% block dashboard_content_block %}
     <div class="grid grid-cols-3 gap-4">
-        <div class="col-span-2 bg-slate-50 p-5 shadow-md rounded">
+        <div class="col-span-2 p-5 shadow-md rounded">
             {# Start Job Title #}
-            <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                <h2 class="text-lg font-bold tracking-wider">{{ object.title|capfirst }}</h2>
+            <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70 p-4">
+                <h2 class="text-lg font-bold tracking-wider">
+                    {{ object.title|capfirst }}
+                </h2>
             </div>
             {# End Job Title #}
-            <div class="flex mt-2 flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+            <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70 mt-2">
                 <div class="p-4 md:p-5">
                     <h3 class="text-lg pb-3 font-bold text-gray-800 dark:text-white">
                         {% translate "Description" %}
                     </h3>
                     <article class="text-sm md:text-base lg:text-lg overflow-y-auto max-h-96">
-                        <p>{{ object.description|safe }}</p>
+                        <p>
+                            {{ object.description|safe }}
+                        </p>
                         <br />
                         {% if object.categories.all %}
                             {% for category in object.categories.all %}
@@ -31,10 +35,7 @@
                         {# End categories badges #}
                     </article>
                 </div>
-                <div class="bg-gray-100 border-t rounded-b-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700">
-                    <!-- <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
-                    Last updated 5 mins ago
-                  </p> -->
+                <div class="bg-gray-100 border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700">
                     <div class="hs-tooltip inline-block">
                         <button type="button"
                                 class="hs-tooltip-toggle italic text-sm text-gray-500 dark:text-neutral-500">
@@ -46,7 +47,7 @@
                 </div>
             </div>
             {# Start categories badges #}
-            <div class="flex flex-col mt-2 bg-white border border-gray-200 shadow-sm rounded-xl p-4 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+            <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70 mt-2 p-4">
                 <div class="flex items-center justify-between gap-2 rounded">
                     <div>
                         <!-- <label for="hs-trailing" class="sr-only">Label</label> -->
@@ -108,17 +109,19 @@
                         <span class="text-sm text-gray-700 font-bold dark:text-gray-400">{% translate "Notes:" %}</span>
                     </span>
                     <div class="flex ml-1 flex-col w-full bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
-                        <p class="italic">{{ object.note|safe }}</p>
+                        <p class="italic">
+                            {{ object.note|safe }}
+                        </p>
                     </div>
                 </div>
             </div>
             {# Start Tabs Block #}
             <section id="job-tabs">
-                <nav class="relative z-0 flex border rounded-xl overflow-hidden dark:border-gray-700"
+                <nav class="relative z-0 flex border border-gray-200 rounded-xl overflow-hidden dark:border-neutral-700"
                      aria-label="Tabs"
                      role="tablist">
                     <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-l-0 border-l border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-400 active"
+                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400 active"
                             id="tasks-btn"
                             data-hs-tab="#tasks-tab"
                             aria-controls="tasks-tab"
@@ -128,7 +131,7 @@
                         <!-- <span class="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ml-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">99+</span> -->
                     </button>
                     <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-l-0 border-l border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-400"
+                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400"
                             id="documents-btn"
                             data-hs-tab="#documents-tab"
                             aria-controls="documents-tab"
@@ -137,7 +140,7 @@
                         {% translate "Documents" %} ({{ object.documents.count }})
                     </button>
                     <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-l-0 border-l border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-400"
+                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400"
                             id="notes-btn"
                             data-hs-tab="#notes-tab"
                             aria-controls="notes-tab"
@@ -146,7 +149,7 @@
                         {% translate "Notes" %} ({{ object.notes.count }})
                     </button>
                     <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-l-0 border-l border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-400"
+                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400"
                             id="notes-btn"
                             data-hs-tab="#assignments-tab"
                             aria-controls="assignments-tab"
@@ -160,9 +163,6 @@
                     <div id="tasks-tab"
                          role="tabpanel"
                          aria-labelledby="bar-with-underline-item-1">
-                        <!-- <p class="text-gray-500 dark:text-gray-400">
-                            This is the <em class="font-semibold text-gray-800 dark:text-gray-200">first</em> item's tab body.
-</p> -->
                         {% bw_js_modal modal_css_id="createTaskModal" modal_size="sm" modal_title="Create new task" is_submit_btn_enabled=True is_form_modal=True form_object=task_form is_upload_form=True form_id="createTaskForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:task:api:task-api-router-list" %}
                         <div class="text-right">
                             <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-2 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
@@ -187,9 +187,6 @@
                          class="hidden"
                          role="tabpanel"
                          aria-labelledby="bar-with-underline-item-2">
-                        <!-- <p class="text-gray-500 dark:text-gray-400">
-                            This is the <em class="font-semibold text-gray-800 dark:text-gray-200">second</em> item's tab body.
-</p> -->
                         {% bw_js_modal modal_css_id="createDocumentModal" modal_size="sm" modal_title="Create new document" is_submit_btn_enabled=True is_form_modal=True form_object=document_form is_upload_form=True form_id="createDocumentForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:document:api:document-api-router-list" %}
                         <div class="text-right">
                             <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-2 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
@@ -214,9 +211,6 @@
                          class="hidden"
                          role="tabpanel"
                          aria-labelledby="bar-with-underline-item-3">
-                        <!-- <p class="text-gray-500 dark:text-gray-400">
-                            This is the <em class="font-semibold text-gray-800 dark:text-gray-200">third</em> item's tab body.
-</p> -->
                         {% convert_dict_to_str job=object.pk as extra_hidden_inputs %}
                         {% bw_js_modal modal_css_id="createNoteModal" modal_size="sm" modal_title="Create new note" is_submit_btn_enabled=True is_form_modal=True form_object=note_form is_upload_form=False form_id="createNoteForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:note:api:note-api-router-list" %}
                         <div class="text-right">
@@ -242,9 +236,6 @@
                          role="tabpanel"
                          class="hidden"
                          aria-labelledby="bar-with-underline-item-1">
-                        <!-- <p class="text-gray-500 dark:text-gray-400">
-                            This is the <em class="font-semibold text-gray-800 dark:text-gray-200">first</em> item's tab body.
-</p> -->
                         <div class="text-right">
                             <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-2 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
                                 <div class="flex justify-end">
@@ -272,12 +263,14 @@
         <div class="p-5 flex flex-col gap-4 rounded">
             <div class="main flex flex-col gap-2">
                 {% if object.status == CON_ARCHIVED or object.status == CON_COMPLETED %}
-                    <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 text-center">
+                    <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 text-center">
                         <span class="gap-x-1.5 py-1.5 px-3 rounded-full text-md font-bold bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">{% translate "Archived" %}</span>
                     </div>
                 {% endif %}
-                <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400">
-                    <label for="job-status-input" class="sr-only">{% translate "Status" %}</label>
+                <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+                    <label for="job-status-input" class="sr-only">
+                        {% translate "Status" %}
+                    </label>
                     <form action="{% url 'dashboard:job:api:job-api-router-detail' object.pk %}"
                           method="post"
                           id="updateJobStatusStateForm">
@@ -292,7 +285,11 @@
                                         disabled>
                                     {% for choice in job_status_choices %}
                                         <option value="{{ choice.0|safe }}"
-                                                {% if object.status == choice.0 %}selected{% endif %}>{{ choice.1|safe }}</option>
+                                                {% if object.status == choice.0 %}
+                                                    selected
+                                                {% endif %}>
+                                            {{ choice.1|safe }}
+                                        </option>
                                     {% endfor %}
                                 </select>
                                 <select id="jobStateInput"
@@ -301,7 +298,11 @@
                                         disabled>
                                     {% for choice in job_stats_choices %}
                                         <option value="{{ choice.0|safe }}"
-                                                {% if object.state == choice.0 %}selected{% endif %}>{{ choice.1|safe }}</option>
+                                                {% if object.state == choice.0 %}
+                                                    selected
+                                                {% endif %}>
+                                            {{ choice.1|safe }}
+                                        </option>
                                     {% endfor %}
                                 </select>
                                 <button type="submit"
@@ -326,7 +327,7 @@
                         </fieldset>
                     </form>
                 </div>
-                <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400">
+                <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
                     <div>
                         <div class="flex rounded-lg shadow-sm">
                             <div class="hs-tooltip px-4 inline-flex items-center min-w-fit rounded-l-md border border-r-0 border-gray-200 bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
@@ -340,7 +341,9 @@
                                    id="hs-search-box-with-loading-3"
                                    name="hs-search-box-with-loading-3"
                                    class="{{ BW_FULL_INPUT_CSS_CLASSES }} py-3 px-4 pr-11 block w-full border-gray-200 shadow-sm rounded-none text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 cursor-not-allowed
-                                          {% if not object.managed_by %}text-red-500{% endif %}"
+                                          {% if not object.managed_by %}
+                                              text-red-500
+                                          {% endif %}"
                                    data-keep-disabled="true"
                                    value="{% if object.managed_by %}
                                               {{ object.managed_by.fullname|safe }}
@@ -397,15 +400,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400">
+                <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
                     <dl class="grid sm:grid-cols-3 gap-1 sm:gap-3">
-                        <dt class="sm:col-span-1 font-semibold dark:text-white">{% translate "Period Year" %}</dt>
+                        <dt class="sm:col-span-1 font-semibold dark:text-white">
+                            {% translate "Period Year" %}
+                        </dt>
                         <dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white">
-                            <h6 class="text-base dark:text-white">{{ object.period_year }}</h6>
+                            <h6 class="text-base dark:text-white">
+                                {{ object.period_year }}
+                            </h6>
                         </dd>
-                        <dt class="sm:col-span-1 font-semibold dark:text-white">{% translate "Period Month" %}</dt>
+                        <dt class="sm:col-span-1 font-semibold dark:text-white">
+                            {% translate "Period Month" %}
+                        </dt>
                         <dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white">
-                            <h6 class="text-base dark:text-white">{{ object.get_period_month_display }}</h6>
+                            <h6 class="text-base dark:text-white">
+                                {{ object.get_period_month_display }}
+                            </h6>
                         </dd>
                     </dl>
                 </div>
@@ -419,7 +430,7 @@
                     {% endif %}
                 </div>
                 <div class="-mt-1">
-                    <div class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] dark:text-gray-400">
+                    <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
                         {% bw_js_modal modal_css_id="add-discussion-model-form" modal_size="sm" modal_title="Post discussion or reply" is_submit_btn_enabled=True is_form_modal=True form_object=discussion_form is_upload_form=True form_id="createDiscussionForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:discussion:api:discussion-api-router-list" %}
                         <button type="button"
                                 data-hs-overlay="#add-discussion-model-form"

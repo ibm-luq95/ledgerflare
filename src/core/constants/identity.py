@@ -29,13 +29,25 @@ class LedgerFlareIdentity:
     og_title = _("Comprehensive Client Management Platform")
     manager_name = _("Albert Salazar")
     description = _(
-        "Manage clients and their associated jobs, tasks, and financial details with our comprehensive platform. With multiple user roles (Bookkeepers, Assistants, Managers) and features like job management, client accounts, briefcase storage, and archived data retrieval, this web application is designed to streamline project workflow and provide a secure centralized location for tracking progress."
+        "Manage clients and their associated jobs, tasks, and financial details with"
+        " our comprehensive platform. With multiple user roles (Bookkeepers,"
+        " Assistants, Managers) and features like job management, client accounts,"
+        " briefcase storage, and archived data retrieval, this web application is"
+        " designed to streamline project workflow and provide a secure centralized"
+        " location for tracking progress."
     )
     og_description = _(
-        "Manage clients and their associated jobs, tasks, and financial details with our comprehensive platform. With multiple user roles (Bookkeepers, Assistants, Managers) and features like job management, client accounts, briefcase storage, and archived data retrieval, this web application is designed to streamline project workflow and provide a secure centralized location for tracking progress."
+        "Manage clients and their associated jobs, tasks, and financial details with"
+        " our comprehensive platform. With multiple user roles (Bookkeepers,"
+        " Assistants, Managers) and features like job management, client accounts,"
+        " briefcase storage, and archived data retrieval, this web application is"
+        " designed to streamline project workflow and provide a secure centralized"
+        " location for tracking progress."
     )
     keywords = _(
-        "Client Management, Job Management, Financial Details, User Roles, Briefcase Feature, Archived Data Retrieval, Scalable Backend Framework (Django), Responsive Frontend Framework (Tailwind CSS with Preline)"
+        "Client Management, Job Management, Financial Details, User Roles, Briefcase"
+        " Feature, Archived Data Retrieval, Scalable Backend Framework (Django),"
+        " Responsive Frontend Framework (Tailwind CSS with Preline)"
     )
     authos = _("Ibrahim Luqman")
     classification = _("Business & Finance > Accounting & Bookkeeping")

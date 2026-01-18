@@ -272,14 +272,18 @@ window.document.addEventListener("DOMContentLoaded", function () {
       countryList.innerHTML = "";
       noMatches.classList.remove("hidden");
     } else {
-      noMatches.classList.add("hidden");
+      if (noMatches) {
+        noMatches.classList.add("hidden");
+      }
 
       let html =
         '<div class="py-2 px-3 text-xs font-medium uppercase text-gray-800 bg-gray-100 sticky top-0">Actions</div>';
       filteredData.forEach((country, index) => {
         html += buildCountryOption(country, index);
       });
-      countryList.innerHTML = html;
+      if (countryList) {
+        countryList.innerHTML = html;
+      }
     }
 
     currentSelection = -1;
@@ -288,15 +292,17 @@ window.document.addEventListener("DOMContentLoaded", function () {
 
   // Update visual selection
   function updateSelection() {
-    const options = countryList.querySelectorAll(".country-option");
-    options.forEach((option, index) => {
-      if (index === currentSelection) {
-        option.classList.add("bg-blue-100");
-        option.scrollIntoView({ block: "nearest" });
-      } else {
-        option.classList.remove("bg-blue-100");
-      }
-    });
+    if (countryList) {
+      const options = countryList.querySelectorAll(".country-option");
+      options.forEach((option, index) => {
+        if (index === currentSelection) {
+          option.classList.add("bg-blue-100");
+          option.scrollIntoView({ block: "nearest" });
+        } else {
+          option.classList.remove("bg-blue-100");
+        }
+      });
+    }
   }
 
   // Open/close dropdown
@@ -394,8 +400,10 @@ window.document.addEventListener("DOMContentLoaded", function () {
 
   // Event: Click outside to close
   document.addEventListener("click", function (e) {
-    if (!document.getElementById("combobox-wrapper").contains(e.target)) {
-      toggleDropdown(false);
+    if (document.getElementById("combobox-wrapper")) {
+      if (!document.getElementById("combobox-wrapper").contains(e.target)) {
+        toggleDropdown(false);
+      }
     }
   });
 
