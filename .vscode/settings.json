@@ -176,7 +176,7 @@
   "python.analysis.enableTroubleshootMissingImports": true,
   "python.analysis.regenerateStdLibIndices": true,
   "python.analysis.supportDocstringTemplate": true,
-  "djlint.configuration": "pyproject.toml",
+  "djlint.configuration": "/run/media/ibrahim-pc/Primary/P_IBM/MY_Projects/Freelancing/Albert_Salazar/Beach_Wood_Financial/pyproject.toml",
   // "djlint.ignore": ["*.py"],
   "djlint.formatLanguages": [
     "django-html",
