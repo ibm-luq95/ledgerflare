@@ -61,7 +61,7 @@
                                     {% if filter_field.field.widget.choices %}
                                         {% if filter_field.field.widget|bw_get_form_field_type == "Select" or filter_field.field.widget|bw_get_form_field_type == "SelectMultiple" %}
                                             {% with select_multiple=filter_field.field.widget|bw_get_form_field_type %}
-                                                {% render_field filter_field class+=BW_PRELINE_FILTER_SELECT_INPUT_DEFAULT placeholder=widget_attrs.placeholder disabled="disabled" %}
+                                                {% render_field filter_field class+=BW_PRELINE_FILTER_SELECT_INPUT_DEFAULT placeholder=widget_attrs.placeholder %}
                                             {% endwith %}
                                         {% elif filter_field.field.widget|bw_get_form_field_type == "CheckboxSelectMultiple" or filter_field.field|bw_get_form_field_type == "MultipleChoiceField" %}
                                             {% for checkbox_field in filter_field %}
@@ -161,7 +161,7 @@
                 </fieldset>
             </form>
         </div>
-        <div class="bg-gray-100 border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700">
+        <div class="bg-gray-100 border-t border-gray-200 rounded-b-xl py-2 px-4 md:py-2 md:px-5 dark:bg-neutral-900 dark:border-neutral-700">
             <div class="flex flex-row-reverse justify-end">
                 <div class="hs-tooltip inline-block">
                     <button type="submit"
@@ -169,7 +169,7 @@
                                 disabled
                             {% endif %}
                             form="{{ filter_form_id }}"
-                            class="hs-tooltip-toggle inline-flex flex-shrink-0 h-[2.375rem] w-[2.375rem] py-3 px-4 justify-center items-center gap-2 rounded-md bg-blue-100 border border-transparent font-semibold text-blue-500 hover:text-white hover:bg-blue-500 focus:outline-none focus:ring-2 ring-offset-white focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 mx-1">
+                            class="hs-tooltip-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-hidden focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20 mx-1">
                         <i class="fa-solid fa-filter"></i>
                         <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
                               role="tooltip">{% translate "Filter" %}</span>
@@ -181,7 +181,7 @@
                             id="resetFilterBtn"
                             form="{{ filter_form_id }}"
                             data-form="{{ filter_form_id }}"
-                            class="hs-tooltip-toggle inline-flex flex-shrink-0 h-[2.375rem] w-[2.375rem] justify-center items-center gap-2 rounded-md py-3 px-4inline-flex bg-gray-300 border border-transparent font-semibold text-gray-800 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 ring-offset-white focus:ring-gray-800 focus:ring-offset-2 transition-all text-sm dark:bg-gray-700 dark:hover:bg-gray-900 dark:hover:border-gray-900 dark:text-white dark:focus:ring-gray-900 dark:focus:ring-offset-gray-800">
+                            class="hs-tooltip-toggle inline-flex py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:hover:text-white dark:focus:bg-white/20 dark:focus:text-white">
                         <i class="fa-solid fa-eraser"></i>
                         <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
                               role="tooltip">{% translate "Reset filter" %}</span>
