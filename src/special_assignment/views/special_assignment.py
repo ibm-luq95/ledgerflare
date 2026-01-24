@@ -4,7 +4,13 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
@@ -36,7 +42,7 @@ class SpecialAssignmentListView(
     is_actions_menu_enabled = True
     is_header_enabled = True
     is_footer_enabled = True
-    show_info_icon = True
+    show_info_icon = False
     page_title = _("Special assignments")
     page_header = _("Special assignments".title())
     component_path = "bw_components/special_assignment/table_list.html"
@@ -47,7 +53,9 @@ class SpecialAssignmentListView(
     actions_items = "details,update,delete"
     base_url_name = "dashboard:special_assignment"
     empty_label = _("assignments")
-    subtitle = _("Special assignments custom specific assignments to clients".capitalize())
+    subtitle = _(
+        "Special assignments custom specific assignments to clients".capitalize()
+    )
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -57,11 +65,13 @@ class SpecialAssignmentListView(
         context.setdefault(
             "info_details",
             {
-                "tooltip_txt": BW_INFO_MODAL_CSS_CLASSES.get("special_assignment").get(
-                    "tooltip_txt"
+                "tooltip_txt": (
+                    BW_INFO_MODAL_CSS_CLASSES.get("special_assignment").get(
+                        "tooltip_txt"
+                    )
                 ),
-                "modal_css_id": BW_INFO_MODAL_CSS_CLASSES.get("special_assignment").get(
-                    "cssID"
+                "modal_css_id": (
+                    BW_INFO_MODAL_CSS_CLASSES.get("special_assignment").get("cssID")
                 ),
             },
         )
@@ -82,9 +92,7 @@ class SpecialAssignmentListView(
             )
             queryset |= self.request.user.requested_assignments.all()
         if self.request.user.user_type == CON_ASSISTANT:
-            queryset = (
-                self.request.user.assigned_assignments.all()
-            )
+            queryset = self.request.user.assigned_assignments.all()
             queryset |= self.request.user.requested_assignments.all()
         self.filterset = SpecialAssignmentFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
@@ -226,7 +234,9 @@ class RequestedSpecialAssignmentsListView(
         context.setdefault("table_header_title", _("C"))
         context.setdefault("table_header_subtitle", _("Jobs subtitle"))
         context.setdefault("is_show_create_btn", True)
-        context.setdefault("pagination_list_url_name", "dashboard:special_assignment:list")
+        context.setdefault(
+            "pagination_list_url_name", "dashboard:special_assignment:list"
+        )
         context.setdefault("is_filters_enabled", True)
         context.setdefault("is_actions_menu_enabled", True)
         context.setdefault("is_header_enabled", True)
@@ -239,11 +249,15 @@ class RequestedSpecialAssignmentsListView(
         context.setdefault(
             "info_details",
             {
-                "tooltip_txt": BW_INFO_MODAL_CSS_CLASSES.get("requested_assignment").get(
-                    "tooltip_txt"
+                "tooltip_txt": (
+                    BW_INFO_MODAL_CSS_CLASSES.get("requested_assignment").get(
+                        "tooltip_txt"
+                    )
                 ),
-                "modal_css_id": BW_INFO_MODAL_CSS_CLASSES.get("requested_assignment").get(
-                    "cssID"
+                "modal_css_id": (
+                    BW_INFO_MODAL_CSS_CLASSES.get("requested_assignment").get(
+                        "cssID"
+                    )
                 ),
             },
         )

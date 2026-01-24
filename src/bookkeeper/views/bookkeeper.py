@@ -37,7 +37,7 @@ class BookkeeperListView(
     is_actions_menu_enabled = True
     is_header_enabled = True
     is_footer_enabled = True
-    show_info_icon = True
+    show_info_icon = False
     page_title = _("Bookkeepers")
     page_header = _("Bookkeepers".title())
     component_path = "bw_components/bookkeeper/table_list.html"

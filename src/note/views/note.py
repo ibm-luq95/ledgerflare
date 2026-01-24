@@ -41,7 +41,7 @@ class NoteListView(
     is_actions_menu_enabled = True
     is_header_enabled = True
     is_footer_enabled = True
-    show_info_icon = True
+    show_info_icon = False
     pagination_list_url_name = "dashboard:note:list"
     base_url_name = "dashboard:note"
     empty_label = _("notes")
