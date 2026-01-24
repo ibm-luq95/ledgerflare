@@ -39,7 +39,7 @@ class DocumentListView(
     is_actions_menu_enabled = True
     is_header_enabled = True
     is_footer_enabled = True
-    show_info_icon = True
+    show_info_icon = False
     page_title = _("Documents")
     page_header = _("Documents".title())
     component_path = "bw_components/document/table_list.html"

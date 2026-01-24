@@ -13,7 +13,9 @@ from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
 from core.constants.users import CON_BOOKKEEPER
 from core.views.mixins import BWBaseListViewMixin
 from core.views.mixins import BWLoginRequiredMixin
-from core.views.mixins.bookkeeper_pass_related_mixin import BookkeeperPassRelatedMixin
+from core.views.mixins.bookkeeper_pass_related_mixin import (
+    BookkeeperPassRelatedMixin,
+)
 from task.filters import TaskFilter
 from task.forms import TaskForm
 from task.models import TaskProxy
@@ -37,7 +39,7 @@ class TaskListView(
     is_actions_menu_enabled = True
     is_header_enabled = True
     is_footer_enabled = True
-    show_info_icon = True
+    show_info_icon = False
     page_title = _("Tasks")
     page_header = _("Tasks".title())
     component_path = "bw_components/task/table_list.html"
@@ -67,7 +69,9 @@ class TaskListView(
         context.setdefault(
             "info_details",
             {
-                "tooltip_txt": BW_INFO_MODAL_CSS_CLASSES.get("task").get("tooltip_txt"),
+                "tooltip_txt": (
+                    BW_INFO_MODAL_CSS_CLASSES.get("task").get("tooltip_txt")
+                ),
                 "modal_css_id": BW_INFO_MODAL_CSS_CLASSES.get("task").get("cssID"),
             },
         )

@@ -65,7 +65,7 @@ class JobListView(
     is_actions_menu_enabled = True
     is_header_enabled = True
     is_footer_enabled = True
-    show_info_icon = True
+    show_info_icon = False
     page_title = _("Jobs")
     page_header = _("Jobs".title())
     component_path = "bw_components/job/table_list.html"

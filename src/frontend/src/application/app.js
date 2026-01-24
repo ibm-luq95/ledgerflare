@@ -22,6 +22,8 @@ import "highlight.js/styles/default.css";
 import NiceSelect from "nice-select2/dist/js/nice-select2.js";
 import "nice-select2/dist/css/nice-select2.css";
 import Toastify from "toastify-js";
+import Choices from "choices.js";
+import "choices.js/public/assets/styles/choices.min.css";
 import "toastify-js/src/toastify.css";
 
 // import pdfMake from "pdfmake/build/pdfmake";
@@ -74,6 +76,7 @@ import { HSTabs } from "../../node_modules/preline/dist/preline.js";
 
 window.document.addEventListener("DOMContentLoaded", function () {
   window.HSStaticMethods.autoInit();
+
   // Datatables config
   const dataTablesInputs = document.querySelectorAll(
     ".dt-container thead input",
@@ -202,6 +205,13 @@ window.document.addEventListener("DOMContentLoaded", function () {
     html.classList.add("dark");
   else if (isLightOrAuto && !html.classList.contains("light"))
     html.classList.add("light");
+
+  const jsChoicesSelect = document.querySelectorAll(".js-choice-select");
+  if (jsChoicesSelect.length > 0) {
+    jsChoicesSelect.forEach((jsElement) => {
+      const choices = new Choices(jsElement);
+    });
+  }
 });
 (function () {
   "use strict";

@@ -38,7 +38,7 @@ class AssistantListView(
     is_actions_menu_enabled = True
     is_header_enabled = True
     is_footer_enabled = True
-    show_info_icon = True
+    show_info_icon = False
     page_title = _("Assistants")
     page_header = _("Assistants".title())
     component_path = "bw_components/assistant/table_list.html"
