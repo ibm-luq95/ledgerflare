@@ -1,4 +1,5 @@
 import { createApp } from "vue";
 import App from "../components/App.vue";
-
-createApp(App).mount("#app");
+if (document.querySelector("#app")) {
+  createApp(App).mount("#app");
+}
