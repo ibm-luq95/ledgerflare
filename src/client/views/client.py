@@ -76,7 +76,7 @@ class ClientListView(
     is_actions_menu_enabled = True
     is_header_enabled = True
     is_footer_enabled = True
-    show_info_icon = True
+    show_info_icon = False
     base_url_name = "dashboard:client"
     empty_label = _("client")
     subtitle = _(f"Clients for {LedgerFlareIdentity.name}".title())

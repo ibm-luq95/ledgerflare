@@ -10,7 +10,9 @@ import {
 import { showToastNotification } from "../../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
-  const filterCategoryForms = document.querySelectorAll("form.filterCategoryForms");
+  const filterCategoryForms = document.querySelectorAll(
+    "form.filterCategoryForms",
+  );
   if (filterCategoryForms.length > 0) {
     filterCategoryForms.forEach((form) => {
       form.addEventListener("submit", (submitEvent) => {
@@ -46,6 +48,9 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           })
           .catch((error) => {
             const er = bwCleanApiError(error);
+            // console.warn(er);
+            // console.warn(error);
+
             if (er) {
               er.forEach((erElement) => {
                 showToastNotification(
@@ -54,7 +59,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
                 );
               });
             } else {
-              showToastNotification(`Error adding note!`, "error");
+              showToastNotification(`Error adding category!`, "error");
             }
             console.error(error);
           })

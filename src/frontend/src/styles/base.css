@@ -57,3 +57,23 @@
 .dropdown-closed {
   display: none;
 }
+
+.choices__list--dropdown {
+  border-radius: 0.5rem !important;
+}
+.choices__inner {
+  background-color: unset !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+.choices__input {
+  background-color: unset !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+.choices__list--dropdown {
+  z-index: 999999 !important;
+  position: relative;
+}

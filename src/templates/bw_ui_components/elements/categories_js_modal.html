@@ -1,18 +1,23 @@
 {% load i18n %}
 
 <div id="category-js-form-modal"
-     class="bw-js-modal hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto [--overlay-backdrop:static]">
-    <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all lg:max-w-4xl lg:w-full m-3 lg:mx-auto">
-        <div class="flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
-            <div class="flex justify-between items-center py-3 px-4 border-b dark:border-gray-700">
-                <h3 class="font-bold text-gray-800 dark:text-white">
+     class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none"
+     role="dialog"
+     tabindex="-1"
+     aria-labelledby="category-js-form-modal-label">
+    <div class="hs-overlay-animation-target hs-overlay-open:scale-100 hs-overlay-open:opacity-100 scale-95 opacity-0 ease-in-out transition-all duration-200 md:max-w-2xl md:w-full m-3 sm:mx-auto min-h-[calc(100%-56px)] flex items-center">
+        <div class="w-full flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl pointer-events-auto dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-neutral-700/70">
+            <div class="flex justify-between items-center py-3 px-4 border-b border-gray-200 dark:border-neutral-700">
+                <h3 id="category-js-form-modal-label"
+                    class="font-bold text-gray-800 dark:text-white">
                     {{ filter_categories_dict.categories_modal_title }}
                 </h3>
                 <button type="button"
-                        class="flex justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600"
+                        aria-label="Close"
                         data-hs-overlay="#category-js-form-modal">
                     <span class="sr-only">{% translate "Close" %}</span>
-                    <svg class="flex-shrink-0 size-4"
+                    <svg class="shrink-0 size-4"
                          xmlns="http://www.w3.org/2000/svg"
                          width="24"
                          height="24"
@@ -22,133 +27,129 @@
                          stroke-width="2"
                          stroke-linecap="round"
                          stroke-linejoin="round">
-                        <path d="M18 6 6 18" />
-                        <path d="m6 6 12 12" />
+                        <path d="M18 6 6 18">
+                        </path>
+                        <path d="m6 6 12 12">
+                        </path>
                     </svg>
                 </button>
             </div>
             <div class="p-4 overflow-y-auto">
-                <nav class="relative z-0 flex border border-gray-200 rounded-xl overflow-hidden dark:border-neutral-700"
-                     aria-label="Tabs"
-                     role="tablist">
-                    <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-400 active"
-                            id="bar-with-underline-item-1"
-                            data-hs-tab="#bar-with-underline-1"
-                            aria-controls="bar-with-underline-1"
-                            role="tab">
-                        <i class="fa-solid fa-table-list inline-block mr-2"></i>
-                        {% translate "List" %}
-                    </button>
-                    <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white dark:hs-tab-active:border-b-blue-600 relative min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-800 dark:border-l-gray-700 dark:border-b-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-400"
-                            id="bar-with-underline-item-2"
-                            data-hs-tab="#bar-with-underline-2"
-                            aria-controls="bar-with-underline-2"
-                            role="tab">
-                        <i class="fa-solid fa-plus inline-block mr-2"></i>
-                        {% translate "Add" %}
-                    </button>
-                </nav>
-                <div class="mt-3">
-                    <div id="bar-with-underline-1"
-                         role="tabpanel"
-                         aria-labelledby="bar-with-underline-item-1">
-                        <div class="flex flex-col">
-                            <div class="-m-1.5 h-80 {{ BW_PRELINE_ROUNDED_SCROLLBAR_CSS_CLASSES }}">
-                                <div class="p-1.5 min-w-full inline-block align-middle">
-                                    <div class="overflow-hidden">
-                                        {% if filter_categories.categories_object_list %}
-                                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col"
-                                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                            {% translate "Name" %}
-                                                        </th>
-                                                        <th scope="col"
-                                                            class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                            {% if filter_categories.category_app_label == "client_category" %}
-                                                                {% translate "Clients" %}
-                                                            {% else %}
-                                                                {% translate "Jobs" %}
-                                                            {% endif %}
-                                                        </th>
-                                                        {% if filter_categories.is_actions_menu_enabled is True %}
+                <section>
+                    <nav class="relative z-0 flex border border-gray-200 rounded-xl overflow-hidden dark:border-neutral-700"
+                         aria-label="Tabs"
+                         role="tablist"
+                         aria-orientation="horizontal">
+                        <button type="button"
+                                class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400 active"
+                                id="bar-with-underline-item-1"
+                                aria-selected="true"
+                                data-hs-tab="#bar-with-underline-1"
+                                aria-controls="bar-with-underline-1"
+                                role="tab">
+                            {% translate "Categories" %}
+                        </button>
+                        <button type="button"
+                                class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400"
+                                id="bar-with-underline-item-2"
+                                aria-selected="false"
+                                data-hs-tab="#bar-with-underline-2"
+                                aria-controls="bar-with-underline-2"
+                                role="tab">
+                            {% translate "Add New" %}
+                        </button>
+                    </nav>
+                    <div class="mt-3">
+                        <div id="bar-with-underline-1"
+                             role="tabpanel"
+                             aria-labelledby="bar-with-underline-item-1">
+                            <div class="flex flex-col">
+                                <div class="-m-1.5 h-80 {{ BW_PRELINE_ROUNDED_SCROLLBAR_CSS_CLASSES }}">
+                                    <div class="p-1.5 min-w-full inline-block align-middle">
+                                        <div class="overflow-hidden">
+                                            {% if filter_categories.categories_object_list %}
+                                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                                    <thead>
+                                                        <tr>
                                                             <th scope="col"
-                                                                class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">
-                                                                #
+                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                                {% translate "Name" %}
                                                             </th>
-                                                        {% endif %}
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for cat_object in filter_categories.categories_object_list %}
-                                                        <tr class="odd:bg-white even:bg-gray-100 dark:odd:bg-slate-900 dark:even:bg-slate-800">
-                                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                                {{ cat_object.name|safe }}
-                                                            </td>
-                                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                                            <th scope="col"
+                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                                                 {% if filter_categories.category_app_label == "client_category" %}
-                                                                    {{ cat_object.clients.count }}
+                                                                    {% translate "Clients" %}
                                                                 {% else %}
-                                                                    {{ cat_object.jobs.count }}
+                                                                    {% translate "Jobs" %}
                                                                 {% endif %}
-                                                            </td>
+                                                            </th>
                                                             {% if filter_categories.is_actions_menu_enabled is True %}
-                                                                <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                                                    <div class="hs-tooltip inline-block">
-                                                                        <button type="button"
-                                                                                class="hs-tooltip-toggle flex-item justify-end items-end size-[30px] text-sm font-semibold rounded-full border border-transparent  disabled:opacity-50 disabled:pointer-events-none bg-red-100 text-red-800 hover:bg-red-200 dark:hover:bg-red-900 dark:text-red-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:hover:text-red-400">
-                                                                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                                                                  role="tooltip">{% translate "Delete" %}</span>
-                                                                            <i class="fa-regular fa-trash-can"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
+                                                                <th scope="col"
+                                                                    class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">
+                                                                    #
+                                                                </th>
                                                             {% endif %}
                                                         </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        {% else %}
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for cat_object in filter_categories.categories_object_list %}
+                                                            <tr class="odd:bg-white even:bg-gray-100 dark:odd:bg-slate-900 dark:even:bg-slate-800">
+                                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                                    {{ cat_object.name|safe }}
+                                                                </td>
+                                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                                                    {% if filter_categories.category_app_label == "client_category" %}
+                                                                        {{ cat_object.clients.count }}
+                                                                    {% else %}
+                                                                        {{ cat_object.jobs.count }}
+                                                                    {% endif %}
+                                                                </td>
+                                                                {% if filter_categories.is_actions_menu_enabled is True %}
+                                                                    <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                                                                        <div class="hs-tooltip inline-block">
+                                                                            <button type="button"
+                                                                                    class="hs-tooltip-toggle flex-item justify-end items-end size-[30px] text-sm font-semibold rounded-full border border-transparent  disabled:opacity-50 disabled:pointer-events-none bg-red-100 text-red-800 hover:bg-red-200 dark:hover:bg-red-900 dark:text-red-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:hover:text-red-400">
+                                                                                <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
+                                                                                      role="tooltip">{% translate "Delete" %}</span>
+                                                                                <i class="fa-regular fa-trash-can"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+                                                                {% endif %}
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            {% else %}
 
-                                            {% include "bw_ui_components/global/empty_card.html" with label="job categories" %}
+                                                {% include "bw_ui_components/global/empty_card.html" with label="categories" %}
 
-                                        {% endif %}
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div id="bar-with-underline-2"
+                             class="hidden"
+                             role="tabpanel"
+                             aria-labelledby="bar-with-underline-item-2">
+                            <section>
+                                {% component "bw_form" form_id=filter_categories.categories_add_form_css_id form_action_url=filter_categories.category_filter_form_action_url form_method="POST" form=filter_categories_dict.categories_add_form is_btns_enabled=False form_title="Add new category" extra_form_css_classes=filter_categories.categories_add_form_css_class %}{% endcomponent %}
+                            </section>
+                        </div>
                     </div>
-                    <div id="bar-with-underline-2"
-                         class="hidden"
-                         role="tabpanel"
-                         aria-labelledby="bar-with-underline-item-2">
-                        <section>
-                            <article class="my-3 text-sm leading-6 text-slate-600 dark:text-slate-400">
-                                {% comment  %}
-                                    <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
-                                    <p>
-                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Et, reprehenderit natus omnis perferendis facere corporis minima. Quis aperiam praesentium dignissimos, delectus libero dicta nemo illo quam, sunt natus adipisci culpa.
-                                    </p>
-                                </div>
-                                {% endcomment %}
-                            </article>
-                            {% component "bw_form" form_id=filter_categories.categories_add_form_css_id form_action_url=filter_categories.category_filter_form_action_url form_method="POST" form=filter_categories_dict.categories_add_form is_btns_enabled=False form_title="Add new category" extra_form_css_classes=filter_categories.categories_add_form_css_class %}{% endcomponent %}
-                        </section>
-                    </div>
-                </div>
+                </section>
             </div>
-            <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700">
+            <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t border-gray-200 dark:border-neutral-700">
                 <button type="button"
-                        class="{{ BW_FULL_INPUT_CSS_CLASSES }} py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
                         data-hs-overlay="#category-js-form-modal">
                     {% translate "Close" %}
                 </button>
                 <button type="submit"
                         form="{{ filter_categories.categories_add_form_css_id }}"
-                        class="{{ BW_FULL_INPUT_CSS_CLASSES }} py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                     {% translate "Create" %}
                 </button>
             </div>
