@@ -14,7 +14,9 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
   const updateJobStatusStateForm = document.querySelector(
     "form#updateJobStatusStateForm",
   );
-  const addDiscussionFormInJob = document.querySelector("form#addDiscussionFormInJob");
+  const addDiscussionFormInJob = document.querySelector(
+    "form#addDiscussionFormInJob",
+  );
   const updateJobForm = document.querySelector("form#updateJobForm");
   if (updateJobStatusStateForm) {
     updateJobStatusStateForm.addEventListener("submit", (event) => {
@@ -39,14 +41,19 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
         const request = RequestHandler.sendRequest(requestOptions);
         request
           .then((data) => {
-            showToastNotification("Job status/state updated successfully", "success");
+            showToastNotification(
+              "Job status/state updated successfully",
+              "success",
+            );
             setTimeout(() => {
               window.location.reload();
             }, SUCCESSTIMEOUTSECS);
           })
           .catch((error) => {
             console.error(error);
-            throw new Error(error.message);
+            console.warn(error);
+            showToastNotification("Error while update job!", "danger");
+            // throw new Error(error.message);
           });
       } catch (error) {
         showToastNotification("Error while update job!", "danger");
@@ -76,7 +83,10 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
           formElement: currentTarget,
           excludedFields: ["_method"],
         });
-        disableAndEnableFieldsetItems({ formElement: updateJobForm, state: "disable" });
+        disableAndEnableFieldsetItems({
+          formElement: updateJobForm,
+          state: "disable",
+        });
         const requestOptions = {
           method: currentTarget["_method"]
             ? currentTarget["_method"].value.toUpperCase()
