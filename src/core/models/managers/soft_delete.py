@@ -29,20 +29,6 @@ class SoftDeleteManager(models.Manager):
 
     ALLOWED_STATUS = [CON_ARCHIVED, CON_COMPLETED]
 
-    # def get_queryset(self) -> BaseQuerySetMixin:
-    #     """
-    #     Returns a queryset of all instances of the model that are not marked as deleted.
-    #
-    #     Returns:
-    #         BaseQuerySetMixin: A queryset of instances of the model that are not marked as deleted.
-    #
-    #     """
-    #     queryset = BaseQuerySetMixin(self.model, using=self._db).filter(
-    #         Q(is_deleted=False)
-    #     )
-    #
-    #     return queryset
-
     def get_queryset(self):
         """
         Return a custom QuerySet that excludes soft-deleted rows by default.

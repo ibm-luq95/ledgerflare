@@ -98,14 +98,16 @@ class JobListView(
         # context.setdefault("filter_form", self.filterset.form)
         context.setdefault("filter_form_id", "jobFilterForm")
         context.setdefault("table_header_subtitle", _("Jobs subtitle"))
-        context.setdefault("total_records", JobProxy.objects.count())
+        context.setdefault("total_records", JobProxy.objects.active().count())
         context.setdefault(
             "extra_context", {"is_show_client": True, "is_hide_manager": False}
         )
         context.setdefault(
             "info_details",
             {
-                "tooltip_txt": BW_INFO_MODAL_CSS_CLASSES.get("job").get("tooltip_txt"),
+                "tooltip_txt": (
+                    BW_INFO_MODAL_CSS_CLASSES.get("job").get("tooltip_txt")
+                ),
                 "modal_css_id": BW_INFO_MODAL_CSS_CLASSES.get("job").get("cssID"),
             },
         )
@@ -141,7 +143,9 @@ class JobListView(
         if self.request.user.user_type == CON_BOOKKEEPER:
             # queryset = self.request.user.bookkeeper.get_proxy_model().get_user_jobs()
             if show_all_jobs:
-                queryset = self.request.user.bookkeeper.get_proxy_model().get_all_jobs()
+                queryset = (
+                    self.request.user.bookkeeper.get_proxy_model().get_all_jobs()
+                )
             else:
                 queryset = (
                     self.request.user.bookkeeper.get_proxy_model().get_user_jobs()
@@ -290,7 +294,8 @@ class JobDetailsView(
         if pk is None and slug is None:
             raise AttributeError(
                 _(
-                    "Generic detail view %s must be called with either an object pk or a slug in the URLconf."
+                    "Generic detail view %s must be called with either an object pk"
+                    " or a slug in the URLconf."
                     % self.__class__.__name__
                 )
             )
