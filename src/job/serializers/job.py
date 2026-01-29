@@ -12,14 +12,19 @@ from task.serializers import TaskSerializer
 class JobSerializer(ValidateDueDateSerializerMixin, serializers.ModelSerializer):
     tasks = TaskSerializer(many=True, read_only=True, required=False)
     client = serializers.PrimaryKeyRelatedField(
-        queryset=ClientProxy.objects.all(), many=False
+        queryset=ClientProxy.objects.all(),
+        many=False,
     )
     managed_by = serializers.PrimaryKeyRelatedField(
-        queryset=BWUser.objects.all(), many=False, allow_null=True
+        queryset=BWUser.objects.all(),
+        many=False,
+        allow_null=True,
     )
     # categories = JobCategorySerializer(read_only=True, many=True)
     categories = serializers.PrimaryKeyRelatedField(
-        queryset=JobCategory.objects.all(), many=True, required=False
+        queryset=JobCategory.objects.all(),
+        many=True,
+        required=False,
     )
 
     # due_date = serializers.DateField(read_only=True)
