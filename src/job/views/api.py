@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 import traceback
 
 from django.utils.translation import gettext as _
@@ -15,6 +14,7 @@ from core.api.permissions import BaseApiPermissionMixin
 from core.utils import get_formatted_logger
 from job.models import JobProxy
 from job.serializers.job import JobSerializer
+
 
 logger = get_formatted_logger()
 
@@ -41,7 +41,10 @@ class UpdateJobApiView(APIView):
 
             # serializer = JobSerializer(instance=job_object, data=data, partial=True)
             serializer = JobSerializer(
-                instance=job_object, data=data, context={"request": request}, partial=True
+                instance=job_object,
+                data=data,
+                context={"request": request},
+                partial=True,
             )
             serializer.is_valid(raise_exception=True)
             # if not serializer.is_valid(raise_exception=True):
@@ -57,7 +60,7 @@ class UpdateJobApiView(APIView):
                 data={"job": serializer.data, "msg": _("Job updated successfully!")},
                 status=status.HTTP_200_OK,
             )
-        except APIException as ex:
+        except APIException:
             # logger.error("API Exception")
             logger.error(traceback.format_exc())
             # logger.error(ex.detail)

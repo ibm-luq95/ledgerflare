@@ -15,7 +15,7 @@ from ..managers.archive_manager import ArchiveManager
 
 class BaseModelMixin(DiffingMixin, GetModelInstanceAsDictMixin, models.Model):
     """
-    A mixin class that provides common functionality for models in the Beachwood Wood
+    A mixin class that provides common functionality for models in the LedgerFlar
     Financial application.
 
     This mixin class includes fields and methods that are commonly used by models.
