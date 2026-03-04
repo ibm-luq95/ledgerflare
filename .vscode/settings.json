@@ -194,5 +194,10 @@
     "editor.defaultFormatter": "monosans.djlint"
   },
   "eslint.run": "onSave",
-  "eslint.workingDirectories": ["${workspaceFolder}"]
+  "eslint.workingDirectories": [
+    "${workspaceFolder}"
+  ],
+  "windsurfPyright.importStrategy": "fromEnvironment",
+  "windsurfPyright.analysis.useTypingExtensions": true,
+  "windsurfPyright.analysis.logLevel": "Trace"
 }
