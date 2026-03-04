@@ -18,14 +18,14 @@
   "djlint.useNewLinterOutputParser": true,
   // "djlint.preserveBlankLines": true
   "djlint.useVenv": false,
-  "djlint.pythonPath": "/home/ibrahim-pc/.virtualenvs/Leadger_Flear_Venv3.13/bin/python3",
+  "djlint.pythonPath": "${userHome}/.virtualenvs/Leadger_Flear_Venv3.14/bin/python3",
   "windsurfPyright.analysis.inlayHints.variableTypes": true,
   "windsurfPyright.analysis.inlayHints.genericTypes": true,
   "windsurfPyright.analysis.inlayHints.functionReturnTypes": true,
   "windsurfPyright.analysis.inlayHints.callArgumentNamesMatching": true,
   "windsurfPyright.analysis.inlayHints.callArgumentNames": true,
   "windsurfPyright.analysis.include": ["./src"],
-  "windsurfPyright.analysis.typeCheckingMode": "basic",
+  "windsurfPyright.analysis.typeCheckingMode": "standard",
   "npm-intellisense.importQuotes": "\"",
   "path-intellisense.showHiddenFiles": true,
   "ruff.format.preview": true,
@@ -143,7 +143,6 @@
     // Keep .vscode folder visible for workspace settings
     ".vscode": false
   },
-  "python.defaultInterpreterPath": "/home/ibrahim-pc/.virtualenvs/Leadger_Flear_Venv3.13/bin/python3",
   "python.terminal.executeInFileDir": true,
   "python.terminal.focusAfterLaunch": true,
   "autoDocstring.docstringFormat": "sphinx",
