@@ -1,8 +1,8 @@
 services:
   backend:
     restart: no
-    container_name: beachwoodfinancial_development_backend
-    #    image: beachwoodfinancial_development_webapp_image
+    container_name: LedgerFlare_backend
+    #    image: LedgerFlare_webapp_image
     environment:
       - TERM=xterm-256color
       - COLOR_PROMPT=yes
@@ -61,7 +61,7 @@ services:
     image: postgres:alpine
     tty: true
     stdin_open: true
-    container_name: beachwoodfinancial_development_db
+    container_name: LedgerFlare_db
     ports:
       - "5433:5432"
     expose:

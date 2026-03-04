@@ -2,7 +2,7 @@ colorama
 crispy-tailwind
 apscheduler
 cryptography
-Django
+Django~=6.0
 django-cors-headers
 django-admin-rangefilter
 django-components

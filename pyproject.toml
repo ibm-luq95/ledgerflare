@@ -3,12 +3,12 @@ name = "Leadgerflare_Web_Application"
 version = "1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = []
 
 [tool.black]
 line-length = 85
-target-version = ['py313'] # Updated to Python 3.13
+target-version = ['py314'] # Updated to Python 3.13
 preview = true
 unstable-feature = true
 unstable = true
@@ -58,7 +58,7 @@ ignore = "H006, H014"
 
 [tool.ruff]
 line-length = 91
-target-version = "py313" # Updated to Python 3.13
+target-version = "py314" # Updated to Python 3.13
 indent-width = 4
 exclude = [
     ".bzr",
@@ -141,7 +141,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 
 [tool.mypy]
-python_version = "3.13"             # Updated to Python 3.13
+python_version = "3.14"             # Updated to Python 3.13
 ignore_missing_imports = true
 follow_imports = "silent"
 no_implicit_optional = true
