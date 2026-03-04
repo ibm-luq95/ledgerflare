@@ -5,7 +5,7 @@ djlint
 djade
 djhtml
 curlylint
-docformatter
+# docformatter
 flake8
 isort
 mypy
