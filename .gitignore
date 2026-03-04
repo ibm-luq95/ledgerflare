@@ -593,3 +593,4 @@ src/frontend/bun.lockb!/.env_dotenv
 production_config_files
 uv.lock
 .direnv
+.qaiprompts

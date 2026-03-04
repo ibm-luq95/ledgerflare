@@ -32,9 +32,9 @@ urlpatterns = [
     path("", include("django_components.urls")),
 ]
 
-admin.site.index_title = _("Beachwood Financial Administrator")
-admin.site.site_header = _("Beachwood Financial Solutions")
-admin.site.site_title = _("Beachwood Financial Administrator")
+admin.site.index_title = _("LedgerFlare Administrator")
+admin.site.site_header = _("LedgerFlare Solutions")
+admin.site.site_title = _("LedgerFlare Administrator")
 
 if settings.DEBUG:
     urlpatterns += static_and_media_path_urls
