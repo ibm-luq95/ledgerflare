@@ -19,9 +19,11 @@
     <body class="hs-overlay-body-open hs-overlay-body-open:overflow-hidden">
         <div class="max-w-full flex flex-col mx-auto w-full h-full">
             <!-- ========== HEADER ========== -->
+            {% if request.user.is_authenticated %}
 
-            {% include "components/inc/home_top_navbar.html" %}
+                {% include "components/inc/home_top_navbar.html" %}
 
+            {% endif %}
             <!-- ========== END HEADER ========== -->
             {% comment  %}
             <!-- ========== ANNOUNCEMENT BANNER ========== -->
@@ -31,7 +33,7 @@
             <!-- ========== MAIN CONTENT ========== -->
             <main id="home-content"
                   role="main"
-                  class="sm:hs-overlay-layout-open:ms-64 py-5 min-h-160 bg-white transition-all duration-300 dark:bg-neutral-800">
+                  class="py-5 min-h-160 bg-white transition-all duration-300 dark:bg-neutral-800">
                 {# Start Flash Message #}
 
                 {% include "components/inc/messages.html" %}
