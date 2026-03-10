@@ -248,6 +248,14 @@ class BWLoginViewBW(SuccessMessageMixin, BWSiteSettingsViewMixin, FormMixin, Vie
         :return: Rendered HTML response with errors
         :rtype: HttpResponse
         """
+        # Add form errors as flash messages
+        for field, errors in form.errors.items():
+            for error in errors:
+                if field == '__all__':  # Non-field errors
+                    messages.error(self.request, error)
+                else:
+                    messages.error(self.request, f"{form.fields[field].label}: {error}")
+
         context = self.get_context_data(form=form)
         return render(self.request, self.template_name, context, status=400)
 
