@@ -3,6 +3,11 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from django.db.models.signals import pre_init, post_init
 
+# Add security middleware to production
+MIDDLEWARE = MIDDLEWARE + [
+    "core.middleware.security_logging.SecurityLoggingMiddleware",
+]
+
 DEBUG = config("DEBUG", cast=bool)
 
 ADMINS = [("Ibrahim Luqman", "ibm_luq995@outlook.com")]
@@ -118,13 +123,22 @@ if config("SENTRY_IS_ENABLED", cast=bool) is True:
 # Start from base logging
 LOGGING = LOGGING_BASE.copy()
 LOGGING["handlers"] = LOGGING["handlers"].copy()  # Allow adding new handlers
+LOGGING["formatters"] = LOGGING["formatters"].copy()  # Allow adding new formatters
 
-# Add file handlers
+# Add plain text formatter for readable logs (optional, alongside JSON)
+LOGGING["formatters"]["plain_text"] = {
+    "format": "[{levelname}] {asctime} {name} {module}:{lineno} :: {message}\n{exc_info}",
+    "style": "{",
+    "datefmt": "%Y-%m-%d %H:%M:%S",
+}
+
+# Add file handlers with proper encoding and exception capture
 LOGGING["handlers"]["file_error"] = {
     "level": "ERROR",
     "class": "logging.FileHandler",
     "filename": LOGS_FOLDER / "bw_errors.log",
     "formatter": "verbose_json",
+    "encoding": "utf8",
 }
 
 LOGGING["handlers"]["file_warning"] = {
@@ -132,6 +146,7 @@ LOGGING["handlers"]["file_warning"] = {
     "class": "logging.FileHandler",
     "filename": LOGS_FOLDER / "bw_warning.log",
     "formatter": "verbose_json",
+    "encoding": "utf8",
 }
 
 LOGGING["handlers"]["file_app_rotating"] = {
@@ -143,6 +158,20 @@ LOGGING["handlers"]["file_app_rotating"] = {
     "backupCount": 6,  # Keep 7 weekly logs (~7 weeks of history)
     "filename": LOGS_FOLDER / "app.log",
     "formatter": "verbose_json",
+    "encoding": "utf8",
+}
+
+# Add readable plain text log file for production (human-readable)
+LOGGING["handlers"]["file_readable"] = {
+    "level": "INFO",
+    "class": "logging.handlers.TimedRotatingFileHandler",
+    "when": "W0",  # Rotate every Monday
+    "interval": 1,
+    "delay": True,
+    "backupCount": 4,  # Keep 4 weeks of readable logs
+    "filename": LOGS_FOLDER / "app_readable.log",
+    "formatter": "plain_text",
+    "encoding": "utf8",
 }
 
 # 🔽 Admin email handler is COMMENTED OUT — disabled for now
@@ -156,14 +185,27 @@ LOGGING["handlers"]["email_admin"] = {
 
 # Update root logger to handle all uncaught logs
 LOGGING["root"] = {
-    "handlers": ["file_app_rotating", "file_warning", "file_error"],
+    "handlers": ["file_app_rotating", "file_readable", "file_warning", "file_error"],
     "level": "INFO",
 }
 
 # bw_logger: main app logger
 LOGGING["loggers"]["bw_logger"] = {
-    "handlers": ["file_app_rotating", "file_warning", "file_error"],
+    "handlers": ["file_app_rotating", "file_readable", "file_warning", "file_error"],
     "level": "INFO",
+    "propagate": False,
+}
+
+# Add Django framework loggers for comprehensive monitoring
+LOGGING["loggers"]["django.db.backends"] = {
+    "handlers": ["file_warning", "file_error"],
+    "level": "WARNING",
+    "propagate": False,
+}
+
+LOGGING["loggers"]["django.security"] = {
+    "handlers": ["file_error"],
+    "level": "ERROR", 
     "propagate": False,
 }
 
