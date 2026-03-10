@@ -15,14 +15,14 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
       "dashboard:manager:management_api:management-dashboard-api"
     )
       .then((urlData) => {
-        console.warn(urlData);
+        // console.warn(urlData);
         const urlPath = urlData["urlPath"];
         RequestHandler.sendRequest({
           url: urlPath,
           method: "POST",
           djangoRequest: true,
           debug: true,
-          // environment: process.env.STAGE_ENVIRONMENT || "development",
+          environment: process.env.STAGE_ENVIRONMENT || "development",
         })
           .then((newData) => {
             console.log("Request successful:", newData);
@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
             const chartDashboardWrapper = document.querySelector(
               "#chart-dashboard-wrapper"
             );
+            console.warn(chartDashboardWrapper)
             const chartLoader = chartDashboardWrapper.querySelector(".loader-element");
             const jobChartWrapper =
               chartDashboardWrapper.querySelector("#jobChartWrapper");
@@ -66,6 +67,11 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
             if (newData["jobs_count"] > 0) {
               jobChartWrapper.classList.remove("hidden");
               if (jobsChart) {
+                const getAspectRatio = () => window.innerWidth < 768 ? 1.5 : 1.2;
+                const getFontSize = () => window.innerWidth < 768 ? 10 : 11;
+                const getTitleFontSize = () => window.innerWidth < 768 ? 13 : 14;
+                const getLegendPadding = () => window.innerWidth < 768 ? 8 : 12;
+
                 const chart = new Chart(jobsChart, {
                   type: "doughnut",
 
@@ -74,6 +80,8 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
                     datasets: [
                       {
                         backgroundColor: ["#EF4444", "#22C55E", "#EAB308"],
+                        borderWidth: 0,
+                        hoverOffset: 4,
                         data: [
                           newData["jobs_statistics"]["past_due_jobs_count"],
                           newData["jobs_statistics"]["completed_jobs_count"],
@@ -83,20 +91,73 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
                     ],
                   },
                   options: {
-                    maintainAspectRation: false,
-                    responsive: false,
-                    aspectRatio: 2,
-
+                    maintainAspectRatio: true,
+                    responsive: true,
+                    aspectRatio: getAspectRatio(),
+                    layout: {
+                      padding: {
+                        top: 5,
+                        bottom: 5,
+                      },
+                    },
                     plugins: {
                       title: {
                         display: true,
-                        text: "Jobs",
+                        text: "Jobs Overview",
+                        font: {
+                          size: getTitleFontSize(),
+                          weight: "600",
+                        },
+                        color: "#374151",
+                        padding: {
+                          top: 0,
+                          bottom: 10,
+                        },
                       },
                       legend: {
-                        display: false,
+                        display: true,
+                        position: "bottom",
+                        labels: {
+                          usePointStyle: true,
+                          pointStyle: "circle",
+                          padding: getLegendPadding(),
+                          font: {
+                            size: getFontSize(),
+                          },
+                          color: "#6B7280",
+                        },
+                      },
+                      tooltip: {
+                        backgroundColor: "rgba(17, 24, 39, 0.9)",
+                        padding: 12,
+                        titleFont: {
+                          size: 13,
+                        },
+                        bodyFont: {
+                          size: 12,
+                        },
+                        cornerRadius: 8,
+                        displayColors: true,
                       },
                     },
+                    animation: {
+                      animateScale: true,
+                      animateRotate: true,
+                    },
                   },
+                });
+
+                // Update chart on window resize
+                let resizeTimeout;
+                window.addEventListener("resize", () => {
+                  clearTimeout(resizeTimeout);
+                  resizeTimeout = setTimeout(() => {
+                    chart.options.aspectRatio = getAspectRatio();
+                    chart.options.plugins.legend.labels.font.size = getFontSize();
+                    chart.options.plugins.legend.labels.padding = getLegendPadding();
+                    chart.options.plugins.title.font.size = getTitleFontSize();
+                    chart.update("none");
+                  }, 250);
                 });
               }
             } else {
