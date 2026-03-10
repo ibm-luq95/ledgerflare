@@ -67,6 +67,7 @@ import "./beach_wood_user/bookkeeper.js";
 import "./beach_wood_user/manager.js";
 import "./beach_wood_user/cfo.js";
 import "./dashboard/notifications.js";
+import "./dashboard/manager_dashboard.js";
 import "./management/delete_staff.js";
 import { initJournalEntryModule } from "./client/journal_entry.js";
 // import "../styles/datatable.css";
