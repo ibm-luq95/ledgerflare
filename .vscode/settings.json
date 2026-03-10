@@ -18,7 +18,7 @@
   "djlint.useNewLinterOutputParser": true,
   // "djlint.preserveBlankLines": true
   "djlint.useVenv": false,
-  "djlint.pythonPath": "${userHome}/.virtualenvs/Leadger_Flear_Venv3.14/bin/python3",
+  "djlint.pythonPath": "/home/ibrahim-pc/.virtualenvs/Leadger_Flear_Venv3.14/bin/python3",
   "windsurfPyright.analysis.inlayHints.variableTypes": true,
   "windsurfPyright.analysis.inlayHints.genericTypes": true,
   "windsurfPyright.analysis.inlayHints.functionReturnTypes": true,
