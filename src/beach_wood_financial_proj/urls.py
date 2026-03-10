@@ -1,13 +1,20 @@
-from core.views import js_settings
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path, reverse_lazy
+from django.urls import include
+from django.urls import path
+from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import RedirectView
 from django.views.i18n import JavaScriptCatalog
 
-from core.views.core import custom_404_view, custom_500_view
+from core.views import js_settings
+from core.views.core import custom_404_view
+from core.views.core import custom_500_view
+from core.views.test_logging import test_logging
+from core.views.test_security_logging import test_security_logging
+from core.views.test_sql_logging import test_sql_logging
+
 
 # Custom 404 error view
 handler404 = "core.views.error_404"
@@ -24,6 +31,9 @@ urlpatterns = [
     path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     # path("", include("home.urls"), name="home-urls"),
     path("logs/", include("log_viewer.urls")),
+    path("test-logging/", test_logging, name="test_logging"),
+    path("test-security-logging/", test_security_logging, name="test_security_logging"),
+    path("test-sql-logging/", test_sql_logging, name="test_sql_logging"),
     path("", RedirectView.as_view(url=reverse_lazy("auth:login")), name="home-url"),
     path("js-settings/", js_settings, name="js_settings"),
     path("core/", include("core.urls"), name="core-urls"),
