@@ -327,6 +327,12 @@ CSRF_COOKIE_HTTPONLY = False  # JS needs access
 CSRF_COOKIE_SECURE = False  # Allow HTTP
 CSRF_COOKIE_SAMESITE = "Lax"
 # CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = [
+    "https://dev.int.ledgerflare.com",
+    # Add other domains if needed
+    "http://localhost:3000",  # if you're developing locally
+    "http://127.0.0.1:8000",
+]
 CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 CSRF_COOKIE_NAME = "csrftoken"
 
