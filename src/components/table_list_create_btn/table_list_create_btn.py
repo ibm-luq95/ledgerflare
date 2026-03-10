@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 # In a file called [project root]/components/calendar/calendar.py
 from typing import Optional
 
