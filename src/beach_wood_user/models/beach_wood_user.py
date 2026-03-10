@@ -1,21 +1,21 @@
-# -*- coding: utf-8 -*-#
-from django.urls import reverse_lazy
-
-from core.choices import (
-    BeachWoodUserStatusEnum,
-    BeachWoodUserTypeEnum,
-    BeachWoodUserTypesEnum,
-)
-from core.models.mixins import BaseModelMixin
-from core.utils import get_formatted_logger
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from guardian.mixins import GuardianUserMixin
 
+from beach_wood_user.signals.signals import bwuser_post_soft_delete
+from beach_wood_user.signals.signals import bwuser_pre_soft_delete
+from core.choices import BeachWoodUserStatusEnum
+from core.choices import BeachWoodUserTypeEnum
+from core.choices import BeachWoodUserTypesEnum
+from core.models.mixins import BaseModelMixin
+from core.utils import get_formatted_logger
+
 from .manager import BeachWoodUserManager
-from beach_wood_user.signals.signals import bwuser_pre_soft_delete, bwuser_post_soft_delete
+
 
 # TODO: remove the custom logger before push (only for development)
 # ###### [Custom Logger] #########
@@ -175,30 +175,28 @@ class BWUser(BaseModelMixin, AbstractBaseUser, PermissionsMixin, GuardianUserMix
     def get_staff_details(self) -> dict:
         user_dict = dict()
         staff_object = self.get_staff_member_object.get("staff_object")
-        user_dict.update(
-            {
-                "linkedin": getattr(staff_object.profile, "linkedin", None),
-                "instagram": getattr(staff_object.profile, "instagram", None),
-                "github": getattr(staff_object.profile, "github", None),
-                "profile_picture": getattr(staff_object.profile, "profile_picture", None),
-                "facebook": getattr(staff_object.profile, "facebook", None),
-                "twitter": getattr(staff_object.profile, "twitter", None),
-                "bio": getattr(staff_object.profile, "bio", None),
-                "first_name": self.first_name,
-                "last_name": self.last_name,
-                "email": self.email,
-                "phone_number": getattr(staff_object.profile, "phone_number", None),
-                "address": getattr(staff_object.profile, "address", None),
-            }
-        )
+        user_dict.update({
+            "linkedin": getattr(staff_object.profile, "linkedin", None),
+            "instagram": getattr(staff_object.profile, "instagram", None),
+            "github": getattr(staff_object.profile, "github", None),
+            "profile_picture": getattr(
+                staff_object.profile, "profile_picture", None
+            ),
+            "facebook": getattr(staff_object.profile, "facebook", None),
+            "twitter": getattr(staff_object.profile, "twitter", None),
+            "bio": getattr(staff_object.profile, "bio", None),
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "phone_number": getattr(staff_object.profile, "phone_number", None),
+            "address": getattr(staff_object.profile, "address", None),
+        })
         if self.user_type == "assistant":
-            user_dict.update(
-                {
-                    "assistant_type": self.get_staff_member_object.get(
-                        "staff_object"
-                    ).assistant_type
-                }
-            )
+            user_dict.update({
+                "assistant_type": (
+                    self.get_staff_member_object.get("staff_object").assistant_type
+                )
+            })
         if self.user_type == "manager":
             user_dict.update({"is_superuser": self.is_superuser})
         return user_dict
