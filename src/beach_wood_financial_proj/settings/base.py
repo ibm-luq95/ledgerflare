@@ -10,14 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import configparser
 import os
 import pprint
 from pathlib import Path
-from decouple import Config, RepositoryEnv, Csv
-import configparser
-from django.contrib.messages import constants as messages
 
-from django_components import ComponentsSettings
+from decouple import Config
+from decouple import Csv
+from decouple import RepositoryEnv
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent  # Default BASE_DIR
@@ -71,6 +72,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "webpack_boilerplate",
     "django_components",
+    # "django_viewcomponent",
     "crispy_forms",
     "crispy_tailwind",
     "log_viewer",
@@ -208,50 +210,50 @@ UI_COMPONENTS_TEMPLATETAGS = [
     "bw_ui_components.templatetags.global.check_var_none",
 ]
 
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates", BASE_DIR / "components"],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-                "django.template.context_processors.request",
-                # "django.template.context_processors.i18n",
-                # "site_settings.context_processors.site_settings"
-                # ".return_site_settings_context",
+TEMPLATES = [{
+    "BACKEND": "django.template.backends.django.DjangoTemplates",
+    "DIRS": [BASE_DIR / "templates", BASE_DIR / "components"],
+    "APP_DIRS": True,
+    "OPTIONS": {
+        "context_processors": [
+            "django.template.context_processors.debug",
+            "django.template.context_processors.request",
+            "django.contrib.auth.context_processors.auth",
+            "django.contrib.messages.context_processors.messages",
+            "django.template.context_processors.request",
+            # "django.template.context_processors.i18n",
+            # "site_settings.context_processors.site_settings"
+            # ".return_site_settings_context",
+            (
                 "site_settings.context_processors.section_descriptions"
-                ".return_section_description_context",
-                "core.context_processors.access_constants",
-                "core.context_processors.access_css_classes_constants",
-                "core.context_processors.access_constants_as_group",
-                "maintenance_mode.context_processors.maintenance_mode",
-            ],
-            "builtins": [
-                *UI_COMPONENTS_TEMPLATETAGS,
-                "core.templatetags.string_helpers_tags",
-                "core.templatetags.url_helpers",
-                "django_components.templatetags.component_tags",
-            ],
-            # "loaders": [
-            #     (
-            #         "django.template.loaders.cached.Loader",
-            #         [
-            #             # Default Django loader
-            #             "django.template.loaders.filesystem.Loader",
-            #             # Inluding this is the same as APP_DIRS=True
-            #             "django.template.loaders.app_directories.Loader",
-            #             # Components loader
-            #             "django_components.template_loader.Loader",
-            #         ],
-            #     )
-            # ],
-        },
-    }
-]
+                ".return_section_description_context"
+            ),
+            "core.context_processors.access_constants",
+            "core.context_processors.access_css_classes_constants",
+            "core.context_processors.access_constants_as_group",
+            "maintenance_mode.context_processors.maintenance_mode",
+        ],
+        "builtins": [
+            *UI_COMPONENTS_TEMPLATETAGS,
+            "core.templatetags.string_helpers_tags",
+            "core.templatetags.url_helpers",
+            "django_components.templatetags.component_tags",
+        ],
+        # "loaders": [
+        #     (
+        #         "django.template.loaders.cached.Loader",
+        #         [
+        #             # Default Django loader
+        #             "django.template.loaders.filesystem.Loader",
+        #             # Inluding this is the same as APP_DIRS=True
+        #             "django.template.loaders.app_directories.Loader",
+        #             # Components loader
+        #             "django_components.template_loader.Loader",
+        #         ],
+        #     )
+        # ],
+    },
+}]
 
 STATICFILES_FINDERS = [
     # Default finders
@@ -274,7 +276,11 @@ WSGI_APPLICATION = "beach_wood_financial_proj.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": (
+            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+        )
+    },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
         "OPTIONS": {"min_length": 7},
@@ -434,13 +440,67 @@ ENCRYPT_KEY = bytes(config("ENCRYPT_KEY", cast=str), "ascii")  # type: ignore
 LOG_VIEWER_FILES_DIR = BASE_DIR.parent / "logs"
 LOG_VIEWER_PAGE_LENGTH = 25  # total log lines per-page
 LOG_VIEWER_MAX_READ_LINES = 1000  # total log lines will be read
-LOG_VIEWER_FILE_LIST_MAX_ITEMS_PER_PAGE = 25  # Max log files loaded in Datatable per page
-LOG_VIEWER_PATTERNS = ["[INFO]", "[DEBUG]", "[WARNING]", "[ERROR]", "[CRITICAL]"]
+LOG_VIEWER_FILE_LIST_MAX_ITEMS_PER_PAGE = (
+    25  # Max log files loaded in Datatable per page
+)
+LOG_VIEWER_PATTERNS = [
+    r'"levelname": "ERROR"',
+    r'"levelname": "WARNING"',
+    r'"levelname": "INFO"',
+    r'"levelname": "DEBUG"',
+    r'"levelname": "CRITICAL"',
+    r"Traceback",
+    r"Exception",
+    r'"exc_info"',
+    r'"exc_text"',
+    r"SECURITY_EVENT",
+    r"AUTH_",
+    r"LOGIN_",
+    r"PERMISSION_",
+    r"DATA_ACCESS_",
+    r"event_type",
+    r"user_id",
+    r"ip_address",
+    r"user_agent",
+    r"REQUEST_ACCESS",
+    r"USER_CREATED",
+    r"USER_UPDATED",
+    r"BRUTE_FORCE_DETECTED",
+    r"SUSPICIOUS_LOCATION",
+    r"BOT_ACCESS",
+    r"TEST_EVENT",
+]
 # LOG_VIEWER_EXCLUDE_TEXT_PATTERN = (
 #     None  # String regex expression to exclude the log from line
 # )
 # Optionally you can set the next variables in order to customize the admin:
 LOG_VIEWER_FILE_LIST_TITLE = "Log viewer"
+
+# Security logging configuration
+SECURITY_LOG_FILE = BASE_DIR.parent / "logs" / "security.log"
+SECURITY_LOG_RETENTION_YEARS = 7  # Financial industry standard
+
+# Security logging performance optimization
+ENABLE_SELECTIVE_SECURITY_LOGGING = config(
+    "ENABLE_SELECTIVE_SECURITY_LOGGING", cast=bool, default=True
+)
+SECURITY_LOG_SAMPLING_RATE = config(
+    "SECURITY_LOG_SAMPLING_RATE", cast=int, default=10
+)  # Log 1 in N requests
+ALWAYS_LOG_SECURITY_EVENTS = {
+    "LOGIN_FAILED",  # Always log authentication failures
+    "BRUTE_FORCE_DETECTED",  # Always log brute force attacks
+    "PERMISSION_CHANGED",  # Always log permission changes
+    "ADMIN_ACTION",  # Always log admin actions
+    "DATA_ACCESS",  # Always log sensitive data access
+    "USER_CREATED",  # Always log user creation
+    "USER_UPDATED",  # Always log user updates
+}
+CONDITIONAL_SECURITY_EVENTS = {
+    "REQUEST_ACCESS",  # Log based on conditions
+    "SUSPICIOUS_LOCATION",  # Log only for suspicious IPs
+    "BOT_ACCESS",  # Log only for unknown bots
+}
 
 # Django flash messages css classes
 # MESSAGE_TAGS = {
@@ -458,13 +518,24 @@ LOG_VIEWER_FILE_LIST_TITLE = "Log viewer"
 # )
 
 # Django-filter configs
-FILTERS_VERBOSE_LOOKUPS = {"exact": "", "iexact": "", "contains": "", "icontains": ""}
+FILTERS_VERBOSE_LOOKUPS = {
+    "exact": "",
+    "iexact": "",
+    "contains": "",
+    "icontains": "",
+}
 FILTERS_EMPTY_CHOICE_LABEL = ""
 # FILTERS_NULL_CHOICE_LABEL = "---"
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+#         "LOCATION": "app_cache_table",
+#     }
+# }
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "app_cache_table",
+        "BACKEND": "django_valkey.cache.ValkeyCache",
+        "LOCATION": "valkey://127.0.0.1:6379",
     }
 }
 
@@ -563,7 +634,51 @@ LOGGING_BASE = {
         # Structured JSON format for production logs
         "verbose_json": {
             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-            "format": "%(asctime)s %(levelname)s %(name)s %(message)s",
+            "format": (
+                "%(asctime)s %(levelname)s %(name)s %(module)s %(funcName)s"
+                " %(lineno)d %(message)s %(exc_info)s %(exc_text)s %(pathname)s"
+                " %(process)d %(thread)d"
+            ),
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        # Security logging - JSON format for analysis tools
+        "security_json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": (
+                "%(asctime)s %(levelname)s %(name)s %(module)s %(funcName)s"
+                " %(lineno)d %(message)s %(exc_info)s %(exc_text)s %(pathname)s"
+                " %(process)d %(thread)d %(user_id)s %(ip_address)s %(user_agent)s"
+                " %(event_type)s"
+            ),
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        # Security logging - Human readable format
+        "security_readable": {
+            "format": (
+                "[{levelname}] {asctime} SECURITY::{event_type} User:{user_id}"
+                " IP:{ip_address} Agent:{user_agent} :: {message}\n{exc_info}"
+            ),
+            "style": "{",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        # SQL Query Logging - JSON format for analysis tools
+        "sql_query_json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": (
+                "%(asctime)s %(levelname)s %(name)s %(module)s %(funcName)s"
+                " %(lineno)d %(message)s %(duration_ms)s %(sql)s %(row_count)s"
+                " %(explain_plan)s %(query_hash)s"
+            ),
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        # SQL Query Logging - Human readable format with color coding
+        "sql_query_readable": {
+            "format": (
+                "[{levelname}] {asctime} {name} {module}:{lineno} {funcName} ::"
+                " {message} [{duration_ms}ms] [{sql}] [{row_count} rows]"
+                " {explain_plan}\n{exc_info}"
+            ),
+            "style": "{",
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },
@@ -577,10 +692,38 @@ LOGGING_BASE = {
             "formatter": "console",
             "filters": ["require_debug_true"],
         },
+        # Security log handler - JSON format for analysis
+        "security_file_json": {
+            "level": "INFO",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "when": "midnight",
+            "backupCount": (
+                365 * SECURITY_LOG_RETENTION_YEARS
+            ),  # Daily logs for 7 years
+            "filename": SECURITY_LOG_FILE,
+            "formatter": "security_json",
+            "encoding": "utf8",
+        },
+        # Security log handler - Human readable format
+        "security_file_readable": {
+            "level": "INFO",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "when": "midnight",
+            "backupCount": 30,  # Keep 30 days of readable logs
+            "filename": SECURITY_LOG_FILE.parent / "security_readable.log",
+            "formatter": "security_readable",
+            "encoding": "utf8",
+        },
     },
     "loggers": {
         "bw_logger": {
             "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        # Security logger - dual format for analysis and debugging
+        "security_logger": {
+            "handlers": ["security_file_json", "security_file_readable"],
             "level": "INFO",
             "propagate": False,
         },
@@ -589,6 +732,7 @@ LOGGING_BASE = {
 SESSION_TIMEOUT_REDIRECT = "/auth/login"
 ANONYMOUS_USER_NAME = None
 MANAGER_MAIN_EMAIL = config("MANAGER_MAIN_EMAIL", cast=str)
+
 
 # Django-import-export config
 # IMPORT_EXPORT_SKIP_ADMIN_LOG = True
