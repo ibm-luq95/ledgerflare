@@ -1,0 +1,330 @@
+{# templates/dashboard/components/widgets/table_widget/table_widget.html #}
+
+{% load i18n %}
+
+<!-- Enhanced Table Widget - Preline Style -->
+<div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-900 dark:border-neutral-800 overflow-hidden"
+     {% if widget_name %}
+         data-widget-name="{{ widget_name }}"
+     {% endif %}
+     {% if element_id %}
+         id="{{ element_id }}"
+     {% endif %}>
+    <!-- Header Section -->
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                {% if icon %}
+                    <div class="flex items-center justify-center w-8 h-8 bg-blue-50 rounded-lg dark:bg-blue-900/20">
+                        <i class="{{ icon }} text-blue-600 dark:text-blue-400"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        {{ title }}
+                    </h3>
+                    {% if subtitle %}
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            {{ subtitle }}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% if show_search or show_filter or show_export %}
+                <div class="flex items-center space-x-2">
+                    {% if show_search %}
+                        <div class="relative">
+                            <input type="text"
+                                   placeholder="{% translate 'Search...' %}"
+                                   class="pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-800 dark:border-neutral-600 dark:text-white dark:placeholder-gray-400" />
+                            <i class="fas fa-search absolute left-2.5 top-2.5 text-gray-400 text-sm"></i>
+                        </div>
+                    {% endif %}
+                    {% if show_filter %}
+                        <button class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-neutral-700">
+                            <i class="fas fa-filter mr-2"></i>
+                            {% translate 'Filter' %}
+                        </button>
+                    {% endif %}
+                    {% if show_export %}
+                        <button class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-neutral-700">
+                            <i class="fas fa-download mr-2"></i>
+                            {% translate 'Export' %}
+                        </button>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Table Content -->
+    <div class="flex-1 overflow-hidden">
+        {% if loading %}
+            <div class="flex flex-col items-center justify-center py-16 px-6">
+                <div class="relative">
+                    <div class="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin">
+                    </div>
+                    <div class="absolute inset-0 w-12 h-12 border-4 border-transparent border-t-blue-400 rounded-full animate-spin animation-delay-150">
+                    </div>
+                </div>
+                <p class="mt-4 text-sm font-medium text-gray-600 dark:text-gray-400">
+                    {% translate 'Loading data...' %}
+                </p>
+            </div>
+        {% elif rows and rows|length > 0 %}
+            <!-- Table Container -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                    {% if columns %}
+                        <thead class="bg-gray-50 dark:bg-neutral-800/50">
+                            <tr>
+                                {% if show_row_numbers %}
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-16">
+                                        <span class="flex items-center">
+                                            {% translate '#' %}
+                                        </span>
+                                    </th>
+                                {% endif %}
+                                {% for column in columns %}
+                                    <th scope="col"
+                                        class="px-6 py-3 text-{{ column.align|default:'left' }} text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider group {{ column.class|default:'' }}"
+                                        {% if column.sortable %}
+                                            data-sortable="true"
+                                        {% endif %}>
+                                        <span class="flex items-center space-x-1
+                                                     {% if column.align == 'center' %}
+                                                         justify-center
+                                                     {% elif column.align == 'right' %}
+                                                         justify-end
+                                                     {% else %}
+                                                         justify-left
+                                                     {% endif %}">
+                                            <span>{{ column.label }}</span>
+                                            {% if column.sortable %}
+                                                <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                                                        aria-label="Sort">
+                                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                                    </svg>
+                                                </button>
+                                            {% endif %}
+                                        </span>
+                                    </th>
+                                {% endfor %}
+                                {% if show_actions %}
+                                    <th scope="col"
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">
+                                        {% translate "Actions" %}
+                                    </th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                    {% endif %}
+                    <tbody class="bg-white dark:bg-neutral-900 divide-y divide-gray-200 dark:divide-neutral-700">
+                        {% for row in rows %}
+                            <tr class="{% if hoverable %}
+                                           hover:bg-gray-50 dark:hover:bg-neutral-800/50
+                                       {% endif %}
+                                       transition-colors duration-150
+                                       {% if striped and forloop.counter|divisibleby:2 %}
+                                           bg-gray-50/50 dark:bg-neutral-800/30
+                                       {% endif %}">
+                                {% if show_row_numbers %}
+                                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                                        {{ forloop.counter }}
+                                    </td>
+                                {% endif %}
+                                {% for cell in row.cells %}
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        {% if cell.is_link %}
+                                            <a href="{{ cell.url }}"
+                                               class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-colors"
+                                               {% if cell.title %}
+                                                   title="{{ cell.title }}"
+                                               {% endif %}>
+                                                {{ cell.value }}
+                                            </a>
+                                        {% elif cell.is_badge %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ cell.badge_class|default:'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
+                                                {% if cell.badge_icon %}
+                                                    <i class="{{ cell.badge_icon }} mr-1"></i>
+                                                {% endif %}
+                                                {{ cell.value }}
+                                            </span>
+                                        {% elif cell.is_status %}
+                                            <div class="flex items-center">
+                                                <span class="w-2 h-2 mr-2 rounded-full {{ cell.status_color|default:'bg-gray-400' }}"></span>
+                                                <span class="text-sm text-gray-900 dark:text-gray-100">{{ cell.value }}</span>
+                                            </div>
+                                        {% elif cell.is_avatar %}
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-neutral-700 flex items-center justify-center mr-3">
+                                                    {% if cell.avatar_url %}
+                                                        <img src="{{ cell.avatar_url }}"
+                                                             alt="{{ cell.value }}"
+                                                             class="w-8 h-8 rounded-full object-cover" />
+                                                    {% else %}
+                                                        <span class="text-xs font-medium text-gray-600 dark:text-gray-300">{{ cell.value|slice:":2"|upper }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ cell.value }}</span>
+                                            </div>
+                                        {% elif cell.is_html %}
+                                            {{ cell.html|safe }}
+                                        {% elif cell.is_currency %}
+                                            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                {{ cell.currency_symbol|default:'$' }}{{ cell.value|floatformat:2 }}
+                                            </span>
+                                        {% elif cell.is_progress %}
+                                            <div class="flex items-center">
+                                                <div class="flex-1 mr-3">
+                                                    <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-neutral-700">
+                                                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                                             style="width: {{ cell.value }}%">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <span class="text-sm text-gray-600 dark:text-gray-400 min-w-[3rem] text-right">{{ cell.value }}%</span>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-sm text-gray-900 dark:text-gray-100 {{ cell.text_class|default:'' }}">
+                                                {{ cell.value|default:'—' }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                                {% if show_actions %}
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex items-center justify-end space-x-2">
+                                            {% if row.view_url %}
+                                                <a href="{{ row.view_url }}"
+                                                   class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                                   title="{% translate 'View' %}">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if row.edit_url %}
+                                                <a href="{{ row.edit_url }}"
+                                                   class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                                                   title="{% translate 'Edit' %}">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if row.delete_url %}
+                                                <button onclick="confirmDelete('{{ row.delete_url }}')"
+                                                        class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                                                        title="{% translate 'Delete' %}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Footer Section -->
+            {% if show_pagination or link_url %}
+                <div class="px-6 py-4 border-t border-gray-200 dark:border-neutral-700">
+                    <div class="flex items-center justify-between">
+                        {% if show_pagination %}
+                            <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                                <span>{% translate 'Showing' %} {{ start_index|default:1 }}-{{ end_index|default:rows|length }} {% translate 'of' %} {{ total_count|default:rows|length }} {% translate 'results' %}</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button class="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-neutral-600 dark:hover:bg-neutral-800">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg">
+                                    1
+                                </button>
+                                <button class="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 dark:border-neutral-600 dark:hover:bg-neutral-800">
+                                    2
+                                </button>
+                                <button class="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 dark:border-neutral-600 dark:hover:bg-neutral-800">
+                                    3
+                                </button>
+                                <button class="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-neutral-600 dark:hover:bg-neutral-800">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        {% endif %}
+                        {% if link_url and not show_pagination %}
+                            <div class="flex justify-end">
+                                <a href="{{ link_url }}"
+                                   class="inline-flex items-center gap-x-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+                                    {{ link_text|default:'View All' }}
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <!-- Enhanced Empty State -->
+            <div class="flex flex-col items-center justify-center py-16 px-6">
+                <div class="flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-neutral-800 rounded-full mb-4">
+                    {% if empty_icon %}
+                        <i class="{{ empty_icon }} text-2xl text-gray-400 dark:text-gray-500"></i>
+                    {% else %}
+                        <i class="fas fa-inbox text-2xl text-gray-400 dark:text-gray-500"></i>
+                    {% endif %}
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    {{ empty_title|default:'No data available' }}
+                </h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 text-center max-w-md mb-6">
+                    {{ empty_message|default:'There are no items to display at this time.' }}
+                </p>
+                {% if empty_action_url %}
+                    <a href="{{ empty_action_url }}"
+                       class="inline-flex items-center gap-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        <i class="{{ empty_action_icon|default:'fas fa-plus' }}"></i>
+                        {{ empty_action_text|default:'Add New Item' }}
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+<!-- Enhanced Table Widget Styles -->
+<style>
+    @keyframes animation-delay-150 {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animation-delay-150 {
+        animation-delay: 150ms;
+    }
+</style>
+<script>
+    // Enhanced table interactions
+    function confirmDelete(url) {
+        if (confirm('{% translate "Are you sure you want to delete this item?" %}')) {
+            window.location.href = url;
+        }
+    }
+
+    // Sort functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortableHeaders = document.querySelectorAll('[data-sortable="true"]');
+        sortableHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                // Add sort logic here
+                console.log('Sort clicked for:', header.textContent.trim());
+            });
+        });
+    });
+</script>
+<!-- End Enhanced Table Widget -->
