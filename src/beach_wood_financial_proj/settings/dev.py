@@ -1,6 +1,9 @@
 import mimetypes
+import re
+import logging
 
 from .base import *
+from django_components import ComponentsSettings
 
 # Add color formatter
 try:
@@ -9,6 +12,23 @@ try:
     HAS_COLORLOG = True
 except ImportError:
     HAS_COLORLOG = False
+
+
+# Custom formatter to strip ANSI codes for file logs
+class PlainFormatter(logging.Formatter):
+    """Formatter that strips ANSI color codes from log messages"""
+
+    # ANSI escape code pattern
+    ANSI_ESCAPE_PATTERN = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+
+    def format(self, record):
+        # Get the formatted message
+        formatted = super().format(record)
+
+        # Strip ANSI codes from the entire formatted string
+        clean_message = self.ANSI_ESCAPE_PATTERN.sub("", formatted)
+
+        return clean_message
 
 
 mimetypes.add_type("application/javascript", ".js", True)
@@ -39,6 +59,7 @@ MIDDLEWARE = MIDDLEWARE + [
     "django.contrib.admindocs.middleware.XViewMiddleware",
     # "django_pdb.middleware.PdbMiddleware",
     # "silk.middleware.SilkyMiddleware",
+    "core.middleware.security_logging.SecurityLoggingMiddleware",  # Add security logging
 ]
 
 # Database configurations
@@ -168,8 +189,8 @@ TEMPLATES[0]["OPTIONS"]["debug"] = DEBUG
 COMPONENTS = ComponentsSettings(
     autodiscover=True,
     reload_on_file_change=True,
-    # cache=None,
-    # template_cache_size=1,
+    cache=None,
+    template_cache_size=0,
 )
 DJANGO_EASY_AUDIT_PROPAGATE_EXCEPTIONS = DEBUG
 if HAS_COLORLOG:
@@ -191,7 +212,43 @@ if HAS_COLORLOG:
     }
 
     LOGGING_BASE["handlers"]["console"]["formatter"] = "dev_color"
+# Logging configs - Enhanced with file logging for development
 LOGGING = LOGGING_BASE.copy()
+
+# Add plain formatter that strips ANSI codes
+LOGGING["formatters"] = LOGGING.get("formatters", {}).copy()
+LOGGING["formatters"]["plain"] = {
+    "()": PlainFormatter,
+    "format": (
+        "{levelname} {asctime} {name} {module}:{lineno} :: {message}\n{exc_info}"
+    ),
+    "style": "{",
+}
+
+# Add development file handler for persistent logs (no colors)
+LOGGING["handlers"]["dev_file"] = {
+    "level": "DEBUG",
+    "class": "logging.FileHandler",
+    "filename": LOGS_FOLDER / "dev_debug.log",
+    "formatter": "plain",  # Use custom plain formatter that strips ANSI codes
+    "encoding": "utf8",
+}
+
+# Update bw_logger to include file handler
+LOGGING["loggers"]["bw_logger"]["handlers"] = ["console", "dev_file"]
+
+# Add Django framework loggers for better debugging
+LOGGING["loggers"]["django.db.backends"] = {
+    "handlers": ["console", "dev_file"],
+    "level": "WARNING",
+    "propagate": False,
+}
+
+LOGGING["loggers"]["django.request"] = {
+    "handlers": ["console", "dev_file"],
+    "level": "ERROR",
+    "propagate": False,
+}
 
 # LOGGING = {
 #     "version": 1,
@@ -268,7 +325,7 @@ SESSION_COOKIE_DOMAIN = None
 CSRF_COOKIE_HTTPONLY = False  # JS needs access
 CSRF_COOKIE_SECURE = False  # Allow HTTP
 CSRF_COOKIE_SAMESITE = "Lax"
-CSRF_TRUSTED_ORIGINS = []
+# CSRF_TRUSTED_ORIGINS = []
 CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 CSRF_COOKIE_NAME = "csrftoken"
 
