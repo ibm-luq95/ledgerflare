@@ -3,13 +3,13 @@
 {% load core_tags %}
 
 <!-- TODO: Add translate templatetag -->
-<header class="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400  border-gray-200 text-sm py-2.5 sm:py-4 lg:pl-64">
-    <nav class="flex items-center w-full px-4 mx-auto basis-full sm:px-4 md:px-6"
+<header class="sticky top-0 inset-x-0 flex flex-wrap sm:flex-nowrap z-[48] w-full bg-white border dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 border-gray-200 text-sm py-2.5 sm:py-4 lg:pl-64">
+    <nav class="flex items-center w-full px-3 sm:px-4 md:px-6 mx-auto basis-full"
          aria-label="Global">
-        <!-- Left-aligned logo -->
-        <div>
+        <!-- Left-aligned logo / menu toggle -->
+        <div class="flex-none">
             <button type="button"
-                    class="flex mx-2 justify-center items-center gap-x-3 size-8 text-sm text-gray-600 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
+                    class="flex justify-center items-center gap-x-3 size-8 text-sm text-gray-600 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
                     aria-haspopup="dialog"
                     aria-expanded="false"
                     aria-controls="hs-sidebar-content-push"
@@ -46,23 +46,21 @@
                 <span class="sr-only">Navigation Toggle</span>
             </button>
         </div>
-        <div class="flex-none mr-5 lg:mr-0">
+        <!-- Logo / Search combobox -->
+        <div class="flex-none mr-3 sm:mr-4 lg:mr-0">
             {% if request.resolver_match.view_name == "dashboard:client:details" or request.resolver_match.view_name == "dashboard:client:transactions" or request.resolver_match.view_name == "dashboard:client:journal_entry" or request.resolver_match.view_name == "dashboard:client:bank_register" or request.resolver_match.view_name == "dashboard:client:chart_of_accounts" or request.resolver_match.view_name == "dashboard:client:expense_create" %}
-                <div class="max-w-md mx-auto">
-                    <!-- <h1 class="text-2xl font-bold text-gray-900 mb-6 text-center">
-                        Select Your Country
-                    </h1> -->
+                <div class="w-full max-w-[200px] sm:max-w-md">
                     <!-- Combobox Container -->
                     <div class="relative" id="combobox-wrapper">
                         <!-- Search Input -->
                         <div class="relative">
                             <input id="search-input"
-                                   class="py-3 px-4 pr-11 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 border-2 transition-colors duration-200"
+                                   class="py-2 sm:py-3 px-3 sm:px-4 pr-10 sm:pr-11 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 border-2 transition-colors duration-200"
                                    type="text"
-                                   placeholder="Search client actions..."
+                                   placeholder="Search..."
                                    autocomplete="off" />
                             <!-- Dropdown Toggle Button -->
-                            <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                            <div class="absolute inset-y-0 end-0 flex items-center pe-3 sm:pe-4 pointer-events-none">
                                 <svg id="arrow-icon"
                                      class="w-4 h-4 text-gray-400 transform transition-transform duration-200"
                                      fill="none"
@@ -93,36 +91,26 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Selected Value Display -->
-                    <!-- <div class="mt-4 p-4 bg-white border border-gray-200 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">
-                            Selected Country:
-                        </p>
-                        <p id="display-value" class="text-lg font-medium text-gray-900">
-                            None selected
-                        </p>
-                    </div> -->
                 </div>
             {% else %}
-                <a class="text-xl font-semibold dark:text-white"
+                <a class="text-lg sm:text-xl font-semibold dark:text-white whitespace-nowrap"
                    href="{% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_ASSISTANT %} {% url 'dashboard:manager:home' %} {% elif request.user.user_type == CON_BOOKKEEPER %} {% url 'dashboard:bookkeeper:home' %} {% endif %}"
                    aria-label="{{ get_web_app_settings.name }}">
                     {{ get_web_app_settings.name }}
                 </a>
             {% endif %}
         </div>
-        <!-- Center-aligned main nav items -->
-        <div class="flex items-center justify-center w-full gap-x-4 sm:gap-x-6">
-            <!-- Add your center-aligned nav items here -->
+        <!-- Center-aligned main nav items - hidden on small screens, shown on md+ -->
+        <div class="hidden md:flex items-center justify-center flex-1 gap-x-4 lg:gap-x-6">
             {% if request.resolver_match.view_name == "dashboard:client:details" or request.resolver_match.view_name == "dashboard:client:transactions" %}
                 <a href="{% url 'dashboard:client:list' %}"
-                   class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">{% translate "Clients" %}</a>
+                   class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 whitespace-nowrap">{% translate "Clients" %}</a>
                 <a href="{% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_ASSISTANT %} {% url 'dashboard:manager:home' %} {% elif request.user.user_type == CON_BOOKKEEPER %} {% url 'dashboard:bookkeeper:home' %} {% endif %}"
-                   class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Dashboard</a>
+                   class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 whitespace-nowrap">Dashboard</a>
             {% endif %}
         </div>
         <!-- Right-aligned items (notifications, profile, etc.) -->
-        <div class="flex items-center justify-end gap-x-3">
+        <div class="flex items-center justify-end gap-x-2 sm:gap-x-3 ml-auto">
             <!-- Theme switcher -->
             {% comment  %}
                 <div class="flex items-center gap-x-3 mx-1">
@@ -139,8 +127,8 @@
                 </label>
             </div>
             {% endcomment %}
-            <!-- User type badge -->
-            <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">
+            <!-- User type badge - hidden on very small screens -->
+            <span class="hidden xs:inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500 whitespace-nowrap">
                 {{ request.user.get_user_type_display }}
             </span>
             {% if debug %}
