@@ -1,0 +1,15 @@
+# Django Environment Configuration
+DEBUG=True
+SECRET_KEY=your-secret-key-here
+
+# SQL Query Logging Configuration
+ENABLE_SQL_QUERY_LOGGING=True
+SLOW_QUERY_THRESHOLD_MS=100
+ENABLE_EXPLAIN_PLANS=True
+ENABLE_QUERY_COUNT=True
+SQL_QUERY_SAMPLING_RATE=1
+EXCLUDE_SQL_MODELS=Session,Cache,LogEntry
+
+# Security Logging Configuration
+ENABLE_SELECTIVE_SECURITY_LOGGING=True
+SECURITY_LOG_SAMPLING_RATE=10
