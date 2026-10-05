@@ -629,3 +629,10 @@ src/e2e_workflows
 ARCHITECTURE.md
 SECURITY.md
 TESTING.md
+.codex
+
+.aiignore
+.geminiignore
+.future_security_plan
+works
+.commandcode
