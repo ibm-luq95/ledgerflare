@@ -1,9 +1,16 @@
-# -*- coding: utf-8 -*-#
+from __future__ import annotations
+
+import mimetypes
+from pathlib import Path
+from typing import Any
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import FileResponse, Http404, HttpResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView, View
 
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
@@ -47,7 +54,7 @@ class DocumentListView(
     filter_cancel_url = "dashboard:document:list"
     table_header_title = _("C")
     pagination_list_url_name = "dashboard:document:list"
-    actions_items = "details,update,delete"
+    actions_items = "update,delete"
     base_url_name = "dashboard:document"
     empty_label = _("documents")
     subtitle = _(
@@ -163,3 +170,42 @@ class DocumentDeleteView(
         context.setdefault("object_name", "document")
         context.setdefault("form_css_id", "documentDeleteForm")
         return context
+
+
+class DocumentDownloadView(
+    PermissionRequiredMixin,
+    BWLoginRequiredMixin,
+    View,
+):
+    """Download and transparently decrypt document files for users."""
+
+    permission_required = "document.can_view_list"
+    permission_denied_message = _(
+        "You do not have permission to download this document."
+    )
+
+    def get(self, request: Any, *args: Any, **kwargs: Any) -> FileResponse:
+        """Stream decrypted document content with correct MIME headers."""
+        pk = kwargs.get("pk")
+        document = get_object_or_404(Document, pk=pk)
+        if not document.document_file:
+            raise Http404(_("No file associated with this document"))
+
+        try:
+            file_obj = document.document_file.open("rb")
+        except FileNotFoundError as err:
+            raise Http404(_("Document file not found on disk")) from err
+
+        raw_name = Path(str(document.document_file.name)).name
+        clean_name = (
+            raw_name.split("_", 1)[-1] if "_" in raw_name else raw_name
+        )
+        content_type, _encoding = mimetypes.guess_type(clean_name)
+
+        return FileResponse(
+            file_obj,
+            as_attachment=True,
+            filename=clean_name,
+            content_type=content_type or "application/octet-stream",
+        )
+
