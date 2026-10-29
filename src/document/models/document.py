@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 import secrets
 
 from django.db import models
@@ -6,11 +5,12 @@ from django.utils.translation import gettext as _
 
 from client.models import ClientProxy
 from core.choices import DocumentSectionEnum
+from core.fields import EncryptedFileField
 from core.models.mixins import (
     BaseModelMixin,
     GeneralStatusFieldMixin,
-    StrModelMixin,
     GetObjectSectionMixin,
+    StrModelMixin,
 )
 from job.models import JobProxy
 from task.models import TaskProxy
@@ -36,8 +36,9 @@ class Document(
         db_index=True,
         editable=False,
     )
-    document_file = models.FileField(
-        _("document file"), upload_to=saved_document_file_path
+    document_file = EncryptedFileField(
+        _("document file"),
+        upload_to=saved_document_file_path,
     )
 
     client = models.ForeignKey(
