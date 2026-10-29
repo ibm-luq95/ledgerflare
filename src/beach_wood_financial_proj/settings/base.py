@@ -145,6 +145,7 @@ MIDDLEWARE = [
     "auditlog.middleware.AuditlogMiddleware",
     # 10. Session timeout - after auth to check authenticated users
     "django_session_timeout.middleware.SessionTimeoutMiddleware",
+    "core.middleware.session_timeout.SessionInactivityTimeoutMiddleware",
     # 11. Failed login middleware - after auth
     # "defender.middleware.FailedLoginMiddleware",
     # 12. Messages middleware - after auth for user-specific messages
@@ -773,8 +774,23 @@ ANONYMOUS_USER_NAME = None
 MANAGER_MAIN_EMAIL = app_settings.MANAGER_MAIN_EMAIL
 
 
-# Django-import-export config
-# IMPORT_EXPORT_SKIP_ADMIN_LOG = True
+# Phase 1 Security & Data Protection
+CONTENT_ENCRYPTION_KEY = app_settings.CONTENT_ENCRYPTION_KEY
+CONTENT_ENCRYPTION_KEYS = dict(app_settings.CONTENT_ENCRYPTION_KEYS)
+ACTIVE_KEY_ID = app_settings.ACTIVE_KEY_ID
 
+if not CONTENT_ENCRYPTION_KEYS and CONTENT_ENCRYPTION_KEY:
+    CONTENT_ENCRYPTION_KEYS = {"k1": CONTENT_ENCRYPTION_KEY}
+    ACTIVE_KEY_ID = "k1"
 
-# SENTRY configs
+BLIND_INDEX_KEY = app_settings.BLIND_INDEX_KEY
+MALWARE_SCANNER_ENABLED = app_settings.MALWARE_SCANNER_ENABLED
+CLAMAV_SOCKET_PATH = app_settings.CLAMAV_SOCKET_PATH
+CLAMAV_SOCKET_TIMEOUT_SECONDS = app_settings.CLAMAV_SOCKET_TIMEOUT_SECONDS
+SESSION_INACTIVITY_TIMEOUT_SECONDS = app_settings.SESSION_INACTIVITY_TIMEOUT_SECONDS
+SESSION_INACTIVITY_EXEMPT_PATHS = (
+    list(app_settings.SESSION_INACTIVITY_EXEMPT_PATHS)
+    if isinstance(app_settings.SESSION_INACTIVITY_EXEMPT_PATHS, (list, tuple))
+    else [app_settings.SESSION_INACTIVITY_EXEMPT_PATHS]
+)
+SENDGRID_API_KEY = app_settings.SENDGRID_API_KEY
