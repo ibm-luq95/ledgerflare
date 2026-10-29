@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 from __future__ import annotations
 
 from django.db import models
@@ -6,7 +5,7 @@ from django.utils.translation import gettext as _
 
 from client.models import ClientProxy
 from core.choices import ClientAccountStatusEnum, ServiceNameEnum
-from core.models.fields import EncryptedCharField
+from core.fields.encrypted_fields import EncryptedCharField
 from core.models.mixins import BaseModelMixin
 
 
@@ -57,4 +56,4 @@ class ClientAccount(BaseModelMixin):
     def save(self, *args, **kwargs):
         if self.service_name != "":
             self.is_services = True
-        super(ClientAccount, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

@@ -14,6 +14,7 @@ from client.models import ClientProxy
 from core.choices import TaskStatusEnum, TaskTypeEnum
 from core.choices.filters import DateFiltersEnum
 from core.filters.filter_created_mixin import FilterCreatedMixin
+from core.utils.text_search import search_in_text
 from job.models import JobProxy
 from task.models import TaskProxy
 
@@ -40,8 +41,7 @@ class TaskFilter(FilterCreatedMixin):
         ),
     )
     hints = django_filters.CharFilter(
-        field_name="hints",
-        lookup_expr="icontains",
+        method="filter_hints",
         label=_("Hints"),
         widget=forms.TextInput(
             attrs={
@@ -50,6 +50,19 @@ class TaskFilter(FilterCreatedMixin):
             }
         ),
     )
+
+    def filter_hints(self, queryset, name, value):
+        """Filter tasks using normalized in-memory search for encrypted hints."""
+        if not value:
+            return queryset
+        candidates = list(queryset)
+        matching_pks = [
+            obj.pk
+            for obj in candidates
+            if search_in_text(value, getattr(obj, "hints", "") or "")
+        ]
+        return queryset.filter(pk__in=matching_pks)
+
     task_type = django_filters.ChoiceFilter(
         field_name="task_type",
         choices=TaskTypeEnum.choices,

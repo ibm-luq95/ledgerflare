@@ -10,6 +10,7 @@ from client.models import ClientProxy
 from core.choices import NoteSectionEnum
 from core.choices.filters import DateFiltersEnum
 from core.filters.filter_created_mixin import FilterCreatedMixin
+from core.utils.text_search import search_in_text
 from job.models import JobProxy
 from note.models import NoteProxy
 from task.models import TaskProxy
@@ -37,8 +38,7 @@ class NoteFilter(FilterCreatedMixin):
         ),
     )
     body = django_filters.CharFilter(
-        field_name="body",
-        lookup_expr="icontains",
+        method="filter_body",
         label=_("Note Content"),
         widget=forms.TextInput(
             attrs={
@@ -47,6 +47,19 @@ class NoteFilter(FilterCreatedMixin):
             }
         ),
     )
+
+    def filter_body(self, queryset, name, value):
+        """Filter notes using normalized in-memory search for encrypted body."""
+        if not value:
+            return queryset
+        candidates = list(queryset)
+        matching_pks = [
+            obj.pk
+            for obj in candidates
+            if search_in_text(value, getattr(obj, "body", "") or "")
+        ]
+        return queryset.filter(pk__in=matching_pks)
+
     note_section = django_filters.ChoiceFilter(
         field_name="note_section",
         choices=NoteSectionEnum.choices,

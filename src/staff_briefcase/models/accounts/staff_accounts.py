@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-#
 from __future__ import annotations
 
 from django.db import models
 from django.utils.translation import gettext as _
 
 from core.choices import ServiceNameEnum
-from core.models.fields import EncryptedCharField
+from core.fields.encrypted_fields import EncryptedCharField
 from core.models.mixins import BaseModelMixin, StrModelMixin
 
 
@@ -38,4 +37,4 @@ class StaffAccounts(BaseModelMixin, StrModelMixin):
         return self.password
 
     def save(self, *args, **kwargs):
-        super(StaffAccounts, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

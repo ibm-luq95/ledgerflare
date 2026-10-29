@@ -343,3 +343,31 @@ def test_filter_form_fields_and_widgets() -> None:
         assert field_name in form.fields, (
             f"Field '{field_name}' should be in TaskFilter form"
         )
+
+
+def test_task_filter_multilingual_hints_search() -> None:
+    job = baker.make(JobProxy, title="Job Audit")
+    t1 = baker.make(
+        TaskProxy,
+        title="Spanish Hint Task",
+        hints="Revisión de nómina y café",
+        job=job,
+    )
+    t2 = baker.make(
+        TaskProxy,
+        title="Arabic Hint Task",
+        hints="مُحَمَّدٌ مُحَاسِب",
+        job=job,
+    )
+
+    # Search with "nomina" (accent insensitive)
+    filter_es = TaskFilter(data={"hints": "nomina"}, queryset=TaskProxy.objects.all())
+    assert filter_es.is_valid()
+    assert t1 in filter_es.qs
+    assert t2 not in filter_es.qs
+
+    # Search with "محمد" (diacritic insensitive)
+    filter_ar = TaskFilter(data={"hints": "محمد"}, queryset=TaskProxy.objects.all())
+    assert filter_ar.is_valid()
+    assert t2 in filter_ar.qs
+    assert t1 not in filter_ar.qs
