@@ -7,6 +7,15 @@ from django.contrib.auth import get_user_model
 from model_bakery import baker
 from rest_framework.test import APIClient
 
+baker.generators.add(
+    "core.fields.encrypted_fields.EncryptedTextField",
+    lambda: "Sample encrypted text",
+)
+baker.generators.add(
+    "core.fields.encrypted_fields.EncryptedCharField",
+    lambda: "Sample encrypted char",
+)
+
 User = get_user_model()
 
 
