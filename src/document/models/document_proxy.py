@@ -16,9 +16,8 @@ class DocumentProxy(Document):
         """Meta options for DocumentProxy."""
 
         proxy = True
+        indexes: ClassVar[list] = []
 
     def get_absolute_url(self) -> str:
         """Return the absolute URL for the document viewer."""
-        return str(
-            reverse_lazy("dashboard:document:view", kwargs={"pk": self.pk})
-        )
+        return str(reverse_lazy("dashboard:document:view", kwargs={"pk": self.pk}))
