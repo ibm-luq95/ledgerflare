@@ -111,6 +111,8 @@ class AppSettings(BaseSettings):
         ]
     )
     SENDGRID_API_KEY: str | None = None
+    MAX_DOCUMENT_UPLOAD_SIZE: int = Field(default=100 * 1024 * 1024)
+    MAX_IMAGE_UPLOAD_SIZE: int = Field(default=15 * 1024 * 1024)
 
     @field_validator("CONTENT_ENCRYPTION_KEYS", mode="after")
     @classmethod
