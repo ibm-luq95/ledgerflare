@@ -22,7 +22,6 @@ class StaffNotesViewSet(RoleScopedQuerysetMixin, ModelViewSet):
     search_fields = ["title", "note"]
     ordering_fields = ["created_at", "updated_at", "title"]
     ordering = ["-created_at"]
-    authentication_classes = [TokenAuthentication]
 
     def scope_queryset_for_bookkeeper(self, queryset, bookkeeper):
         return queryset.filter(briefcase__user=bookkeeper.user).distinct()

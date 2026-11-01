@@ -24,7 +24,6 @@ logger = get_formatted_logger()
 class JobViewSet(RoleScopedQuerysetMixin, ModelViewSet):
     serializer_class = JobSerializer
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
-    authentication_classes = [TokenAuthentication]
     perm_slug = "job.job"
     queryset = JobProxy.objects.all()
     filterset_fields = [
@@ -58,7 +57,6 @@ class JobViewSet(RoleScopedQuerysetMixin, ModelViewSet):
 class UpdateJobApiView(RoleScopedQuerysetMixin, APIView):
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     perm_slug = "job.job"
-    authentication_classes = [TokenAuthentication]
     queryset = JobProxy.objects.all()
 
     def scope_queryset_for_bookkeeper(self, queryset, bookkeeper):

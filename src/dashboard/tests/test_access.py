@@ -79,8 +79,10 @@ class TestAccessDashboard:
             "script",
             string=lambda text: text and "window.csrfToken" in text,
         )
-        assert auth_script is not None and csrf_script is not None
-        assert client.session["auth_token"] in auth_script.text
+        # Verify window.AUTH_TOKEN is no longer leaked into DOM
+        assert auth_script is None
+        assert csrf_script is not None
+        assert "window.AUTH_TOKEN" not in response.content.decode()
 
     def test_invalid_login(self, client: Client) -> None:
         credentials = {

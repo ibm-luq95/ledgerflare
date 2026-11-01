@@ -2,9 +2,8 @@
 {% nospaces %}
 <html lang="en" class="h-full">
     <head>
-        <!-- CSRF & Auth Token Meta Tags -->
+        <!-- CSRF Meta Tag -->
         <meta name="csrf-token" content="{{ csrf_token }}" />
-        <meta name="auth-token" content="{{ request.session.auth_token }}" />
 
 
 
@@ -54,12 +53,6 @@
         <!-- ========== END MAIN CONTENT ========== -->
         <script nonce="{{ request.csp_nonce }}">
             (function() {
-                const token = "{{ request.session.auth_token }}";
-                try {
-                    window.AUTH_TOKEN = token;
-                } catch (e) {
-                    /* Ignore if window.AUTH_TOKEN is read-only */
-                }
                 window.CSRF_TOKEN = "{{ csrf_token }}";
                 const csrfMeta = document.querySelector('meta[name="csrf-token"]');
                 if (csrfMeta) {
