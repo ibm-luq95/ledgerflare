@@ -19,7 +19,7 @@
              alt="{{ object.fullname }}" />
         <div class="grow">
             <h3 class="font-medium text-gray-800 dark:text-gray-200">
-                {{ object.fullname|safe }}
+                {{ object.fullname }}
                 {# Start Is active and is has manager permissions #}
                 <div class="flex">
                     <div class="hs-tooltip inline-block ml-2 mr-1">
@@ -92,7 +92,7 @@
             <p>
                 <address class="text-gray-600 text-[14px] italic">
                     {% if object.get_staff_member_object.staff_object.profile.address %}
-                        {{ object.get_staff_member_object.staff_object.profile.address|safe }}
+                        {{ object.get_staff_member_object.staff_object.profile.address }}
                     {% else %}
                         ---
                     {% endif %}

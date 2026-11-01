@@ -3,7 +3,7 @@ import json
 import ast
 from django import template
 from django.urls import reverse_lazy
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 from core.utils import get_request_context, debugging_print
 
@@ -25,8 +25,9 @@ def bw_js_modal(context, *args, **kwargs) -> dict:
     if extra_hidden_inputs is not None:
         extra_hidden_inputs = ast.literal_eval(extra_hidden_inputs)
         for name, value in extra_hidden_inputs.items():
-            tmp_markup = f"<input type='hidden' name='{name}' value='{value}' />"
-            extra_hidden_inputs_markup_list.append(mark_safe(tmp_markup))
+            extra_hidden_inputs_markup_list.append(
+                format_html("<input type='hidden' name='{}' value='{}' />", name, value)
+            )
 
     # Modal size (optional, defaults to 'md' for backward compatibility)
     # Size parameter is kept but doesn't affect responsive behavior
