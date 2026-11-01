@@ -205,7 +205,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "django.template.context_processors.request",
+                "csp.context_processors.nonce",
                 # "django.template.context_processors.i18n",
                 # "site_settings.context_processors.site_settings"
                 # ".return_site_settings_context",
