@@ -33,6 +33,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
@@ -103,9 +104,14 @@ class BWLoginViewBW(ThrottledViewMixin, SuccessMessageMixin, BWSiteSettingsViewM
         :rtype: HttpResponse
         """
         try:
-            # Store next parameter in session if provided
-            if request.GET.get("next"):
-                request.session.setdefault("next", request.GET.get("next"))
+            # Store validated next parameter in session if provided
+            next_param = request.GET.get("next")
+            if next_param and url_has_allowed_host_and_scheme(
+                url=next_param,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                request.session["next"] = next_param
 
             # Redirect authenticated users
             if request.user.is_authenticated:
@@ -370,10 +376,20 @@ class BWLoginViewBW(ThrottledViewMixin, SuccessMessageMixin, BWSiteSettingsViewM
         :return: Redirect response to appropriate destination
         :rtype: HttpResponseRedirect
         """
-        # Check next URL from session
-        next_url = self.request.session.get("next")
-        if next_url:
+        # Check next URL from POST, GET, or session
+        next_url = (
+            self.request.POST.get("next")
+            or self.request.GET.get("next")
+            or self.request.session.get("next")
+        )
+        if "next" in self.request.session:
             del self.request.session["next"]
+
+        if next_url and url_has_allowed_host_and_scheme(
+            url=next_url,
+            allowed_hosts={self.request.get_host()},
+            require_https=self.request.is_secure(),
+        ):
             return redirect(next_url)
 
         # Fallback to user type-based redirect
