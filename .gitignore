@@ -642,3 +642,6 @@ DESIGN.md
 .claude
 ENCRYPTION_ENGINE_V0.1.md
 STATIC_SECURITY_AUDIT_REPORT.md
+.env_dotenv_old
+*.env_dotenv*
+src/tmp/
