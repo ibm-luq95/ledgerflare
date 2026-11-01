@@ -89,7 +89,7 @@ class AppSettings(BaseSettings):
     OLD_PRODUCTION_SECRET_KEY: str = ""
     INIT_DB_COMMAND_FILE_NAME: str = ""
     WHEREAMI: str = "LOCAL"
-    VITE_DEV_MODE: bool = True
+    VITE_DEV_MODE: bool = False
 
     # CORS & CSRF
     CORS_ALLOWED_ORIGINS: CommaSeparatedList = Field(default=[])
