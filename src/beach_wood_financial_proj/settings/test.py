@@ -33,3 +33,11 @@ REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
     "export_data": "10/minute",
 }
 
+# In-memory cache for fast, isolated, robust unit and integration testing
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "ledgerflare-test-suite-cache",
+    }
+}
+
