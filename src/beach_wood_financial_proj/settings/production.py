@@ -300,7 +300,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://app.ledgerflare.com ",  # Your live frontend URL
+    "https://app.ledgerflare.com",  # Your live frontend URL
 ]
 
 # Optional: Lock down allowed headers

@@ -77,6 +77,19 @@ class DiscussionCreateHtmxView(BWLoginRequiredMixin, View):
         if not raw_body and not attachment:
             return HttpResponseBadRequest(_("Message body or attachment is required."))
 
+        if attachment:
+            from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
+            from core.utils import FileValidator
+            from django.core.exceptions import ValidationError
+
+            validator = FileValidator(
+                max_size=1024 * 1024 * 100, content_types=IMAGES_AND_DOCS_FT
+            )
+            try:
+                validator(attachment)
+            except ValidationError as ve:
+                return HttpResponseBadRequest(str(ve))
+
         clean_body = sanitize_html(raw_body)
         target_special_assignment = None
         target_job = None

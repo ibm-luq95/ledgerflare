@@ -36,9 +36,6 @@ urlpatterns = [
         include("client_accounting.urls"),
         name="client_accounting",
     ),
-    path("test-logging/", test_logging, name="test_logging"),
-    path("test-security-logging/", test_security_logging, name="test_security_logging"),
-    path("test-sql-logging/", test_sql_logging, name="test_sql_logging"),
     path("", RedirectView.as_view(url=reverse_lazy("auth:login")), name="home-url"),
     path("js-settings/", js_settings, name="js_settings"),
     path("core/", include("core.urls"), name="core-urls"),
@@ -54,7 +51,13 @@ admin.site.site_title = _("LedgerFlare Administrator")
 
 if settings.DEBUG:
     urlpatterns += static_and_media_path_urls
-    urlpatterns.append(path("__debug__/", include(("debug_toolbar.urls", "djdt"), namespace="djdt")))
+    urlpatterns += [
+        path("test-logging/", test_logging, name="test_logging"),
+        path("test-security-logging/", test_security_logging, name="test_security_logging"),
+        path("test-sql-logging/", test_sql_logging, name="test_sql_logging"),
+    ]
+    if "debug_toolbar" in settings.INSTALLED_APPS:
+        urlpatterns.append(path("__debug__/", include(("debug_toolbar.urls", "djdt"), namespace="djdt")))
     # urlpatterns.append(
     #     path("request-logs/", include("request_viewer.urls")),
     # )

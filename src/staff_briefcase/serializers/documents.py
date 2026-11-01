@@ -10,6 +10,13 @@ from staff_briefcase.models import StaffBriefcase, StaffDocuments
 class StaffDocumentsSerializer(serializers.ModelSerializer):
     briefcase = serializers.UUIDField(required=True, write_only=True)
 
+    def validate_document_file(self, value):
+        from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
+        from core.utils import FileValidator
+        validator = FileValidator(max_size=1024 * 1024 * 100, content_types=IMAGES_AND_DOCS_FT)
+        validator(value)
+        return value
+
     class Meta:
         model = StaffDocuments
         fields = ("id", "title", "document_file", "briefcase")
