@@ -25,7 +25,7 @@ from core.views.mixins.bookkeeper_pass_related_mixin import BookkeeperPassRelate
 from core.views.mixins.update_previous_mixin import UpdateReturnPreviousMixin
 from document.filters import DocumentFilter
 from document.forms import DocumentForm
-from document.models import Document
+from document.models import Document, DocumentProxy
 
 
 class DocumentListView(
@@ -174,6 +174,7 @@ class DocumentDeleteView(
 
 class DocumentDownloadView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     View,
 ):
@@ -183,11 +184,19 @@ class DocumentDownloadView(
     permission_denied_message = _(
         "You do not have permission to download this document."
     )
+    object: DocumentProxy | None = None
+
+    def get_object(self, queryset: Any = None) -> DocumentProxy:
+        """Retrieve and cache the target DocumentProxy by primary key."""
+        if self.object is not None:
+            return self.object
+        pk = self.kwargs.get("pk")
+        self.object = get_object_or_404(DocumentProxy, pk=pk)
+        return self.object
 
     def get(self, request: Any, *args: Any, **kwargs: Any) -> FileResponse:
         """Stream decrypted document content with correct MIME headers."""
-        pk = kwargs.get("pk")
-        document = get_object_or_404(Document, pk=pk)
+        document = self.get_object()
         if not document.document_file:
             raise Http404(_("No file associated with this document"))
 

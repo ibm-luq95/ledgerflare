@@ -173,6 +173,7 @@ class ImportantContactListViewBW(
 
 class ImportantContactQuickPeekView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     DetailView,

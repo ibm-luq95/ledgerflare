@@ -88,6 +88,9 @@ class StaffNotesListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_superuser:
+            queryset = queryset.filter(briefcase__user=user)
         self.filterset = StaffNotesFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
@@ -109,6 +112,12 @@ class StaffNotesUpdateView(
     # success_url = reverse_lazy("dashboard:note:list")
     model = StaffNotes
     BASE_SUCCESS_URL = "dashboard:briefcase:briefcase_staff_notes:list"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(briefcase__user=self.request.user)
+        return queryset
 
     # template_name_suffix = "_create_client"
 
@@ -167,6 +176,12 @@ class StaffNotesDeleteView(
     model = StaffNotes
     success_message = _("Staff note deleted successfully")
     success_url = reverse_lazy("dashboard:briefcase:briefcase_staff_notes:list")
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(briefcase__user=self.request.user)
+        return queryset
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
