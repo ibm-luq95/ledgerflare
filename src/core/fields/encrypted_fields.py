@@ -63,11 +63,13 @@ class EncryptedFieldMixin:
         *args: Any,
         blind_index: bool = False,
         blind_index_field: str | None = None,
+        trigram_blind_index: bool = False,
         **kwargs: Any,
     ) -> None:
         """Initialize encrypted field with optional blind index configuration."""
         self.blind_index = blind_index
         self.blind_index_field = blind_index_field
+        self.trigram_blind_index = trigram_blind_index
         super().__init__(*args, **kwargs)
 
     def contribute_to_class(
@@ -79,7 +81,10 @@ class EncryptedFieldMixin:
 
     def pre_save(self, model_instance: models.Model, add: bool) -> Any:
         """Encrypt value and compute blind index if configured."""
-        from core.crypto.blind_index import compute_blind_index
+        from core.crypto.blind_index import (
+            compute_blind_index,
+            compute_trigram_blind_index,
+        )
 
         value = model_instance.__dict__.get(self.attname)  # type: ignore[attr-defined]
         str_val = str(value) if value is not None else ""
@@ -92,6 +97,19 @@ class EncryptedFieldMixin:
                 context = f"{model_name}:{self.attname}"
                 bidx = compute_blind_index(str_val, context=context) if str_val else ""
                 setattr(model_instance, bidx_field_name, bidx)
+
+        if self.trigram_blind_index:
+            bidx_field_name = self.blind_index_field or f"{self.attname}_bidx"
+            if hasattr(model_instance, bidx_field_name):
+                concrete = getattr(model_instance._meta, "concrete_model", None)
+                model_name = (concrete or model_instance)._meta.model_name
+                context = f"{model_name}:{self.attname}"
+                bidx_list = (
+                    compute_trigram_blind_index(str_val, context=context)
+                    if str_val
+                    else []
+                )
+                setattr(model_instance, bidx_field_name, bidx_list)
 
         if value is None:
             return value
@@ -129,6 +147,8 @@ class EncryptedTextField(EncryptedFieldMixin, models.TextField):  # type: ignore
         name, _path, args, kwargs = super().deconstruct()
         if self.blind_index:
             kwargs["blind_index"] = True
+        if self.trigram_blind_index:
+            kwargs["trigram_blind_index"] = True
         if self.blind_index_field:
             kwargs["blind_index_field"] = self.blind_index_field
         return (
@@ -154,6 +174,8 @@ class EncryptedCharField(EncryptedFieldMixin, models.CharField):  # type: ignore
         name, _path, args, kwargs = super().deconstruct()
         if self.blind_index:
             kwargs["blind_index"] = True
+        if self.trigram_blind_index:
+            kwargs["trigram_blind_index"] = True
         if self.blind_index_field:
             kwargs["blind_index_field"] = self.blind_index_field
         return (

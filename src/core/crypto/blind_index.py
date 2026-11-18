@@ -47,3 +47,27 @@ def compute_blind_index(
     key = get_blind_index_key()
     message = f"{context}:{val}".encode() if context else val.encode()
     return hmac.new(key, message, hashlib.sha256).hexdigest()
+
+
+def compute_trigram_blind_index(
+    text: str | None,
+    context: str = "",
+    normalize: bool = True,
+) -> list[str]:
+    """Compute deterministic 16-hex HMAC-SHA256 tokens for 3-character n-grams."""
+    if not text:
+        return []
+
+    val = normalize_search_string(text) if normalize else text
+    if len(val) < 3:
+        return []
+
+    key = get_blind_index_key()
+    trigrams = {val[i : i + 3] for i in range(len(val) - 2)}
+
+    tokens: list[str] = []
+    for tri in sorted(trigrams):
+        message = f"{context}:{tri}".encode() if context else tri.encode()
+        tokens.append(hmac.new(key, message, hashlib.sha256).hexdigest()[:16])
+
+    return tokens
