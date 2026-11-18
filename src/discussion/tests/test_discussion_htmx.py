@@ -68,11 +68,12 @@ class TestDiscussionCreateHtmxView:
         assert "Manager update on assignment progress" in response.content.decode(
             "utf-8"
         )
-        assert DiscussionProxy.objects.filter(
+        disc = DiscussionProxy.objects.filter(
             special_assignment=assignment,
             sender=manager,
-            body="Manager update on assignment progress",
-        ).exists()
+        ).first()
+        assert disc is not None
+        assert disc.body == "Manager update on assignment progress"
 
     def test_manager_can_post_discussion_to_job(self, client):
         manager = BWUser.objects.create_user(
@@ -98,11 +99,12 @@ class TestDiscussionCreateHtmxView:
 
         assert response.status_code == 200
         assert "Job reconciliation started" in response.content.decode("utf-8")
-        assert DiscussionProxy.objects.filter(
+        disc = DiscussionProxy.objects.filter(
             job=job,
             sender=manager,
-            body="Job reconciliation started",
-        ).exists()
+        ).first()
+        assert disc is not None
+        assert disc.body == "Job reconciliation started"
 
     def test_xss_content_is_sanitized(self, client):
         manager = BWUser.objects.create_user(
@@ -198,8 +200,9 @@ class TestDiscussionCreateHtmxView:
         assert response.status_code == 201
         data = response.json()
         assert data["body"] == "Vue 3 message posted via DRF API"
-        assert DiscussionProxy.objects.filter(
+        disc = DiscussionProxy.objects.filter(
             job=job,
             sender=manager,
-            body="Vue 3 message posted via DRF API",
-        ).exists()
+        ).first()
+        assert disc is not None
+        assert disc.body == "Vue 3 message posted via DRF API"
