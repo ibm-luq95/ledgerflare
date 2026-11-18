@@ -121,3 +121,16 @@ def test_encrypted_storage_deconstruct() -> None:
     assert path == "core.storage.encrypted_storage.EncryptedPrivateStorage"
     assert isinstance(args, list)
     assert isinstance(kwargs, dict)
+
+
+@pytest.mark.unit
+def test_encrypted_storage_transparent_plaintext_fallback(tmp_path: Path) -> None:
+    """Verify legacy unencrypted plaintext files on disk read transparently."""
+    storage = EncryptedPrivateStorage(location=str(tmp_path))
+    raw_file = tmp_path / "legacy_doc.pdf"
+    raw_file.write_bytes(b"%PDF-1.4 raw unencrypted document bytes here")
+
+    with storage.open("legacy_doc.pdf", "rb") as f:
+        content = f.read()
+
+    assert content == b"%PDF-1.4 raw unencrypted document bytes here"
