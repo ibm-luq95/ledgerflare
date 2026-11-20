@@ -12,11 +12,6 @@ from rest_framework import serializers
 from client.models import ClientProxy
 from core.constants import EXCLUDED_FIELDS
 from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
-from core.services.malware_scanner import (
-    ClamAVScanner,
-    MalwareDetectedError,
-    ScannerUnavailableError,
-)
 from core.utils import FileValidator
 from document.models import Document
 from job.models import JobProxy
@@ -41,21 +36,12 @@ class DocumentSerializer(serializers.ModelSerializer):
             validator = FileValidator(
                 max_size=max_size,
                 content_types=IMAGES_AND_DOCS_FT,
+                scan_malware=True,
             )
             try:
                 validator(value)
             except DjangoValidationError as err:
                 raise serializers.ValidationError(err.messages) from err
-
-            scanner = ClamAVScanner()
-            try:
-                scanner.scan_stream(value)
-            except MalwareDetectedError as err:
-                msg = str(err)
-                raise serializers.ValidationError(msg) from err
-            except ScannerUnavailableError as err:
-                msg = "Malware scanner temporarily unavailable. Please try again later."
-                raise serializers.ValidationError(msg) from err
         return value
 
     class Meta:

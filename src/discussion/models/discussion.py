@@ -5,17 +5,27 @@ from django.utils.translation import gettext as _
 from beach_wood_user.models import BWUser
 from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
 from core.fields import EncryptedFileField, EncryptedTextField
-from core.models.mixins import BaseModelMixin, StrModelMixin, TeamMembersMixin
+from core.models.mixins import (
+    BaseModelMixin,
+    SanitizeHTMLFieldsMixin,
+    StrModelMixin,
+    TeamMembersMixin,
+)
 from core.utils import FileValidator
 from discussion.models.manager import RepliesManager
 from job.models import JobProxy
 from special_assignment.models import SpecialAssignmentProxy
 
 
-file_validator = FileValidator(max_size=1024 * 10000, content_types=IMAGES_AND_DOCS_FT)
+file_validator = FileValidator(
+    max_size=100 * 1024 * 1024,
+    content_types=IMAGES_AND_DOCS_FT,
+    scan_malware=True,
+)
 
 
-class Discussion(BaseModelMixin, TeamMembersMixin, StrModelMixin):
+class Discussion(BaseModelMixin, TeamMembersMixin, StrModelMixin, SanitizeHTMLFieldsMixin):
+    SANITY_HTML_FIELDS = ("body",)
     special_assignment = models.ForeignKey(
         to=SpecialAssignmentProxy,
         on_delete=models.CASCADE,

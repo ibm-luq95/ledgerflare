@@ -4,8 +4,16 @@ from typing import Optional, Dict, List
 from django import forms
 from django.utils.translation import gettext as _
 
+from core.constants.file_types_validation import IMAGES_FT
 from core.forms.mixins.remove_fields_mixin import RemoveFieldsMixin
 from core.forms.widgets import RichHTMLEditorWidget, BWPasswordInputWidget
+from core.utils import FileValidator
+
+image_validator = FileValidator(
+    max_size=15 * 1024 * 1024,
+    content_types=IMAGES_FT,
+    scan_malware=True,
+)
 
 
 class AbstractStaffMemberForm(forms.Form, RemoveFieldsMixin):
@@ -128,7 +136,9 @@ class AbstractStaffMemberForm(forms.Form, RemoveFieldsMixin):
     email = forms.EmailField(label=_("Email Address"), required=True)
     first_name = forms.CharField(label=_("First Name"), required=True)
     last_name = forms.CharField(label=_("Last Name"), required=True)
-    profile_picture = forms.ImageField(label=_("Profile Picture"), required=False)
+    profile_picture = forms.ImageField(
+        label=_("Profile Picture"), required=False, validators=[image_validator]
+    )
     address = forms.CharField(label=_("Address"), required=False)
     phone_number = forms.CharField(label=_("Phone number"), required=False)
     bio = forms.CharField(label=_("BIO"), widget=RichHTMLEditorWidget, required=False)

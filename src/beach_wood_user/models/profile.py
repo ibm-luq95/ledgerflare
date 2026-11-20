@@ -5,14 +5,20 @@ from django.utils.translation import gettext as _
 from django.core.validators import RegexValidator
 
 from core.constants.file_types_validation import IMAGES_FT
-from core.models.mixins import BaseModelMixin
+from core.models.mixins.base_model import BaseModelMixin
+from core.models.mixins.sanitize_html import SanitizeHTMLFieldsMixin
 from core.models.mixins.staff_member_social_media import StaffMemberSocialMediaMixin
 from core.utils import FileValidator
 
-file_validator = FileValidator(max_size=1024 * 1000, content_types=IMAGES_FT)
+file_validator = FileValidator(
+	max_size=1024 * 1024 * 15,
+	content_types=IMAGES_FT,
+	scan_malware=True,
+)
 
 
-class Profile(BaseModelMixin, StaffMemberSocialMediaMixin, models.Model):
+class Profile(BaseModelMixin, SanitizeHTMLFieldsMixin, StaffMemberSocialMediaMixin, models.Model):
+	SANITY_HTML_FIELDS = ("bio",)
 	profile_picture = models.ImageField(
 		_("profile picture"),
 		upload_to="profile_pictures/",

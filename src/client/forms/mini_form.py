@@ -12,7 +12,11 @@ from core.utils import FileValidator
 from important_contact.models import ImportantContact
 
 
-file_validator = FileValidator(max_size=1024 * 1000, content_types=IMAGES_FT)
+file_validator = FileValidator(
+    max_size=15 * 1024 * 1024,
+    content_types=IMAGES_FT,
+    scan_malware=True,
+)
 
 
 class ClientMiniForm(RemoveFieldsMixin, BWBaseFormMixin):

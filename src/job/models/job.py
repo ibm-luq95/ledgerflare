@@ -36,6 +36,7 @@ class Job(
     StrModelMixin,
     SanitizeHTMLFieldsMixin,
 ):
+    SANITY_HTML_FIELDS = ("description", "note")
     """This is the job for every bookkeeper and assistant.
 
     Attributes:

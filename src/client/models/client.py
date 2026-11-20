@@ -6,6 +6,7 @@ from PIL import Image
 
 from client_category.models import ClientCategory
 from core.choices import ClientStatusEnum
+from core.constants.file_types_validation import IMAGES_FT
 from core.models.mixins import BaseModelMixin, SanitizeHTMLFieldsMixin
 from core.models.mixins.access_proxy_models_mixin import AccessProxyModelMixin
 from core.utils import FileValidator
@@ -13,7 +14,9 @@ from important_contact.models import ImportantContact
 
 
 file_validator = FileValidator(
-    max_size=1024 * 1000, content_types=("image/png", "image/jpeg")
+    max_size=15 * 1024 * 1024,
+    content_types=IMAGES_FT,
+    scan_malware=True,
 )
 
 

@@ -16,11 +16,6 @@ from core.forms.mixins.set_bookkeeper_related_mixin import (
     InitBookkeeperRelatedFieldsMixin,
 )
 from core.forms.mixins.set_field_to_hidden import SetFieldsInputsHiddenMixin
-from core.services.malware_scanner import (
-    ClamAVScanner,
-    MalwareDetectedError,
-    ScannerUnavailableError,
-)
 from core.utils import FileValidator
 from document.models import Document
 
@@ -61,18 +56,9 @@ class DocumentForm(
             validator = FileValidator(
                 max_size=max_size,
                 content_types=IMAGES_AND_DOCS_FT,
+                scan_malware=True,
             )
             validator(file)
-
-            scanner = ClamAVScanner()
-            try:
-                scanner.scan_stream(file)
-            except MalwareDetectedError as err:
-                msg = str(err)
-                raise forms.ValidationError(msg) from err
-            except ScannerUnavailableError as err:
-                msg = "Malware scanner temporarily unavailable. Please try again later."
-                raise forms.ValidationError(msg) from err
         return file
 
     class Meta(BaseModelFormMixin.Meta):

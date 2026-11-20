@@ -9,6 +9,7 @@ from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
 from core.fields import EncryptedFileField, EncryptedTextField
 from core.models.mixins import (
     BaseModelMixin,
+    SanitizeHTMLFieldsMixin,
     StartAndDueDateMixin,
     StrModelMixin,
     TeamMembersMixin,
@@ -19,7 +20,11 @@ from job.models import JobProxy
 from special_assignment.models.manager import SpecialAssignmentsManager
 
 
-file_validator = FileValidator(max_size=1024 * 1000, content_types=IMAGES_AND_DOCS_FT)
+file_validator = FileValidator(
+    max_size=100 * 1024 * 1024,
+    content_types=IMAGES_AND_DOCS_FT,
+    scan_malware=True,
+)
 
 
 class SpecialAssignment(
@@ -28,7 +33,9 @@ class SpecialAssignment(
     TeamMembersMixin,
     CronColumnMixin,
     StrModelMixin,
+    SanitizeHTMLFieldsMixin,
 ):
+    SANITY_HTML_FIELDS = ("body", "notes")
     """Represents a special assignment.
 
     This class defines a special assignment with attributes such as client, job, title, body, status, attachment, notes, is_seen, and assigned_by.

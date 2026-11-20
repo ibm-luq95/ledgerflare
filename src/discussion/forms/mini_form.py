@@ -27,7 +27,11 @@ from core.utils import FileValidator
 from job.models import JobProxy
 from special_assignment.models import SpecialAssignmentProxy
 
-file_validator = FileValidator(max_size=1024 * 1000, content_types=IMAGES_AND_DOCS_FT)
+file_validator = FileValidator(
+    max_size=100 * 1024 * 1024,
+    content_types=IMAGES_AND_DOCS_FT,
+    scan_malware=True,
+)
 
 
 class DiscussionMiniForm(
