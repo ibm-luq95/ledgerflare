@@ -41,3 +41,7 @@ CACHES = {
     }
 }
 
+# Keep test suite decoupled from requiring live systemd clamd daemon
+MALWARE_SCANNER_ENABLED = False
+
+

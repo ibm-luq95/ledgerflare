@@ -18,6 +18,7 @@ def test_upload_settings_configured() -> None:
     """Verify max upload size settings exist and match default quotas."""
     assert settings.MAX_DOCUMENT_UPLOAD_SIZE == 100 * 1024 * 1024
     assert settings.MAX_IMAGE_UPLOAD_SIZE == 15 * 1024 * 1024
+    assert settings.CLAMAV_SOCKET_TIMEOUT_SECONDS == 15.0
 
 
 @pytest.mark.unit

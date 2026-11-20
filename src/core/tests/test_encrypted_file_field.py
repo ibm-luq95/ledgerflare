@@ -17,6 +17,7 @@ def test_encrypted_file_field_attaches_default_validator() -> None:
     validator = field.validators[0]
     assert isinstance(validator, FileValidator)
     assert validator.max_size == settings.MAX_DOCUMENT_UPLOAD_SIZE
+    assert validator.scan_malware is True
 
 
 def test_encrypted_image_field_attaches_default_validator() -> None:
@@ -25,6 +26,7 @@ def test_encrypted_image_field_attaches_default_validator() -> None:
     validator = field.validators[0]
     assert isinstance(validator, FileValidator)
     assert validator.max_size == settings.MAX_IMAGE_UPLOAD_SIZE
+    assert validator.scan_malware is True
 
 
 def test_encrypted_file_field_default_storage() -> None:

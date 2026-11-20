@@ -22,7 +22,11 @@ class EncryptedFileField(models.FileField):
         if "validators" not in kwargs:
             max_size = getattr(settings, "MAX_DOCUMENT_UPLOAD_SIZE", 100 * 1024 * 1024)
             kwargs["validators"] = [
-                FileValidator(max_size=max_size, content_types=IMAGES_AND_DOCS_FT)
+                FileValidator(
+                    max_size=max_size,
+                    content_types=IMAGES_AND_DOCS_FT,
+                    scan_malware=True,
+                )
             ]
             self._has_default_validator = True
         else:
@@ -54,7 +58,11 @@ class EncryptedImageField(models.ImageField):
         if "validators" not in kwargs:
             max_size = getattr(settings, "MAX_IMAGE_UPLOAD_SIZE", 15 * 1024 * 1024)
             kwargs["validators"] = [
-                FileValidator(max_size=max_size, content_types=IMAGES_FT)
+                FileValidator(
+                    max_size=max_size,
+                    content_types=IMAGES_FT,
+                    scan_malware=True,
+                )
             ]
             self._has_default_validator = True
         else:

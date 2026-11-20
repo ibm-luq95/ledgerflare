@@ -42,6 +42,7 @@ class FileValidator:
         min_size: int | None = None,
         content_types: tuple[str, ...] | list[str] = (),
         allowed_extensions: tuple[str, ...] | list[str] | None = None,
+        scan_malware: bool = True,
     ) -> None:
         """Initialize FileValidator with size thresholds and allowed types."""
         self.max_size = max_size
@@ -50,6 +51,7 @@ class FileValidator:
         self.allowed_extensions = (
             tuple(allowed_extensions) if allowed_extensions is not None else None
         )
+        self.scan_malware = scan_malware
 
     def __call__(self, data: Any) -> None:
         """Validate uploaded file size, sniff MIME bytes, and verify extension."""
@@ -120,6 +122,37 @@ class FileValidator:
                             params,
                         )
 
+        if self.scan_malware:
+            from django.core.files.uploadedfile import UploadedFile
+            from django.utils.translation import gettext as _
+
+            from core.services.malware_scanner import (
+                ClamAVScanner,
+                MalwareDetectedError,
+                ScannerUnavailableError,
+            )
+
+            if isinstance(data, UploadedFile):
+                if getattr(data, "_malware_scanned", False) is True:
+                    return
+
+                scanner = ClamAVScanner()
+                filename = getattr(data, "name", None)
+                try:
+                    scanner.scan_stream(data, filename=filename)
+                    data._malware_scanned = True
+                except MalwareDetectedError as err:
+                    raise ValidationError(str(err)) from err
+                except ScannerUnavailableError as err:
+                    msg = _(
+                        "Malware scanner temporarily unavailable. "
+                        "Please try again later."
+                    )
+                    raise ValidationError(msg) from err
+                finally:
+                    if hasattr(data, "seek"):
+                        data.seek(0)
+
     def __eq__(self, other: Any) -> bool:
         """Check equality between FileValidator instances."""
         return (
@@ -128,6 +161,7 @@ class FileValidator:
             and self.min_size == other.min_size
             and self.content_types == other.content_types
             and self.allowed_extensions == other.allowed_extensions
+            and self.scan_malware == other.scan_malware
         )
 
     def __hash__(self) -> int:
@@ -138,5 +172,6 @@ class FileValidator:
                 self.min_size,
                 self.content_types,
                 self.allowed_extensions,
+                self.scan_malware,
             )
         )

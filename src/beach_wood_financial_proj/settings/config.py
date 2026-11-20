@@ -100,9 +100,9 @@ class AppSettings(BaseSettings):
     CONTENT_ENCRYPTION_KEYS: dict[str, str] = Field(default_factory=dict)
     ACTIVE_KEY_ID: str = Field(default="k1")
     BLIND_INDEX_KEY: str = Field()
-    MALWARE_SCANNER_ENABLED: bool = False
+    MALWARE_SCANNER_ENABLED: bool = True
     CLAMAV_SOCKET_PATH: str = "/var/run/clamav/clamd.ctl"
-    CLAMAV_SOCKET_TIMEOUT_SECONDS: float = 5.0
+    CLAMAV_SOCKET_TIMEOUT_SECONDS: float = 15.0
     SESSION_INACTIVITY_TIMEOUT_SECONDS: int = 1800
     SESSION_INACTIVITY_EXEMPT_PATHS: CommaSeparatedList = Field(
         default=[

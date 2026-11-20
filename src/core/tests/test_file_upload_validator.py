@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+from unittest.mock import patch
 
 import pytest
 from django.core.exceptions import ValidationError
@@ -138,3 +139,93 @@ def test_file_validator_seeks_to_start_before_reading() -> None:
     )
     validator(stream)
     assert stream.tell() == 0
+
+
+@pytest.mark.unit
+def test_file_validator_scans_malware_and_rewinds() -> None:
+    """Verify that FileValidator invokes ClamAVScanner, sets _malware_scanned, and rewinds."""
+    upload = SimpleUploadedFile("clean.pdf", b"%PDF-1.4\nclean document content", content_type="application/pdf")
+    validator = FileValidator(
+        max_size=1024 * 1024,
+        content_types=("application/pdf",),
+        scan_malware=True,
+    )
+    with patch("core.services.malware_scanner.ClamAVScanner.scan_stream") as mock_scan:
+        validator(upload)
+        mock_scan.assert_called_once_with(upload, filename="clean.pdf")
+        assert upload.tell() == 0
+        assert getattr(upload, "_malware_scanned", False) is True
+
+
+@pytest.mark.unit
+def test_file_validator_deduplicates_repeated_calls() -> None:
+    """Verify that FileValidator only streams to ClamAV once on the same UploadedFile."""
+    upload = SimpleUploadedFile("clean.pdf", b"%PDF-1.4\nclean document content", content_type="application/pdf")
+    validator = FileValidator(
+        max_size=1024 * 1024,
+        content_types=("application/pdf",),
+        scan_malware=True,
+    )
+    with patch("core.services.malware_scanner.ClamAVScanner.scan_stream") as mock_scan:
+        validator(upload)
+        validator(upload)
+        mock_scan.assert_called_once()
+
+
+@pytest.mark.unit
+def test_file_validator_skips_non_uploaded_file() -> None:
+    """Verify that non-UploadedFile instances (e.g. FieldFile or raw BytesIO) skip malware scanning."""
+    raw_stream = io.BytesIO(b"%PDF-1.4\nraw stream")
+    raw_stream.size = len(raw_stream.getvalue())
+    raw_stream.name = "persisted.pdf"
+    validator = FileValidator(
+        max_size=1024 * 1024,
+        content_types=("application/pdf",),
+        scan_malware=True,
+    )
+    with patch("core.services.malware_scanner.ClamAVScanner.scan_stream") as mock_scan:
+        validator(raw_stream)
+        mock_scan.assert_not_called()
+
+
+@pytest.mark.unit
+def test_file_validator_raises_validation_error_on_infected_file() -> None:
+    """Verify that MalwareDetectedError is translated into a Django ValidationError."""
+    from core.services.malware_scanner import MalwareDetectedError
+
+    upload = SimpleUploadedFile("virus.pdf", b"%PDF-1.4\neicar payload", content_type="application/pdf")
+    validator = FileValidator(
+        max_size=1024 * 1024,
+        content_types=("application/pdf",),
+        scan_malware=True,
+    )
+    with patch(
+        "core.services.malware_scanner.ClamAVScanner.scan_stream",
+        side_effect=MalwareDetectedError("Malware detected: Eicar-Test-Signature"),
+    ):
+        with pytest.raises(ValidationError) as exc:
+            validator(upload)
+        assert "Eicar-Test-Signature" in str(exc.value)
+        assert upload.tell() == 0
+
+
+@pytest.mark.unit
+def test_file_validator_raises_validation_error_on_scanner_unavailable() -> None:
+    """Verify that ScannerUnavailableError is translated into a user-friendly ValidationError."""
+    from core.services.malware_scanner import ScannerUnavailableError
+
+    upload = SimpleUploadedFile("clean.pdf", b"%PDF-1.4\nclean content", content_type="application/pdf")
+    validator = FileValidator(
+        max_size=1024 * 1024,
+        content_types=("application/pdf",),
+        scan_malware=True,
+    )
+    with patch(
+        "core.services.malware_scanner.ClamAVScanner.scan_stream",
+        side_effect=ScannerUnavailableError("Socket closed"),
+    ):
+        with pytest.raises(ValidationError) as exc:
+            validator(upload)
+        assert "Malware scanner temporarily unavailable" in str(exc.value)
+        assert upload.tell() == 0
+
