@@ -15,6 +15,7 @@ import { showToastNotification } from "../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   initNoteListView();
+  initNoteQuickPeek();
 
   const filterForm = document.getElementById("notesFilterForm");
   const resetFilterBtn = document.querySelector("button#resetFilterBtn");
@@ -180,14 +181,13 @@ function initNoteListView() {
       }
     });
   }
+}
 
-  // 3. Slide-Over Quick Peek Drawer
-  const quickPeekDrawer = document.getElementById("noteQuickPeekDrawer");
-  const quickPeekBackdrop = document.getElementById("noteQuickPeekBackdrop");
-  const quickPeekDrawerBody = document.getElementById("noteQuickPeekDrawerBody");
-  const closeQuickPeekBtn = document.getElementById("closeNoteQuickPeekBtn");
-
+function initNoteQuickPeek() {
   function openQuickPeek(url) {
+    const quickPeekDrawer = document.getElementById("noteQuickPeekDrawer");
+    const quickPeekBackdrop = document.getElementById("noteQuickPeekBackdrop");
+    const quickPeekDrawerBody = document.getElementById("noteQuickPeekDrawerBody");
     if (!quickPeekDrawer || !quickPeekBackdrop || !quickPeekDrawerBody) return;
 
     quickPeekDrawerBody.innerHTML = `
@@ -225,6 +225,8 @@ function initNoteListView() {
   }
 
   function closeQuickPeek() {
+    const quickPeekDrawer = document.getElementById("noteQuickPeekDrawer");
+    const quickPeekBackdrop = document.getElementById("noteQuickPeekBackdrop");
     if (!quickPeekDrawer || !quickPeekBackdrop) return;
     quickPeekDrawer.classList.remove("translate-x-0");
     quickPeekDrawer.classList.add("translate-x-full");
@@ -236,13 +238,15 @@ function initNoteListView() {
     if (trigger && trigger.dataset.quickPeekUrl) {
       e.preventDefault();
       openQuickPeek(trigger.dataset.quickPeekUrl);
+      return;
+    }
+
+    if (
+      e.target.closest("#closeNoteQuickPeekBtn") ||
+      e.target.matches("#noteQuickPeekBackdrop")
+    ) {
+      e.preventDefault();
+      closeQuickPeek();
     }
   });
-
-  if (closeQuickPeekBtn) {
-    closeQuickPeekBtn.addEventListener("click", closeQuickPeek);
-  }
-  if (quickPeekBackdrop) {
-    quickPeekBackdrop.addEventListener("click", closeQuickPeek);
-  }
 }

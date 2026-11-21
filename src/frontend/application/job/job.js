@@ -234,12 +234,10 @@ function initJobListView() {
   }
 
   // Quick Peek Slide-Over Drawer
-  const quickPeekDrawer = document.getElementById("quickPeekDrawer");
-  const quickPeekBackdrop = document.getElementById("quickPeekBackdrop");
-  const quickPeekDrawerBody = document.getElementById("quickPeekDrawerBody");
-  const closeQuickPeekBtn = document.getElementById("closeQuickPeekBtn");
-
   function openQuickPeek(url) {
+    const quickPeekDrawer = document.getElementById("quickPeekDrawer");
+    const quickPeekBackdrop = document.getElementById("quickPeekBackdrop");
+    const quickPeekDrawerBody = document.getElementById("quickPeekDrawerBody");
     if (!quickPeekDrawer || !quickPeekBackdrop || !quickPeekDrawerBody) return;
 
     quickPeekDrawerBody.innerHTML = `
@@ -262,6 +260,9 @@ function initJobListView() {
       })
       .then((html) => {
         quickPeekDrawerBody.innerHTML = html;
+        if (window.HSStaticMethods) {
+          window.HSStaticMethods.autoInit();
+        }
       })
       .catch((err) => {
         console.error("Quick Peek load error:", err);
@@ -274,6 +275,8 @@ function initJobListView() {
   }
 
   function closeQuickPeek() {
+    const quickPeekDrawer = document.getElementById("quickPeekDrawer");
+    const quickPeekBackdrop = document.getElementById("quickPeekBackdrop");
     if (!quickPeekDrawer || !quickPeekBackdrop) return;
     quickPeekDrawer.classList.remove("translate-x-0");
     quickPeekDrawer.classList.add("translate-x-full");
@@ -285,13 +288,15 @@ function initJobListView() {
     if (peekBtn && peekBtn.dataset.jobUrl) {
       e.preventDefault();
       openQuickPeek(peekBtn.dataset.jobUrl);
+      return;
+    }
+
+    if (
+      e.target.closest("#closeQuickPeekBtn") ||
+      e.target.matches("#quickPeekBackdrop")
+    ) {
+      e.preventDefault();
+      closeQuickPeek();
     }
   });
-
-  if (closeQuickPeekBtn) {
-    closeQuickPeekBtn.addEventListener("click", closeQuickPeek);
-  }
-  if (quickPeekBackdrop) {
-    quickPeekBackdrop.addEventListener("click", closeQuickPeek);
-  }
 }

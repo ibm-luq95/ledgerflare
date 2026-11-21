@@ -9,6 +9,7 @@ import { showToastNotification } from "../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   initSpecialAssignmentListView();
+  initSpecialAssignmentQuickPeek();
 
   const filterForm = document.getElementById("specialAssignmentsFilterForm") || document.getElementById("specialAssignmentFilterForm");
   const resetFilterBtn = document.querySelector("button#resetFilterBtn");
@@ -174,13 +175,13 @@ function initSpecialAssignmentListView() {
     });
   }
 
-  // 3. Slide-Over Quick Peek Drawer
-  const quickPeekDrawer = document.getElementById("saQuickPeekDrawer");
-  const quickPeekBackdrop = document.getElementById("saQuickPeekBackdrop");
-  const quickPeekDrawerBody = document.getElementById("saQuickPeekDrawerBody");
-  const closeQuickPeekBtn = document.getElementById("closeSaQuickPeekBtn");
+}
 
+function initSpecialAssignmentQuickPeek() {
   function openQuickPeek(url) {
+    const quickPeekDrawer = document.getElementById("saQuickPeekDrawer");
+    const quickPeekBackdrop = document.getElementById("saQuickPeekBackdrop");
+    const quickPeekDrawerBody = document.getElementById("saQuickPeekDrawerBody");
     if (!quickPeekDrawer || !quickPeekBackdrop || !quickPeekDrawerBody) return;
 
     quickPeekDrawerBody.innerHTML = `
@@ -218,6 +219,8 @@ function initSpecialAssignmentListView() {
   }
 
   function closeQuickPeek() {
+    const quickPeekDrawer = document.getElementById("saQuickPeekDrawer");
+    const quickPeekBackdrop = document.getElementById("saQuickPeekBackdrop");
     if (!quickPeekDrawer || !quickPeekBackdrop) return;
     quickPeekDrawer.classList.remove("translate-x-0");
     quickPeekDrawer.classList.add("translate-x-full");
@@ -229,14 +232,16 @@ function initSpecialAssignmentListView() {
     if (trigger && trigger.dataset.quickPeekUrl) {
       e.preventDefault();
       openQuickPeek(trigger.dataset.quickPeekUrl);
+      return;
+    }
+
+    if (
+      e.target.closest("#closeSaQuickPeekBtn") ||
+      e.target.matches("#saQuickPeekBackdrop")
+    ) {
+      e.preventDefault();
+      closeQuickPeek();
     }
   });
-
-  if (closeQuickPeekBtn) {
-    closeQuickPeekBtn.addEventListener("click", closeQuickPeek);
-  }
-  if (quickPeekBackdrop) {
-    quickPeekBackdrop.addEventListener("click", closeQuickPeek);
-  }
 }
 
