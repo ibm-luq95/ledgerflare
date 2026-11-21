@@ -34,7 +34,6 @@ class FetchUrlApiView(APIView):
     """
 
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = [TokenAuthentication]
 
     def post(self, request: Request, *args, **kwargs):
         """

@@ -18,7 +18,6 @@ class StaffDocumentsViewSet(RoleScopedQuerysetMixin, ModelViewSet):
         parsers.FormParser,
         parsers.MultiPartParser,
     ]
-    authentication_classes = [TokenAuthentication]
     serializer_class = StaffDocumentsSerializer
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     perm_slug = "staff_briefcase.staffdocuments"

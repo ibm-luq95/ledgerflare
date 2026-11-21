@@ -172,6 +172,7 @@ class NoteListView(
 
 class NoteQuickPeekView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     DetailView,

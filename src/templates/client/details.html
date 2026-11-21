@@ -547,16 +547,16 @@
                                 {% translate "Name:" %}
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white break-words">
-                                {{ object.name|safe }}
+                                {{ object.name }}
                             </dd>
                             <dt class="sm:col-span-1 font-semibold text-sm md:text-base lg:text-lg dark:text-white">
                                 {% translate "Email Address:" %}
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white break-all">
                                 {% if object.email %}
-                                    <a href="mailto:{{ object.email|safe }}"
+                                    <a href="mailto:{{ object.email }}"
                                        class="hover:underline italic {{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }}">
-                                        {{ object.email|safe }}
+                                        {{ object.email }}
                                     </a>
                                 {% else %}
                                     {% translate "N/A" %}
@@ -567,7 +567,7 @@
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white break-words">
                                 {% if object.industry %}
-                                    {{ object.industry|safe }}
+                                    {{ object.industry }}
                                 {% else %}
                                     {% translate "N/A" %}
                                 {% endif %}
@@ -590,9 +590,9 @@
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white break-all">
                                 {% if object.website %}
-                                    <a href="{{ object.website|safe }}"
+                                    <a href="{{ object.website }}"
                                        class="hover:underline italic {{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }}">
-                                        {{ object.website|safe }}
+                                        {{ object.website }}
                                     </a>
                                 {% else %}
                                     {% translate "N/A" %}
@@ -603,7 +603,7 @@
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white break-words">
                                 {% if object.street %}
-                                    {{ object.street|safe }}
+                                    {{ object.street }}
                                 {% else %}
                                     {% translate "N/A" %}
                                 {% endif %}
@@ -613,7 +613,7 @@
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white break-words">
                                 {% if object.city %}
-                                    {{ object.city|safe }}
+                                    {{ object.city }}
                                 {% else %}
                                     {% translate "N/A" %}
                                 {% endif %}
@@ -623,7 +623,7 @@
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white break-words">
                                 {% if object.state %}
-                                    {{ object.state|safe }}
+                                    {{ object.state }}
                                 {% else %}
                                     {% translate "N/A" %}
                                 {% endif %}
@@ -633,9 +633,9 @@
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white">
                                 {% if object.phone_number %}
-                                    <a href="tel:{{ object.phone_number|safe }}"
+                                    <a href="tel:{{ object.phone_number }}"
                                        class="hover:underline italic {{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }}">
-                                        {{ object.phone_number|safe }}
+                                        {{ object.phone_number }}
                                     </a>
                                 {% else %}
                                     {% translate "N/A" %}
@@ -646,7 +646,7 @@
                             </dt>
                             <dd class="sm:col-span-2 mb-3 text-sm md:text-base lg:text-lg sm:mb-0 dark:text-white break-words">
                                 {% if object.postcode %}
-                                    {{ object.postcode|safe }}
+                                    {{ object.postcode }}
                                 {% else %}
                                     {% translate "N/A" %}
                                 {% endif %}
@@ -672,7 +672,7 @@
                                         <a href="{{ object.company_logo.url }}"
                                            download="{{ object.company_logo.url }}">
                                             <img src="{{ object.company_logo.url }}"
-                                                 alt="{{ object.name|safe }}"
+                                                 alt="{{ object.name }}"
                                                  class="w-[40px] h-[40px] rounded-full border border-gray-700" />
                                         </a>
                                     </div>
@@ -726,7 +726,7 @@
                                     <div class="flex flex-wrap gap-1">
                                         {% for icontact in object.important_contacts.all %}
                                             <a href="{% url 'dashboard:important_contact:update' icontact.pk %}">
-                                                <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium border border-gray-200 bg-white text-gray-800 shadow-sm dark:bg-slate-900 dark:border-gray-700 dark:text-white">{{ icontact.get_contact_label_display }} - {{ icontact.full_name|safe }}</span>
+                                                <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium border border-gray-200 bg-white text-gray-800 shadow-sm dark:bg-slate-900 dark:border-gray-700 dark:text-white">{{ icontact.get_contact_label_display }} - {{ icontact.full_name }}</span>
                                             </a>
                                         {% endfor %}
                                     </div>

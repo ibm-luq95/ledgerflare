@@ -23,7 +23,6 @@ class ClientCategoryViewSet(CachedViewSetResponseMixin, RoleScopedQuerysetMixin,
     search_fields = ["name"]
     ordering_fields = ["created_at", "updated_at", "name"]
     ordering = ["name"]
-    authentication_classes = [TokenAuthentication]
 
     def scope_queryset_for_bookkeeper(self, queryset, bookkeeper):
         return queryset.filter(clients__bookkeepers=bookkeeper).distinct()

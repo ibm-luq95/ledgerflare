@@ -1,7 +1,10 @@
+import re
 from pathlib import Path
 from typing import Annotated, Optional
-from pydantic import Field, BeforeValidator
+
+from pydantic import BeforeValidator, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 # Base Directory of the Django application (src/)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -86,10 +89,44 @@ class AppSettings(BaseSettings):
     OLD_PRODUCTION_SECRET_KEY: str = ""
     INIT_DB_COMMAND_FILE_NAME: str = ""
     WHEREAMI: str = "LOCAL"
+    VITE_DEV_MODE: bool = False
 
     # CORS & CSRF
     CORS_ALLOWED_ORIGINS: CommaSeparatedList = Field(default=[])
     CSRF_TRUSTED_ORIGINS: CommaSeparatedList = Field(default=[])
+
+    # Phase 1 Security & Data Protection
+    CONTENT_ENCRYPTION_KEY: str | None = Field(default=None)
+    CONTENT_ENCRYPTION_KEYS: dict[str, str] = Field(default_factory=dict)
+    ACTIVE_KEY_ID: str = Field(default="k1")
+    BLIND_INDEX_KEY: str = Field()
+    MALWARE_SCANNER_ENABLED: bool = True
+    CLAMAV_SOCKET_PATH: str = "/var/run/clamav/clamd.ctl"
+    CLAMAV_SOCKET_TIMEOUT_SECONDS: float = 15.0
+    SESSION_INACTIVITY_TIMEOUT_SECONDS: int = 1800
+    SESSION_INACTIVITY_EXEMPT_PATHS: CommaSeparatedList = Field(
+        default=[
+            r"^/api/notifications/",
+            r"^/notifications/api/",
+            r"^/api/discussion/unread/",
+        ]
+    )
+    SENDGRID_API_KEY: str | None = None
+    MAX_DOCUMENT_UPLOAD_SIZE: int = Field(default=100 * 1024 * 1024)
+    MAX_IMAGE_UPLOAD_SIZE: int = Field(default=15 * 1024 * 1024)
+
+    @field_validator("CONTENT_ENCRYPTION_KEYS", mode="after")
+    @classmethod
+    def validate_key_ids(cls, v: dict[str, str]) -> dict[str, str]:
+        """Validate that all key identifiers match regex ^[a-zA-Z0-9_-]+$."""
+        for key_id in v:
+            if not re.match(r"^[a-zA-Z0-9_-]+$", key_id):
+                msg = (
+                    f"Key ID '{key_id}' contains invalid characters. "
+                    "Must match ^[a-zA-Z0-9_-]+$"
+                )
+                raise ValueError(msg)
+        return v
 
     model_config = SettingsConfigDict(
         env_file_encoding="utf-8",

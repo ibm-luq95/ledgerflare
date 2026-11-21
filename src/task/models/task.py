@@ -5,11 +5,13 @@ from django.utils.translation import gettext as _
 
 from core.choices import TaskStatusEnum
 from core.choices import TaskTypeEnum
+from core.fields.encrypted_fields import EncryptedTextField
 from core.models.mixins import BaseModelMixin
 from core.models.mixins import SanitizeHTMLFieldsMixin
 from core.models.mixins import StrModelMixin
 from core.models.mixins.access_proxy_models_mixin import AccessProxyModelMixin
 from core.models.mixins.cron_column_mixin import CronColumnMixin
+from core.models.mixins.encrypted_model import EncryptedModelMixin
 from job.models.job_proxy import JobProxy
 from task.models.manager.tasks_manager import TaskManager
 
@@ -21,6 +23,7 @@ class Task(
     CronColumnMixin,
     StrModelMixin,
     SanitizeHTMLFieldsMixin,
+    EncryptedModelMixin,
 ):
     SANITY_HTML_FIELDS = ("additional_notes",)
     """Tasks for every job.
@@ -78,14 +81,13 @@ class Task(
     is_completed = models.BooleanField(
         _("is completed"), default=False, editable=False, db_index=True
     )
-    hints = models.CharField(
+    hints = EncryptedTextField(
         _("hints"),
-        max_length=60,
         null=True,
         blank=True,
         help_text=_("Hints help to this task"),
     )
-    additional_notes = models.TextField(
+    additional_notes = EncryptedTextField(
         _("additional notes"),
         null=True,
         blank=True,

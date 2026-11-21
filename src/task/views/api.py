@@ -17,7 +17,6 @@ class TaskViewSet(RoleScopedQuerysetMixin, ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     perm_slug = "task.task"
-    authentication_classes = [TokenAuthentication]
     queryset = TaskProxy.objects.all()
     filterset_fields = ["status", "task_type", "is_completed", "job", "is_deleted"]
     search_fields = ["title", "hints", "additional_notes"]

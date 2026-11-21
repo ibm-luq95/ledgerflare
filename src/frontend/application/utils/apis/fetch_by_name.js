@@ -145,9 +145,6 @@ class SecureUrlFetcher {
       throw new Error("URL name is required");
     }
     const authToken = AuthTokenHandler.getAuthToken();
-    if (!authToken) {
-      throw new AuthError("Authentication token not found");
-    }
 
     const csrfToken = CSRFTokenHandler.getCSRFToken();
     if (!csrfToken) {
@@ -164,8 +161,10 @@ class SecureUrlFetcher {
       Accept: "application/json",
       "X-Requested-With": "XMLHttpRequest",
       "X-CSRFToken": csrfToken,
-      Authorization: `Token ${authToken}`,
     });
+    if (authToken) {
+      headers.set("Authorization", `Token ${authToken}`);
+    }
 
     const dataToSend = { urlName };
     if (pk) {

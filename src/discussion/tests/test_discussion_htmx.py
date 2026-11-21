@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from typing import Any
+from unittest.mock import patch
 
 import pytest
 from django.contrib.sites.models import Site
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.urls import reverse
 from model_bakery import baker
@@ -11,6 +13,10 @@ from model_bakery import baker
 from beach_wood_user.models import BWUser
 from client.models import ClientProxy
 from core.constants.users import CON_BOOKKEEPER, CON_MANAGER
+from core.services.malware_scanner import (
+    MalwareDetectedError,
+    ScannerUnavailableError,
+)
 from discussion.models import DiscussionProxy
 from job.models import JobProxy
 from special_assignment.models import SpecialAssignmentProxy
@@ -68,11 +74,12 @@ class TestDiscussionCreateHtmxView:
         assert "Manager update on assignment progress" in response.content.decode(
             "utf-8"
         )
-        assert DiscussionProxy.objects.filter(
+        disc = DiscussionProxy.objects.filter(
             special_assignment=assignment,
             sender=manager,
-            body="Manager update on assignment progress",
-        ).exists()
+        ).first()
+        assert disc is not None
+        assert disc.body == "Manager update on assignment progress"
 
     def test_manager_can_post_discussion_to_job(self, client):
         manager = BWUser.objects.create_user(
@@ -98,11 +105,12 @@ class TestDiscussionCreateHtmxView:
 
         assert response.status_code == 200
         assert "Job reconciliation started" in response.content.decode("utf-8")
-        assert DiscussionProxy.objects.filter(
+        disc = DiscussionProxy.objects.filter(
             job=job,
             sender=manager,
-            body="Job reconciliation started",
-        ).exists()
+        ).first()
+        assert disc is not None
+        assert disc.body == "Job reconciliation started"
 
     def test_xss_content_is_sanitized(self, client):
         manager = BWUser.objects.create_user(
@@ -151,6 +159,72 @@ class TestDiscussionCreateHtmxView:
 
         assert response.status_code == 400
 
+    def test_discussion_htmx_blocks_infected_attachment(self, client):
+        manager = BWUser.objects.create_user(
+            email="manager_infected@ledgerflare.com",
+            password="ValidPassword123!",
+            user_type=CON_MANAGER,
+        )
+        test_client = ClientProxy.objects.create(name="Threat Client")
+        job = JobProxy.objects.create(title="Threat Job", client=test_client)
+        client.force_login(manager)
+
+        infected_file = SimpleUploadedFile(
+            "virus.pdf",
+            b"%PDF-1.4\nEICAR payload test",
+            content_type="application/pdf",
+        )
+        url = reverse("dashboard:discussion:htmx_create")
+
+        with patch(
+            "core.services.malware_scanner.ClamAVScanner.scan_stream",
+            side_effect=MalwareDetectedError("Malware detected by scanner: Win.Test.EICAR"),
+        ):
+            response = client.post(
+                url,
+                {
+                    "body": "Here is the attachment",
+                    "job": str(job.pk),
+                    "attachment": infected_file,
+                },
+            )
+
+        assert response.status_code == 400
+        assert "Malware detected" in response.content.decode()
+
+    def test_discussion_htmx_blocks_when_scanner_unavailable(self, client):
+        manager = BWUser.objects.create_user(
+            email="manager_down@ledgerflare.com",
+            password="ValidPassword123!",
+            user_type=CON_MANAGER,
+        )
+        test_client = ClientProxy.objects.create(name="Down Client")
+        job = JobProxy.objects.create(title="Down Job", client=test_client)
+        client.force_login(manager)
+
+        upload_file = SimpleUploadedFile(
+            "clean.pdf",
+            b"%PDF-1.4\nClean doc content",
+            content_type="application/pdf",
+        )
+        url = reverse("dashboard:discussion:htmx_create")
+
+        with patch(
+            "core.services.malware_scanner.ClamAVScanner.scan_stream",
+            side_effect=ScannerUnavailableError("Socket unreachable"),
+        ):
+            response = client.post(
+                url,
+                {
+                    "body": "Here is the attachment",
+                    "job": str(job.pk),
+                    "attachment": upload_file,
+                },
+            )
+
+        assert response.status_code == 400
+        assert "temporarily unavailable" in response.content.decode()
+
     def test_vue_api_endpoint_list_discussions(self, client):
         manager = BWUser.objects.create_user(
             email="manager_api_list@ledgerflare.com",
@@ -198,8 +272,9 @@ class TestDiscussionCreateHtmxView:
         assert response.status_code == 201
         data = response.json()
         assert data["body"] == "Vue 3 message posted via DRF API"
-        assert DiscussionProxy.objects.filter(
+        disc = DiscussionProxy.objects.filter(
             job=job,
             sender=manager,
-            body="Vue 3 message posted via DRF API",
-        ).exists()
+        ).first()
+        assert disc is not None
+        assert disc.body == "Vue 3 message posted via DRF API"

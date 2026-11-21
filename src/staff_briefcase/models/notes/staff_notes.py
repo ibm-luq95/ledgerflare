@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-#
 import textwrap
 
 from django.contrib import admin
 from django.db import models
 from django.utils.translation import gettext as _
 
+from core.fields import EncryptedTextField
 from core.models.mixins import BaseModelMixin, StrModelMixin
 
 
@@ -15,7 +15,7 @@ class StaffNotes(BaseModelMixin, StrModelMixin):
 
     Attributes:
         title (CharField): The title of the note.
-        note (TextField): The main content of the note.
+        note (EncryptedTextField): The encrypted main content of the note.
 
     Methods:
         note_body(self): Displays a shortened version of the note content.
@@ -23,7 +23,7 @@ class StaffNotes(BaseModelMixin, StrModelMixin):
     """
 
     title = models.CharField(_("title"), max_length=250, null=True, blank=True)
-    note = models.TextField(_("Note"))
+    note = EncryptedTextField(_("Note"))
 
     @admin.display(description=_("Note body"))
     def note_body(self):

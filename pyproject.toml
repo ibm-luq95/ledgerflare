@@ -1,21 +1,25 @@
 [project]
-name = "Leadgerflare_Web_Application"
-version = "1.0"
-description = "Add your description here"
+name = "ledgerflare"
+version = "1.0.0"
+description = "LedgerFlare — Financial SaaS management and accounting platform."
 readme = "README.md"
 requires-python = ">=3.14"
+license = { text = "Proprietary" }
 dependencies = [
   "apscheduler",
+  "beautifulsoup4>=4.15.0",
+  "click",
   "colorama",
   "crispy-tailwind",
   "cryptography",
-  "pydantic-settings",
   "Django~=6.0",
   "django-admin-rangefilter",
+  "django-auditlog",
+  "django-axes>=6.0.0",
   "django-components",
   "django-cors-headers",
   "django-crispy-forms",
-  "django-auditlog",
+  "django-csp>=4.0.0",
   "django-extensions",
   "django-filter",
   "django-guardian",
@@ -23,149 +27,161 @@ dependencies = [
   "django-log-viewer",
   "django-maintenance-mode",
   "django-session-timeout",
-  "valkey",
   "django-valkey",
   "django-vite-boilerplate",
   "django-widget-tweaks",
   "djangorestframework",
+  "drf-spectacular",
   "drf-standardized-errors",
   "gunicorn",
+  "inflection",
+  "nh3>=0.3.6",
   "numpy",
+  "openpyxl>=3.1.5",
   "pandas",
   "Pillow",
+  "prettyprinter",
   "prettytable",
   "psycopg[binary]",
+  "pydantic",
+  "pydantic-settings",
+  "python-dateutil",
   "python-json-logger",
   "python-magic",
   "PyYAML",
   "requests",
+  "rich",
   "sentry-sdk[django]",
-  "inflection",
-  "python-json-logger",
-  "django-axes>=6.0.0",
-  "django-csp>=4.0.0",
-  "whitenoise",
-  "drf-spectacular",
-  "prettyprinter",
   "termcolor",
-  "nh3>=0.3.6",
-  "beautifulsoup4>=4.15.0",
-  "openpyxl>=3.1.5",
+  "valkey",
+  "whitenoise",
 ]
 
 [dependency-groups]
-# Core development tools (testing, debugging)
 dev = [
-  "django-model-info",
-  "django-admin-cli",
-  "Werkzeug",
   "bpython",
   "colorlog",
-  # Type Checking
-  "mypy",
-  "django-stubs",
-  "djangorestframework-stubs",
-  # Developer Experience
-  "ipython",
+  "coverage>=7.15.2",
+  "django-admin-cli",
+  "django-coverage-plugin>=3.2.2",
   "django-debug-toolbar",
   "django-debugtools>=2.0",
-  "coverage>=7.15.2",
-  "django-coverage-plugin>=3.2.2",
+  "django-model-info",
+  "ipython",
   "playwright>=1.62.0",
+  "Werkzeug",
 ]
 
-# Code quality and static analysis
-lint = [
-  "ruff",
-  "mypy",
-  "django-stubs",
-  "black",
-  # Template Formatting
-  "djlint",
-  # Security
-  "bandit",
-]
-
-# Testing
 testing = [
-  "pytest",
-  "pytest-django",
-  "pytest-cov",
   "factory-boy",
   "faker",
   "model-bakery",
-  "selenium",
+  "pytest",
+  "pytest-cov",
+  "pytest-django",
 ]
-# --- Type Checking ---
+
+lint = [
+  "bandit",
+  "djlint",
+  "ruff",
+]
+
 types = [
-  "mypy",
-  "mypy-extensions",
   "django-stubs",
   "django-stubs-ext",
   "djangorestframework-stubs[compatible-mypy]",
+  "mypy",
+  "mypy-extensions",
   "types-requests",
 ]
 
-# Documentation generation
 docs = [
-  "mkdocs",
-  "mkdocs-material",
-  "sphinx",
   "autotyping",
   "infer-types",
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocstrings[python]",
   "MonkeyType",
-  "mkdocstrings[python]", # Parses Python code and supports Sphinx/reST style
+  "sphinx",
 ]
 
-# uv-specific configuration
 [tool.uv]
-# Set to false if this is an application, not a distributable library.
-# This prevents uv from trying to build/install this project as a package.
 package = false
+default-groups = ["dev", "testing", "lint", "types"]
 
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "beach_wood_financial_proj.settings.test"
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+pythonpath = ["src"]
+testpaths = ["src"]
+addopts = "-p no:warnings --ignore=src/core/views/test_logging.py --ignore=src/core/views/test_security_logging.py --ignore=src/core/views/test_sql_logging.py"
+markers = [
+  "unit: Fast unit tests (models, serializers, helpers)",
+  "integration: Integration & view tests",
+  "security: Encryption, audit logging, middleware tests",
+  "guardian: Object-level permission tests",
+  "workflow: Multi-app end-to-end integration workflows",
+  "slow: Long running tests (deselect with '-m \"not slow\"')",
+  "e2e: End-to-end browser tests",
+]
 
-[tool.black]
-line-length = 85
-target-version = ['py314'] # Updated to Python 3.14
-preview = true
-unstable-feature = true
-unstable = true
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+[tool.django-stubs]
+django_settings_module = "beach_wood_financial_proj.settings.test"
 
 [tool.isort]
-py_version = 314 # Updated to Python 3.14
+py_version = 314
 profile = "django"
-line_length = 85
-force_single_line = true
+line_length = 88
+force_single_line = false
 use_parentheses = true
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
-known_first_party = ["your_project_name"] # Replace with your project's name
+known_first_party = [
+  "beach_wood_financial_proj",
+  "beach_wood_user",
+  "bw_ui_components",
+  "client",
+  "client_account",
+  "client_accounting",
+  "client_category",
+  "components",
+  "core",
+  "dashboard",
+  "discussion",
+  "document",
+  "document_template",
+  "fiscal_year",
+  "home",
+  "important_contact",
+  "job",
+  "job_category",
+  "job_template",
+  "lf_notifications",
+  "manager",
+  "note",
+  "note_template",
+  "reports",
+  "site_settings",
+  "special_assignment",
+  "special_assignment_template",
+  "staff_briefcase",
+  "task",
+  "task_item",
+  "task_template",
+]
 known_third_party = [
   "django",
+  "rest_framework",
   "numpy",
   "pandas",
-] # Add your third-party dependencies
+]
 
 [tool.djlint]
 profile = "django"
 extension = "html,djhtml"
 indent = 4
-# exclude directories and file patterns (comma separated)
-exclude = ".venv,venv,.tox,build,dist,node_modules,src,src/**,**/*.py,**/__pycache__,**/migrations/**"
+exclude = ".venv,venv,.tox,build,dist,node_modules,src/staticfiles,src/static/build,media,**/*.py,**/__pycache__,**/migrations/**"
 blank_line_after_tag = "load,extends,include"
 blank_line_before_tag = "load,extends,include"
 max_line_length = 95
@@ -174,9 +190,13 @@ format_js = true
 format_css = true
 ignore = "H006, H014"
 
-
 [tool.mypy]
-python_version = "3.14"             # Updated to Python 3.14
+python_version = "3.14"
+mypy_path = "src"
+plugins = [
+  "mypy_django_plugin.main",
+  "mypy_drf_plugin.main",
+]
 ignore_missing_imports = true
 follow_imports = "silent"
 no_implicit_optional = true
@@ -196,8 +216,8 @@ disallow_subclassing_any = true
 exclude = ["docs", "test", "tests"]
 
 [tool.bandit]
-targets = ["."]
-skips = ["B101"] # Example: Skip assert statement checks
+targets = ["src"]
+skips = ["B101"]
 
 [tool.docformatter]
 wrap-summaries = 82
@@ -206,3 +226,23 @@ blank = true
 pre-summary-newline = true
 pre-summary-space = true
 make-summary-multi-line = true
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+  "*/tests/*",
+  "*/migrations/*",
+  "src/beach_wood_financial_proj/settings/*",
+  "src/beach_wood_financial_proj/wsgi.py",
+  "src/beach_wood_financial_proj/asgi.py",
+  "src/manage.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+]

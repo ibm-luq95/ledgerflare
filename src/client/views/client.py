@@ -254,6 +254,7 @@ class ClientExportView(BaseClientExportView):
 
 class ClientQuickPeekView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     DetailView,
 ):

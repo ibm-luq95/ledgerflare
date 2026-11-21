@@ -4,7 +4,7 @@ import logging
 
 from .base import *
 
-DJANGO_VITE["default"]["dev_mode"] = True
+DJANGO_VITE["default"]["dev_mode"] = app_settings.VITE_DEV_MODE
 
 
 # Add color formatter
@@ -345,7 +345,9 @@ if "CONTENT_SECURITY_POLICY" in locals():
     CONTENT_SECURITY_POLICY["DIRECTIVES"]["connect-src"].extend(
         VITE_DEV_ORIGINS + VITE_WS_ORIGINS
     )
-    CONTENT_SECURITY_POLICY["DIRECTIVES"]["script-src"].extend(VITE_DEV_ORIGINS)
+    CONTENT_SECURITY_POLICY["DIRECTIVES"]["script-src"].extend(
+        VITE_DEV_ORIGINS + ["'sha256-LU/kkUjvgwMjOUdsHfzKOn8XfOOZeOMchvUy8L9Hy00='"]
+    )
 
     CONTENT_SECURITY_POLICY["DIRECTIVES"]["style-src"].extend(VITE_DEV_ORIGINS)
     CONTENT_SECURITY_POLICY["DIRECTIVES"]["font-src"].extend(VITE_DEV_ORIGINS)

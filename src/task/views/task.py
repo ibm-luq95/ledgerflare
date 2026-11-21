@@ -284,6 +284,7 @@ class TaskDeleteView(
 
 class TaskQuickPeekView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     DetailView,

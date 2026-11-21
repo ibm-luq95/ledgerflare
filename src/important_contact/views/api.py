@@ -17,7 +17,6 @@ class ImportantContactViewSet(RoleScopedQuerysetMixin, ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     # parser_classes = [parsers.FormParser, parsers.MultiPartParser]
     perm_slug = "important_contact.importantcontact"
-    authentication_classes = [TokenAuthentication]
     queryset = ImportantContact.objects.all()
     filterset_fields = ["contact_type", "client", "company", "is_deleted"]
     search_fields = ["contact_label", "contact_name", "email"]

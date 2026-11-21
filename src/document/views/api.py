@@ -18,7 +18,6 @@ class DocumentViewSet(RoleScopedQuerysetMixin, ModelViewSet):
         parsers.FormParser,
         parsers.MultiPartParser,
     ]
-    authentication_classes = [TokenAuthentication]
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     perm_slug = "document.document"
     queryset = Document.objects.all()

@@ -48,13 +48,19 @@ def should_sample_request() -> bool:
     return random.randint(1, settings.SECURITY_LOG_SAMPLING_RATE) == 1
 
 def get_client_ip(request: HttpRequest) -> str:
-    """Extract client IP address from request"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0].strip()
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip or 'unknown'
+    """Extract client IP address from request securely."""
+    if getattr(settings, "USE_X_FORWARDED_HOST", False) or getattr(
+        settings, "SECURE_PROXY_SSL_HEADER", None
+    ):
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(",")[-1].strip()
+            if ip:
+                return ip
+        x_real_ip = request.META.get("HTTP_X_REAL_IP")
+        if x_real_ip:
+            return x_real_ip.strip()
+    return request.META.get("REMOTE_ADDR") or "unknown"
 
 def get_user_agent_string(request: HttpRequest) -> str:
     """Extract user agent string from request"""

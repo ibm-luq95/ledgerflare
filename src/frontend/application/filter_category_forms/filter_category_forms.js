@@ -58,19 +58,31 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
               const newRow = document.createElement("div");
               newRow.className =
                 "flex items-center justify-between p-2.5 rounded-lg border border-gray-100 bg-gray-50/50 hover:bg-gray-50 dark:bg-neutral-800/40 dark:border-neutral-800 dark:hover:bg-neutral-800/80 transition-colors animate__animated animate__fadeInDown";
-              newRow.innerHTML = `
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="size-2 rounded-full bg-blue-500 shrink-0"></span>
-                  <span class="text-xs font-medium text-gray-800 dark:text-neutral-200 truncate">
-                    ${categoryName}
-                  </span>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                  <span class="inline-flex items-center py-0.5 px-2 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                    0 items
-                  </span>
-                </div>
+
+              const leftDiv = document.createElement("div");
+              leftDiv.className = "flex items-center gap-2 min-w-0";
+
+              const dotSpan = document.createElement("span");
+              dotSpan.className = "size-2 rounded-full bg-blue-500 shrink-0";
+
+              const nameSpan = document.createElement("span");
+              nameSpan.className =
+                "text-xs font-medium text-gray-800 dark:text-neutral-200 truncate";
+              nameSpan.textContent = categoryName;
+
+              leftDiv.appendChild(dotSpan);
+              leftDiv.appendChild(nameSpan);
+
+              const rightDiv = document.createElement("div");
+              rightDiv.className = "flex items-center gap-2 shrink-0";
+              rightDiv.innerHTML = `
+                <span class="inline-flex items-center py-0.5 px-2 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                  0 items
+                </span>
               `;
+
+              newRow.appendChild(leftDiv);
+              newRow.appendChild(rightDiv);
               listEl.prepend(newRow);
 
               if (countEl) {

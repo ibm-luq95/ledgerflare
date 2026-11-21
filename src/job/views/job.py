@@ -290,6 +290,7 @@ class JobExportView(
 
 class JobQuickPeekView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     DetailView,
 ):

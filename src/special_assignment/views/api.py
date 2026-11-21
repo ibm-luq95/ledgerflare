@@ -19,7 +19,6 @@ class SpecialAssignmentViewSet(RoleScopedQuerysetMixin, ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     parser_classes = [parsers.FormParser, parsers.MultiPartParser]
     perm_slug = "special_assignment.specialassignment"
-    authentication_classes = [TokenAuthentication]
     filterset_fields = ["status", "client", "assigned_to", "is_deleted"]
     search_fields = ["title", "description"]
     ordering_fields = ["created_at", "updated_at", "title", "status", "due_date"]

@@ -1,15 +1,16 @@
-# -*- coding: utf-8 -*-#
-"""
-File: file_types_validation.py
-Author: Ibrahim Luqman
-Date: 5/10/24
+"""File MIME types and extension mappings used for upload validation."""
 
-Description: File mime types using for validation
-"""
+from __future__ import annotations
 
-IMAGES_FT = ("image/png", "image/jpeg", "image/jpg")
 
-DOCUMENTS_FT = (
+IMAGES_FT: tuple[str, ...] = (
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/webp",
+)
+
+DOCUMENTS_FT: tuple[str, ...] = (
     "text/csv",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -21,4 +22,26 @@ DOCUMENTS_FT = (
     "application/vnd.oasis.opendocument.text",
 )
 
-IMAGES_AND_DOCS_FT = IMAGES_FT + DOCUMENTS_FT
+IMAGES_AND_DOCS_FT: tuple[str, ...] = IMAGES_FT + DOCUMENTS_FT
+
+EXTENSION_TO_MIME_MAP: dict[str, tuple[str, ...]] = {
+    ".pdf": ("application/pdf",),
+    ".png": ("image/png",),
+    ".jpg": ("image/jpeg",),
+    ".jpeg": ("image/jpeg",),
+    ".webp": ("image/webp",),
+    ".csv": ("text/csv", "text/plain"),
+    ".txt": ("text/plain",),
+    ".doc": ("application/msword",),
+    ".docx": (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/zip",
+    ),
+    ".xls": ("application/vnd.ms-excel",),
+    ".xlsx": (
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/zip",
+    ),
+    ".odt": ("application/vnd.oasis.opendocument.text",),
+    ".ods": ("application/vnd.oasis.opendocument.spreadsheet",),
+}

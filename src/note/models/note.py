@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 from client.models import ClientProxy
 from core.choices import NoteSectionEnum
 from core.constants.general import CON_JOB
+from core.fields.encrypted_fields import EncryptedTextField
 from core.models.mixins import (
     BaseModelMixin,
     GeneralStatusFieldMixin,
@@ -11,6 +12,7 @@ from core.models.mixins import (
     SanitizeHTMLFieldsMixin,
     StrModelMixin,
 )
+from core.models.mixins.encrypted_model import EncryptedModelMixin
 from job.models import JobProxy
 from task.models import TaskProxy
 
@@ -21,6 +23,7 @@ class Note(
     GeneralStatusFieldMixin,
     StrModelMixin,
     SanitizeHTMLFieldsMixin,
+    EncryptedModelMixin,
 ):
     SANITY_HTML_FIELDS = ("body",)
     """Notes model for bookkeeper, assistant, and manager.
@@ -46,7 +49,7 @@ class Note(
     """
 
     title = models.CharField(_("title"), max_length=60, null=False)
-    body = models.TextField(_("body"), null=False)
+    body = EncryptedTextField(_("body"), null=False)
     client = models.ForeignKey(
         to=ClientProxy,
         on_delete=models.SET_NULL,

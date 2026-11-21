@@ -556,10 +556,7 @@ src/frontend/!.yarn/cache
 # End of https://www.toptal.com/developers/gitignore/api/pycharm+all,python,django,node,pythonvanilla,visualstudiocode
 docs/
 src/frontend/package-lock.json
-# Only for Development only
-**/migrations/**
-!**/migrations
-!**/migrations/__init__.py
+production_migration/
 # Custom migration files
 **.pyc
 src/reports/migrations/**
@@ -629,3 +626,22 @@ src/e2e_workflows
 ARCHITECTURE.md
 SECURITY.md
 TESTING.md
+.codex
+
+.aiignore
+.geminiignore
+.future_security_plan
+works
+.commandcode
+.testing_data
+DESIGN.md
+.superpowers
+.claude
+ENCRYPTION_ENGINE_V0.1.md
+STATIC_SECURITY_AUDIT_REPORT.md
+.env_dotenv_old
+*.env_dotenv*
+src/tmp/
+
+production_migration
+graphify-out

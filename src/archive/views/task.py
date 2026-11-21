@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
-from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_BOOKKEEPER, CON_CFO
 from core.views.mixins import BWLoginRequiredMixin, BWBaseListViewMixin
 from task.filters import TaskFilter
 from task.models import TaskProxy
@@ -78,6 +78,10 @@ class TaskArchiveListView(
                 self.request.user.bookkeeper.get_proxy_model().get_all_related_items(
                     "tasks"
                 )
+            )
+        elif self.request.user.user_type == CON_CFO:
+            queryset = TaskProxy.archive_objects.filter(
+                job__client__cfos__user=self.request.user
             )
 
         self.filterset = TaskFilter(self.request.GET, queryset=queryset)

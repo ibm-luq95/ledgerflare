@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", (readyEvent) => {
         token: currentTarget[CSRFINPUTNAME].value,
         djangoRequest: true,
       };
-      console.log(formInputs);
       const request = RequestHandler.sendRequest(requestOptions);
       request
         .then((data) => {

@@ -28,7 +28,6 @@ class ClientViewSet(RoleScopedQuerysetMixin, ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     parser_classes = [parsers.JSONParser, parsers.FormParser, parsers.MultiPartParser]
     perm_slug = "client.client"
-    authentication_classes = [TokenAuthentication]
     queryset = ClientProxy.objects.all()
     http_method_names = ["get", "post", "patch"]
     filterset_fields = ["status", "is_deleted"]

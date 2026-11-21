@@ -9,6 +9,7 @@ from typing import List
 from cryptography.fernet import Fernet, InvalidSignature, InvalidToken
 from django.conf import settings
 
+
 logger = logging.getLogger(__name__)
 
 VERSION_PREFIX_V2 = "v2$"
@@ -16,12 +17,13 @@ VERSION_PREFIX_V2 = "v2$"
 
 class CryptoEngine:
     """Centralized cryptographic engine handling encryption format detection
-    and multi-key fallback decryption."""
+    and multi-key fallback decryption.
+    """
 
     @classmethod
-    def get_keys(cls) -> List[str]:
+    def get_keys(cls) -> list[str]:
         """Collect all active and legacy encryption keys."""
-        keys: List[str] = []
+        keys: list[str] = []
         primary_key = getattr(settings, "ENCRYPT_KEY", None)
         if primary_key:
             keys.append(primary_key)
@@ -68,13 +70,12 @@ class CryptoEngine:
                 cipher = Fernet(key)
                 if is_v2:
                     return cipher.decrypt(payload_str.encode("ascii")).decode("utf-8")
-                else:
-                    # Legacy double-base64 decoding fallback
-                    try:
-                        raw_bytes = base64.urlsafe_b64decode(payload_str)
-                    except Exception:
-                        raw_bytes = payload_str.encode("ascii")
-                    return cipher.decrypt(raw_bytes).decode("utf-8")
+                # Legacy double-base64 decoding fallback
+                try:
+                    raw_bytes = base64.urlsafe_b64decode(payload_str)
+                except Exception:
+                    raw_bytes = payload_str.encode("ascii")
+                return cipher.decrypt(raw_bytes).decode("utf-8")
             except (InvalidToken, InvalidSignature, ValueError):
                 continue
             except Exception as e:

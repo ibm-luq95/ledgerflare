@@ -376,6 +376,7 @@ class RequestedSpecialAssignmentsListView(
 
 class SpecialAssignmentQuickPeekView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     DetailView,
 ):

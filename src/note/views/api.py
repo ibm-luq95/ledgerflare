@@ -22,7 +22,6 @@ class NoteViewSet(RoleScopedQuerysetMixin, ModelViewSet):
     search_fields = ["title", "body"]
     ordering_fields = ["created_at", "updated_at", "title"]
     ordering = ["-created_at"]
-    authentication_classes = [TokenAuthentication]
 
     def scope_queryset_for_bookkeeper(self, queryset, bookkeeper):
         return queryset.filter(

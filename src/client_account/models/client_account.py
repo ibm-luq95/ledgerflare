@@ -1,12 +1,13 @@
-# -*- coding: utf-8 -*-#
 from __future__ import annotations
 
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.utils.translation import gettext as _
 
 from client.models import ClientProxy
 from core.choices import ClientAccountStatusEnum, ServiceNameEnum
-from core.models.fields import EncryptedCharField
+from core.fields.encrypted_fields import EncryptedCharField, EncryptedTextField
 from core.models.mixins import BaseModelMixin
 
 
@@ -22,8 +23,33 @@ class ClientAccount(BaseModelMixin):
     )
     is_services = models.BooleanField(_("is services"), default=False, editable=False)
     account_name = models.CharField(_("account name"), max_length=100, null=True)
-    account_url = models.TextField(_("account url"), null=True)
-    account_username = models.CharField(_("account username"), max_length=250, null=True)
+    account_url = EncryptedTextField(
+        _("account url"),
+        null=True,
+        blank=True,
+        trigram_blind_index=True,
+        blind_index_field="account_url_bidx",
+    )
+    account_username = EncryptedCharField(
+        _("account username"),
+        max_length=512,
+        null=True,
+        blank=True,
+        trigram_blind_index=True,
+        blind_index_field="account_username_bidx",
+    )
+    account_username_bidx = ArrayField(
+        models.CharField(max_length=16),
+        default=list,
+        blank=True,
+        help_text=_("Trigram blind index tokens for partial substring searching."),
+    )
+    account_url_bidx = ArrayField(
+        models.CharField(max_length=16),
+        default=list,
+        blank=True,
+        help_text=_("Trigram blind index tokens for partial URL searching."),
+    )
     account_password = EncryptedCharField(
         _("account password"), max_length=500, null=True, blank=True
     )
@@ -45,6 +71,11 @@ class ClientAccount(BaseModelMixin):
 
     class Meta(BaseModelMixin.Meta):
         ordering = ["account_name"]
+        indexes = [
+            *BaseModelMixin.Meta.indexes,
+            GinIndex(fields=["account_username_bidx"], name="idx_cli_acc_user_trigram"),
+            GinIndex(fields=["account_url_bidx"], name="idx_cli_acc_url_trigram"),
+        ]
 
     def __str__(self) -> str:
         return f"{self.account_name}"
@@ -57,4 +88,4 @@ class ClientAccount(BaseModelMixin):
     def save(self, *args, **kwargs):
         if self.service_name != "":
             self.is_services = True
-        super(ClientAccount, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

@@ -6,7 +6,7 @@ from django.views.generic import (
 
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
-from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_BOOKKEEPER, CON_CFO
 from core.views.mixins import BWLoginRequiredMixin, BWBaseListViewMixin
 from job.filters import JobFilter
 from job.models import JobProxy
@@ -53,6 +53,10 @@ class JobArchiveListView(
         if self.request.user.user_type == CON_BOOKKEEPER:
             queryset = self.request.user.bookkeeper.get_proxy_model().get_user_jobs(
                 is_archived=True
+            )
+        elif self.request.user.user_type == CON_CFO:
+            queryset = JobProxy.archive_objects.filter(
+                client__cfos__user=self.request.user
             )
         self.filterset = JobFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
