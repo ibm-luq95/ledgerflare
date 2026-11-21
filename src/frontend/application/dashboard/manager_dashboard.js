@@ -24,6 +24,7 @@ class LFManagerDashboardLoader {
     this.widgets = {
       kpiStats: {
         urlName: "dashboard:manager:kpi-stats",
+        url: "/dashboard/manager/api/kpi-stats/",
         elementIds: {
           staff: "mgTotalStaffMembers",
           clients: "mgTotalClients",
@@ -37,14 +38,17 @@ class LFManagerDashboardLoader {
       },
       pastDueJobsTable: {
         urlName: "dashboard:manager:past-due-jobs",
+        url: "/dashboard/manager/api/past-due-jobs/",
         containerId: "lfPastDueJobsTableContainer",
       },
       tasksThisWeekTable: {
         urlName: "dashboard:manager:tasks-this-week",
+        url: "/dashboard/manager/api/tasks-this-week/",
         containerId: "lfTasksThisWeekTableContainer",
       },
       staffWorkloadChart: {
         urlName: "dashboard:manager:staff-workload",
+        url: "/dashboard/manager/api/staff-workload/",
         chartId: "lfStaffWorkloadChart",
         containerId: "lfStaffWorkloadChartContainer",
       },
@@ -55,6 +59,19 @@ class LFManagerDashboardLoader {
 
     // Store resize handler reference to prevent memory leaks
     this.resizeHandler = null;
+  }
+
+  /**
+   * Resolve widget API endpoint path with static fallback.
+   * @param {Object} widget - Widget configuration object.
+   * @returns {Promise<string>} The resolved URL path.
+   */
+  async getWidgetUrl(widget) {
+    if (widget.url) {
+      return widget.url;
+    }
+    const urlData = await SecureUrlFetcher.fetchUrlPathByName(widget.urlName);
+    return urlData.urlPath;
   }
 
   /**
@@ -80,12 +97,10 @@ class LFManagerDashboardLoader {
    */
   async loadKPIStats() {
     try {
-      const urlData = await SecureUrlFetcher.fetchUrlPathByName(
-        this.widgets.kpiStats.urlName,
-      );
+      const urlPath = await this.getWidgetUrl(this.widgets.kpiStats);
 
       const data = await RequestHandler.sendRequest({
-        url: urlData.urlPath,
+        url: urlPath,
         method: "GET",
         djangoRequest: true,
         debug: true,
@@ -144,12 +159,10 @@ class LFManagerDashboardLoader {
    */
   async loadPastDueJobsTable() {
     try {
-      const urlData = await SecureUrlFetcher.fetchUrlPathByName(
-        this.widgets.pastDueJobsTable.urlName,
-      );
+      const urlPath = await this.getWidgetUrl(this.widgets.pastDueJobsTable);
 
       const data = await RequestHandler.sendRequest({
-        url: urlData.urlPath,
+        url: urlPath,
         method: "GET",
         djangoRequest: true,
         debug: true,
@@ -323,12 +336,10 @@ class LFManagerDashboardLoader {
    */
   async loadTasksThisWeekTable() {
     try {
-      const urlData = await SecureUrlFetcher.fetchUrlPathByName(
-        this.widgets.tasksThisWeekTable.urlName,
-      );
+      const urlPath = await this.getWidgetUrl(this.widgets.tasksThisWeekTable);
 
       const data = await RequestHandler.sendRequest({
-        url: urlData.urlPath,
+        url: urlPath,
         method: "GET",
         djangoRequest: true,
         debug: true,
@@ -549,12 +560,10 @@ class LFManagerDashboardLoader {
    */
   async loadStaffWorkloadChart() {
     try {
-      const urlData = await SecureUrlFetcher.fetchUrlPathByName(
-        this.widgets.staffWorkloadChart.urlName,
-      );
+      const urlPath = await this.getWidgetUrl(this.widgets.staffWorkloadChart);
 
       const data = await RequestHandler.sendRequest({
-        url: urlData.urlPath,
+        url: urlPath,
         method: "GET",
         djangoRequest: true,
         debug: true,
