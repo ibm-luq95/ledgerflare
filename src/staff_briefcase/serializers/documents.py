@@ -8,12 +8,30 @@ from staff_briefcase.models import StaffBriefcase, StaffDocuments
 
 
 class StaffDocumentsSerializer(serializers.ModelSerializer):
-    briefcase = serializers.UUIDField(required=True)
+    briefcase = serializers.UUIDField(required=True, write_only=True)
+
+    def validate_document_file(self, value):
+        from django.core.exceptions import (
+            ValidationError as DjangoValidationError,
+        )
+
+        from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
+        from core.utils import FileValidator
+
+        validator = FileValidator(
+            max_size=1024 * 1024 * 100,
+            content_types=IMAGES_AND_DOCS_FT,
+            scan_malware=True,
+        )
+        try:
+            validator(value)
+        except DjangoValidationError as err:
+            raise serializers.ValidationError(err.messages) from err
+        return value
 
     class Meta:
         model = StaffDocuments
-        fields = ("title", "document_file", "briefcase")
-        # exclude = EXCLUDED_FIELDS
+        fields = ("id", "title", "document_file", "briefcase")
         depth = 1
 
     def create(self, validated_data):

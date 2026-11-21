@@ -11,6 +11,7 @@ from manager.signals.signals import (
 class ManagerProxy(Manager):
     class Meta(Manager.Meta):
         proxy = True
+        indexes = []
 
     def delete(self):
         """

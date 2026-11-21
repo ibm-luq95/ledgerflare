@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 import random
 import traceback
 
@@ -41,5 +40,5 @@ class Command(BaseCommand, CommandStdOutputMixin):
                     # for client in all_clients:
                     #     debugging_print(client.categories.all())
                     #     debugging_print("#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        except Exception as ex:
+        except Exception:
             self.stdout_output("error", traceback.format_exc())

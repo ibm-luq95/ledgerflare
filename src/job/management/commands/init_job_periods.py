@@ -31,7 +31,9 @@ class Command(BaseCommand, CommandStdOutputMixin):
             if date_field not in ["start_date", "created_date"]:
                 self.stdout_output("error", _("Date field not valid"))
                 return
-            date_field_label = "start_date" if date_field == "start_date" else "created_at"
+            date_field_label = (
+                "start_date" if date_field == "start_date" else "created_at"
+            )
             self.stdout_output("warn", _("Init job months and years periods"))
             all_jobs = JobProxy.original_objects.all()
             cnfm = DebuggingPrompt.confirm(_("Are you sure want to start?"))

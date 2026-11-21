@@ -48,7 +48,9 @@ class BookkeeperListView(
     actions_items = "update,delete"
     base_url_name = "dashboard:management_bookkeeper"
     empty_label = _("bookkeepers")
-    subtitle = _("bookkeepers staff".title())
+    subtitle = _(
+        "Certified bookkeepers and accounting specialists managing day-to-day ledger reconciliations."
+    )
 
     # queryset = BookkeeperProxy.objects.get_queryset().order_by("-user__created_at")
 
@@ -63,7 +65,9 @@ class BookkeeperListView(
                 "tooltip_txt": BW_INFO_MODAL_CSS_CLASSES.get("bookkeeper").get(
                     "tooltip_txt"
                 ),
-                "modal_css_id": BW_INFO_MODAL_CSS_CLASSES.get("bookkeeper").get("cssID"),
+                "modal_css_id": BW_INFO_MODAL_CSS_CLASSES.get("bookkeeper").get(
+                    "cssID"
+                ),
             },
         )
         context.setdefault("filter_form_id", "bookkeepersFilterForm")
@@ -115,7 +119,9 @@ class BookkeeperCreateView(
             debugging_print(form.cleaned_data.get("password"))
             new_user.set_password(form.cleaned_data.get("password"))
             new_user.save()
-            new_user.bookkeeper.profile_picture = form.cleaned_data.get("profile_picture")
+            new_user.bookkeeper.profile_picture = form.cleaned_data.get(
+                "profile_picture"
+            )
             new_user.bookkeeper.bio = form.cleaned_data.get("bio")
             new_user.bookkeeper.save()
         return super().form_valid(form)
@@ -219,7 +225,9 @@ class BookkeeperUpdateView(
             if password:
                 bookkeeper.user.set_password(password)
             bookkeeper.user.save()
-            bookkeeper.profile.profile_picture = form.cleaned_data.get("profile_picture")
+            bookkeeper.profile.profile_picture = form.cleaned_data.get(
+                "profile_picture"
+            )
             bookkeeper.profile.bio = form.cleaned_data.get("bio")
             bookkeeper.profile.address = form.cleaned_data.get("address")
             bookkeeper.profile.phone_number = form.cleaned_data.get("phone_number")

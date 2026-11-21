@@ -1,0 +1,284 @@
+{% load i18n %}
+{% load static %}
+{% load core_tags %}
+
+<!-- TODO: Add translate templatetag -->
+<header class="sticky top-0 inset-x-0 flex flex-wrap sm:flex-nowrap z-[48] w-full bg-white border dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 border-gray-200 text-sm py-2.5 sm:py-4 lg:pl-56">
+    <nav class="flex items-center w-full px-3 sm:px-4 md:px-6 mx-auto basis-full"
+         aria-label="Global">
+        <!-- Left-aligned logo / menu toggle -->
+        <div class="flex-none">
+            <button type="button"
+                    class="flex justify-center items-center gap-x-3 size-8 text-sm text-gray-600 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:hover:text-neutral-200 dark:focus:text-neutral-200"
+                    aria-haspopup="dialog"
+                    aria-expanded="false"
+                    aria-controls="hs-sidebar-content-push"
+                    aria-label="Toggle navigation"
+                    data-hs-overlay="#hs-sidebar-content-push">
+                <svg class="sm:hidden shrink-0 size-4"
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M15 3v18" />
+                    <path d="m8 9 3 3-3 3" />
+                </svg>
+                <svg class="hidden sm:block shrink-0 size-4"
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M15 3v18" />
+                    <path d="m10 15-3-3 3-3" />
+                </svg>
+                <span class="sr-only">Navigation Toggle</span>
+            </button>
+        </div>
+        <!-- Logo / Client Selector -->
+        <div class="flex-none mr-3 sm:mr-4 lg:mr-0">
+            <!-- Vue Client Selector Mount Point -->
+            <div id="vue-client-selector"
+                 class="w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[350px] lg:max-w-[450px]"
+                 data-api-endpoint="/dashboard/client/api/dropdown/"
+                 data-current-client-id="{{ object.pk|default:'' }}"
+                 data-current-client-name="{{ object.name|default:'' }}"
+                 data-current-client-email="{{ object.email|default:'' }}"
+                 data-current-client-logo="{% if object.company_logo %}
+                                               {{ object.company_logo.url }}
+                                           {% endif %}">
+            </div>
+        </div>
+        <!-- Center-aligned main nav items - hidden on small screens, shown on md+ -->
+        <div class="hidden md:flex items-center justify-center flex-1 gap-x-4 lg:gap-x-6">
+            {% if request.resolver_match.view_name == "dashboard:client:details" or request.resolver_match.view_name == "dashboard:client:transactions" %}
+                <a href="{% url 'dashboard:client:list' %}"
+                   class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 whitespace-nowrap">{% translate "Clients" %}</a>
+                <a href="{% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_ASSISTANT %} {% url 'dashboard:manager:home' %} {% elif request.user.user_type == CON_BOOKKEEPER %} {% url 'dashboard:bookkeeper:home' %} {% endif %}"
+                   class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 whitespace-nowrap">Dashboard</a>
+            {% endif %}
+        </div>
+        <!-- Right-aligned items (notifications, profile, etc.) -->
+        <div class="flex items-center justify-end gap-x-2 sm:gap-x-3 ml-auto">
+            <!-- Theme switcher -->
+            {% comment  %}
+                <div class="flex items-center gap-x-3 mx-1">
+                <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
+                    <i class="fa-solid fa-sun"></i>
+                </label>
+                <label for="darkSwtich" class="relative inline-block w-11 h-6 cursor-pointer">
+                    <input type="checkbox" data-hs-theme-switch="" id="darkSwtich" class="peer sr-only" />
+                    <span class="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
+                    <span class="absolute top-1/2 start-0.5 -translate-y-1/2 size-5 bg-white rounded-full shadow-xs transition-transform duration-200 ease-in-out peer-checked:translate-x-full dark:bg-neutral-400 dark:peer-checked:bg-white"></span>
+                </label>
+                <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
+                    <i class="fa-solid fa-moon"></i>
+                </label>
+            </div>
+            {% endcomment %}
+            <!-- User type badge - hidden on very small screens -->
+            <span class="hidden xs:inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500 whitespace-nowrap">
+                {{ request.user.get_user_type_display }}
+            </span>
+            {% if debug %}
+                <div class="flex items-center gap-x-3 mx-1">
+                    <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
+                        <i class="fa-solid fa-sun"></i>
+                    </label>
+                    <label for="darkSwtich"
+                           class="relative inline-block w-11 h-6 cursor-pointer">
+                        <input type="checkbox"
+                               data-hs-theme-switch=""
+                               id="darkSwtich"
+                               class="peer sr-only" />
+                        <span class="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
+                        <span class="absolute top-1/2 start-0.5 -translate-y-1/2 size-5 bg-white rounded-full shadow-xs transition-transform duration-200 ease-in-out peer-checked:translate-x-full dark:bg-neutral-400 dark:peer-checked:bg-white"></span>
+                    </label>
+                    <label for="darkSwtich" class="text-sm text-gray-500 dark:text-neutral-400">
+                        <i class="fa-solid fa-moon"></i>
+                    </label>
+                </div>
+            {% endif %}
+            <!-- Notifications dropdown -->
+            <div class="hs-dropdown relative [--placement:bottom-left] inline-flex"
+                 id="notificationsDropdown">
+                <button type="button"
+                        id="hs-dropdown"
+                        class="relative hs-dropdown-toggle inline-flex justify-center items-center size-[46px] text-sm font-semibold rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                        aria-haspopup="menu"
+                        aria-expanded="false"
+                        aria-label="Dropdown">
+                    <svg class="shrink-0 size-5"
+                         xmlns="http://www.w3.org/2000/svg"
+                         width="24"
+                         height="24"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9">
+                        </path>
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0">
+                        </path>
+                    </svg>
+                    {% if request.user.utils.get_all_total_not_read_notifications > 0 %}
+                        <span class="absolute inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-blue-600 text-white border-2 border-white dark:border-neutral-900 transform translate-x-1/2 -translate-y-1/2"
+                              id="topNotificationBadge">
+                            {% if request.user.utils.get_all_total_not_read_notifications > 9 %}
+                                9+
+                            {% else %}
+                                {{ request.user.utils.get_all_total_not_read_notifications }}
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                </button>
+                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-80 bg-white shadow-xl rounded-xl mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
+                     role="menu"
+                     aria-orientation="vertical"
+                     aria-labelledby="hs-dropdown">
+                    <!-- Header -->
+                    <div class="py-3 px-4 border-b border-gray-200 dark:border-neutral-700 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900 dark:text-white">{% translate "Notifications" %}</h3>
+                            <p class="text-xs text-gray-500 dark:text-neutral-400">
+                                {{ request.user.utils.get_all_total_not_read_notifications }} {% translate "unread" %}
+                            </p>
+                        </div>
+                        {% if request.user.utils.get_all_total_not_read_notifications > 0 %}
+                            <button type="button"
+                                    id="setAllNotificationsReadBtn"
+                                    class="inline-flex items-center gap-x-1 text-xs font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-500 dark:hover:text-blue-400">
+                                {% translate "Mark all as read" %}
+                            </button>
+                        {% endif %}
+                    </div>
+
+                    <!-- Scrollable notifications list -->
+                    <div class="max-h-96 overflow-y-auto p-2 space-y-1">
+                        <input type="hidden"
+                               id="notificationUrl"
+                               value="{% url 'dashboard:discussion:api:set-discussion-notifications' %}" />
+                        
+                        {% define request.user.utils.get_all_notifications as dropdown_notifs %}
+                        {% for notification_item in dropdown_notifs|slice:":10" %}
+                            <a class="notificationsItem flex gap-x-3 p-3 rounded-lg text-sm text-gray-800 hover:bg-gray-50 dark:text-neutral-300 dark:hover:bg-neutral-700/50 transition-all {% if not notification_item.is_read %}bg-blue-50/50 dark:bg-blue-900/10 border-l-2 border-blue-600{% endif %}"
+                               data-notification-pk="{{ notification_item.pk }}"
+                               data-user="{{ request.user.pk }}"
+                               data-notification-type="NotificationRecipientProxy"
+                               href="{{ notification_item.notification.get_absolute_url }}">
+                                
+                                <div class="shrink-0 mt-0.5">
+                                    {% with staff_details=notification_item.notification.actor.get_staff_details %}
+                                        {% if staff_details.profile_picture %}
+                                            <img class="size-8 rounded-full" src="{{ staff_details.profile_picture.url }}" alt="">
+                                        {% else %}
+                                            <div class="size-8 rounded-full bg-gray-100 flex items-center justify-center dark:bg-neutral-700">
+                                                <svg class="size-4 text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+
+                                <div class="grow">
+                                    <p class="text-sm text-gray-900 dark:text-white {% if not notification_item.is_read %}font-semibold{% endif %}">
+                                        {{ notification_item.notification.message_template|safe }}
+                                    </p>
+                                    <div class="flex items-center gap-x-2 mt-1">
+                                        <span class="text-[11px] text-gray-500 dark:text-neutral-500">
+                                            {{ notification_item.created_at|timesince }} {% translate "ago" %}
+                                        </span>
+                                        {% if notification_item.notification.content_type %}
+                                            <span class="text-[10px] text-gray-400 dark:text-neutral-600 uppercase font-bold tracking-tighter">
+                                                • {{ notification_item.notification.content_type.model }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </a>
+                        {% empty %}
+                            <div class="flex flex-col items-center justify-center py-10 px-4 text-center">
+                                <svg class="size-8 text-gray-300 dark:text-neutral-600 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                                <p class="text-sm text-gray-500 dark:text-neutral-400">{% translate "No notifications" %}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="py-2 px-4 border-t border-gray-200 dark:border-neutral-700 text-center">
+                        <a href="{% url 'lf_notifications:list' %}"
+                           class="inline-flex items-center gap-x-1.5 text-xs font-bold text-gray-800 hover:text-blue-600 dark:text-neutral-300 dark:hover:text-blue-500 transition-colors uppercase tracking-widest">
+                            {% translate "View all activities" %}
+                            <svg class="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- End Notifications dropdown -->
+            <!-- Profile dropdown -->
+            <div class="hs-dropdown [--strategy:absolute] relative inline-flex [--placement:bottom-right]">
+                <button id="hs-dropdown-with-header"
+                        type="button"
+                        class="hs-dropdown-toggle inline-flex flex-shrink-0 justify-center items-center gap-2 h-[2.375rem] w-[2.375rem] rounded-full font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-xs dark:bg-gray-800 dark:hover:bg-slate-800 dark:text-gray-400 dark:hover:text-white dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800">
+                    <img class="inline-block h-[2.375rem] w-[2.375rem] rounded-full ring-2 ring-white dark:ring-gray-800"
+                         src="{% if request.user.get_staff_member_object.staff_object.profile.profile_picture %} {{ request.user.get_staff_member_object.staff_object.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %} {% endif %}"
+                         alt="{{ request.user.fullname }}" />
+                </button>
+                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700"
+                     aria-labelledby="hs-dropdown-with-header">
+                    <div class="py-3 px-4 border-b border-gray-200 dark:border-neutral-700">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            {% translate "Signed in as:" %}
+                        </p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+                            {{ request.user.fullname }}
+                        </p>
+                        <p class="text-sm font-medium text-gray-800 dark:text-gray-300">
+                            {{ request.user.email|safe }}
+                        </p>
+                    </div>
+                    <div class="py-2 mt-2 first:pt-0 last:pb-0">
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                           href="#">
+                            <svg class="flex-none"
+                                 width="16"
+                                 height="16"
+                                 viewBox="0 0 16 16"
+                                 fill="currentColor">
+                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
+                            </svg>
+                            {% translate "Assignments" %}
+                        </a>
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                           href="{% url 'dashboard:staff:staff-profile' request.user.pk %}">
+                            <i class="fa-regular fa-user"></i>
+                            {% translate "Profile" %}
+                        </a>
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-red-500 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                           href="{% url 'dashboard:staff:staff-update-password' request.user.pk %}">
+                            <i class="fa-solid fa-key"></i>
+                            {% translate "Change Password" %}
+                        </a>
+                        <a class="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                           href="{% url 'auth:logout' %}">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            {% translate "Logout" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

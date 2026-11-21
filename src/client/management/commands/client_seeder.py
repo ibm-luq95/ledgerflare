@@ -1,24 +1,21 @@
-# -*- coding: utf-8 -*-#
-import traceback
 import random
+import traceback
 
+from django.core.management.base import BaseCommand
+from django.db import transaction
+from django.db.models import Count, Sum
+from django.db.models.functions import ExtractMonth, ExtractYear, TruncMonth, TruncYear
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
 from django.utils.timezone import datetime, make_aware
-from django.db import transaction
-
-from django.core.management.base import BaseCommand
 from django.utils.translation import gettext as _
+from faker import Faker
 
 from beach_wood_user.models import BWUser
-from core.choices import JobTypeEnum, JobStateEnum, JobStatusEnum
+from client.models import ClientProxy
+from core.choices import JobStateEnum, JobStatusEnum, JobTypeEnum
 from core.constants.status_labels import CON_IN_PROGRESS
 from core.management.mixins import CommandStdOutputMixin
-from django.db.models.functions import TruncYear, ExtractYear, ExtractMonth, TruncMonth
-from django.db.models import Count, Sum
-
-from faker import Faker
-from client.models import ClientProxy
 from core.utils import debugging_print, get_months_abbr
 from job.models import JobProxy
 from job_category.models import JobCategory
@@ -91,5 +88,5 @@ class Command(BaseCommand, CommandStdOutputMixin):
                     debugging_print(job)
                 # debugging_print(jobs)
 
-        except Exception as ex:
+        except Exception:
             self.stdout_output("error", traceback.format_exc())

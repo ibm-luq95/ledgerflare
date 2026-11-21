@@ -1,0 +1,97 @@
+{% load i18n humanize %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 mb-6 mx-1 sm:mx-0">
+    <!-- Total Jobs Card -->
+    <div class="flex flex-col bg-white border border-gray-200 shadow-xs rounded-xl p-4 md:p-5 dark:bg-neutral-800 dark:border-neutral-700">
+        <div class="flex items-center gap-x-3">
+            <div class="inline-flex justify-center items-center w-[46px] h-[46px] rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                <i class="fa-solid fa-briefcase text-lg"></i>
+            </div>
+            <div class="grow">
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-neutral-400">
+                    {% translate "Total Jobs" %}
+                </h3>
+                <div class="flex items-baseline gap-x-2">
+                    <span class="text-2xl font-bold text-gray-800 dark:text-neutral-200">
+                        {{ summary_kpis.total_jobs_count|intcomma }}
+                    </span>
+                    <span class="text-xs text-gray-500 dark:text-neutral-400">
+                        ({% translate "Period" %}: {{ selected_period_year }})
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Card -->
+    <div class="flex flex-col bg-white border border-gray-200 shadow-xs rounded-xl p-4 md:p-5 dark:bg-neutral-800 dark:border-neutral-700">
+        <div class="flex items-center gap-x-3">
+            <div class="inline-flex justify-center items-center w-[46px] h-[46px] rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+                <i class="fa-solid fa-circle-check text-lg"></i>
+            </div>
+            <div class="grow">
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-neutral-400">
+                    {% translate "Completed" %}
+                </h3>
+                <div class="flex items-baseline gap-x-2">
+                    <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                        {{ summary_kpis.total_completed_count|intcomma }}
+                    </span>
+                    <span class="inline-flex items-center py-0.5 px-2 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
+                        {{ summary_kpis.overall_completion_rate }}%
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- In Progress Card -->
+    <div class="flex flex-col bg-white border border-gray-200 shadow-xs rounded-xl p-4 md:p-5 dark:bg-neutral-800 dark:border-neutral-700">
+        <div class="flex items-center gap-x-3">
+            <div class="inline-flex justify-center items-center w-[46px] h-[46px] rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
+                <i class="fa-solid fa-spinner text-lg"></i>
+            </div>
+            <div class="grow">
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-neutral-400">
+                    {% translate "In Progress" %}
+                </h3>
+                <div class="flex items-baseline gap-x-2">
+                    <span class="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                        {{ summary_kpis.total_in_progress_count|intcomma }}
+                    </span>
+                    <span class="text-xs text-gray-500 dark:text-neutral-400">
+                        {{ summary_kpis.total_not_started_count }} {% translate "not started" %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Past Due Card -->
+    <div class="flex flex-col bg-white border border-gray-200 shadow-xs rounded-xl p-4 md:p-5 dark:bg-neutral-800 dark:border-neutral-700">
+        <div class="flex items-center gap-x-3">
+            <div class="inline-flex justify-center items-center w-[46px] h-[46px] rounded-lg {% if summary_kpis.total_past_due_count > 0 %}bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400{% else %}bg-gray-50 text-gray-400 dark:bg-neutral-700 dark:text-neutral-500{% endif %}">
+                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+            </div>
+            <div class="grow">
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-neutral-400">
+                    {% translate "Past Due" %}
+                </h3>
+                <div class="flex items-baseline gap-x-2">
+                    <span class="text-2xl font-bold {% if summary_kpis.total_past_due_count > 0 %}text-rose-600 dark:text-rose-400{% else %}text-gray-800 dark:text-neutral-200{% endif %}">
+                        {{ summary_kpis.total_past_due_count|intcomma }}
+                    </span>
+                    {% if summary_kpis.total_past_due_count > 0 %}
+                        <span class="inline-flex items-center py-0.5 px-2 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300">
+                            {% translate "Needs attention" %}
+                        </span>
+                    {% else %}
+                        <span class="text-xs text-gray-500 dark:text-neutral-400">
+                            {% translate "All on track" %}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

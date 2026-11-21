@@ -49,7 +49,9 @@ class AssistantListView(
     actions_items = "update,delete"
     base_url_name = "dashboard:management_assistant"
     empty_label = _("assistants")
-    subtitle = _("assistants staff".title())
+    subtitle = _(
+        "Administrative staff and operations assistants supporting workflow execution and documentation."
+    )
 
     # queryset = AssistantProxy.objects.get_queryset().order_by("-user__created_at")
 
@@ -130,7 +132,9 @@ class AssistantCreateView(
                 # new_user = BWUser.objects.create(**user_details)
                 new_user = BWUser.objects.create_user(**user_details)
                 # new_user.set_password(form.cleaned_data.get("password"))
-                new_user.assistant.assistant_type = form.cleaned_data.get("assistant_type")
+                new_user.assistant.assistant_type = form.cleaned_data.get(
+                    "assistant_type"
+                )
                 new_user.assistant.save()
                 for attr, value in profile_details.items():
                     setattr(new_user.assistant.profile, attr, value)

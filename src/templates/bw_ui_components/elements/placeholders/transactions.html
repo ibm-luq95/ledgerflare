@@ -1,0 +1,139 @@
+{% load i18n %}
+{% load humanize %}
+
+<!-- Transactions Placeholder Section -->
+<div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
+    <!-- Header -->
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">
+                    <i class="fa-solid fa-arrow-right-arrow-left mr-2 text-purple-600"></i>
+                    {% translate "Recent Transactions" %}
+                </h3>
+                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    {% translate "Latest income and expenses" %}
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button"
+                        class="py-2 px-3 inline-flex items-center gap-2 rounded-md border border-gray-200 font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
+                    <i class="fa-solid fa-filter"></i>
+                    {% translate "Filter" %}
+                </button>
+                <button type="button"
+                        class="py-2 px-3 inline-flex items-center gap-2 rounded-md border border-transparent font-semibold bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                    <i class="fa-solid fa-plus"></i>
+                    {% translate "Add Transaction" %}
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="p-4 sm:p-6">
+        {% if transactions %}
+            <!-- Table Container -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-neutral-800">
+                        <tr>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                                {% translate "Date" %}
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                                {% translate "Description" %}
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                                {% translate "Account" %}
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                                {% translate "Type" %}
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                                {% translate "Amount" %}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-neutral-900 dark:divide-gray-700">
+                        {% for transaction in transactions %}
+                            <tr class="hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
+                                    {{ transaction.date|date:"m/d/Y" }}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center {% if transaction.transaction_type == 'receive' %}bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400{% else %}bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400{% endif %}">
+                                            {% if transaction.transaction_type == 'receive' %}
+                                                <i class="fa-solid fa-arrow-down text-xs"></i>
+                                            {% else %}
+                                                <i class="fa-solid fa-arrow-up text-xs"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">
+                                                {{ transaction.description|truncatechars:40 }}
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ transaction.bank_account }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
+                                    {{ transaction.bank_account }}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    {% if transaction.transaction_type == 'receive' %}
+                                        <span class="inline-flex items-center gap-1.5 py-1 px-2 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500">
+                                            <i class="fa-solid fa-arrow-down text-[8px]"></i>
+                                            {% translate "Receive" %}
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-1.5 py-1 px-2 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500">
+                                            <i class="fa-solid fa-arrow-up text-[8px]"></i>
+                                            {% translate "Spent" %}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-right">
+                                    <span class="text-sm font-bold {% if transaction.amount >= 0 %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}">
+                                        {% if transaction.amount >= 0 %}+{% endif %}${{ transaction.amount|floatformat:2|intcomma }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- View All Link -->
+            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
+                <a href="javascript:;"
+                   class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                    {% translate "View All Transactions" %}
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="flex flex-col items-center justify-center py-8 sm:py-12">
+                <div class="w-16 h-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center dark:bg-neutral-800">
+                    <i class="fa-solid fa-arrow-right-arrow-left text-2xl"></i>
+                </div>
+                <h4 class="mt-4 text-sm font-semibold text-gray-800 dark:text-white">
+                    {% translate "No transactions yet" %}
+                </h4>
+                <p class="mt-1 text-xs sm:text-sm text-center text-gray-500 dark:text-gray-400">
+                    {% translate "Start tracking income and expenses for this client" %}
+                </p>
+                <button type="button"
+                        class="mt-4 py-2 px-4 inline-flex items-center gap-2 rounded-md border border-transparent font-semibold bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                    <i class="fa-solid fa-plus"></i>
+                    {% translate "Add Transaction" %}
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<!-- End Transactions Placeholder Section -->

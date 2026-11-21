@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 import django_filters
 from django import forms
 from django.utils.translation import gettext as _

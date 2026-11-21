@@ -1,27 +1,33 @@
 {% extends "core/layouts/dashboard_content_base.html" %}
 
-{% load development_tags %}
+{% load i18n development_tags %}
 
 {% block dashboard_content_block %}
-    {# Page Heading #}
+<div id="taskListRoot" class="px-2 sm:px-4 md:px-0">
+    {# Modern Enterprise Header #}
+    {% include "bw_components/task/header.html" with page_header=page_header subtitle=subtitle is_show_create_btn=is_show_create_btn app_label=app_label actions_base_url=actions_base_url kpi_stats=kpi_stats total_records=total_records export_url=export_url %}
 
-    {% include "components/inc/dashboard/content_header.html" with title="Tasks" subtitle="Subtitle" is_show_create_btn=True app_label=app_label actions_base_url="dashboard:task" %}
-
-    {# End Page Heading #}
-    {# Start Filter Form #}
-    {% if filter_form %}
-        {% component "bw_filter_form" filter_form=filter_form filter_cancel_url="dashboard:task:list" %}{% endcomponent %}
+    {# KPI Summary Ribbon #}
+    {% if kpi_stats %}
+        {% include "bw_components/task/kpi_ribbon.html" with kpi_stats=kpi_stats %}
     {% endif %}
-    {# End Filter Form #}
-    {% if object_list %}
-        <!-- Table Section -->
 
-        {% include "bw_components/task/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at header_title="Tasks" header_subtitle="Sub" is_show_create_btn=True app_label=app_label page_obj=page_obj pagination_list_url_name="dashboard:task:list" is_filters_enabled=True is_actions_menu_enabled=True actions_items="update,delete" actions_app_name=app_label actions_base_url="dashboard:task" base_url_name="dashboard:task" filter_form=filter_form filter_cancel_url="dashboard:task:list" object_list=object_list is_show_job_column=True is_show_manager_column=True is_show_type_column=True is_show_status_column=True object_list=object_list is_header_enabled=True is_footer_enabled=True %}
+    {# Collapsible Filter Accordion Card #}
+    {% if is_filters_enabled is not False %}
+        {% include "bw_components/task/filter_accordion.html" with kpi_stats=kpi_stats filter_form=filter_form pagination_list_url_name=pagination_list_url_name is_show_create_btn=is_show_create_btn actions_base_url=actions_base_url is_filters_enabled=is_filters_enabled filter_form_id=filter_form_id %}
+    {% endif %}
 
-        <!-- End Table Section -->
+    {% if filter_categories %}
+        {% include "bw_ui_components/elements/categories_js_modal.html" with filter_categories_dict=filter_categories %}
+    {% endif %}
+
+    {% if object_list or page_obj %}
+        {% include "bw_components/task/table_list.html" with is_checkbox_enabled=is_checkbox_enabled is_show_created_at=is_show_created_at header_title=table_header_title header_subtitle=table_header_subtitle app_label=app_label pagination_list_url_name=pagination_list_url_name is_filters_enabled=is_filters_enabled is_actions_menu_enabled=is_actions_menu_enabled actions_items=actions_items actions_app_name=app_label actions_base_url=actions_base_url base_url_name=base_url_name is_header_enabled=is_header_enabled is_footer_enabled=is_footer_enabled extra_context=extra_context page_obj=page_obj total_records=total_records object_list=object_list is_show_job_column=is_show_job_column is_show_manager_column=is_show_manager_column is_show_type_column=is_show_type_column is_show_status_column=is_show_status_column is_show_client_column=is_show_client_column %}
     {% else %}
-
-        {% include "bw_ui_components/global/empty_card.html" with label="tasks" %}
-
+        {% include "bw_ui_components/global/empty_card.html" with label=empty_label|default:"tasks" %}
     {% endif %}
+
+    {# Quick Peek Slide-Over Drawer #}
+    {% include "bw_components/task/quick_peek_drawer.html" %}
+</div>
 {% endblock dashboard_content_block %}

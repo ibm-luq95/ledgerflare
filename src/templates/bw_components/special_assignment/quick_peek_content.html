@@ -1,0 +1,178 @@
+{% load i18n core_tags %}
+
+<div class="space-y-6">
+    <!-- Header: Title + Status + Full Page Link -->
+    <div class="flex items-start justify-between gap-4 pb-5 border-b border-gray-200 dark:border-neutral-700">
+        <div>
+            <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
+                {% if object.is_seen %}
+                    <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800">
+                        <svg class="size-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                        </svg>
+                        {% translate "Seen" %}
+                    </span>
+                {% else %}
+                    <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800">
+                        {% translate "Unread" %}
+                    </span>
+                {% endif %}
+            </div>
+            <h3 class="text-base font-bold text-gray-900 dark:text-neutral-100 leading-snug">
+                {{ object.title }}
+            </h3>
+        </div>
+
+        <a href="{% url 'dashboard:special_assignment:details' object.pk %}"
+           class="py-1.5 px-3 inline-flex items-center gap-x-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition-colors shrink-0">
+            {% translate "Full View" %}
+            <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Metadata Grid (Client, Job, Creator, Assignee) -->
+    <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="p-3 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+            <span class="block text-[10px] uppercase font-semibold text-gray-400 dark:text-neutral-500 mb-1">{% translate "Client" %}</span>
+            {% if object.client %}
+                <a href="{% url 'dashboard:client:details' object.client.pk %}" class="font-semibold text-blue-600 hover:underline dark:text-blue-400 truncate block">
+                    {{ object.client.name }}
+                </a>
+            {% else %}
+                <span class="text-gray-400 dark:text-neutral-500 italic">{% translate "Standalone / Internal" %}</span>
+            {% endif %}
+        </div>
+
+        <div class="p-3 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+            <span class="block text-[10px] uppercase font-semibold text-gray-400 dark:text-neutral-500 mb-1">{% translate "Job" %}</span>
+            {% if object.job %}
+                <a href="{% url 'dashboard:job:details' object.job.pk %}" class="font-semibold text-blue-600 hover:underline dark:text-blue-400 truncate block">
+                    {{ object.job.title }}
+                </a>
+            {% else %}
+                <span class="text-gray-400 dark:text-neutral-500 italic">{% translate "No Job Linked" %}</span>
+            {% endif %}
+        </div>
+
+        <div class="p-3 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+            <span class="block text-[10px] uppercase font-semibold text-gray-400 dark:text-neutral-500 mb-1">{% translate "Assigned By" %}</span>
+            <span class="font-semibold text-gray-800 dark:text-neutral-200 block truncate">
+                {{ object.assigned_by.fullname|default:object.assigned_by|default:_("System") }}
+            </span>
+        </div>
+
+        <div class="p-3 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+            <span class="block text-[10px] uppercase font-semibold text-gray-400 dark:text-neutral-500 mb-1">{% translate "Assigned To" %}</span>
+            <span class="font-semibold text-gray-800 dark:text-neutral-200 block truncate">
+                {{ object.assigned_to.fullname|default:object.assigned_to|default:_("Unassigned") }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Timeline & Deadlines -->
+    <div class="bg-gray-50/70 dark:bg-neutral-800/40 rounded-xl p-3.5 space-y-2 text-xs border border-gray-100 dark:border-neutral-800">
+        <div class="flex items-center justify-between">
+            <span class="text-gray-500 dark:text-neutral-400">{% translate "Start Date:" %}</span>
+            <span class="font-medium text-gray-800 dark:text-neutral-200">
+                {{ object.start_date|default:"—" }}
+            </span>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="text-gray-500 dark:text-neutral-400">{% translate "Due Date:" %}</span>
+            <span class="font-semibold {% if object.due_date and object.due_date < today %}text-red-600 dark:text-red-400{% else %}text-gray-800 dark:text-neutral-200{% endif %}">
+                {{ object.due_date|default:"—" }}
+            </span>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="text-gray-500 dark:text-neutral-400">{% translate "Created:" %}</span>
+            <span class="text-gray-600 dark:text-neutral-400">
+                {{ object.created_at|date:"M d, Y H:i" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Assignment Body -->
+    <div class="space-y-2">
+        <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+            {% translate "Instructions & Description" %}
+        </h4>
+        <div class="p-3.5 bg-white dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-700 text-xs text-gray-700 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed">
+            {{ object.body|safe }}
+        </div>
+    </div>
+
+    <!-- Notes Section (if available) -->
+    {% if object.notes %}
+        <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Internal Notes" %}
+            </h4>
+            <div class="p-3 bg-amber-50/50 dark:bg-amber-900/10 border border-amber-200/60 dark:border-amber-800/30 rounded-xl text-xs text-amber-900 dark:text-amber-300">
+                {{ object.notes }}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Attachment Section (if available) -->
+    {% if object.attachment %}
+        <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Attachment" %}
+            </h4>
+            <a href="{{ object.attachment.url }}" download
+               class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700/80 rounded-xl border border-gray-200 dark:border-neutral-700 transition-colors text-xs">
+                <div class="flex items-center gap-2.5 truncate">
+                    <svg class="size-4 text-blue-600 dark:text-blue-400 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                    <span class="font-medium text-gray-800 dark:text-neutral-200 truncate">
+                        {{ object.attachment.name|slice:"28:"|default:object.attachment.name }}
+                    </span>
+                </div>
+                <span class="text-blue-600 dark:text-blue-400 font-semibold shrink-0">
+                    {% translate "Download" %}
+                </span>
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Recent Discussions -->
+    <div class="space-y-3">
+        <div class="flex items-center justify-between">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Discussions" %} ({{ recent_discussions.count|default:0 }})
+            </h4>
+            <a href="{% url 'dashboard:special_assignment:details' object.pk %}#discussionsSection"
+               class="text-xs text-blue-600 hover:underline dark:text-blue-400 font-medium">
+                {% translate "View all" %}
+            </a>
+        </div>
+
+        {% if recent_discussions %}
+            <div class="space-y-2.5">
+                {% for msg in recent_discussions %}
+                    <div class="p-3 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-800 text-xs">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-semibold text-gray-900 dark:text-neutral-100">
+                                {{ msg.sender.fullname|default:msg.sender|default:_("Staff") }}
+                            </span>
+                            <span class="text-[10px] text-gray-400 dark:text-neutral-500">
+                                {{ msg.created_at|date:"M d, H:i" }}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 dark:text-neutral-300">
+                            {{ msg.body|truncatechars:120 }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-xs text-gray-400 dark:text-neutral-500 italic p-3 bg-gray-50 dark:bg-neutral-800/40 rounded-xl text-center">
+                {% translate "No discussion messages yet." %}
+            </p>
+        {% endif %}
+    </div>
+</div>

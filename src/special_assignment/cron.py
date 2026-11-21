@@ -49,7 +49,7 @@ def check_past_due_sa():
         day="*",
         hour=8,
         minute=0,
-        timezone=settings.TIME_ZONE
+        timezone=settings.TIME_ZONE,
         # year="*",
         # month="*",
         # day="*",

@@ -1,29 +1,41 @@
-# -*- coding: utf-8 -*-#
 from django.conf import settings
 from django.db import models
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from client.models import ClientProxy
 from core.choices.special_assignment import SpecialAssignmentStatusEnum
 from core.constants.file_types_validation import IMAGES_AND_DOCS_FT
+from core.fields import EncryptedFileField, EncryptedTextField
 from core.models.mixins import (
     BaseModelMixin,
+    SanitizeHTMLFieldsMixin,
     StartAndDueDateMixin,
-    TeamMembersMixin,
     StrModelMixin,
+    TeamMembersMixin,
 )
 from core.models.mixins.cron_column_mixin import CronColumnMixin
 from core.utils import FileValidator
 from job.models import JobProxy
 from special_assignment.models.manager import SpecialAssignmentsManager
 
-file_validator = FileValidator(max_size=1024 * 1000, content_types=IMAGES_AND_DOCS_FT)
+
+file_validator = FileValidator(
+    max_size=100 * 1024 * 1024,
+    content_types=IMAGES_AND_DOCS_FT,
+    scan_malware=True,
+)
 
 
 class SpecialAssignment(
-    BaseModelMixin, StartAndDueDateMixin, TeamMembersMixin, CronColumnMixin, StrModelMixin
+    BaseModelMixin,
+    StartAndDueDateMixin,
+    TeamMembersMixin,
+    CronColumnMixin,
+    StrModelMixin,
+    SanitizeHTMLFieldsMixin,
 ):
+    SANITY_HTML_FIELDS = ("body", "notes")
     """Represents a special assignment.
 
     This class defines a special assignment with attributes such as client, job, title, body, status, attachment, notes, is_seen, and assigned_by.
@@ -60,7 +72,7 @@ class SpecialAssignment(
         db_index=True,
     )
     title = models.CharField(_("title"), max_length=100, null=False, blank=False)
-    body = models.TextField(_("body"))
+    body = EncryptedTextField(_("body"))
     status = models.CharField(
         _("status"),
         max_length=15,
@@ -68,14 +80,14 @@ class SpecialAssignment(
         default=SpecialAssignmentStatusEnum.NOT_STARTED,
         db_index=True,
     )
-    attachment = models.FileField(
+    attachment = EncryptedFileField(
         _("attachment"),
         upload_to="special_assignment_attachments/",
         null=True,
         blank=True,
         validators=[file_validator],
     )
-    notes = models.TextField(_("notes"), null=True, blank=True)
+    notes = EncryptedTextField(_("notes"), null=True, blank=True)
     is_seen = models.BooleanField(_("is seen"), default=False, db_index=True)
     assigned_by = models.ForeignKey(
         verbose_name=_("assigned by"),
@@ -103,4 +115,4 @@ class SpecialAssignment(
         ordering = ["title"]
 
     def get_absolute_url(self):
-        reverse_lazy("dashboard:special_assignment:details", kwargs={"pk": self.pk})
+        return reverse("dashboard:special_assignment:details", kwargs={"pk": self.pk})

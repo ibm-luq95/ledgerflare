@@ -42,11 +42,21 @@ class CFOListView(
         context.setdefault("list_type", self.list_type)
         context.setdefault("page_header", _("CFOs"))
         context.setdefault("component_path", "bw_components/cfo/table_list.html")
-        context.setdefault("subtitle", _("CFOs staff"))
+        context.setdefault(
+            "subtitle",
+            _(
+                "Chief Financial Officers and executive advisors providing strategic financial oversight."
+            ),
+        )
         context.setdefault("actions_base_url", "dashboard:management_cfo")
         context.setdefault("filter_cancel_url", "dashboard:management_cfo:list")
         context.setdefault("table_header_title", _("C"))
-        context.setdefault("table_header_subtitle", _("management_bookkeeper subtitle"))
+        context.setdefault(
+            "table_header_subtitle",
+            _(
+                "Executive financial officers, advisory partners, and strategic directors."
+            ),
+        )
         context.setdefault("is_show_create_btn", True)
         context.setdefault("pagination_list_url_name", "dashboard:management_cfo:list")
         context.setdefault("is_filters_enabled", True)

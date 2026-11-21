@@ -32,6 +32,7 @@ class AssistantProxy(Assistant):
 
     class Meta(Assistant.Meta):
         proxy = True
+        indexes = []
 
     def delete(self):
         """

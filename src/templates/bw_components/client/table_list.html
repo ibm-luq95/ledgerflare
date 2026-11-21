@@ -1,29 +1,31 @@
 {% extends "bw_components/layouts/table_list_base.html" %}
 
-{% load i18n %}
-
-{% load core_tags %}
+{% load i18n core_tags %}
 
 {# Start Table Header #}
 {% block header_title %}
     {% translate header_title %}
 {% endblock header_title %}
 {# End Table Header #}
+
 {# Start Table Subtitle #}
 {% block header_subtitle %}
     {% translate header_subtitle %}
 {% endblock header_subtitle %}
 {# End Table Subtitle #}
+
 {# Start Table ID Block #}
 {% block table_id_block %}
     {{ app_label|add:'_table' }}
 {% endblock table_id_block %}
 {# End Table ID Block #}
+
 {# Start Custom Css Class #}
 {% block custom_css_class_name %}
-    clients-table-list
+    clients-table-list w-full
 {% endblock custom_css_class_name %}
 {# End Custom Css Class #}
+
 {% if is_show_create_btn is True %}
     {# Start Create Button Block #}
     {% block create_btn_block %}
@@ -31,236 +33,530 @@
     {% endblock create_btn_block %}
     {# End Create Button Block #}
 {% endif %}
-{# Start Table Header Columns #}
+
+{# Start Desktop Table Header Columns #}
 {% block thead_block %}
-    <tr>
+    <tr class="border-b border-gray-200 bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800/60">
         {% if is_checkbox_enabled is True %}
-            <th scope="col" class="pl-6 py-3 text-left">
+            <th scope="col" class="ps-6 py-3.5 text-start w-10">
                 <label for="{{ column|add:'-checkbox' }}" class="flex">
                     <input type="checkbox"
-                           class="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800 {{ BW_DISABLED_DISABLED_INPUTS_CSS_CLASSES }} {{ BW_BASE_INPUT_CSS_CLASSES }}"
+                           class="shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500"
                            id="{{ column|add:'-checkbox' }}"
                            disabled />
                     <span class="sr-only">{{ column|title }}</span>
                 </label>
             </th>
         {% endif %}
-        <th scope="col" class="px-6 py-3 text-left">
+
+        <th scope="col" class="px-6 py-3.5 text-start">
             <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Name" %}
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Client" %}
                 </span>
-
                 {% include "bw_components/global/table_list/sort_icon.html" %}
-
             </div>
         </th>
-        {% if extra_context.is_show_status is True %}
-            <th scope="col" class="px-6 py-3 text-left">
+
+        {% if extra_context.is_show_status is not False %}
+            <th scope="col" class="px-6 py-3.5 text-start">
                 <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Status" %}
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                        {% translate "Status & Alerts" %}
                     </span>
-
                     {% include "bw_components/global/table_list/sort_icon.html" %}
-
                 </div>
             </th>
         {% endif %}
-        {% if extra_context.is_show_bookkeeper is True %}
-            <th scope="col" class="px-6 py-3 text-left">
+
+        {% if extra_context.is_show_bookkeeper is not False %}
+            <th scope="col" class="px-6 py-3.5 text-start">
                 <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
                         {% translate "Managed By" %}
                     </span>
-
                     {% include "bw_components/global/table_list/sort_icon.html" %}
-
                 </div>
             </th>
         {% endif %}
-        <th scope="col" class="px-6 py-3 text-left">
+
+        <th scope="col" class="px-6 py-3.5 text-start">
             <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
                     {% translate "Industry" %}
                 </span>
-
                 {% include "bw_components/global/table_list/sort_icon.html" %}
-
             </div>
         </th>
-        <th scope="col" class="px-6 py-3 text-left">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+
+        <th scope="col" class="px-6 py-3.5 text-center">
+            <div class="flex items-center justify-center gap-x-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
                     {% translate "Jobs" %}
                 </span>
-
                 {% include "bw_components/global/table_list/sort_icon.html" %}
-
             </div>
         </th>
-        <th scope="col" class="px-6 py-3 text-left">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+
+        <th scope="col" class="px-6 py-3.5 text-center">
+            <div class="flex items-center justify-center gap-x-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
                     {% translate "Tasks" %}
                 </span>
-
                 {% include "bw_components/global/table_list/sort_icon.html" %}
-
             </div>
         </th>
-        <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+
+        <th scope="col" class="px-6 py-3.5 text-center disable-sort">
+            <div class="flex items-center justify-center gap-x-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
                     {% translate "Assignments" %}
                 </span>
             </div>
         </th>
+
         {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
-            <th scope="col" class="px-6 py-3 text-left">
+            <th scope="col" class="px-6 py-3.5 text-start">
                 <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
                         {% translate "Created" %}
                     </span>
-
                     {% include "bw_components/global/table_list/sort_icon.html" %}
-
                 </div>
             </th>
         {% endif %}
-        <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2"></div>
+
+        <th scope="col" class="px-6 py-3.5 text-end disable-sort w-28">
+            <span class="sr-only">{% translate "Actions" %}</span>
         </th>
     </tr>
 {% endblock thead_block %}
 {# End Table Header Columns #}
-{# Start Table Body #}
+
+{# Start Table Body (Desktop) #}
 {% block tbody_block %}
     {% for object in object_list %}
-        <tr>
+        <tr class="hover:bg-gray-50/80 dark:hover:bg-neutral-800/50 transition-colors">
             {% if is_checkbox_enabled is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="pl-6 py-3">
-                        <label for="{{ object.pk|add:'-checkbox' }}" class="flex">
-                            <input type="checkbox"
-                                   class="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800 {{ BW_DISABLED_DISABLED_INPUTS_CSS_CLASSES }} {{ BW_BASE_INPUT_CSS_CLASSES }}"
-                                   id="{{ object.pk|add:'-checkbox' }}"
-                                   disabled />
-                            <span class="sr-only">{{ object.name|title }}</span>
-                        </label>
-                    </div>
+                <td class="ps-6 py-4 whitespace-nowrap">
+                    <label for="{{ object.pk|add:'-checkbox' }}" class="flex">
+                        <input type="checkbox"
+                               class="shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500"
+                               id="{{ object.pk|add:'-checkbox' }}"
+                               disabled />
+                        <span class="sr-only">{{ object.name|title }}</span>
+                    </label>
                 </td>
             {% endif %}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <div class="scrollable-wrapper h-12 {{ BW_PRELINE_ROUNDED_SCROLLBAR_CSS_CLASSES }}">
-                        <a href="{% url base_url_name|add:':details' object.pk %}">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.name|safe }}</span>
-                        </a>
+
+            <!-- Client Identity Column -->
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-x-3">
+                    {% if object.company_logo %}
+                        <img class="shrink-0 size-9 rounded-lg object-cover border border-gray-200 dark:border-neutral-700"
+                             src="{{ object.company_logo.url }}"
+                             alt="{{ object.name }}" />
+                    {% else %}
+                        <span class="shrink-0 inline-flex items-center justify-center size-9 rounded-lg bg-blue-100 text-blue-800 font-bold text-sm border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800">
+                            {{ object.name|slice:":1"|upper }}
+                        </span>
+                    {% endif %}
+
+                    <div class="grow">
+                        <div class="flex items-center gap-2">
+                            <a href="{% url base_url_name|add:':details' object.pk %}"
+                               class="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-neutral-100 dark:hover:text-blue-400 transition-colors">
+                                {{ object.name }}
+                            </a>
+                            <button type="button"
+                                    class="quick-peek-btn size-5.5 inline-flex justify-center items-center rounded-md text-gray-400 hover:text-blue-600 hover:bg-gray-100 dark:text-neutral-500 dark:hover:text-blue-400 dark:hover:bg-neutral-800 transition-colors"
+                                    data-client-url="{% url 'dashboard:client:quick-peek' object.pk %}"
+                                    title="{% translate 'Quick Peek' %}">
+                                <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+
                         {% if object.categories.all %}
-                            <div class="my-1 text-left">
+                            <div class="flex flex-wrap gap-1 mt-1">
                                 {% for category in object.categories.all %}
-                                    <div class="hs-tooltip inline-block mr-0.5">
-                                        <a href="#" class="hs-tooltip-toggle">
-                                            <span class="inline-flex items-center gap-1 py-0.5 px-2 rounded-full text-[10px] font-medium bg-blue-100 text-blue-800">{{ category.name|safe }}</span>
-                                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                                  role="tooltip">{% translate "Category" %}</span>
-                                        </a>
-                                    </div>
+                                    <span class="inline-flex items-center py-0.5 px-2 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                        {{ category.name }}
+                                    </span>
                                 {% endfor %}
                             </div>
                         {% endif %}
                     </div>
                 </div>
             </td>
-            {% if extra_context.is_show_status is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="px-6 py-3">
+
+            <!-- Status & Health Column -->
+            {% if extra_context.is_show_status is not False %}
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex flex-col gap-1 items-start">
                         {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
+                        {% if object.past_due_jobs_count > 0 %}
+                            <span class="inline-flex items-center gap-1 py-0.5 px-1.5 rounded text-[10px] font-semibold bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800">
+                                <span>⚠️</span> {{ object.past_due_jobs_count }} {% translate "Past Due" %}
+                            </span>
+                        {% endif %}
                     </div>
                 </td>
             {% endif %}
-            {% if extra_context.is_show_bookkeeper is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="px-6 py-3">
-                        <div class="scrollable-wrapper max-h-[80px] {{ BW_PRELINE_ROUNDED_SCROLLBAR_CSS_CLASSES }}">
-                            {% for bookkeeper in object.bookkeepers.all %}
-                                {% if request.user.user_type == CON_BOOKKEEPER %}
-                                    <a href="javascript:;" class="disabledAnchorElement text-sm">{{ bookkeeper }}</a>
-                                {% else %}
-                                    <a href="{% url 'dashboard:staff:member-details' bookkeeper.user.pk %}"
-                                       class="text-sm {{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }}">{{ bookkeeper }}</a>
-                                {% endif %}
-                                <br />
-                            {% empty %}
-                                <span class="text-sm text-yellow-600 font-semibold italic">{% translate "No Bookkeepers" %}</span>
-                                {% comment  %}
-                    {# {% fetch_user_details_url base_user=user_type user_object=bookkeeper.user %} #}
-                        {% translate "No staff member for this client" as red_text %}
-                        {% include "components/core/red_text.html" with text=red_text %}
 
-
-                                {% endcomment %}
-                            {% endfor %}
-                        </div>
+            <!-- Managed By Column -->
+            {% if extra_context.is_show_bookkeeper is not False %}
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex flex-col gap-1">
+                        {% for bookkeeper in object.bookkeepers.all %}
+                            {% if request.user.user_type == CON_BOOKKEEPER %}
+                                <span class="text-xs font-medium text-gray-700 dark:text-neutral-300">{{ bookkeeper }}</span>
+                            {% else %}
+                                <a href="{% url 'dashboard:staff:member-details' bookkeeper.user.pk %}"
+                                   class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors inline-flex items-center gap-1">
+                                    <span class="size-1.5 rounded-full bg-blue-600 dark:bg-blue-400"></span>
+                                    {{ bookkeeper }}
+                                </a>
+                            {% endif %}
+                        {% empty %}
+                            <span class="text-xs text-amber-600 dark:text-amber-400 font-medium italic">
+                                {% translate "Unassigned" %}
+                            </span>
+                        {% endfor %}
                     </div>
                 </td>
             {% endif %}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.industry|truncatechars:DEFAULT_TEMPLATE_TABLE_LIST_TRUNCATED_STRING }}</span>
-                </div>
+
+            <!-- Industry Column -->
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-xs text-gray-600 dark:text-neutral-400">
+                    {{ object.industry|default:"-" }}
+                </span>
             </td>
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">
-                        {% if object.get_proxy_model %}
-                            {{ object.get_proxy_model.get_jobs_count }}
-                        {% else %}
-                            {{ object.get_jobs_count }}
-                        {% endif %}
-                    </span>
-                </div>
+
+            <!-- Jobs Count -->
+            <td class="px-6 py-4 whitespace-nowrap text-center">
+                <span class="inline-flex items-center justify-center min-w-[28px] px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-neutral-800 dark:text-neutral-200">
+                    {{ object.total_jobs_count|default_if_none:0 }}
+                </span>
             </td>
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">
-                        {% if object.get_proxy_model %}
-                            {{ object.get_proxy_model.get_total_tasks_for_all_jobs }}
-                        {% else %}
-                            {{ object.get_total_tasks_for_all_jobs }}
-                        {% endif %}
-                    </span>
-                </div>
+
+            <!-- Tasks Count -->
+            <td class="px-6 py-4 whitespace-nowrap text-center">
+                <span class="inline-flex items-center justify-center min-w-[28px] px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-neutral-800 dark:text-neutral-200">
+                    {{ object.total_tasks_count|default_if_none:0 }}
+                </span>
             </td>
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.special_assignments.count }}</span>
-                </div>
+
+            <!-- Special Assignments Count -->
+            <td class="px-6 py-4 whitespace-nowrap text-center">
+                <span class="inline-flex items-center justify-center min-w-[28px] px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-neutral-800 dark:text-neutral-200">
+                    {{ object.total_special_assignments_count|default_if_none:0 }}
+                </span>
             </td>
+
+            <!-- Created Date -->
             {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
-                <td class="h-px w-px whitespace-nowrap">
+                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-neutral-400">
                     {% bw_date date_txt=object.created_at is_in_table_list=True %}
                 </td>
             {% endif %}
-            <td class="h-px w-px whitespace-nowrap text-center">
-                {% if is_actions_menu_enabled is True %}
-                    {% bw_actions_dropdown actions_items=actions_items actions_base_url=actions_base_url actions_app_name=actions_app_name object=object %}
-                {% endif %}
+
+            <!-- Actions Dropdown -->
+            <td class="px-6 py-4 whitespace-nowrap text-end">
+                <div class="flex items-center justify-end gap-1.5">
+                    <button type="button"
+                            class="quick-peek-btn size-7 inline-flex justify-center items-center rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-2xs"
+                            data-client-url="{% url 'dashboard:client:quick-peek' object.pk %}"
+                            title="{% translate 'Quick Peek' %}">
+                        <svg class="size-3.5 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+
+                    {% if is_actions_menu_enabled is True %}
+                        {% bw_actions_dropdown actions_items=actions_items actions_base_url=actions_base_url actions_app_name=actions_app_name object=object %}
+                    {% endif %}
+                </div>
             </td>
         </tr>
     {% endfor %}
 {% endblock tbody_block %}
-{# End Table Body #}
+{# End Table Body (Desktop) #}
+
+{# Start Mobile/Tablet Card Stack & Grid View Block #}
+{% block mobile_cards_block %}
+    <!-- Grid Cards View (Controlled by clientViewGridBtn) -->
+    <div id="clientGridView"
+         class="hidden p-4 sm:p-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {% for object in object_list %}
+            <div class="flex flex-col justify-between bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-2xs hover:shadow-sm dark:bg-neutral-900 dark:border-neutral-700 transition-all">
+                <div>
+                    <!-- Top Row: Avatar/Logo + Status & Alerts -->
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            {% if object.company_logo %}
+                                <img class="shrink-0 size-11 rounded-lg object-cover border border-gray-200 dark:border-neutral-700"
+                                     src="{{ object.company_logo.url }}"
+                                     alt="{{ object.name }}" />
+                            {% else %}
+                                <span class="shrink-0 inline-flex items-center justify-center size-11 rounded-lg bg-blue-100 text-blue-800 font-bold text-base border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800">
+                                    {{ object.name|slice:":1"|upper }}
+                                </span>
+                            {% endif %}
+
+                            <div>
+                                <a href="{% url base_url_name|add:':details' object.pk %}"
+                                   class="text-sm font-bold text-gray-900 hover:text-blue-600 dark:text-neutral-100 dark:hover:text-blue-400 transition-colors block">
+                                    {{ object.name }}
+                                </a>
+                                <p class="text-xs text-gray-500 dark:text-neutral-400">
+                                    {{ object.industry|default:"General" }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col items-end gap-1">
+                            {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
+                            {% if object.past_due_jobs_count > 0 %}
+                                <span class="inline-flex items-center gap-1 py-0.5 px-1.5 rounded text-[10px] font-semibold bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800">
+                                    <span>⚠️</span> {{ object.past_due_jobs_count }} {% translate "Past Due" %}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Category Pills -->
+                    {% if object.categories.all %}
+                        <div class="flex flex-wrap gap-1 mt-3">
+                            {% for category in object.categories.all %}
+                                <span class="inline-flex items-center py-0.5 px-2 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                    {{ category.name }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Key Client Info -->
+                    <div class="mt-3.5 space-y-1.5 text-xs text-gray-600 dark:text-neutral-400 border-t border-gray-100 dark:border-neutral-800 pt-2.5">
+                        {% if object.email %}
+                            <div class="flex items-center gap-2 truncate">
+                                <svg class="size-3.5 text-gray-400 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                                </svg>
+                                <span class="truncate">{{ object.email }}</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 dark:text-neutral-500">{% translate "Bookkeeper:" %}</span>
+                            <span class="font-medium text-gray-800 dark:text-neutral-200">
+                                {% for bookkeeper in object.bookkeepers.all %}
+                                    {{ bookkeeper }}{% if not forloop.last %}, {% endif %}
+                                {% empty %}
+                                    <span class="text-amber-600 dark:text-amber-400 italic">{% translate "Unassigned" %}</span>
+                                {% endfor %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Pill Bar -->
+                    <div class="mt-3.5 grid grid-cols-3 gap-2 text-center bg-gray-50 dark:bg-neutral-800/60 p-2 rounded-lg border border-gray-100 dark:border-neutral-700/60">
+                        <div>
+                            <span class="block text-xs font-bold text-gray-800 dark:text-neutral-200">
+                                {{ object.total_jobs_count|default_if_none:0 }}
+                            </span>
+                            <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                                {% translate "Jobs" %}
+                            </span>
+                        </div>
+                        <div class="border-x border-gray-200 dark:border-neutral-700">
+                            <span class="block text-xs font-bold text-gray-800 dark:text-neutral-200">
+                                {{ object.total_tasks_count|default_if_none:0 }}
+                            </span>
+                            <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                                {% translate "Tasks" %}
+                            </span>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-gray-800 dark:text-neutral-200">
+                                {{ object.total_special_assignments_count|default_if_none:0 }}
+                            </span>
+                            <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                                {% translate "Special" %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Footer Actions -->
+                <div class="mt-4 pt-3 border-t border-gray-100 dark:border-neutral-800 flex items-center justify-between gap-2">
+                    <button type="button"
+                            class="quick-peek-btn py-1.5 px-2.5 inline-flex items-center gap-x-1.5 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-2xs"
+                            data-client-url="{% url 'dashboard:client:quick-peek' object.pk %}"
+                            title="{% translate 'Quick Peek' %}">
+                        <svg class="size-3.5 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <span>{% translate "Peek" %}</span>
+                    </button>
+
+                    <div class="flex items-center gap-1.5">
+                        <a href="{% url base_url_name|add:':details' object.pk %}"
+                           class="py-1.5 px-2.5 inline-flex items-center text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-2xs">
+                            {% translate "Details" %}
+                        </a>
+
+                        <a href="{% url base_url_name|add:':update' object.pk %}"
+                           class="py-1.5 px-2.5 inline-flex items-center text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-2xs">
+                            {% translate "Edit" %}
+                        </a>
+
+                        {% if is_actions_menu_enabled is True %}
+                            {% bw_actions_dropdown actions_items=actions_items actions_base_url=actions_base_url actions_app_name=actions_app_name object=object %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Mobile Card Stack (Visible on small screens < 1024px when in Table View mode) -->
+    <div id="clientMobileCardStack"
+         class="block lg:hidden divide-y divide-gray-200 dark:divide-neutral-700">
+        {% for object in object_list %}
+            <div class="p-4 sm:p-5 hover:bg-gray-50/80 dark:hover:bg-neutral-800/40 transition-colors">
+                <!-- Card Header: Identity + Status & Alerts -->
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        {% if object.company_logo %}
+                            <img class="shrink-0 size-10 rounded-lg object-cover border border-gray-200 dark:border-neutral-700"
+                                 src="{{ object.company_logo.url }}"
+                                 alt="{{ object.name }}" />
+                        {% else %}
+                            <span class="shrink-0 inline-flex items-center justify-center size-10 rounded-lg bg-blue-100 text-blue-800 font-bold text-sm border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800">
+                                {{ object.name|slice:":1"|upper }}
+                            </span>
+                        {% endif %}
+
+                        <div>
+                            <a href="{% url base_url_name|add:':details' object.pk %}"
+                               class="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-neutral-100 dark:hover:text-blue-400 transition-colors block">
+                                {{ object.name }}
+                            </a>
+                            <p class="text-xs text-gray-500 dark:text-neutral-400">
+                                {{ object.industry|default:"General" }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-end gap-1">
+                        {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
+                        {% if object.past_due_jobs_count > 0 %}
+                            <span class="inline-flex items-center gap-1 py-0.5 px-1.5 rounded text-[10px] font-semibold bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800">
+                                <span>⚠️</span> {{ object.past_due_jobs_count }} {% translate "Past Due" %}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                {% if object.categories.all %}
+                    <div class="flex flex-wrap gap-1 mt-3">
+                        {% for category in object.categories.all %}
+                            <span class="inline-flex items-center py-0.5 px-2 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                {{ category.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Managed By -->
+                <div class="mt-3 flex items-center justify-between text-xs text-gray-600 dark:text-neutral-400">
+                    <span class="font-medium text-gray-500 dark:text-neutral-500">{% translate "Managed By:" %}</span>
+                    <div>
+                        {% for bookkeeper in object.bookkeepers.all %}
+                            <span class="font-medium text-gray-800 dark:text-neutral-200">{{ bookkeeper }}</span>{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            <span class="text-amber-600 dark:text-amber-400 font-medium italic">{% translate "Unassigned" %}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Metrics Pill Row -->
+                <div class="mt-3.5 grid grid-cols-3 gap-2 text-center bg-gray-50 dark:bg-neutral-800/60 p-2.5 rounded-lg border border-gray-100 dark:border-neutral-700/60">
+                    <div>
+                        <span class="block text-xs font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ object.total_jobs_count|default_if_none:0 }}
+                        </span>
+                        <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                            {% translate "Jobs" %}
+                        </span>
+                    </div>
+                    <div class="border-x border-gray-200 dark:border-neutral-700">
+                        <span class="block text-xs font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ object.total_tasks_count|default_if_none:0 }}
+                        </span>
+                        <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                            {% translate "Tasks" %}
+                        </span>
+                    </div>
+                    <div>
+                        <span class="block text-xs font-semibold text-gray-800 dark:text-neutral-200">
+                            {{ object.total_special_assignments_count|default_if_none:0 }}
+                        </span>
+                        <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                            {% translate "Special" %}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Card Footer Actions -->
+                <div class="mt-3.5 pt-3 border-t border-gray-100 dark:border-neutral-800 flex items-center justify-between gap-2">
+                    <button type="button"
+                            class="quick-peek-btn py-1.5 px-3 inline-flex items-center gap-x-1.5 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-2xs"
+                            data-client-url="{% url 'dashboard:client:quick-peek' object.pk %}"
+                            title="{% translate 'Quick Peek' %}">
+                        <svg class="size-3.5 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <span>{% translate "Peek" %}</span>
+                    </button>
+
+                    <div class="flex items-center gap-1.5">
+                        <a href="{% url base_url_name|add:':details' object.pk %}"
+                           class="py-1.5 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors">
+                            {% translate "Details" %}
+                        </a>
+
+                        <a href="{% url base_url_name|add:':update' object.pk %}"
+                           class="py-1.5 px-3 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors">
+                            <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                            </svg>
+                            {% translate "Edit" %}
+                        </a>
+
+                        {% if is_actions_menu_enabled is True %}
+                            {% bw_actions_dropdown actions_items=actions_items actions_base_url=actions_base_url actions_app_name=actions_app_name object=object %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock mobile_cards_block %}
+{# End Mobile/Tablet Card Stack #}
+
 {# Start Table Results #}
 {% block results_block %}
-    {{ object_list.count }} /{{ total_records }}
+    {{ page_obj.paginator.count|default:object_list.count }}
 {% endblock results_block %}
 {# End Table Results #}
+
 {# Start Table Pagination #}
 {% block pagination_block %}
-
     {% include "components/inc/dashboard/table_list/table_list_pagination.html" with page_obj=page_obj pagination_list_url_name=pagination_list_url_name %}
-
 {% endblock pagination_block %}
 {# End Table Pagination #}

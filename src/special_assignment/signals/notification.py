@@ -8,10 +8,16 @@ import textwrap
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.translation import gettext as _
 
 from beach_wood_user.models import BWUser
 from core.utils.developments.debugging_print_object import DebuggingPrint
-from special_assignment.models import SpecialAssignmentProxy, SpecialAssignmentNotification
+from special_assignment.models import (
+    SpecialAssignmentProxy,
+    SpecialAssignmentNotification,
+)
+from lf_notifications.services import NotificationService
+from lf_notifications.models import NotificationVerb
 
 
 @receiver(post_save, sender=SpecialAssignmentProxy)
@@ -55,7 +61,7 @@ def create_notification(
 
     >>> # Example of updating a SpecialAssignmentProxy instance
     >>> special_assignment = SpecialAssignmentProxy.objects.get(...)
-    >>> special_assignment.some_field = 'new_value'
+    >>> special_assignment.some_field = "new_value"
     >>> special_assignment.save()
     >>> # The create_notification function will be triggered with created=False
 
@@ -67,19 +73,34 @@ def create_notification(
     try:
         if created is True:
             special_assignment: SpecialAssignmentProxy = instance
-            short_title = textwrap.shorten(
-                special_assignment.title, width=20, placeholder="..."
-            )
-            managed_by: BWUser = special_assignment.assigned_to
-            data = {
-                "special_assignment": special_assignment,
-                "recipient": managed_by,
-                "msg": f"You assigned a new special assignment {short_title}",
-            }
-            notification_obj: SpecialAssignmentNotification = (
-                SpecialAssignmentNotification.objects.create(**data)
-            )
-            # DebuggingPrint.pprint(locals())
+            managed_by: BWUser | None = special_assignment.assigned_to
+            if managed_by is not None:
+                short_title = textwrap.shorten(
+                    special_assignment.title, width=20, placeholder="..."
+                )
+                data = {
+                    "special_assignment": special_assignment,
+                    "recipient": managed_by,
+                    "msg": f"You assigned a new special assignment {short_title}",
+                }
+                notification_obj: SpecialAssignmentNotification = (
+                    SpecialAssignmentNotification.objects.create(**data)
+                )
+                NotificationService.trigger(
+                    notification_type_name="assignment_assigned",
+                    actor=special_assignment.assigned_by,
+                    recipients=[managed_by],
+                    verb=NotificationVerb.ASSIGNED,
+                    context={
+                        "actor_name": special_assignment.assigned_by.fullname
+                        if special_assignment.assigned_by
+                        else _("System"),
+                        "assignment_title": special_assignment.title,
+                        "url": special_assignment.get_absolute_url(),
+                    },
+                    content_object=instance,
+                )
+                # DebuggingPrint.pprint(locals())
 
     except Exception as e:
         print(f"Error creating notification: {e}")

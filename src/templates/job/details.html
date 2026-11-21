@@ -1,449 +1,750 @@
 {% extends "core/layouts/dashboard_content_base.html" %}
 
 {% load i18n %}
-
 {% load static %}
 {% load humanize %}
 {% load bw_form_helpers %}
 {% load tailwind_filters %}
 
 {% block dashboard_content_block %}
-    <div class="grid grid-cols-3 gap-4">
-        <div class="col-span-2 p-5 shadow-md rounded">
-            {# Start Job Title #}
-            <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70 p-4">
-                <h2 class="text-lg font-bold tracking-wider">
-                    {{ object.title|capfirst }}
-                </h2>
-            </div>
-            {# End Job Title #}
-            <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70 mt-2">
-                <div class="p-4 md:p-5">
-                    <h3 class="text-lg pb-3 font-bold text-gray-800 dark:text-white">
-                        {% translate "Description" %}
-                    </h3>
-                    <article class="text-sm md:text-base lg:text-lg overflow-y-auto max-h-96">
-                        <p>
-                            {{ object.description|safe }}
-                        </p>
-                        <br />
-                        {% if object.categories.all %}
-                            {% for category in object.categories.all %}
-                                <span class="inline-flex items-center gap-1 py-1 px-3 mr-1 rounded-full text-[10px] font-medium bg-blue-100 text-blue-800">{{ category.name|capfirst }}</span>
-                            {% endfor %}
-                        {% endif %}
-                        {# End categories badges #}
-                    </article>
-                </div>
-                <div class="bg-gray-100 border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700">
-                    <div class="hs-tooltip inline-block">
-                        <button type="button"
-                                class="hs-tooltip-toggle italic text-sm text-gray-500 dark:text-neutral-500">
-                            {{ object.created_at }}
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                  role="tooltip">{% translate "Created at" %}</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            {# Start categories badges #}
-            <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70 mt-2 p-4">
-                <div class="flex items-center justify-between gap-2 rounded">
-                    <div>
-                        <!-- <label for="hs-trailing" class="sr-only">Label</label> -->
-                        <div class="flex rounded-md shadow-sm">
-                            <span class="px-4 inline-flex items-center p-3 min-w-fit rounded-md border border-gray-200 bg-gray-50 text-sm dark:bg-gray-700 dark:border-gray-700">
-                                <span class="text-sm text-gray-900 font-semibold flex items-center gap-3 dark:text-gray-400">
-                                    <img src="{% static 'img/svg/calender.svg' %}" class="h-6 w-6" alt="" />
-                                {% translate "Start Date" %}: {% bw_date date_txt=object.start_date is_in_table_list=False %}</span>
-                                {% if object.is_scheduled is True %}
-                                    <span class="inline-block ml-2 relative top-0.5">
-                                        <div class="hs-tooltip inline-block ">
-                                            <button type="button" class="hs-tooltip-toggle">
-                                                <!-- -->
-                                                <i class="fa-regular fa-clock size-5"></i>
-                                                <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                                      role="tooltip">{% translate "Scheduled job" %}</span>
-                                            </button>
-                                        </div>
-                                    </span>
-                                {% endif %}
-                            </span>
-                        </div>
-                    </div>
-                    {# Start Job Status #}
-                    <div class="hs-tooltip inline-block">
-                        <p class="hs-tooltip-toggle">
-                            {% bw_badge code=object.status text=object.get_status_display is_solid=False size="md" extra_css_classes="font-semibold" %}
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                  role="tooltip">{% translate "Status" %}</span>
-                        </p>
-                    </div>
-                    {# End Job Status #}
-                    {# Start Job State #}
-                    <div class="hs-tooltip inline-block">
-                        <p class="hs-tooltip-toggle">
-                            <!-- <span class="m-0.5 inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-indigo-500 text-white">Badge</span> -->
-                            {% bw_badge code=object.state text=object.get_state_display is_solid=False size="md" extra_css_classes="font-semibold" %}
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                  role="tooltip">{% translate "State" %}</span>
-                        </p>
-                    </div>
-                    {# End Job State #}
-                    <div>
-                        <!-- <label for="hs" class="sr-only">Label</label> -->
-                        <div class="flex rounded-md shadow-sm">
-                            <span class="px-4 inline-flex items-center p-3 min-w-fit rounded-md border border-gray-200 bg-gray-50 text-sm dark:bg-gray-700 dark:border-gray-700">
-                                <span class="text-sm text-gray-900 font-semibold flex items-center gap-3 dark:text-gray-400">
-                                    <img src="{% static 'img/svg/calender.svg' %}" class="h-6 w-6" alt="" />
-                                {% translate "Due Date:" %} {% bw_date date_txt=object.due_date is_in_table_list=False %}</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="my-3">
-                <!-- <label for="hs-trailing-button" class="sr-only">Label</label> -->
-                <div class="flex rounded-md shadow-sm">
-                    <span class="px-4 inline-flex items-center min-w-fit rounded-md border border-gray-200 bg-gray-50 text-sm dark:bg-gray-700 dark:border-gray-700">
-                        <span class="text-sm text-gray-700 font-bold dark:text-gray-400">{% translate "Notes:" %}</span>
+    <div class="space-y-4 sm:space-y-6 pb-12">
+        {# ========================================== #}
+        {# 1. HERO COMMAND BAR & BREADCRUMB           #}
+        {# ========================================== #}
+        <div class="flex flex-col gap-3.5 sm:gap-4 bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 md:p-6 dark:bg-neutral-900 dark:border-neutral-800">
+            {# Breadcrumb & Top Tag Metadata #}
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500 dark:text-neutral-400">
+                <nav class="flex items-center gap-1.5 font-medium flex-wrap">
+                    <a href="{% url 'dashboard:job:list' %}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        {% translate "Jobs" %}
+                    </a>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-gray-400"></i>
+                    {% if object.client %}
+                        <a href="{% url 'dashboard:client:details' object.client.pk %}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate max-w-[130px] sm:max-w-[200px]">
+                            {{ object.client.name }}
+                        </a>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-gray-400"></i>
+                    {% endif %}
+                    <span class="text-gray-800 dark:text-neutral-200 font-semibold truncate max-w-[140px] sm:max-w-xs md:max-w-md">
+                        {{ object.title|capfirst }}
                     </span>
-                    <div class="flex ml-1 flex-col w-full bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
-                        <p class="italic">
-                            {{ object.note|safe }}
-                        </p>
+                </nav>
+
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    {% if object.is_scheduled %}
+                        <span class="inline-flex items-center gap-1 py-0.5 sm:py-1 px-2 sm:px-2.5 rounded-full text-[11px] sm:text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                            <i class="fa-regular fa-clock text-[10px]"></i>
+                            {% translate "Scheduled" %}
+                        </span>
+                    {% endif %}
+                    {% if object.job_type %}
+                        <span class="inline-flex items-center py-0.5 sm:py-1 px-2 sm:px-2.5 rounded-full text-[11px] sm:text-xs font-medium bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+                            {{ object.get_job_type_display }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Job Title & Primary Actions Row #}
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 sm:gap-4 pt-1">
+                <div class="space-y-2">
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 dark:text-white break-words">
+                            {{ object.title|capfirst }}
+                        </h1>
+                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            {% bw_badge code=object.status text=object.get_status_display is_solid=False size="md" extra_css_classes="font-semibold" %}
+                            {% bw_badge code=object.state text=object.get_state_display is_solid=False size="md" extra_css_classes="font-semibold" %}
+                        </div>
+                    </div>
+
+                    {% if object.categories.all %}
+                        <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+                            {% for category in object.categories.all %}
+                                <span class="inline-flex items-center gap-1 py-0.5 px-2.5 rounded-md text-[11px] sm:text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/60 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/40">
+                                    <i class="fa-solid fa-tag text-[9px]"></i>
+                                    {{ category.name|capfirst }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {# Action Buttons #}
+                <div class="flex items-center gap-2 w-full sm:w-auto self-stretch sm:self-start lg:self-center shrink-0">
+                    {# Edit Job Modal Trigger #}
+                    <button type="button"
+                            id="updateJobModalBtn"
+                            data-hs-overlay="#update-job-details-modal"
+                            class="flex-1 sm:flex-initial inline-flex justify-center items-center gap-x-2 py-2 sm:py-2.5 px-3 sm:px-3.5 text-xs sm:text-sm font-semibold rounded-xl border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 transition-all">
+                        <i class="fa-solid fa-pen-to-square text-gray-500 dark:text-neutral-400 text-xs sm:text-sm"></i>
+                        {% translate "Edit Job" %}
+                    </button>
+
+                    {# Quick Add Dropdown #}
+                    <div class="hs-dropdown relative inline-flex flex-1 sm:flex-initial">
+                        <button id="hs-dropdown-quick-add"
+                                type="button"
+                                class="hs-dropdown-toggle w-full inline-flex justify-center items-center gap-x-2 py-2 sm:py-2.5 px-3 sm:px-3.5 text-xs sm:text-sm font-semibold rounded-xl bg-blue-600 text-white shadow-2xs hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 transition-all">
+                            <i class="fa-solid fa-plus text-xs sm:text-sm"></i>
+                            {% translate "Quick Add" %}
+                            <i class="fa-solid fa-chevron-down text-[10px] sm:text-xs transition duration-200 hs-dropdown-open:rotate-180"></i>
+                        </button>
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-48 bg-white shadow-lg rounded-xl p-1.5 z-20 dark:bg-neutral-800 dark:border dark:border-neutral-700"
+                             aria-labelledby="hs-dropdown-quick-add">
+                            <button type="button"
+                                    data-hs-overlay="#createTaskModal"
+                                    class="w-full flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 transition-colors">
+                                <i class="fa-solid fa-list-check text-blue-500 w-4"></i>
+                                {% translate "Add Task" %}
+                            </button>
+                            <button type="button"
+                                    data-hs-overlay="#createDocumentModal"
+                                    class="w-full flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 transition-colors">
+                                <i class="fa-solid fa-file-arrow-up text-emerald-500 w-4"></i>
+                                {% translate "Upload Document" %}
+                            </button>
+                            <button type="button"
+                                    data-hs-overlay="#createNoteModal"
+                                    class="w-full flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 transition-colors">
+                                <i class="fa-solid fa-note-sticky text-amber-500 w-4"></i>
+                                {% translate "Add Note" %}
+                            </button>
+                            <button type="button"
+                                    data-hs-overlay="#createAssignmentModal"
+                                    class="w-full flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 transition-colors">
+                                <i class="fa-solid fa-list-ol text-purple-500 w-4"></i>
+                                {% translate "New Assignment" %}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            {# Start Tabs Block #}
-            <section id="job-tabs">
-                <nav class="relative z-0 flex border border-gray-200 rounded-xl overflow-hidden dark:border-neutral-700"
-                     aria-label="Tabs"
-                     role="tablist">
-                    <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400 active"
-                            id="tasks-btn"
-                            data-hs-tab="#tasks-tab"
-                            aria-controls="tasks-tab"
-                            role="tab">
-                        <i class="fa-solid fa-list-check hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600 w-3.5 h-3.5 text-gray-400 dark:text-gray-600 mr-2"></i>
-                        {% translate "Tasks" %} ({{ object.tasks.count }})
-                        <!-- <span class="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ml-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">99+</span> -->
-                    </button>
-                    <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400"
-                            id="documents-btn"
-                            data-hs-tab="#documents-tab"
-                            aria-controls="documents-tab"
-                            role="tab">
-                        <i class="fa-solid fa-file hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600 w-3.5 h-3.5 text-gray-400 dark:text-gray-600 mr-2"></i>
-                        {% translate "Documents" %} ({{ object.documents.count }})
-                    </button>
-                    <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400"
-                            id="notes-btn"
-                            data-hs-tab="#notes-tab"
-                            aria-controls="notes-tab"
-                            role="tab">
-                        <i class="fa-solid fa-note-sticky hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600 w-3.5 h-3.5 text-gray-400 dark:text-gray-600 mr-2"></i>
-                        {% translate "Notes" %} ({{ object.notes.count }})
-                    </button>
-                    <button type="button"
-                            class="hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 dark:hs-tab-active:text-white relative dark:hs-tab-active:border-b-blue-600 min-w-0 flex-1 bg-white first:border-s-0 border-s border-b-2 border-gray-200 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-hidden focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-l-neutral-700 dark:border-b-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-400"
-                            id="notes-btn"
-                            data-hs-tab="#assignments-tab"
-                            aria-controls="assignments-tab"
-                            role="tab">
-                        <i class="fa-solid fa-list-ol hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600 w-3.5 h-3.5 text-gray-400 dark:text-gray-600 mr-2"></i>
-                        {% translate "Assignments" %} ({{ object.special_assignments.count }})
-                    </button>
-                </nav>
-                <div class="mt-3">
-                    {% convert_dict_to_str job=object.pk as extra_hidden_inputs %}
-                    <div id="tasks-tab"
-                         role="tabpanel"
-                         aria-labelledby="bar-with-underline-item-1">
-                        {% bw_js_modal modal_css_id="createTaskModal" modal_size="sm" modal_title="Create new task" is_submit_btn_enabled=True is_form_modal=True form_object=task_form is_upload_form=True form_id="createTaskForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:task:api:task-api-router-list" %}
-                        <div class="text-right">
-                            <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-2 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                                <div class="flex justify-end">
-                                    <div>
-                                        {% bw_create_btn_js_modal js_create_btn_css_id="createTaskBtn" modal_css_id="createTaskModal" app_name="task" %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% if object.tasks.all %}
 
-                            {% include "bw_components/task/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at is_show_create_btn=False app_label="task" pagination_list_url_name="dashboard:task:list" is_filters_enabled=False is_actions_menu_enabled=True actions_items="update,delete" actions_app_name="task" actions_base_url="dashboard:task" base_url_name="dashboard:task" filter_form=filter_form filter_cancel_url="dashboard:task:list" object_list=object.tasks.all is_show_job_column=False is_show_manager_column=True is_show_type_column=True is_show_status_column=True %}
+            {# ========================================== #}
+            {# 2. VISUAL PIPELINE STEPPER                 #}
+            {# ========================================== #}
+            <div class="border-t border-gray-100 dark:border-neutral-800/80 pt-3.5 sm:pt-4 mt-1">
+                <div class="flex flex-wrap items-center justify-between gap-1 text-[11px] sm:text-xs font-semibold text-gray-500 dark:text-neutral-400 mb-2">
+                    <span class="flex items-center gap-1.5 uppercase tracking-wider">
+                        <i class="fa-solid fa-diagram-project text-blue-500"></i>
+                        {% translate "Job Lifecycle Pipeline" %}
+                    </span>
+                    <span>
+                        {% translate "Current Stage:" %} <strong class="text-gray-900 dark:text-white">{{ object.get_status_display }}</strong>
+                    </span>
+                </div>
 
+                {# Responsive Pipeline Steps #}
+                <ol class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1.5 sm:gap-2 w-full">
+                    {# Stage 1: Draft #}
+                    <li class="flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border text-xs font-medium
+                        {% if object.status == 'draft' %}
+                            bg-blue-50 border-blue-400 text-blue-800 dark:bg-blue-950/40 dark:border-blue-700 dark:text-blue-300 ring-2 ring-blue-500/20
+                        {% elif object.status in 'not_started,in_progress,completed,archived' %}
+                            bg-emerald-50/70 border-emerald-300 text-emerald-800 dark:bg-emerald-950/20 dark:border-emerald-800/50 dark:text-emerald-300
                         {% else %}
+                            bg-gray-50 border-gray-200 text-gray-500 dark:bg-neutral-800/40 dark:border-neutral-800 dark:text-neutral-500
+                        {% endif %}">
+                        <span class="flex items-center justify-center size-5 rounded-full shrink-0
+                            {% if object.status == 'draft' %} bg-blue-600 text-white
+                            {% elif object.status in 'not_started,in_progress,completed,archived' %} bg-emerald-600 text-white
+                            {% else %} bg-gray-200 text-gray-600 dark:bg-neutral-700 dark:text-neutral-400 {% endif %}">
+                            {% if object.status in 'not_started,in_progress,completed,archived' and object.status != 'draft' %}
+                                <i class="fa-solid fa-check text-[10px]"></i>
+                            {% else %}
+                                1
+                            {% endif %}
+                        </span>
+                        <span class="truncate">{% translate "Draft" %}</span>
+                    </li>
 
-                            {% include "bw_ui_components/global/empty_card.html" with label="tasks" %}
-
-                        {% endif %}
-                    </div>
-                    <div id="documents-tab"
-                         class="hidden"
-                         role="tabpanel"
-                         aria-labelledby="bar-with-underline-item-2">
-                        {% bw_js_modal modal_css_id="createDocumentModal" modal_size="sm" modal_title="Create new document" is_submit_btn_enabled=True is_form_modal=True form_object=document_form is_upload_form=True form_id="createDocumentForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:document:api:document-api-router-list" %}
-                        <div class="text-right">
-                            <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-2 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                                <div class="flex justify-end">
-                                    <div>
-                                        {% bw_create_btn_js_modal js_create_btn_css_id="createDocumentBtn" modal_css_id="createDocumentModal" app_name="document" %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% if object.documents.all %}
-
-                            {% include "bw_components/document/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at is_show_create_btn=False app_label="document" pagination_list_url_name="dashboard:document:list" is_filters_enabled=False is_actions_menu_enabled=True actions_items="update,delete" actions_app_name="document" actions_base_url="dashboard:document" base_url_name="dashboard:document" filter_form=filter_form filter_cancel_url="dashboard:document:list" object_list=object.documents.all is_show_section=False %}
-
+                    {# Stage 2: Not Started #}
+                    <li class="flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border text-xs font-medium
+                        {% if object.status == 'not_started' %}
+                            bg-blue-50 border-blue-400 text-blue-800 dark:bg-blue-950/40 dark:border-blue-700 dark:text-blue-300 ring-2 ring-blue-500/20
+                        {% elif object.status in 'in_progress,completed,archived' %}
+                            bg-emerald-50/70 border-emerald-300 text-emerald-800 dark:bg-emerald-950/20 dark:border-emerald-800/50 dark:text-emerald-300
                         {% else %}
+                            bg-gray-50 border-gray-200 text-gray-500 dark:bg-neutral-800/40 dark:border-neutral-800 dark:text-neutral-500
+                        {% endif %}">
+                        <span class="flex items-center justify-center size-5 rounded-full shrink-0
+                            {% if object.status == 'not_started' %} bg-blue-600 text-white
+                            {% elif object.status in 'in_progress,completed,archived' %} bg-emerald-600 text-white
+                            {% else %} bg-gray-200 text-gray-600 dark:bg-neutral-700 dark:text-neutral-400 {% endif %}">
+                            {% if object.status in 'in_progress,completed,archived' and object.status != 'not_started' %}
+                                <i class="fa-solid fa-check text-[10px]"></i>
+                            {% else %}
+                                2
+                            {% endif %}
+                        </span>
+                        <span class="truncate">{% translate "Not Started" %}</span>
+                    </li>
 
-                            {% include "bw_ui_components/global/empty_card.html" with label="documents" %}
-
-                        {% endif %}
-                    </div>
-                    <div id="notes-tab"
-                         class="hidden"
-                         role="tabpanel"
-                         aria-labelledby="bar-with-underline-item-3">
-                        {% convert_dict_to_str job=object.pk as extra_hidden_inputs %}
-                        {% bw_js_modal modal_css_id="createNoteModal" modal_size="sm" modal_title="Create new note" is_submit_btn_enabled=True is_form_modal=True form_object=note_form is_upload_form=False form_id="createNoteForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:note:api:note-api-router-list" %}
-                        <div class="text-right">
-                            <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-2 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                                <div class="flex justify-end">
-                                    <div>
-                                        {% bw_create_btn_js_modal js_create_btn_css_id="createNoteBtn" modal_css_id="createNoteModal" app_name="note" %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% if object.notes.all %}
-
-                            {% include "bw_components/note/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at header_title="Notes" is_show_create_btn=False app_label="note" pagination_list_url_name="dashboard:note:list" is_filters_enabled=False is_actions_menu_enabled=True actions_items="update,delete" actions_app_name="note" actions_base_url="dashboard:note" base_url_name="dashboard:note" filter_form=filter_form filter_cancel_url="dashboard:note:list" object_list=object.notes.all is_show_section=False %}
-
+                    {# Stage 3: In Progress #}
+                    <li class="flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border text-xs font-medium
+                        {% if object.status == 'in_progress' %}
+                            bg-blue-50 border-blue-400 text-blue-800 dark:bg-blue-950/40 dark:border-blue-700 dark:text-blue-300 ring-2 ring-blue-500/20
+                        {% elif object.status in 'completed,archived' %}
+                            bg-emerald-50/70 border-emerald-300 text-emerald-800 dark:bg-emerald-950/20 dark:border-emerald-800/50 dark:text-emerald-300
+                        {% elif object.status == 'past_due' %}
+                            bg-red-50 border-red-400 text-red-800 dark:bg-red-950/40 dark:border-red-700 dark:text-red-300 ring-2 ring-red-500/20
                         {% else %}
+                            bg-gray-50 border-gray-200 text-gray-500 dark:bg-neutral-800/40 dark:border-neutral-800 dark:text-neutral-500
+                        {% endif %}">
+                        <span class="flex items-center justify-center size-5 rounded-full shrink-0
+                            {% if object.status == 'in_progress' %} bg-blue-600 text-white
+                            {% elif object.status in 'completed,archived' %} bg-emerald-600 text-white
+                            {% elif object.status == 'past_due' %} bg-red-600 text-white
+                            {% else %} bg-gray-200 text-gray-600 dark:bg-neutral-700 dark:text-neutral-400 {% endif %}">
+                            {% if object.status in 'completed,archived' %}
+                                <i class="fa-solid fa-check text-[10px]"></i>
+                            {% else %}
+                                3
+                            {% endif %}
+                        </span>
+                        <span class="truncate">
+                            {% if object.status == 'past_due' %}
+                                {% translate "Past Due" %}
+                            {% else %}
+                                {% translate "In Progress" %}
+                            {% endif %}
+                        </span>
+                    </li>
 
-                            {% include "bw_ui_components/global/empty_card.html" with label="notes" %}
-
-                        {% endif %}
-                    </div>
-                    <div id="assignments-tab"
-                         role="tabpanel"
-                         class="hidden"
-                         aria-labelledby="bar-with-underline-item-1">
-                        <div class="text-right">
-                            <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-2 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                                <div class="flex justify-end">
-                                    <div>
-                                        {% bw_create_btn_js_modal js_create_btn_css_id="createAssignmentBtn" modal_css_id="createAssignmentModal" app_name="special_assignment" %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% bw_js_modal modal_css_id="createAssignmentModal" modal_size="md" modal_title="Create new assignment" is_submit_btn_enabled=True is_form_modal=True form_object=special_assignment_form is_upload_form=True form_id="createAssignmentForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:special_assignment:api:special-assignment-api-router-list" %}
-                        {% if object.special_assignments.all %}
-
-                            {% include "bw_components/special_assignment/mini_table_list.html" with is_checkbox_enabled=False is_show_created_at=IS_SHOW_CREATED_AT header_title="Special assignments" header_subtitle="Special assignments custom specific assignments to clients" app_label=app_label pagination_list_url_name="dashboard:special_assignment:list" is_actions_menu_enabled=False actions_items="show,update,delete" actions_app_name=app_label actions_base_url="dashboard:special_assignment" base_url_name="dashboard:special_assignment" filter_form=filter_form filter_cancel_url="dashboard:special_assignment:list" page_obj=object.special_assignments.all %}
-
+                    {# Stage 4: Completed #}
+                    <li class="flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border text-xs font-medium
+                        {% if object.status == 'completed' %}
+                            bg-emerald-50 border-emerald-400 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-700 dark:text-emerald-300 ring-2 ring-emerald-500/20
+                        {% elif object.status == 'archived' %}
+                            bg-emerald-50/70 border-emerald-300 text-emerald-800 dark:bg-emerald-950/20 dark:border-emerald-800/50 dark:text-emerald-300
                         {% else %}
+                            bg-gray-50 border-gray-200 text-gray-500 dark:bg-neutral-800/40 dark:border-neutral-800 dark:text-neutral-500
+                        {% endif %}">
+                        <span class="flex items-center justify-center size-5 rounded-full shrink-0
+                            {% if object.status in 'completed,archived' %} bg-emerald-600 text-white
+                            {% else %} bg-gray-200 text-gray-600 dark:bg-neutral-700 dark:text-neutral-400 {% endif %}">
+                            {% if object.status in 'completed,archived' %}
+                                <i class="fa-solid fa-check text-[10px]"></i>
+                            {% else %}
+                                4
+                            {% endif %}
+                        </span>
+                        <span class="truncate">{% translate "Completed" %}</span>
+                    </li>
 
-                            {% include "bw_ui_components/global/empty_card.html" with label="special assignments" %}
+                    {# Stage 5: Archived #}
+                    <li class="flex items-center gap-2 p-2 sm:p-2.5 rounded-xl border text-xs font-medium sm:col-span-2 md:col-span-1 lg:col-span-1
+                        {% if object.status == 'archived' %}
+                            bg-amber-50 border-amber-400 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300 ring-2 ring-amber-500/20
+                        {% else %}
+                            bg-gray-50 border-gray-200 text-gray-500 dark:bg-neutral-800/40 dark:border-neutral-800 dark:text-neutral-500
+                        {% endif %}">
+                        <span class="flex items-center justify-center size-5 rounded-full shrink-0
+                            {% if object.status == 'archived' %} bg-amber-600 text-white
+                            {% else %} bg-gray-200 text-gray-600 dark:bg-neutral-700 dark:text-neutral-400 {% endif %}">
+                            5
+                        </span>
+                        <span class="truncate">{% translate "Archived" %}</span>
+                    </li>
+                </ol>
+            </div>
+        </div>
 
-                        {% endif %}
+        {# ========================================== #}
+        {# 3. LIVE HEALTH & KPI DASHBOARD STRIP       #}
+        {# ========================================== #}
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 sm:gap-4">
+            {# Metric 1: Timeline & Due Date #}
+            <div class="flex flex-col justify-between bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400">
+                        {% translate "Timeline" %}
+                    </span>
+                    <div class="size-8 sm:size-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center dark:bg-blue-950/40 dark:text-blue-400 shrink-0">
+                        <i class="fa-regular fa-calendar-days text-sm"></i>
                     </div>
                 </div>
-            </section>
-            {# End Tabs Block #}
-        </div>
-        <div class="p-5 flex flex-col gap-4 rounded">
-            <div class="main flex flex-col gap-2">
-                {% if object.status == CON_ARCHIVED or object.status == CON_COMPLETED %}
-                    <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 text-center">
-                        <span class="gap-x-1.5 py-1.5 px-3 rounded-full text-md font-bold bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">{% translate "Archived" %}</span>
+                <div class="mt-3">
+                    <div class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
+                        {% translate "Due:" %} {% bw_date date_txt=object.due_date is_in_table_list=False %}
                     </div>
-                {% endif %}
-                <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                    <label for="job-status-input" class="sr-only">
-                        {% translate "Status" %}
-                    </label>
+                    <div class="text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 mt-1">
+                        {% translate "Start:" %} {% bw_date date_txt=object.start_date is_in_table_list=False %}
+                    </div>
+                </div>
+            </div>
+
+            {# Metric 2: Tasks Velocity #}
+            <div class="flex flex-col justify-between bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400">
+                        {% translate "Tasks" %}
+                    </span>
+                    <div class="size-8 sm:size-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center dark:bg-emerald-950/40 dark:text-emerald-400 shrink-0">
+                        <i class="fa-solid fa-list-check text-sm"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ object.tasks.count }}
+                    </div>
+                    <div class="text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 mt-1">
+                        {% translate "Linked deliverable tasks" %}
+                    </div>
+                </div>
+            </div>
+
+            {# Metric 3: Documents Attached #}
+            <div class="flex flex-col justify-between bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400">
+                        {% translate "Documents" %}
+                    </span>
+                    <div class="size-8 sm:size-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center dark:bg-amber-950/40 dark:text-amber-400 shrink-0">
+                        <i class="fa-solid fa-file text-sm"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                        {{ object.documents.count }}
+                    </div>
+                    <div class="text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 mt-1">
+                        {% translate "Attached files & records" %}
+                    </div>
+                </div>
+            </div>
+
+            {# Metric 4: Special Assignments & Collaboration #}
+            <div class="flex flex-col justify-between bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400">
+                        {% translate "Collaboration" %}
+                    </span>
+                    <div class="size-8 sm:size-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center dark:bg-purple-950/40 dark:text-purple-400 shrink-0">
+                        <i class="fa-solid fa-comments text-sm"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="flex items-center gap-2 sm:gap-3 text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+                        <span>{{ object.special_assignments.count }} <small class="text-[11px] sm:text-xs font-normal text-gray-500 dark:text-neutral-400">{% translate "assign." %}</small></span>
+                        <span class="text-gray-300 dark:text-neutral-700">|</span>
+                        <span>{{ object.discussions.count }} <small class="text-[11px] sm:text-xs font-normal text-gray-500 dark:text-neutral-400">{% translate "replies" %}</small></span>
+                    </div>
+                    <div class="text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 mt-1">
+                        {% translate "Assignments & active replies" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ========================================== #}
+        {# 4. MAIN DUAL-PANE COCKPIT LAYOUT           #}
+        {# ========================================== #}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+            {# -------------------------------------- #}
+            {# MAIN WORKBENCH (Left - 8 Columns)      #}
+            {# -------------------------------------- #}
+            <div class="lg:col-span-8 space-y-5 sm:space-y-6 w-full min-w-0">
+                {# Scope & Description Card #}
+                <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 md:p-6 dark:bg-neutral-900 dark:border-neutral-800 space-y-3.5 sm:space-y-4">
+                    <div class="flex items-center justify-between border-b border-gray-100 dark:border-neutral-800/80 pb-3">
+                        <h2 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-align-left text-blue-500 text-xs sm:text-sm"></i>
+                            {% translate "Scope & Job Description" %}
+                        </h2>
+                        <div class="hs-tooltip inline-block">
+                            <button type="button" class="hs-tooltip-toggle text-xs text-gray-400 hover:text-gray-600 dark:hover:text-neutral-300">
+                                <i class="fa-regular fa-clock"></i>
+                                {{ object.created_at|naturaltime }}
+                                <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-neutral-700"
+                                      role="tooltip">
+                                    {% translate "Created at" %}: {{ object.created_at }}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {# Description Content #}
+                    <div class="text-xs sm:text-sm text-gray-700 dark:text-neutral-300 leading-relaxed max-h-80 overflow-y-auto break-words">
+                        {% if object.description %}
+                            <p>{{ object.description|safe }}</p>
+                        {% else %}
+                            <p class="text-gray-400 dark:text-neutral-500 italic">
+                                {% translate "No description provided for this job." %}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    {# Pinned Note Alert Block #}
+                    {% if object.note %}
+                        <div class="flex gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl bg-amber-50/80 border border-amber-200/80 text-amber-900 dark:bg-amber-950/20 dark:border-amber-800/50 dark:text-amber-300">
+                            <i class="fa-solid fa-thumbtack text-amber-600 dark:text-amber-400 mt-0.5 shrink-0 text-xs sm:text-sm"></i>
+                            <div class="space-y-1 min-w-0 flex-1">
+                                <h4 class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400">
+                                    {% translate "Job Advisory Note" %}
+                                </h4>
+                                <div class="text-xs sm:text-sm italic break-words">
+                                    {{ object.note|safe }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {# ========================================== #}
+                {# 5. INTERACTIVE WORKBENCH TABS             #}
+                {# ========================================== #}
+                <div class="bg-white border border-gray-200 shadow-xs rounded-2xl overflow-hidden dark:bg-neutral-900 dark:border-neutral-800">
+                    {# Tab Navigation Bar with horizontal scrolling on mobile #}
+                    <div class="border-b border-gray-200 dark:border-neutral-800 px-3 sm:px-6 pt-2.5 sm:pt-3 bg-gray-50/50 dark:bg-neutral-900/50 overflow-x-auto">
+                        <nav class="flex space-x-1 sm:space-x-4 min-w-max" aria-label="Tabs" role="tablist">
+                            {# Tasks Tab Button #}
+                            <button type="button"
+                                    class="hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-400 py-3 px-2.5 sm:px-3 inline-flex items-center gap-1.5 sm:gap-2 border-b-2 border-transparent text-xs sm:text-sm font-semibold whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-hidden active"
+                                    id="tasks-tab-btn"
+                                    data-hs-tab="#tasks-tab"
+                                    aria-controls="tasks-tab"
+                                    role="tab">
+                                <i class="fa-solid fa-list-check"></i>
+                                {% translate "Tasks" %}
+                                <span class="py-0.5 px-1.5 sm:px-2 rounded-full text-[11px] sm:text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                    {{ object.tasks.count }}
+                                </span>
+                            </button>
+
+                            {# Documents Tab Button #}
+                            <button type="button"
+                                    class="hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-400 py-3 px-2.5 sm:px-3 inline-flex items-center gap-1.5 sm:gap-2 border-b-2 border-transparent text-xs sm:text-sm font-semibold whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-hidden"
+                                    id="documents-tab-btn"
+                                    data-hs-tab="#documents-tab"
+                                    aria-controls="documents-tab"
+                                    role="tab">
+                                <i class="fa-solid fa-file"></i>
+                                {% translate "Documents" %}
+                                <span class="py-0.5 px-1.5 sm:px-2 rounded-full text-[11px] sm:text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                    {{ object.documents.count }}
+                                </span>
+                            </button>
+
+                            {# Notes Tab Button #}
+                            <button type="button"
+                                    class="hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-400 py-3 px-2.5 sm:px-3 inline-flex items-center gap-1.5 sm:gap-2 border-b-2 border-transparent text-xs sm:text-sm font-semibold whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-hidden"
+                                    id="notes-tab-btn"
+                                    data-hs-tab="#notes-tab"
+                                    aria-controls="notes-tab"
+                                    role="tab">
+                                <i class="fa-solid fa-note-sticky"></i>
+                                {% translate "Notes" %}
+                                <span class="py-0.5 px-1.5 sm:px-2 rounded-full text-[11px] sm:text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                    {{ object.notes.count }}
+                                </span>
+                            </button>
+
+                            {# Assignments Tab Button #}
+                            <button type="button"
+                                    class="hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-400 py-3 px-2.5 sm:px-3 inline-flex items-center gap-1.5 sm:gap-2 border-b-2 border-transparent text-xs sm:text-sm font-semibold whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-hidden"
+                                    id="assignments-tab-btn"
+                                    data-hs-tab="#assignments-tab"
+                                    aria-controls="assignments-tab"
+                                    role="tab">
+                                <i class="fa-solid fa-list-ol"></i>
+                                {% translate "Assignments" %}
+                                <span class="py-0.5 px-1.5 sm:px-2 rounded-full text-[11px] sm:text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                    {{ object.special_assignments.count }}
+                                </span>
+                            </button>
+                        </nav>
+                    </div>
+
+                    {# Tab Panels Container #}
+                    <div class="p-4 sm:p-5 md:p-6">
+                        {% convert_dict_to_str job=object.pk as extra_hidden_inputs %}
+
+                        {# TAB 1: Tasks Panel #}
+                        <div id="tasks-tab" role="tabpanel" aria-labelledby="tasks-tab-btn">
+                            {% bw_js_modal modal_css_id="createTaskModal" modal_size="sm" modal_title="Create new task" is_submit_btn_enabled=True is_form_modal=True form_object=task_form is_upload_form=True form_id="createTaskForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:task:api:task-api-router-list" %}
+                            
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                <h3 class="text-xs sm:text-sm font-bold text-gray-800 dark:text-neutral-200">
+                                    {% translate "Tasks & Checklist" %}
+                                </h3>
+                                {% bw_create_btn_js_modal js_create_btn_css_id="createTaskBtn" modal_css_id="createTaskModal" app_name="task" %}
+                            </div>
+
+                            <div class="w-full overflow-x-auto">
+                                {% if object.tasks.all %}
+                                    {% include "bw_components/task/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at is_show_create_btn=False app_label="task" pagination_list_url_name="dashboard:task:list" is_filters_enabled=False is_actions_menu_enabled=True actions_items="update,delete" actions_app_name="task" actions_base_url="dashboard:task" base_url_name="dashboard:task" filter_form=filter_form filter_cancel_url="dashboard:task:list" object_list=object.tasks.all is_show_job_column=False is_show_manager_column=True is_show_type_column=True is_show_status_column=True %}
+                                {% else %}
+                                    {% include "bw_ui_components/global/empty_card.html" with label="tasks" %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# TAB 2: Documents Panel #}
+                        <div id="documents-tab" class="hidden" role="tabpanel" aria-labelledby="documents-tab-btn">
+                            {% bw_js_modal modal_css_id="createDocumentModal" modal_size="sm" modal_title="Upload new document" is_submit_btn_enabled=True is_form_modal=True form_object=document_form is_upload_form=True form_id="createDocumentForm" form_submit_text="Upload" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:document:api:document-api-router-list" %}
+
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                <h3 class="text-xs sm:text-sm font-bold text-gray-800 dark:text-neutral-200">
+                                    {% translate "Attached Documents" %}
+                                </h3>
+                                {% bw_create_btn_js_modal js_create_btn_css_id="createDocumentBtn" modal_css_id="createDocumentModal" app_name="document" %}
+                            </div>
+
+                            <div class="w-full overflow-x-auto">
+                                {% if object.documents.all %}
+                                    {% include "bw_components/document/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at is_show_create_btn=False app_label="document" pagination_list_url_name="dashboard:document:list" is_filters_enabled=False is_actions_menu_enabled=True actions_items="update,delete" actions_app_name="document" actions_base_url="dashboard:document" base_url_name="dashboard:document" filter_form=filter_form filter_cancel_url="dashboard:document:list" object_list=object.documents.all is_show_section=False %}
+                                {% else %}
+                                    {% include "bw_ui_components/global/empty_card.html" with label="documents" %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# TAB 3: Notes Panel #}
+                        <div id="notes-tab" class="hidden" role="tabpanel" aria-labelledby="notes-tab-btn">
+                            {% bw_js_modal modal_css_id="createNoteModal" modal_size="sm" modal_title="Add new note" is_submit_btn_enabled=True is_form_modal=True form_object=note_form is_upload_form=False form_id="createNoteForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:note:api:note-api-router-list" %}
+
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                <h3 class="text-xs sm:text-sm font-bold text-gray-800 dark:text-neutral-200">
+                                    {% translate "Internal Notes & Documentation" %}
+                                </h3>
+                                {% bw_create_btn_js_modal js_create_btn_css_id="createNoteBtn" modal_css_id="createNoteModal" app_name="note" %}
+                            </div>
+
+                            <div class="w-full overflow-x-auto">
+                                {% if object.notes.all %}
+                                    {% include "bw_components/note/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at header_title="Notes" is_show_create_btn=False app_label="note" pagination_list_url_name="dashboard:note:list" is_filters_enabled=False is_actions_menu_enabled=True actions_items="update,delete" actions_app_name="note" actions_base_url="dashboard:note" base_url_name="dashboard:note" filter_form=filter_form filter_cancel_url="dashboard:note:list" object_list=object.notes.all is_show_section=False %}
+                                {% else %}
+                                    {% include "bw_ui_components/global/empty_card.html" with label="notes" %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# TAB 4: Special Assignments Panel #}
+                        <div id="assignments-tab" class="hidden" role="tabpanel" aria-labelledby="assignments-tab-btn">
+                            {% bw_js_modal modal_css_id="createAssignmentModal" modal_size="md" modal_title="Create special assignment" is_submit_btn_enabled=True is_form_modal=True form_object=special_assignment_form is_upload_form=True form_id="createAssignmentForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:special_assignment:api:special-assignment-api-router-list" %}
+
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                <h3 class="text-xs sm:text-sm font-bold text-gray-800 dark:text-neutral-200">
+                                    {% translate "Special Client Assignments" %}
+                                </h3>
+                                {% bw_create_btn_js_modal js_create_btn_css_id="createAssignmentBtn" modal_css_id="createAssignmentModal" app_name="special_assignment" %}
+                            </div>
+
+                            <div class="w-full overflow-x-auto">
+                                {% if object.special_assignments.all %}
+                                    {% include "bw_components/special_assignment/mini_table_list.html" with is_checkbox_enabled=False is_show_created_at=IS_SHOW_CREATED_AT header_title="Special assignments" header_subtitle="Special assignments custom specific assignments to clients" app_label=app_label pagination_list_url_name="dashboard:special_assignment:list" is_actions_menu_enabled=False actions_items="show,update,delete" actions_app_name=app_label actions_base_url="dashboard:special_assignment" base_url_name="dashboard:special_assignment" filter_form=filter_form filter_cancel_url="dashboard:special_assignment:list" page_obj=object.special_assignments.all %}
+                                {% else %}
+                                    {% include "bw_ui_components/global/empty_card.html" with label="special assignments" %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# ========================================== #}
+                {# 6. THREADED DISCUSSIONS & REPLIES FEED     #}
+                {# ========================================== #}
+                <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-5 sm:p-6 dark:bg-neutral-900 dark:border-neutral-800 space-y-4">
+                    <div class="flex items-center justify-between gap-2 pb-4 mb-4 border-b border-gray-100 dark:border-neutral-800">
+                        <div class="flex items-center gap-2.5">
+                            <span class="flex items-center justify-center size-8 rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
+                                <i class="fa-solid fa-comments text-sm"></i>
+                            </span>
+                            <div>
+                                <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
+                                    {% translate "Team Discussion & Activity" %}
+                                </h3>
+                                <p class="text-xs text-gray-500 dark:text-neutral-400">
+                                    {% translate "Collaborative message stream between assignees and management" %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% bw_vue_chatbox object=object %}
+                </div>
+            </div>
+
+            {# -------------------------------------- #}
+            {# COCKPIT INSPECTOR (Right - 4 Columns)  #}
+            {# -------------------------------------- #}
+            <div class="lg:col-span-4 space-y-5 sm:space-y-6 w-full">
+                {# Quick Status & State Controller #}
+                <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800 space-y-3.5 sm:space-y-4">
+                    <div class="flex items-center justify-between border-b border-gray-100 dark:border-neutral-800/80 pb-3">
+                        <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-blue-500"></i>
+                            {% translate "Quick Status Control" %}
+                        </h3>
+                    </div>
+
                     <form action="{% url 'dashboard:job:api:job-api-router-detail' object.pk %}"
                           method="post"
                           id="updateJobStatusStateForm">
-                        <fieldset form="updateJobStatusStateForm">
+                        <fieldset form="updateJobStatusStateForm" class="space-y-3">
                             {% csrf_token %}
                             <input type="hidden" name="_method" value="PATCH" />
                             <input type="hidden" name="pk" value="{{ object.pk }}" />
-                            <div class="flex rounded-md shadow-sm">
+
+                            <div class="space-y-1.5">
+                                <label for="jobStatusInput" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                                    {% translate "Job Status" %}
+                                </label>
                                 <select id="jobStatusInput"
                                         name="status"
-                                        class="{{ BW_FULL_INPUT_CSS_CLASSES }} py-2 px-3 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                                        disabled>
+                                        class="py-2 sm:py-2.5 px-3 block w-full border-gray-200 rounded-xl text-xs sm:text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200 min-h-[42px]">
                                     {% for choice in job_status_choices %}
-                                        <option value="{{ choice.0|safe }}"
-                                                {% if object.status == choice.0 %}
-                                                    selected
-                                                {% endif %}>
+                                        <option value="{{ choice.0|safe }}" {% if object.status == choice.0 %}selected{% endif %}>
                                             {{ choice.1|safe }}
                                         </option>
                                     {% endfor %}
                                 </select>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label for="jobStateInput" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300">
+                                    {% translate "Job State" %}
+                                </label>
                                 <select id="jobStateInput"
                                         name="state"
-                                        class="{{ BW_FULL_INPUT_CSS_CLASSES }} py-2 px-3 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                                        disabled>
+                                        class="py-2 sm:py-2.5 px-3 block w-full border-gray-200 rounded-xl text-xs sm:text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200 min-h-[42px]">
                                     {% for choice in job_stats_choices %}
-                                        <option value="{{ choice.0|safe }}"
-                                                {% if object.state == choice.0 %}
-                                                    selected
-                                                {% endif %}>
+                                        <option value="{{ choice.0|safe }}" {% if object.state == choice.0 %}selected{% endif %}>
                                             {{ choice.1|safe }}
                                         </option>
                                     {% endfor %}
                                 </select>
-                                <button type="submit"
-                                        form="updateJobStatusStateForm"
-                                        class="{{ BW_FULL_INPUT_CSS_CLASSES }} hs-tooltip -ml-px py-3 px-4 inline-flex justify-center items-center gap-2 border font-medium bg-blue-100 border-transparent text-blue-500 hover:text-white hover:bg-blue-400 focus:outline-none focus:ring-2 ring-offset-white focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-                                        disabled
-                                        id="updateJobStatusBtn">
-                                    <i class="fa-solid fa-save"></i>
-                                    <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                          role="tooltip">{% translate "Update status" %}</span>
-                                </button>
-                                <button type="button"
-                                        id="updateJobModalBtn"
-                                        class="{{ BW_FULL_INPUT_CSS_CLASSES }} hs-tooltip hs-tooltip-toggle py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-yellow-100 text-yellow-500 hover:text-white hover:bg-yellow-400 focus:outline-none focus:ring-2 ring-offset-white focus:ring-yellow-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-                                        data-hs-overlay="#update-job-details-modal"
-                                        disabled>
-                                    <i class="fa-solid fa-pencil"></i>
-                                    <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                          role="tooltip">{% translate "Update job" %}</span>
-                                </button>
                             </div>
+
+                            <button type="submit"
+                                    form="updateJobStatusStateForm"
+                                    id="updateJobStatusBtn"
+                                    class="w-full mt-2 py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-xs sm:text-sm font-semibold rounded-xl bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 transition-all shadow-xs min-h-[42px]">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                {% translate "Update Status & State" %}
+                            </button>
                         </fieldset>
                     </form>
                 </div>
-                <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                    <div>
-                        <div class="flex rounded-lg shadow-sm">
-                            <div class="hs-tooltip px-4 inline-flex items-center min-w-fit rounded-l-md border border-r-0 border-gray-200 bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-                                <span class="hs-tooltip-toggle text-sm text-gray-500 dark:text-gray-400">
-                                    <i class="fa-solid fa-user-circle fa-xl"></i>
-                                </span>
-                                <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                      role="tooltip">{% translate "Managed by" %}</span>
-                            </div>
-                            <input type="text"
-                                   id="hs-search-box-with-loading-3"
-                                   name="hs-search-box-with-loading-3"
-                                   class="{{ BW_FULL_INPUT_CSS_CLASSES }} py-3 px-4 pr-11 block w-full border-gray-200 shadow-sm rounded-none text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 cursor-not-allowed
-                                          {% if not object.managed_by %}
-                                              text-red-500
-                                          {% endif %}"
-                                   data-keep-disabled="true"
-                                   value="{% if object.managed_by %}
-                                              {{ object.managed_by.fullname|safe }}
-                                          {% else %}
-                                              NO MANAGER
-                                          {% endif %}"
-                                   placeholder="{% if object.managed_by %}
-                                                    {{ object.managed_by.fullname|safe }}
-                                                {% else %}
-                                                    NO MANAGER
-                                                {% endif %}"
-                                   disabled
-                                   readonly />
-                            {% if object.managed_by %}
-                                <a href="{% url 'dashboard:staff:member-details' object.managed_by.pk %}"
-                                   target="_blank"
-                                   class="w-[2.875rem] h-[2.875rem] flex-shrink-0 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-e-md border border-transparent bg-blue-100 text-blue-500 hover:text-white hover:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                </a>
-                            {% else %}
-                                <a href="#"
-                                   target="_blank"
-                                   class="w-[2.875rem] h-[2.875rem] flex-shrink-0 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-e-md border border-transparent bg-blue-100 text-blue-500 hover:text-white hover:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <div>
-                            <div class="flex rounded-lg shadow-sm">
-                                <div class="hs-tooltip px-4 inline-flex items-center min-w-fit rounded-l-md border border-r-0 border-gray-200 bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-                                    <span class="hs-tooltip-toggle text-sm text-gray-500 dark:text-gray-400">
-                                        <i class="fa-solid fa-building fa-xl"></i>
-                                    </span>
-                                    <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                          role="tooltip">{% translate "Client" %}</span>
+
+                {# Client Dossier Card #}
+                <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800 space-y-3">
+                    <h3 class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                        {% translate "Client Organization" %}
+                    </h3>
+
+                    {% if object.client %}
+                        <div class="flex items-start justify-between gap-3 pt-1">
+                            <div class="flex items-center gap-3 min-w-0 flex-1">
+                                <div class="size-9 sm:size-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center dark:bg-blue-950/40 dark:text-blue-400 shrink-0">
+                                    <i class="fa-solid fa-building text-sm sm:text-base"></i>
                                 </div>
-                                <input type="text"
-                                       name="client_name"
-                                       id="client_name"
-                                       class="{{ BW_FULL_INPUT_CSS_CLASSES }} rounded-none py-3 px-4 pr-11 block w-full border-gray-200 shadow-sm text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                                       data-keep-disabled="true"
-                                       value="{{ object.client.name|safe }}"
-                                       placeholder="{{ object.client.name|safe }}"
-                                       readonly
-                                       disabled />
-                                <a href="{% if object.client %} {% url 'dashboard:client:details' object.client.pk %} {% else %} # {% endif %}"
-                                   target="_blank"
-                                   class="w-[2.875rem] h-[2.875rem] flex-shrink-0 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-e-md border border-transparent bg-blue-100 text-blue-500 hover:text-white hover:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                </a>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white truncate">
+                                        {{ object.client.name }}
+                                    </h4>
+                                    {% if object.client.industry %}
+                                        <p class="text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 truncate">
+                                            {{ object.client.industry }}
+                                        </p>
+                                    {% endif %}
+                                </div>
                             </div>
+                            <a href="{% url 'dashboard:client:details' object.client.pk %}"
+                               target="_blank"
+                               class="size-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-blue-400 transition-colors shrink-0"
+                               title="{% translate 'View Client Profile' %}">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                            </a>
                         </div>
-                    </div>
-                </div>
-                <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                    <dl class="grid sm:grid-cols-3 gap-1 sm:gap-3">
-                        <dt class="sm:col-span-1 font-semibold dark:text-white">
-                            {% translate "Period Year" %}
-                        </dt>
-                        <dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white">
-                            <h6 class="text-base dark:text-white">
-                                {{ object.period_year }}
-                            </h6>
-                        </dd>
-                        <dt class="sm:col-span-1 font-semibold dark:text-white">
-                            {% translate "Period Month" %}
-                        </dt>
-                        <dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white">
-                            <h6 class="text-base dark:text-white">
-                                {{ object.get_period_month_display }}
-                            </h6>
-                        </dd>
-                    </dl>
-                </div>
-                <div class="-mt-2">
-                    {% if object.discussions.all %}
-                        {% bw_discussion_chatbox object=object user=request.user display_form=False %}
                     {% else %}
-
-                        {% include "bw_ui_components/global/empty_card.html" with label="discussions or replies" %}
-
+                        <p class="text-xs text-gray-400 dark:text-neutral-500 italic">
+                            {% translate "No client assigned." %}
+                        </p>
                     {% endif %}
                 </div>
-                <div class="-mt-1">
-                    <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-                        {% bw_js_modal modal_css_id="add-discussion-model-form" modal_size="sm" modal_title="Post discussion or reply" is_submit_btn_enabled=True is_form_modal=True form_object=discussion_form is_upload_form=True form_id="createDiscussionForm" form_submit_text="Create" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:discussion:api:discussion-api-router-list" %}
-                        <button type="button"
-                                data-hs-overlay="#add-discussion-model-form"
-                                disabled
-                                class="{{ BW_FULL_INPUT_CSS_CLASSES }} w-full m-1 ml-0 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md bg-blue-100 border border-transparent font-semibold text-blue-500 hover:text-white hover:bg-blue-500 focus:outline-none focus:ring-2 ring-offset-white focus:ring-blue-100 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
-                            {% translate "Submit reply" %}
-                        </button>
+
+                {# Management / Staff Card #}
+                <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800 space-y-3">
+                    <h3 class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                        {% translate "Assigned Manager" %}
+                    </h3>
+
+                    {% if object.managed_by %}
+                        <div class="flex items-start justify-between gap-3 pt-1">
+                            <div class="flex items-center gap-3 min-w-0 flex-1">
+                                <div class="size-9 sm:size-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center dark:bg-emerald-950/40 dark:text-emerald-400 shrink-0">
+                                    <i class="fa-solid fa-user-tie text-sm sm:text-base"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white truncate">
+                                        {{ object.managed_by.fullname|default:object.managed_by.email }}
+                                    </h4>
+                                    <p class="text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 capitalize truncate">
+                                        {{ object.managed_by.user_type }}
+                                    </p>
+                                </div>
+                            </div>
+                            <a href="{% url 'dashboard:staff:member-details' object.managed_by.pk %}"
+                               target="_blank"
+                               class="size-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-blue-400 transition-colors shrink-0"
+                               title="{% translate 'View Staff Profile' %}">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center gap-2 text-xs text-red-500 dark:text-red-400">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            {% translate "No Manager Assigned" %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {# Fiscal Period & Audit Timestamps Card #}
+                <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800 space-y-3.5 sm:space-y-4">
+                    <h3 class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                        {% translate "Fiscal Period & Metadata" %}
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
+                        <div class="p-2.5 sm:p-3 rounded-xl bg-gray-50 dark:bg-neutral-800/60 border border-gray-100 dark:border-neutral-800">
+                            <span class="text-[10px] sm:text-[11px] font-medium text-gray-500 dark:text-neutral-400 block">
+                                {% translate "Fiscal Year" %}
+                            </span>
+                            <span class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white mt-0.5 block">
+                                {{ object.period_year|default:"—" }}
+                            </span>
+                        </div>
+                        <div class="p-2.5 sm:p-3 rounded-xl bg-gray-50 dark:bg-neutral-800/60 border border-gray-100 dark:border-neutral-800">
+                            <span class="text-[10px] sm:text-[11px] font-medium text-gray-500 dark:text-neutral-400 block">
+                                {% translate "Fiscal Month" %}
+                            </span>
+                            <span class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white mt-0.5 block">
+                                {{ object.get_period_month_display|default:"—" }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-100 dark:border-neutral-800/80 pt-3 space-y-1.5 sm:space-y-2 text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400">
+                        <div class="flex items-center justify-between">
+                            <span>{% translate "Created" %}:</span>
+                            <span class="font-medium text-gray-700 dark:text-neutral-300">{{ object.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>{% translate "Last Updated" %}:</span>
+                            <span class="font-medium text-gray-700 dark:text-neutral-300">{{ object.updated_at|naturaltime }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {# Start Update Job Modal #}
-    {% bw_js_modal modal_css_id="update-job-details-modal" modal_size="sm" modal_title="Update job" is_submit_btn_enabled=True is_form_modal=True form_object=job_update_form is_upload_form=False form_id="updateJobForm" form_submit_text="Update" action_url="dashboard:job:api:job-api-router-detail" action_url_pk=object.pk form_method="post" enable_hidden_method=True %}
-    {# End Update Job Modal #}
+
+    {# ========================================== #}
+    {# 7. FULL UPDATE JOB MODAL                   #}
+    {# ========================================== #}
+    {% bw_js_modal modal_css_id="update-job-details-modal" modal_size="sm" modal_title="Update job details" is_submit_btn_enabled=True is_form_modal=True form_object=job_update_form is_upload_form=False form_id="updateJobForm" form_submit_text="Update" action_url="dashboard:job:api:job-api-router-detail" action_url_pk=object.pk form_method="post" enable_hidden_method=True %}
+
 {% endblock dashboard_content_block %}

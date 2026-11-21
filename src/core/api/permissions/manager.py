@@ -1,43 +1,29 @@
-# -*- coding: utf-8 -*-#
-from typing import Tuple
+"""Permission classes for manager-level API access control."""
+from __future__ import annotations
+
+from typing import ClassVar
 
 from django.http import HttpRequest
 from rest_framework import permissions
 from rest_framework.views import APIView
 
+from core.choices import BeachWoodUserTypeEnum
+
 
 class ManagerApiPermission(permissions.BasePermission):
-    """
-    Permission class for API actions related to managers.
+    """Permission class restricting API access to managers and assistants only."""
 
-    This class provides permission handling for API actions specific to managers.
-    It defines permission checks for different HTTP methods.
-
-    Attributes:
-        edit_methods (Tuple[str]): The HTTP methods for which edit permissions are required.
-
-    Methods:
-        has_permission(self, request: HttpRequest, view: APIView) -> bool:
-            Checks if the requesting user has the required permission for the API action.
-
-    """
-
-    edit_methods: Tuple[str] = ("PUT", "PATCH")
+    edit_methods: ClassVar[tuple[str, ...]] = ("PUT", "PATCH")
 
     def has_permission(self, request: HttpRequest, view: APIView) -> bool:
-        """
-        Checks if the requesting user has the required permission for the API action.
-
-        Args:
-            request (HttpRequest): The request object.
-            view (APIView): The view object.
-
-        Returns:
-            bool: True if the user has the required permission, False otherwise.
-
-        """
-        if request.user.user_type in ["manager", "assistant"]:
+        """Check if requesting user has manager or assistant privileges."""
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if request.user.is_superuser or request.user.is_staff:
             return True
-        if request.method in self.edit_methods:
-            return request.user.is_staff
-        return True
+        return request.user.user_type in (
+            BeachWoodUserTypeEnum.MANAGER,
+            BeachWoodUserTypeEnum.ASSISTANT,
+        )
+
+

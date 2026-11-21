@@ -16,6 +16,8 @@ from core.constants.status_labels import (
 )
 from core.utils import bw_log
 from job.models import JobProxy
+from lf_notifications.services import NotificationService
+from lf_notifications.models import NotificationVerb
 import logging
 
 # Apply basic config for all loggers.
@@ -55,6 +57,29 @@ def trigger_fired():
                     job.status = CON_PAST_DUE
                     job.updated_by_cron = True
                     job.save()
+
+                    # Prepare recipients: manager and discussion participants
+                    recipients = []
+                    if job.managed_by:
+                        recipients.append(job.managed_by)
+
+                    staff_discussions = job.get_staff_discussions()
+                    if staff_discussions:
+                        for staff in staff_discussions:
+                            if staff not in recipients:
+                                recipients.append(staff)
+
+                    if recipients:
+                        NotificationService.trigger(
+                            notification_type_name="job_past_due",
+                            verb=NotificationVerb.STATUS_CHANGED,
+                            recipients=recipients,
+                            content_object=job,
+                            context={
+                                "job_title": job.title,
+                                "url": job.get_absolute_url(),
+                            },
+                        )
 
     except Exception as ex:
         bw_log().print_exception(suppress=[click], show_locals=False)

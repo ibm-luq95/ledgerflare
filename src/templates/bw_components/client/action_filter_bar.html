@@ -1,0 +1,97 @@
+{% load i18n core_tags widget_tweaks %}
+
+<div class="mb-4 space-y-3">
+    <!-- Top Action Row: Quick Status Tabs & Action Buttons -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-gray-200 dark:border-neutral-700">
+        <!-- Quick Status Tabs (Scrollable on small screens) -->
+        <nav class="flex space-x-1.5 overflow-x-auto py-1 scrollbar-none" aria-label="Status Filters">
+            <a href="{% url pagination_list_url_name %}"
+               class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium transition-all {% if not request.GET.status and not request.GET.is_unassigned %}bg-blue-600 text-white shadow-2xs{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700{% endif %}">
+                {% translate "All" %}
+                <span class="inline-flex items-center justify-center py-0.5 px-1.5 rounded-full text-[10px] font-semibold {% if not request.GET.status and not request.GET.is_unassigned %}bg-blue-700 text-white{% else %}bg-gray-200 text-gray-800 dark:bg-neutral-700 dark:text-neutral-200{% endif %}">
+                    {{ kpi_stats.total_clients|default:0 }}
+                </span>
+            </a>
+
+            <a href="{% url pagination_list_url_name %}?status=enabled"
+               class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium transition-all {% if request.GET.status == 'enabled' %}bg-emerald-600 text-white shadow-2xs{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700{% endif %}">
+                {% translate "Active" %}
+                <span class="inline-flex items-center justify-center py-0.5 px-1.5 rounded-full text-[10px] font-semibold {% if request.GET.status == 'enabled' %}bg-emerald-700 text-white{% else %}bg-gray-200 text-gray-800 dark:bg-neutral-700 dark:text-neutral-200{% endif %}">
+                    {{ kpi_stats.active_clients|default:0 }}
+                </span>
+            </a>
+
+            <a href="{% url pagination_list_url_name %}?status=past_due"
+               class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium transition-all {% if request.GET.status == 'past_due' %}bg-amber-600 text-white shadow-2xs{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700{% endif %}">
+                {% translate "Past Due" %}
+            </a>
+
+            <a href="{% url pagination_list_url_name %}?status=archive"
+               class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium transition-all {% if request.GET.status == 'archive' %}bg-gray-700 text-white shadow-2xs{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700{% endif %}">
+                {% translate "Archived" %}
+            </a>
+        </nav>
+
+        <!-- Primary Action Button -->
+        {% if is_show_create_btn is True %}
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="{% url actions_base_url|add:':create' %}"
+                   class="py-1.5 px-3 inline-flex items-center gap-x-2 text-xs font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none shadow-2xs transition-all">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    {% translate "New Client" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Search & Advanced Filter Controls -->
+    {% if is_filters_enabled is True and filter_form %}
+        <form method="get" id="{{ filter_form_id|default:'clientFilterForm' }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 items-center">
+            <!-- Search Input -->
+            <div class="relative sm:col-span-2">
+                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-3">
+                    <svg class="shrink-0 size-4 text-gray-400 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                    </svg>
+                </div>
+                <input type="text"
+                       name="name__icontains"
+                       value="{{ request.GET.name__icontains|default:'' }}"
+                       placeholder="{% translate 'Search by client name...' %}"
+                       class="py-2 ps-9 pe-3 block w-full border-gray-200 rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" />
+            </div>
+
+            <!-- Industry Filter -->
+            <div>
+                <input type="text"
+                       name="industry__icontains"
+                       value="{{ request.GET.industry__icontains|default:'' }}"
+                       placeholder="{% translate 'Industry...' %}"
+                       class="py-2 px-3 block w-full border-gray-200 rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" />
+            </div>
+
+            <!-- Submit & Reset Action Buttons -->
+            <div class="flex items-center gap-2">
+                <button type="submit"
+                        class="py-2 px-3.5 inline-flex items-center justify-center gap-x-1.5 text-xs font-medium rounded-lg border border-transparent bg-gray-800 text-white hover:bg-gray-900 focus:outline-hidden dark:bg-neutral-700 dark:hover:bg-neutral-600 transition-all flex-1 sm:flex-initial">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                    {% translate "Filter" %}
+                </button>
+
+                {% if request.GET %}
+                    <a href="{% url pagination_list_url_name %}"
+                       class="py-2 px-3 inline-flex items-center justify-center gap-x-1 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 focus:outline-hidden dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-all">
+                        <svg class="shrink-0 size-3.5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                        </svg>
+                        {% translate "Reset" %}
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    {% endif %}
+</div>

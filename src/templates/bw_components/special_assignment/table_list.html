@@ -1,27 +1,31 @@
 {% extends "bw_components/layouts/table_list_base.html" %}
 
-{% load i18n %}
+{% load i18n core_tags %}
 
 {# Start Table Header #}
 {% block header_title %}
     {% translate header_title %}
 {% endblock header_title %}
 {# End Table Header #}
+
 {# Start Table Subtitle #}
 {% block header_subtitle %}
     {% translate header_subtitle %}
 {% endblock header_subtitle %}
 {# End Table Subtitle #}
+
 {# Start Table ID Block #}
 {% block table_id_block %}
     {{ app_label|add:'_table' }}
 {% endblock table_id_block %}
 {# End Table ID Block #}
+
 {# Start Custom Css Class #}
 {% block custom_css_class_name %}
-    clients-table-list
+    special-assignments-table-list w-full
 {% endblock custom_css_class_name %}
 {# End Custom Css Class #}
+
 {% if is_show_create_btn is True %}
     {# Start Create Button Block #}
     {% block create_btn_block %}
@@ -29,304 +33,247 @@
     {% endblock create_btn_block %}
     {# End Create Button Block #}
 {% endif %}
-{# Start Table Header Columns #}
+
+{# Start Desktop Table Header Columns #}
 {% block thead_block %}
-    <tr>
+    <tr class="border-b border-gray-200 bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800/60">
         {% if is_checkbox_enabled is True %}
-            <th scope="col" class="pl-6 py-3 text-left">
+            <th scope="col" class="ps-6 py-3.5 text-start w-10">
                 <label for="{{ column|add:'-checkbox' }}" class="flex">
                     <input type="checkbox"
-                           class="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800 {{ BW_DISABLED_DISABLED_INPUTS_CSS_CLASSES }} {{ BW_BASE_INPUT_CSS_CLASSES }}"
+                           class="shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500"
                            id="{{ column|add:'-checkbox' }}"
                            disabled />
                     <span class="sr-only">{{ column|title }}</span>
                 </label>
             </th>
         {% endif %}
-        <th scope="col" class="px-2 py-3 text-right">
-            <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                <div class="hs-tooltip inline-block [--placement:right]">
-                    <button type="button"
-                            class="hs-tooltip-toggle text-sm text-gray-600 dark:text-gray-400">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                              role="tooltip">{% translate "Contains attachment file" %}</span>
-                    </button>
-                </div>
+
+        <th scope="col" class="px-6 py-3.5 text-start">
+            <div class="flex items-center gap-x-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Assignment Title" %}
+                </span>
+                {% include "bw_components/global/table_list/sort_icon.html" %}
+            </div>
+        </th>
+
+        <th scope="col" class="px-6 py-3.5 text-start">
+            <div class="flex items-center gap-x-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Status & Alerts" %}
+                </span>
+                {% include "bw_components/global/table_list/sort_icon.html" %}
+            </div>
+        </th>
+
+        <th scope="col" class="px-6 py-3.5 text-start">
+            <div class="flex items-center gap-x-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Client / Job" %}
+                </span>
+                {% include "bw_components/global/table_list/sort_icon.html" %}
+            </div>
+        </th>
+
+        <th scope="col" class="px-6 py-3.5 text-start">
+            <div class="flex items-center gap-x-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Assigned To" %}
+                </span>
+                {% include "bw_components/global/table_list/sort_icon.html" %}
+            </div>
+        </th>
+
+        <th scope="col" class="px-6 py-3.5 text-start">
+            <div class="flex items-center gap-x-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Due Date" %}
+                </span>
+                {% include "bw_components/global/table_list/sort_icon.html" %}
+            </div>
+        </th>
+
+        <th scope="col" class="px-6 py-3.5 text-center">
+            <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                {% translate "Discussions" %}
             </span>
         </th>
-        <th scope="col" class="px-6 py-3 text-left">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Title" %}
+
+        {% if is_actions_menu_enabled is True %}
+            <th scope="col" class="px-6 py-3.5 text-end">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Actions" %}
                 </span>
-
-                {% include "bw_components/global/table_list/sort_icon.html" %}
-
-            </div>
-        </th>
-        <th scope="col" class="px-6 py-3 text-left">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Client" %}
-                </span>
-
-                {% include "bw_components/global/table_list/sort_icon.html" %}
-
-            </div>
-        </th>
-        <th scope="col" class="px-6 py-3 text-left">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Job" %}
-                </span>
-
-                {% include "bw_components/global/table_list/sort_icon.html" %}
-
-            </div>
-        </th>
-        <th scope="col" class="px-6 py-3 text-left">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Assigned to" %}
-                </span>
-
-                {% include "bw_components/global/table_list/sort_icon.html" %}
-
-            </div>
-        </th>
-        <th scope="col" class="px-6 py-3 text-left">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Assigned by" %}
-                </span>
-
-                {% include "bw_components/global/table_list/sort_icon.html" %}
-
-            </div>
-        </th>
-        <th scope="col" class="px-6 py-3 text-left">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Reply(s)" %}
-                </span>
-
-                {% include "bw_components/global/table_list/sort_icon.html" %}
-
-            </div>
-        </th>
-        <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Status" %}
-                </span>
-            </div>
-        </th>
-        <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Seen" %}
-                </span>
-            </div>
-        </th>
-        <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Start date" %}
-                </span>
-            </div>
-        </th>
-        <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Due date" %}
-                </span>
-            </div>
-        </th>
-        {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
-            <th scope="col" class="px-6 py-3 text-left">
-                <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Created" %}
-                    </span>
-
-                    {% include "bw_components/global/table_list/sort_icon.html" %}
-
-                </div>
             </th>
         {% endif %}
-        <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2">
-            </div>
-        </th>
     </tr>
 {% endblock thead_block %}
-{# End Table Header Columns #}
+{# End Desktop Table Header Columns #}
+
 {# Start Table Body #}
 {% block tbody_block %}
     {% for object in object_list %}
-        <tr>
+        <tr class="hover:bg-gray-50/80 dark:hover:bg-neutral-800/50 transition-colors border-b border-gray-100 dark:border-neutral-800/80 group">
             {% if is_checkbox_enabled is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="pl-6 py-3">
-                        <label for="{{ object.pk|add:'-checkbox' }}" class="flex">
-                            <input type="checkbox"
-                                   class="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800 {{ BW_DISABLED_DISABLED_INPUTS_CSS_CLASSES }} {{ BW_BASE_INPUT_CSS_CLASSES }}"
-                                   id="{{ object.pk|add:'-checkbox' }}"
-                                   disabled />
-                            <span class="sr-only">{{ object.name|title }}</span>
-                        </label>
+                <td class="ps-6 py-4 w-10">
+                    <label for="{{ object.pk }}-checkbox" class="flex">
+                        <input type="checkbox"
+                               class="row-checkbox shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500"
+                               id="{{ object.pk }}-checkbox"
+                               value="{{ object.pk }}" />
+                        <span class="sr-only">{% translate "Select Row" %}</span>
+                    </label>
+                </td>
+            {% endif %}
+
+            <!-- Assignment Title & Preview -->
+            <td class="px-6 py-4">
+                <div class="flex items-start gap-x-3">
+                    <!-- Quick Peek Trigger Icon -->
+                    <button type="button"
+                            class="sa-quick-peek-trigger shrink-0 mt-0.5 size-7 inline-flex justify-center items-center rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-blue-600 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-blue-400 shadow-2xs transition-colors cursor-pointer"
+                            data-quick-peek-url="{% url 'dashboard:special_assignment:quick-peek' object.pk %}"
+                            title="{% translate 'Quick Peek' %}">
+                        <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-x-2">
+                            <a href="{% url 'dashboard:special_assignment:details' object.pk %}"
+                               class="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-neutral-100 dark:hover:text-blue-400 transition-colors">
+                                {{ object.title }}
+                            </a>
+                            {% if object.attachment %}
+                                <a href="{{ object.attachment.url }}" download
+                                   class="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                                   title="{% translate 'Download Attachment' %}">
+                                    <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                    </svg>
+                                </a>
+                            {% endif %}
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-neutral-400 truncate max-w-xs mt-0.5">
+                            {{ object.body|striptags|truncatechars:75 }}
+                        </p>
+                    </div>
+                </div>
+            </td>
+
+            <!-- Status & Seen Indicator -->
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-x-2">
+                    {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
+                    {% if not object.is_seen %}
+                        <span class="inline-flex items-center size-2 rounded-full bg-purple-500" title="{% translate 'Unseen' %}"></span>
+                    {% endif %}
+                </div>
+            </td>
+
+            <!-- Client / Job Reference -->
+            <td class="px-6 py-4 whitespace-nowrap text-xs">
+                {% if object.client %}
+                    <a href="{% url 'dashboard:client:details' object.client.pk %}"
+                       class="font-medium text-blue-600 hover:underline dark:text-blue-400 block truncate max-w-[140px]">
+                        {{ object.client.name }}
+                    </a>
+                {% else %}
+                    <span class="text-gray-400 dark:text-neutral-500 italic block">{% translate "Standalone" %}</span>
+                {% endif %}
+
+                {% if object.job %}
+                    <a href="{% url 'dashboard:job:details' object.job.pk %}"
+                       class="text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-neutral-200 text-[11px] truncate max-w-[140px] block mt-0.5">
+                        {{ object.job.title }}
+                    </a>
+                {% endif %}
+            </td>
+
+            <!-- Assigned To Avatar + Name -->
+            <td class="px-6 py-4 whitespace-nowrap">
+                {% if object.assigned_to %}
+                    <div class="flex items-center gap-x-2">
+                        <span class="inline-flex items-center justify-center size-7 rounded-full bg-blue-100 text-blue-800 font-bold text-xs dark:bg-blue-900/40 dark:text-blue-300">
+                            {{ object.assigned_to.fullname|slice:":1"|upper|default:"U" }}
+                        </span>
+                        <span class="text-xs font-medium text-gray-800 dark:text-neutral-200">
+                            {{ object.assigned_to.fullname|default:object.assigned_to }}
+                        </span>
+                    </div>
+                {% else %}
+                    <span class="text-xs text-gray-400 dark:text-neutral-500 italic">{% translate "Unassigned" %}</span>
+                {% endif %}
+            </td>
+
+            <!-- Due Date & Urgency -->
+            <td class="px-6 py-4 whitespace-nowrap text-xs">
+                {% if object.due_date %}
+                    <span class="font-medium {% if object.due_date < today %}text-red-600 dark:text-red-400 font-semibold{% else %}text-gray-800 dark:text-neutral-200{% endif %}">
+                        {{ object.due_date|date:"M d, Y" }}
+                    </span>
+                    {% if object.due_date < today %}
+                        <span class="block text-[10px] text-red-500 font-semibold">{% translate "Overdue" %}</span>
+                    {% endif %}
+                {% else %}
+                    <span class="text-gray-400 dark:text-neutral-500">—</span>
+                {% endif %}
+            </td>
+
+            <!-- Discussions Bubble Count -->
+            <td class="px-6 py-4 whitespace-nowrap text-center text-xs">
+                <a href="{% url 'dashboard:special_assignment:details' object.pk %}#discussionsSection"
+                   class="inline-flex items-center gap-x-1 py-1 px-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors">
+                    <svg class="size-3 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+                    </svg>
+                    <span class="font-semibold">{{ object.discussions_count|default:object.discussions.count|default:0 }}</span>
+                </a>
+            </td>
+
+            <!-- Actions Menu Dropdown -->
+            {% if is_actions_menu_enabled is True %}
+                <td class="px-6 py-4 whitespace-nowrap text-end text-xs">
+                    <div class="hs-dropdown relative inline-flex">
+                        <button id="hs-table-dropdown-{{ object.pk }}"
+                                type="button"
+                                class="hs-dropdown-toggle py-1.5 px-2 inline-flex justify-center items-center gap-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-hidden dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors">
+                            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                            </svg>
+                        </button>
+
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-40 bg-white shadow-md rounded-lg p-1.5 mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700 z-20"
+                             aria-labelledby="hs-table-dropdown-{{ object.pk }}">
+                            <a class="flex items-center gap-x-2 py-1.5 px-2.5 rounded-md text-xs text-gray-700 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                               href="{% url 'dashboard:special_assignment:details' object.pk %}">
+                                {% translate "View Details" %}
+                            </a>
+                            <a class="flex items-center gap-x-2 py-1.5 px-2.5 rounded-md text-xs text-gray-700 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                               href="{% url 'dashboard:special_assignment:update' object.pk %}">
+                                {% translate "Edit" %}
+                            </a>
+                            <a class="flex items-center gap-x-2 py-1.5 px-2.5 rounded-md text-xs text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-neutral-700"
+                               href="{% url 'dashboard:special_assignment:delete' object.pk %}">
+                                {% translate "Delete" %}
+                            </a>
+                        </div>
                     </div>
                 </td>
             {% endif %}
-            <td class="h-px w-px whitespace-nowrap text-right">
-                <div class="px-1 py-2">
-                    {% if object.attachment %}
-                        <div class="hs-tooltip inline-block mx-1 [--placement:right]">
-                            <button type="button"
-                                    class="hs-tooltip-toggle text-sm text-gray-600 dark:text-gray-400">
-                                <i class="fa-solid fa-paperclip"></i>
-                                <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                      role="tooltip">
-                                    {% translate "Assignment contains attachment file" %}
-                                </span>
-                            </button>
-                        </div>
-                    {% else %}
-                        <div class="hs-tooltip inline-block mx-1 [--placement:right]">
-                            <button type="button"
-                                    class="hs-tooltip-toggle text-sm text-gray-600 dark:text-gray-400">
-                                <i class="fa-solid fa-ban text-red-500"></i>
-                                <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                      role="tooltip">{% translate "No attachment" %}</span>
-                            </button>
-                        </div>
-                    {% endif %}
-                </div>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="8" class="px-6 py-12 text-center text-gray-400 dark:text-neutral-500">
+                <svg class="mx-auto size-9 text-gray-300 dark:text-neutral-600 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/>
+                </svg>
+                <p class="text-sm font-medium">{% translate "No special assignments found." %}</p>
+                <p class="text-xs text-gray-400 dark:text-neutral-500 mt-1">{% translate "Try adjusting your filters or create a new assignment." %}</p>
             </td>
-            {# Start Title #}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <a href="{% url base_url_name|add:':details' object.pk %}">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.title|truncatechars:DEFAULT_TEMPLATE_TABLE_LIST_TRUNCATED_STRING }}</span>
-                    </a>
-                </div>
-            </td>
-            {# End Title #}
-            {# Start Client #}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    {% if object.client %}
-                        <a class="{{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} text-sm"
-                           href="{% url 'dashboard:client:details' object.client.pk %}">
-                            {{ object.client.name }}
-                        </a>
-                    {% else %}
-                        ---
-                    {% endif %}
-                </div>
-            </td>
-            {# End Client #}
-            {# Start Job #}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    {% if object.job %}
-                        <a class="{{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} text-sm"
-                           href="{% url 'dashboard:job:details' object.job.pk %}">
-                            {{ object.job.title|truncatechars:DEFAULT_TEMPLATE_TABLE_LIST_TRUNCATED_STRING }}
-                        </a>
-                    {% else %}
-                        ---
-                    {% endif %}
-                </div>
-            </td>
-            {# End Job #}
-            {# Start Manager #}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    {% if object.assigned_to %}
-                        <a href="{% url 'dashboard:staff:member-details' object.assigned_to.pk %}"
-                           class="{{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} text-sm">{{ object.assigned_to.fullname }}</a>
-                    {% else %}
-                        <span class="text-xs text-gray-600 dark:text-gray-400">{% translate "N/A" %}</span>
-                    {% endif %}
-                </div>
-            </td>
-            {# End Manager #}
-            {# Start Assigned by #}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    {% if object.assigned_by %}
-                        <a href="{% url 'dashboard:staff:member-details' object.assigned_by.pk %}"
-                           class="{{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} text-sm">
-                            {{ object.assigned_by.fullname }}
-                        </a>
-                    {% else %}
-                        <span class="text-xs text-gray-600 dark:text-gray-400">{% translate "N/A" %}</span>
-                    {% endif %}
-                </div>
-            </td>
-            {# End Assigned by #}
-            {# Start Reply(s) #}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">
-                        {{ object.discussions.get_only_discussions_without_replies.count }}
-                    </span>
-                </div>
-            </td>
-            {# End Reply(s) #}
-            {# Start Status #}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
-                </div>
-            </td>
-            {# End Status #}
-            {# Start Seen #}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    {% translate "Assignment opened and seen by manager" as true_tooltip_txt %}
-                    {% translate "Assignment not open yet by manager" as false_tooltip_txt %}
-
-                    {% include "bw_components/global/check_times_icon.html" with status=object.is_seen is_tooltip_enabled=True true_tooltip_txt=true_tooltip_txt false_tooltip_txt=false_tooltip_txt %}
-
-                </div>
-            </td>
-            {# End Seen #}
-            {# Start Start Date #}
-            <td class="h-px w-px whitespace-nowrap">
-                {% bw_date date_txt=object.start_date is_in_table_list=True %}
-            </td>
-            {# End Start Date #}
-            {# Start Due Date #}
-            <td class="h-px w-px whitespace-nowrap">
-                {% bw_date date_txt=object.due_date is_in_table_list=True %}
-            </td>
-            {# End Due Date #}
-            {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    {% bw_date date_txt=object.created_at is_in_table_list=True %}
-                </td>
-            {% endif %}
-            {% if is_actions_menu_enabled is True %}
-                <td class="h-px w-px whitespace-nowrap text-center">
-                    {% bw_actions_dropdown actions_items=actions_items actions_base_url=actions_base_url actions_app_name=actions_app_name object=object %}
-                </td>
-            {% endif %}
         </tr>
     {% endfor %}
 {% endblock tbody_block %}
 {# End Table Body #}
-{# Start Table Results #}
-{% block results_block %}
-    {{ object_list.count }}/{{ total_records }}
-{% endblock results_block %}
-{# End Table Results #}
-{# Start Table Pagination #}
-{% block pagination_block %}
-
-    {% include "components/inc/dashboard/table_list/table_list_pagination.html" with page_obj=page_obj pagination_list_url_name=pagination_list_url_name %}
-
-{% endblock pagination_block %}
-{# End Table Pagination #}

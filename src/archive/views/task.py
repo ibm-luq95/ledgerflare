@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
-from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_BOOKKEEPER, CON_CFO
 from core.views.mixins import BWLoginRequiredMixin, BWBaseListViewMixin
 from task.filters import TaskFilter
 from task.models import TaskProxy
@@ -41,9 +41,10 @@ class TaskArchiveListView(
     pagination_list_url_name = "dashboard:archive:tasks:list"
     base_url_name = "dashboard:task"
     empty_label = _("task(s)")
-    subtitle = _("Tasks archive".title())
+    subtitle = _(
+        "Archived subtasks and completed checklist items preserved for historical reference."
+    )
     actions_items = "update,delete"
-
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -77,6 +78,10 @@ class TaskArchiveListView(
                 self.request.user.bookkeeper.get_proxy_model().get_all_related_items(
                     "tasks"
                 )
+            )
+        elif self.request.user.user_type == CON_CFO:
+            queryset = TaskProxy.archive_objects.filter(
+                job__client__cfos__user=self.request.user
             )
 
         self.filterset = TaskFilter(self.request.GET, queryset=queryset)

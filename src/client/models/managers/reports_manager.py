@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 from typing import Optional
 
 from django.core.paginator import Page
@@ -23,9 +22,9 @@ class ClientReportsManager(SoftDeleteManager):
 
     def get_all_jobs_as_list(
         self,
-        filter_params: Optional[ClientJobsFilterTypes] = None,
-        page: Optional[int] = None,
-        per_page: Optional[int] = 15,
+        filter_params: ClientJobsFilterTypes | None = None,
+        page: int | None = None,
+        per_page: int | None = 15,
     ) -> dict[int, Page, list[ClientDetailsMap]]:
         qs = self.get_queryset()
 

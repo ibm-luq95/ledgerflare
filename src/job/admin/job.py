@@ -10,7 +10,6 @@ from core.admin import BWBaseAdminModelMixin
 
 @admin.register(JobProxy)
 class JobAdmin(BWBaseAdminModelMixin):
-
     actions = ["make_draft", "make_completed", "make_archived"]
     search_fields = ("title", "client", "status", "managed_by", "state", "job_type")
     list_filter = (
@@ -52,7 +51,9 @@ class JobAdmin(BWBaseAdminModelMixin):
         try:
             with transaction.atomic():
                 queryset.update(status=CON_COMPLETED)
-            self.message_user(request, _("Job(s) marked as completed."), level="success")
+            self.message_user(
+                request, _("Job(s) marked as completed."), level="success"
+            )
         except Exception as ex:
             self.message_user(request, str(ex), level="error")
 

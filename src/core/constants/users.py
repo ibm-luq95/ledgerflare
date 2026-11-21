@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-#
-"""
-File: users.py
-Author: Ibrahim Luqman
-Date: 5/10/24
+"""User roles, permissions, and group constants."""
+from __future__ import annotations
 
-Description: Includes constants for users and permissions 
-"""
 
 # Bookkeeper user group name
 BOOKKEEPER_GROUP_NAME = "Bookkeeper Group"
@@ -31,41 +26,148 @@ BOOKKEEPER_PERMISSION = "bookkeeper_user"
 ASSISTANT_PERMISSION = "assistant_user"
 MANAGER_PERMISSION = "manager_user"
 
-# Default permissions for new created staff member
-DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
+# Read-only permissions for new staff member / read-only groups
+DEFAULT_READONLY_PERMISSIONS_NEW_STAFF_MEMBER = [
     {
         "app_label": "special_assignment",
-        "model_label": "SpecialAssignment".lower(),
+        "model_label": "specialassignment",
         "permissions_codename_labels": [
             "can_view_list",
             "view_specialassignment",
-            # "special_assignment.add_specialassignment",
-            "add_specialassignment",
+        ],
+    },
+    {
+        "app_label": "task",
+        "model_label": "task",
+        "permissions_codename_labels": [
+            "can_view_list",
+            "view_task",
+        ],
+    },
+    {
+        "app_label": "job",
+        "model_label": "job",
+        "permissions_codename_labels": [
+            "can_view_list",
+            "view_job",
+        ],
+    },
+    {
+        "app_label": "discussion",
+        "model_label": "discussion",
+        "permissions_codename_labels": [
+            "can_view_list",
+            "view_discussion",
+        ],
+    },
+    {
+        "app_label": "note",
+        "model_label": "note",
+        "permissions_codename_labels": [
+            "can_view_list",
+            "view_note",
+        ],
+    },
+    {
+        "app_label": "document",
+        "model_label": "document",
+        "permissions_codename_labels": [
+            "can_view_list",
+            "view_document",
+        ],
+    },
+    {
+        "app_label": "important_contact",
+        "model_label": "importantcontact",
+        "permissions_codename_labels": [
+            "can_view_list",
+            "view_importantcontact",
+        ],
+    },
+    {
+        "app_label": "client_account",
+        "model_label": "clientaccount",
+        "permissions_codename_labels": [
+            "can_view_list",
+            "view_clientaccount",
+        ],
+    },
+    {
+        "app_label": "client",
+        "model_label": "client",
+        "permissions_codename_labels": [
+            "can_view_list",
+            "view_client",
+        ],
+        "extra_permissions": {"codename_labels": []},
+    },
+    {
+        "app_label": "staff_briefcase",
+        "model_label": "staffbriefcase",
+        "permissions_codename_labels": [
+            "view_staffbriefcase",
+        ],
+        "extra_permissions": {"codename_labels": []},
+    },
+    {
+        "app_label": "staff_briefcase",
+        "model_label": "staffaccounts",
+        "permissions_codename_labels": [
+            "view_staffaccounts",
+        ],
+        "extra_permissions": {"codename_labels": []},
+    },
+    {
+        "app_label": "staff_briefcase",
+        "model_label": "staffdocuments",
+        "permissions_codename_labels": [
+            "view_staffdocuments",
+        ],
+        "extra_permissions": {"codename_labels": []},
+    },
+    {
+        "app_label": "staff_briefcase",
+        "model_label": "staffnotes",
+        "permissions_codename_labels": [
+            "view_staffnotes",
+        ],
+        "extra_permissions": {"codename_labels": []},
+    },
+]
+
+DEFAULT_READONLY_PERMISSIONS_NEW_STAFF_MEMBER = sorted(
+    DEFAULT_READONLY_PERMISSIONS_NEW_STAFF_MEMBER, key=lambda x: x.get("app_label")
+)
+
+# Full operational permissions for active operational staff members
+DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
+    {
+        "app_label": "special_assignment",
+        "model_label": "specialassignment",
+        "permissions_codename_labels": [
+            "can_view_list",
             "view_specialassignment",
+            "add_specialassignment",
             "change_specialassignment",
             "delete_specialassignment",
         ],
     },
     {
         "app_label": "task",
-        "model_label": "Task".lower(),
+        "model_label": "task",
         "permissions_codename_labels": [
             "can_view_list",
-            # "view_taskproxy",
             "add_task",
             "view_task",
             "change_task",
             "delete_task",
-            # "task.add_task",
         ],
     },
     {
         "app_label": "job",
-        "model_label": "Job".lower(),
+        "model_label": "job",
         "permissions_codename_labels": [
             "can_view_list",
-            # "view_jobproxy",
-            # "job.add_job",
             "add_job",
             "view_job",
             "change_job",
@@ -74,20 +176,18 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
     },
     {
         "app_label": "discussion",
-        "model_label": "Discussion".lower(),
+        "model_label": "discussion",
         "permissions_codename_labels": [
             "can_view_list",
             "view_discussion",
-            # "discussion.add_discussion",
             "add_discussion",
-            "view_discussion",
             "change_discussion",
             "delete_discussion",
         ],
     },
     {
         "app_label": "note",
-        "model_label": "Note".lower(),
+        "model_label": "note",
         "permissions_codename_labels": [
             "can_view_list",
             "view_note",
@@ -98,7 +198,7 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
     },
     {
         "app_label": "document",
-        "model_label": "Document".lower(),
+        "model_label": "document",
         "permissions_codename_labels": [
             "can_view_list",
             "view_document",
@@ -109,7 +209,7 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
     },
     {
         "app_label": "important_contact",
-        "model_label": "ImportantContact".lower(),
+        "model_label": "importantcontact",
         "permissions_codename_labels": [
             "can_view_list",
             "view_importantcontact",
@@ -120,7 +220,7 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
     },
     {
         "app_label": "client_account",
-        "model_label": "ClientAccount".lower(),
+        "model_label": "clientaccount",
         "permissions_codename_labels": [
             "can_view_list",
             "view_clientaccount",
@@ -131,7 +231,7 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
     },
     {
         "app_label": "client",
-        "model_label": "Client".lower(),
+        "model_label": "client",
         "permissions_codename_labels": [
             "can_view_list",
             "view_client",
@@ -143,9 +243,8 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
     },
     {
         "app_label": "staff_briefcase",
-        "model_label": "staffbriefcase".lower(),
+        "model_label": "staffbriefcase",
         "permissions_codename_labels": [
-            # "can_view_list",
             "view_staffbriefcase",
             "add_staffbriefcase",
             "change_staffbriefcase",
@@ -155,9 +254,8 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
     },
     {
         "app_label": "staff_briefcase",
-        "model_label": "staffaccounts".lower(),
+        "model_label": "staffaccounts",
         "permissions_codename_labels": [
-            # "can_view_list",
             "view_staffaccounts",
             "add_staffaccounts",
             "change_staffaccounts",
@@ -167,9 +265,8 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
     },
     {
         "app_label": "staff_briefcase",
-        "model_label": "staffdocuments".lower(),
+        "model_label": "staffdocuments",
         "permissions_codename_labels": [
-            # "can_view_list",
             "view_staffdocuments",
             "add_staffdocuments",
             "change_staffdocuments",
@@ -179,9 +276,8 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
     },
     {
         "app_label": "staff_briefcase",
-        "model_label": "staffnotes".lower(),
+        "model_label": "staffnotes",
         "permissions_codename_labels": [
-            # "can_view_list",
             "view_staffnotes",
             "add_staffnotes",
             "change_staffnotes",
@@ -193,3 +289,4 @@ DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = [
 DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER = sorted(
     DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER, key=lambda x: x.get("app_label")
 )
+

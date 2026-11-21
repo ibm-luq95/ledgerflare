@@ -42,6 +42,9 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+airesults/
+.analysis
+.gemeni_airesults
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -553,10 +556,7 @@ src/frontend/!.yarn/cache
 # End of https://www.toptal.com/developers/gitignore/api/pycharm+all,python,django,node,pythonvanilla,visualstudiocode
 docs/
 src/frontend/package-lock.json
-# Only for Development only
-**/migrations/**
-!**/migrations
-!**/migrations/__init__.py
+production_migration/
 # Custom migration files
 **.pyc
 src/reports/migrations/**
@@ -591,6 +591,57 @@ src/frontend/bun.lockb!/.env_dotenv
 /Exported_From_CLI/
 /production_data/
 production_config_files
-uv.lock
 .direnv
 .qaiprompts
+.analysis
+/opencode.jsonc
+/QWEN.md
+
+.qwen
+GEMINI.md
+.gemini
+.base
+my_plans
+pgdata
+.mypy_cache
+PROJECT_ANALYSIS.md
+.opencode
+OPENCODE_AGENTS.md
+AGENTS.md
+CONTEXT.md
+.antigravitycli
+nginx
+
+src/public
+src/my_exported
+.aiassistant
+.agents
+.envrc
+.cline
+.playwright-mcp
+src/e2e_browser
+src/e2e_workflows
+.slim
+**/codemap.md
+ARCHITECTURE.md
+SECURITY.md
+TESTING.md
+.codex
+
+.aiignore
+.geminiignore
+.future_security_plan
+works
+.commandcode
+.testing_data
+DESIGN.md
+.superpowers
+.claude
+ENCRYPTION_ENGINE_V0.1.md
+STATIC_SECURITY_AUDIT_REPORT.md
+.env_dotenv_old
+*.env_dotenv*
+src/tmp/
+
+production_migration
+graphify-out

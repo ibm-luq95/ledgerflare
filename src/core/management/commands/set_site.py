@@ -7,7 +7,6 @@ Date: 5/13/24
 Description: Initiate django site, django site framework for this project
 """
 from colorama import Fore
-from decouple import Config, RepositoryEnv
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand

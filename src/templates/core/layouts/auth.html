@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% load nospaces %}
+{% nospaces %}
+<html lang="en" class="h-full">
+    <head>
+        {% include "core/inc/meta_tags.html" with get_web_app_settings=get_web_app_settings %}
+
+        <title>
+            {% block title %}
+                {{ title }} | {% if get_web_app_settings.name %}{{ get_web_app_settings.name }}{% else %}LedgerFlare{% endif %}
+            {% endblock title %}
+        </title>
+
+        {% include "core/inc/css.html" %}
+
+        {% block externalcss %}
+        {% endblock externalcss %}
+    </head>
+    <body class="h-full bg-[#0E1015] font-sans antialiased text-zinc-900 dark:text-zinc-100 selection:bg-zinc-800 selection:text-white">
+        {% block auth_content %}
+        {% endblock auth_content %}
+
+        <script src="{% url 'js_settings' %}" type="text/javascript"></script>
+
+        {% include "core/inc/js.html" %}
+
+        {% block externaljs %}
+        {% endblock externaljs %}
+    </body>
+</html>
+{% endnospaces %}

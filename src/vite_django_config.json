@@ -1,0 +1,12 @@
+{
+  "all": {
+    "sourceCodeDir": "frontend",
+    "entrypointsDir": "application",
+    "additionalEntrypoints": [],
+    "publicDir": "public",
+    "publicOutputDir": "static"
+  },
+  "development": {
+    "port": 3036
+  }
+}

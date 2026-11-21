@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-#
 from typing import Optional
 
 import click
-from django.core.paginator import Paginator, Page
+from django.core.paginator import Page, Paginator
 from django.db import transaction
 from django.db.models import Q
 
@@ -15,9 +14,9 @@ from core.utils import bw_log
 class ClientReportsQuerySet(BaseQuerySetMixin):
     def get_all_jobs_as_list(
         self,
-        filter_params: Optional[ClientJobsFilterTypes] = None,
-        page: Optional[int] = None,
-        per_page: Optional[int] = 15,
+        filter_params: ClientJobsFilterTypes | None = None,
+        page: int | None = None,
+        per_page: int | None = 15,
     ) -> dict[int, Page, list[ClientDetailsMap]]:
         # DebuggingPrint.pprint(locals())
         from client.models.client_proxy import ClientProxy
@@ -90,7 +89,7 @@ class ClientReportsQuerySet(BaseQuerySetMixin):
                 details_dict.setdefault("current_object_list_count", len(data_list))
                 # DebuggingPrint.pprint(details_dict)
                 return details_dict
-            except Exception as e:
+            except Exception:
                 bw_log().print_exception(suppress=[click], show_locals=False)
                 # colored_output_with_logging(
                 #     is_logged=True,

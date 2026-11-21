@@ -2,6 +2,7 @@
 import traceback
 from typing import Literal
 
+from django.db import models
 from django.db.transaction import atomic
 from rest_framework import permissions, parsers, status
 from rest_framework.authentication import TokenAuthentication
@@ -12,48 +13,37 @@ from rest_framework.viewsets import ModelViewSet
 
 from beach_wood_user.models import BWUser
 from core.api.permissions import BaseApiPermissionMixin
+from core.api.mixins import RoleScopedQuerysetMixin
 from core.utils import get_formatted_logger
 from core.utils.developments.debugging_print_object import DebuggingPrint
-from discussion.models import DiscussionProxy, DiscussionNotification
+from core.utils.html_sanitizer import sanitize_html
+from discussion.models import DiscussionProxy
 from discussion.serializers import DiscussionSerializer
-from special_assignment.models import SpecialAssignmentNotification
+from lf_notifications.models import NotificationRecipientProxy
 
 logger = get_formatted_logger()
 
 
 class DiscussionNotificationsApiView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     perm_slug = "discussion.discussionnotifications"
     http_method_names = ["post"]
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
 
     def post(self, request: Request, *args, **kwargs):
         try:
             with atomic():
                 data = dict()
                 post_data = request.data
-                user: BWUser = BWUser.objects.get(pk=post_data.get("user"))
-                notification_object_lbl: Literal[
-                    "SpecialAssignmentNotification", "DiscussionNotification"
-                ] = post_data.get("notificationType")
-                if notification_object_lbl == "DiscussionNotification":
-                    discussion_notifications: DiscussionNotification = (
-                        DiscussionNotification.objects.get(pk=post_data.get("pk"))
-                    )
-                    # validate it the recipient user match the user how clicked on the notifications
-                    # if discussion_notifications.recipient == user:
-                    discussion_notifications.is_read = True
-                    discussion_notifications.save()
-                elif notification_object_lbl == "SpecialAssignmentNotification":
-                    special_assignment_notification: SpecialAssignmentNotification = (
-                        SpecialAssignmentNotification.objects.get(pk=post_data.get("pk"))
-                    )
-                    # validate it the recipient user match the user how clicked on the notifications
-                    # if special_assignment_notification.recipient == user:
-                    special_assignment_notification.is_read = True
-                    special_assignment_notification.save()
-                # DebuggingPrint.pprint(locals())
-                # DebuggingPrint.pprint(discussion_notifications.recipient)
+                pk = post_data.get("pk")
+
+                # Try to find and mark as read in the new system
+                notification_recipient = NotificationRecipientProxy.objects.filter(
+                    pk=pk, recipient=request.user
+                ).first()
+
+                if notification_recipient:
+                    notification_recipient.mark_as_read()
 
                 return Response(status=status.HTTP_200_OK, data=data)
         except Exception as e:
@@ -62,13 +52,65 @@ class DiscussionNotificationsApiView(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data=str(e))
 
 
-class DiscussionViewSet(ModelViewSet):
+class DiscussionViewSet(RoleScopedQuerysetMixin, ModelViewSet):
     serializer_class = DiscussionSerializer
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
-    parser_classes = [parsers.FormParser, parsers.MultiPartParser]
+    parser_classes = [parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser]
     perm_slug = "discussion.discussion"
     queryset = DiscussionProxy.objects.all()
-    authentication_classes = [TokenAuthentication]
+    filterset_fields = ["is_seen", "job", "special_assignment", "is_deleted"]
+    search_fields = ["body"]
+    ordering_fields = ["created_at", "updated_at"]
+    ordering = ["created_at"]
+    pagination_class = None
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.select_related(
+            "job",
+            "special_assignment",
+            "sender",
+            "manager",
+            "manager__profile",
+            "bookkeeper",
+            "bookkeeper__profile",
+            "assistant",
+            "assistant__profile",
+        )
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        extra_kwargs = {"sender": user}
+
+        if "body" in serializer.validated_data:
+            extra_kwargs["body"] = sanitize_html(serializer.validated_data["body"])
+
+        match user.user_type:
+            case "manager" if hasattr(user, "manager"):
+                extra_kwargs["manager"] = user.manager.get_proxy_model()
+            case "bookkeeper" if hasattr(user, "bookkeeper"):
+                extra_kwargs["bookkeeper"] = user.bookkeeper.get_proxy_model()
+            case "assistant" if hasattr(user, "assistant"):
+                extra_kwargs["assistant"] = user.assistant.get_proxy_model()
+
+        serializer.save(**extra_kwargs)
+
+    def scope_queryset_for_bookkeeper(self, queryset, bookkeeper):
+        return queryset.filter(
+            models.Q(job__managed_by=bookkeeper.user)
+            | models.Q(job__bookkeeper=bookkeeper)
+            | models.Q(job__client__bookkeepers=bookkeeper)
+            | models.Q(special_assignment__assigned_to=bookkeeper.user)
+            | models.Q(special_assignment__assigned_by=bookkeeper.user)
+            | models.Q(special_assignment__bookkeeper=bookkeeper)
+            | models.Q(special_assignment__client__bookkeepers=bookkeeper)
+        )
+
+    def scope_queryset_for_cfo(self, queryset, cfo):
+        return queryset.filter(
+            models.Q(job__client__cfos=cfo)
+            | models.Q(special_assignment__client__cfos=cfo)
+        )
 
 
 # class CreateDiscussionApiView(APIView):

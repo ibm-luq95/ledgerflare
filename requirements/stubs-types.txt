@@ -2,7 +2,6 @@ djangorestframework-stubs
 djangorestframework-types
 typed-argument-parser
 django-filter-stubs
-python-decouple-typed
 django-stubs
 django-stubs-ext
 djangorestframework-stubs[compatible-mypy]

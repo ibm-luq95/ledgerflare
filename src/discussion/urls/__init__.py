@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-#
-from django.urls import path, include
+from __future__ import annotations
 
-from discussion.views import DiscussionListView
+from django.urls import include, path
+
+from discussion.views import DiscussionCreateHtmxView, DiscussionListView
 
 app_name = "discussion"
 
 urlpatterns = [
     path("", DiscussionListView.as_view(), name="list"),
+    path("htmx/create/", DiscussionCreateHtmxView.as_view(), name="htmx_create"),
     path("api/", include("discussion.urls.api"), name="apis"),
-    # path("create", "", name="create"),
-    # path("update/<uuid:pk>", "", name="update"),
-    # path("delete/<uuid:pk>", "", name="delete"),
 ]

@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-#
-from datetime import date
-from typing import TypedDict, NotRequired, Optional
-from django.utils.translation import gettext as _
-
 from dataclasses import dataclass
+from datetime import date
+from typing import NotRequired, Optional, TypedDict
 from uuid import UUID
+
+from django.utils.translation import gettext as _
 
 
 class ClientJobsFilterTypes(TypedDict):
@@ -25,10 +24,10 @@ class ClientJobsFilterTypes(TypedDict):
 
 # @dataclass(order=True, init=False)
 class JobItemDictType(TypedDict):
-    client_name: Optional[str]
+    client_name: str | None
     id: UUID
     job_month: int
-    job_year: Optional[str]
+    job_year: str | None
     job_completed_count: int
     job_draft_count: int
     job_in_progress_count: int

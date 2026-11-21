@@ -1,0 +1,131 @@
+{# templates/dashboard/components/widgets/timeline_widget/timeline_widget.html #}
+{% load i18n %}
+{% load humanize %}
+
+<!-- Timeline Widget -->
+<div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800"
+     {% if widget_name %}data-widget-name="{{ widget_name }}"{% endif %}
+     {% if element_id %}id="{{ element_id }}"{% endif %}>
+    
+    <div class="px-4 pt-3 pb-3 md:px-5">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+                {{ title }}
+            </h3>
+        </div>
+        
+        {% if loading %}
+        <div class="flex items-center justify-center py-12">
+            <div class="loader-element animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-gray-800 rounded-full dark:text-white"
+                 role="status"
+                 aria-label="{% translate 'Loading...' %}">
+                <span class="sr-only">{% translate "Loading..." %}</span>
+            </div>
+        </div>
+        {% elif items and items|length > 0 %}
+        <div class="mt-2">
+            <!-- Timeline -->
+            {% for item in items %}
+            <!-- Item {{ forloop.counter }} -->
+            <div class="flex flex-col sm:flex-row gap-x-3 {% if hoverable|default:True %}hover:bg-gray-100 dark:hover:bg-white/10{% endif %} transition-colors">
+                
+                {% if item.icon %}
+                <!-- Icon -->
+                <div class="relative z-10 w-7 h-7 flex justify-center items-center flex-shrink-0">
+                    <div class="w-2 h-2 rounded-full 
+                                {% if item.is_alert %}
+                                    bg-red-500 dark:bg-red-400
+                                {% elif item.icon_color == 'green' %}
+                                    bg-green-500 dark:bg-green-400
+                                {% elif item.icon_color == 'yellow' %}
+                                    bg-yellow-500 dark:bg-yellow-400
+                                {% elif item.icon_color == 'blue' %}
+                                    bg-blue-500 dark:bg-blue-400
+                                {% else %}
+                                    bg-gray-400 dark:bg-gray-600
+                                {% endif %}">
+                    </div>
+                </div>
+                <!-- End Icon -->
+                {% endif %}
+                
+                <!-- Right Content -->
+                <div class="grow pt-0.5 pb-3">
+                    {% if item.url %}
+                    <h3 class="flex gap-x-1.5 font-semibold text-sm 
+                               {% if item.is_alert %}
+                                   text-red-600 dark:text-red-400
+                               {% else %}
+                                   text-gray-800 dark:text-white
+                               {% endif %}">
+                        {% if item.icon %}
+                        <i class="fa-solid {{ item.icon }} w-3 h-3 mt-0.5 flex-shrink-0"></i>
+                        {% endif %}
+                        <a href="{{ item.url }}" class="hover:underline">
+                            {{ item.title|default:item.subtitle }}
+                        </a>
+                    </h3>
+                    {% else %}
+                    <h3 class="flex gap-x-1.5 font-semibold text-sm 
+                               {% if item.is_alert %}
+                                   text-red-600 dark:text-red-400
+                               {% else %}
+                                   text-gray-800 dark:text-white
+                               {% endif %}">
+                        {% if item.icon %}
+                        <i class="fa-solid {{ item.icon }} w-3 h-3 mt-0.5 flex-shrink-0"></i>
+                        {% endif %}
+                        {{ item.title|default:item.subtitle }}
+                    </h3>
+                    {% endif %}
+                    
+                    {% if item.subtitle and item.title %}
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        {{ item.subtitle }}
+                    </p>
+                    {% endif %}
+                    
+                    {% if item.description %}
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-500">
+                        {{ item.description }}
+                    </p>
+                    {% endif %}
+                    
+                    {% if show_dates and item.timestamp %}
+                    <p class="mt-1 -ms-1 p-1 italic inline-flex items-center gap-x-2 text-xs 
+                              rounded-lg border border-transparent text-gray-500 
+                              hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none 
+                              dark:text-gray-400 dark:hover:bg-gray-700">
+                        {{ item.timestamp }}
+                    </p>
+                    {% endif %}
+                </div>
+                <!-- End Right Content -->
+            </div>
+            <!-- End Item -->
+            {% endfor %}
+        </div>
+        <!-- End Timeline -->
+        
+        {% if link_url %}
+        <div class="mt-3 text-right">
+            <a href="{{ link_url }}" 
+               class="inline-flex items-center gap-x-1 text-sm font-semibold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                {{ link_text }}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        {# Empty State #}
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+            <i class="fa-solid fa-clock-rotate-left text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
+            <p class="text-gray-600 dark:text-gray-400 font-medium">{{ empty_message }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- End Timeline Widget -->

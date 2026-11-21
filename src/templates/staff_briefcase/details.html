@@ -6,6 +6,6 @@
 {% load crispy_forms_tags %}
 
 {% block dashboard_content_block %}
-    {% include "staff_briefcase/details_component.html" with object=request.user briefcase_document_form=briefcase_document_form briefcase_note_form=briefcase_note_form briefcase_account_form=briefcase_account_form %}
+    {% include "staff_briefcase/details_component.html" with object=object briefcase_document_form=briefcase_document_form briefcase_note_form=briefcase_note_form briefcase_account_form=briefcase_account_form %}
 
 {% endblock dashboard_content_block %}

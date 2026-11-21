@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse_lazy
@@ -23,13 +22,13 @@ class ClientProxy(Client, BWGetRelatedNotesAndDocuments):
 
     class Meta(Client.Meta):
         proxy = True
+        indexes = []
 
     def active_jobs(self) -> BaseQuerySetMixin | int:
         if hasattr(self, "jobs"):
             qs = self.jobs.all()
             return qs
-        else:
-            return 0
+        return 0
 
     def get_managed_bookkeepers(self) -> set | None:
         all_bookkeepers = []
@@ -40,8 +39,7 @@ class ClientProxy(Client, BWGetRelatedNotesAndDocuments):
                 for bookkeeper in job.bookkeeper.all():
                     all_bookkeepers.append(bookkeeper)
             return set(all_bookkeepers)
-        else:
-            return None
+        return None
 
     def get_all_tasks(self) -> list | None:
         all_tasks = []
@@ -121,8 +119,7 @@ class ClientProxy(Client, BWGetRelatedNotesAndDocuments):
             all_tasks_count.append(job.tasks.count())
         if sum(all_tasks_count) > 0:
             return sum(all_tasks_count)
-        else:
-            return 0
+        return 0
 
     def get_jobs_count(self) -> int | None:
         # print(self.jobs.archive_objects.all())
@@ -133,4 +130,4 @@ class ClientProxy(Client, BWGetRelatedNotesAndDocuments):
         return jobs
 
     def get_absolute_url(self):
-        reverse_lazy("dashboard:client:details", kwargs={"pk": self.pk})
+        return reverse_lazy("dashboard:client:details", kwargs={"pk": self.pk})

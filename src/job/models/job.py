@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -8,14 +7,16 @@ from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
 from client.models import ClientProxy
-from core.choices import JobStateEnum
-from core.choices import JobStatusEnum
-from core.choices import JobTypeEnum
+from core.choices import JobStateEnum, JobStatusEnum, JobTypeEnum
 from core.choices.fiscal_year import FiscalYearEnum
 from core.choices.months import MonthChoices
-from core.models.mixins import BaseModelMixin
-from core.models.mixins import StartAndDueDateMixin
-from core.models.mixins import StrModelMixin
+from core.fields import EncryptedTextField
+from core.models.mixins import (
+    BaseModelMixin,
+    SanitizeHTMLFieldsMixin,
+    StartAndDueDateMixin,
+    StrModelMixin,
+)
 from core.models.mixins.access_proxy_models_mixin import AccessProxyModelMixin
 from core.models.mixins.cron_column_mixin import CronColumnMixin
 from core.models.mixins.validate_due_date import ValidateDueDateMixin
@@ -33,7 +34,9 @@ class Job(
     AccessProxyModelMixin,
     CronColumnMixin,
     StrModelMixin,
+    SanitizeHTMLFieldsMixin,
 ):
+    SANITY_HTML_FIELDS = ("description", "note")
     """This is the job for every bookkeeper and assistant.
 
     Attributes:
@@ -156,7 +159,7 @@ class Job(
     )
 
     # tasks = models.ManyToManyField(to=Task, help_text=JOB_HELP_MESSAGES.get("tasks"))
-    note = models.TextField(
+    note = EncryptedTextField(
         _("note"), null=True, help_text=JOB_HELP_MESSAGES.get("note"), blank=True
     )
     is_created_from_template = models.BooleanField(
@@ -173,12 +176,25 @@ class Job(
     class Meta(BaseModelMixin.Meta):
         ordering = ["title"]
 
-        permissions = BaseModelMixin.Meta.permissions + [
-            ("list_abstract_job_template", "List abstract job template")
+        permissions = [
+            *BaseModelMixin.Meta.permissions,
+            ("list_abstract_job_template", "List abstract job template"),
         ]
         indexes = [
             models.Index(name="jobs_is_scheduled_idx", fields=["is_scheduled"]),
             models.Index(name="scheduled_date_idx", fields=["scheduled_date"]),
+            models.Index(
+                name="job_client_period_del_idx",
+                fields=["client", "period_year", "period_month", "is_deleted"],
+            ),
+            models.Index(
+                name="job_due_date_del_idx",
+                fields=["due_date", "is_deleted"],
+            ),
+            models.Index(
+                name="job_year_status_del_idx",
+                fields=["period_year", "status", "is_deleted"],
+            ),
         ]
 
     # def get_absolute_url(self):
@@ -186,7 +202,7 @@ class Job(
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
-        super(Job, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def get_all_not_completed_tasks(self):
         filtered = filter(lambda task: task.is_completed is False, self.tasks.all())
@@ -196,11 +212,10 @@ class Job(
         now = timezone.now().date()
         if self.due_date > now:
             return True
-        else:
-            return False
+        return False
 
     def get_absolute_url(self):
-        reverse_lazy("dashboard:job:details", kwargs={"pk": self.pk})
+        return reverse_lazy("dashboard:job:details", kwargs={"pk": self.pk})
 
     # def get_all_assigned_users(self) -> list:
     #     all_users = []

@@ -44,7 +44,9 @@ class JobArchiveRelatedItemsHelper:
                     if notes:
                         notes.filter(Q(status=CON_ARCHIVED)).update(status=CON_ENABLED)
                     if documents:
-                        documents.filter(Q(status=CON_ARCHIVED)).update(status=CON_ENABLED)
+                        documents.filter(Q(status=CON_ARCHIVED)).update(
+                            status=CON_ENABLED
+                        )
         except Exception as ex:
             logger.error(ex)
             DebuggingPrint.print_exception()

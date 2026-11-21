@@ -1,20 +1,18 @@
-# -*- coding: utf-8 -*-#
+from __future__ import annotations
+
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.utils.translation import gettext as _
 
-from core.choices import ClientAccountStatusEnum, ServiceNameEnum
-from core.models.mixins import BaseModelMixin
-from core.utils import PasswordHasher, debugging_print
-
 from client.models import ClientProxy
+from core.choices import ClientAccountStatusEnum, ServiceNameEnum
+from core.fields.encrypted_fields import EncryptedCharField, EncryptedTextField
+from core.models.mixins import BaseModelMixin
 
 
 class ClientAccount(BaseModelMixin):
-    """Client account model related with client
-
-    Args:
-        BaseModelMixin (models.Model): Django base model mixin
-    """
+    """Client account model related with client."""
 
     client = models.ForeignKey(
         to=ClientProxy,
@@ -25,10 +23,36 @@ class ClientAccount(BaseModelMixin):
     )
     is_services = models.BooleanField(_("is services"), default=False, editable=False)
     account_name = models.CharField(_("account name"), max_length=100, null=True)
-    # account_email = models.EmailField(_("account email"), max_length=50, null=True)
-    account_url = models.TextField(_("account url"), null=True)
-    account_username = models.CharField(_("account username"), max_length=250, null=True)
-    account_password = models.CharField(_("account password"), max_length=500, null=True)
+    account_url = EncryptedTextField(
+        _("account url"),
+        null=True,
+        blank=True,
+        trigram_blind_index=True,
+        blind_index_field="account_url_bidx",
+    )
+    account_username = EncryptedCharField(
+        _("account username"),
+        max_length=512,
+        null=True,
+        blank=True,
+        trigram_blind_index=True,
+        blind_index_field="account_username_bidx",
+    )
+    account_username_bidx = ArrayField(
+        models.CharField(max_length=16),
+        default=list,
+        blank=True,
+        help_text=_("Trigram blind index tokens for partial substring searching."),
+    )
+    account_url_bidx = ArrayField(
+        models.CharField(max_length=16),
+        default=list,
+        blank=True,
+        help_text=_("Trigram blind index tokens for partial URL searching."),
+    )
+    account_password = EncryptedCharField(
+        _("account password"), max_length=500, null=True, blank=True
+    )
     status = models.CharField(
         _("status"),
         max_length=10,
@@ -47,23 +71,21 @@ class ClientAccount(BaseModelMixin):
 
     class Meta(BaseModelMixin.Meta):
         ordering = ["account_name"]
+        indexes = [
+            *BaseModelMixin.Meta.indexes,
+            GinIndex(fields=["account_username_bidx"], name="idx_cli_acc_user_trigram"),
+            GinIndex(fields=["account_url_bidx"], name="idx_cli_acc_url_trigram"),
+        ]
 
     def __str__(self) -> str:
         return f"{self.account_name}"
 
     @property
     def decrypted_account_password(self) -> str | None:
-        if not self.account_password:
-            return None
-        else:
-            # debugging_print(self.password)
-            return PasswordHasher.decrypt(self.account_password)
+        """Alias property returning account_password for backward compatibility."""
+        return self.account_password
 
     def save(self, *args, **kwargs):
         if self.service_name != "":
             self.is_services = True
-        if self.decrypted_account_password:
-            self.account_password = PasswordHasher.encrypt(self.decrypted_account_password)
-        else:
-            self.account_password = PasswordHasher.encrypt(self.account_password)
-        super(ClientAccount, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

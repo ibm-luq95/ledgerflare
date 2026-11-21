@@ -85,7 +85,9 @@ class JobMiniForm(RemoveFieldsMixin, BWJSModalFormRendererMixin, BWBaseFormMixin
         label=_("Note"),
         required=False,
         help_text=JOB_HELP_MESSAGES.get("note"),
-        widget=forms.TextInput(attrs={"placeholder": _("Optional notes about the job")}),
+        widget=forms.TextInput(
+            attrs={"placeholder": _("Optional notes about the job")}
+        ),
     )
     client = forms.UUIDField(widget=forms.HiddenInput)
     status = forms.CharField(widget=forms.HiddenInput)

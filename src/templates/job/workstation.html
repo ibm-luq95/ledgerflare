@@ -1,0 +1,193 @@
+{% extends "core/layouts/dashboard_content_base.html" %}
+
+{% load i18n %}
+
+{% block dashboard_content_block %}
+  <!-- Loading Indicator Overlay -->
+  <div id="workstation-loading-indicator" class="htmx-indicator fixed inset-0 z-50 flex items-center justify-center bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xs transition-opacity duration-200">
+    <div class="flex items-center gap-3 px-5 py-3.5 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-xl shadow-xl">
+      <div class="animate-spin inline-block size-5 border-2 border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-400" role="status">
+        <span class="sr-only">{% translate "Loading..." %}</span>
+      </div>
+      <span class="text-xs font-semibold text-gray-700 dark:text-neutral-200">{% translate "Updating workstation data..." %}</span>
+    </div>
+  </div>
+
+  <div class="space-y-6 px-3 sm:px-6 lg:px-8 py-2 md:py-4">
+    <!-- Header Card -->
+    <div class="bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-800 dark:border-neutral-700">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-x-3.5">
+          <div class="shrink-0 flex justify-center items-center size-12 bg-blue-50 text-blue-600 rounded-xl dark:bg-blue-900/30 dark:text-blue-400 shadow-2xs">
+            <i class="fa-solid fa-calendar-check text-xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h1 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
+                {% translate "Staff Workstation" %}
+              </h1>
+              {% if selected_staff %}
+                <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                  <i class="fa-solid fa-user-check text-xs"></i>
+                  {{ selected_staff.fullname }} ({{ selected_staff.get_user_type_display }})
+                </span>
+              {% endif %}
+            </div>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-neutral-400 mt-0.5">
+              {% if selected_staff %}
+                {% translate "Viewing individual task & job workstation for" %} <strong class="text-gray-700 dark:text-neutral-200">{{ selected_staff.fullname }}</strong>
+              {% else %}
+                {% translate "Manage and schedule client jobs and assigned tasks in real-time." %}
+              {% endif %}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          {% if selected_staff %}
+            <a href="{% url 'dashboard:job:workstation' %}?year={{ current_year }}&month={{ current_month_num }}"
+               class="py-2 px-3 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 shadow-2xs hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700">
+              <i class="fa-solid fa-users text-xs"></i>
+              {% translate "View All Staff" %}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Bar Form -->
+    <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-2xs dark:bg-neutral-800 dark:border-neutral-700">
+      <form id="workstationFilterForm"
+            method="get"
+            action="{% url 'dashboard:job:workstation' %}"
+            hx-get="{% url 'dashboard:job:workstation' %}"
+            hx-target="#workstation-content-container"
+            hx-swap="outerHTML"
+            hx-indicator="#workstation-loading-indicator"
+            hx-trigger="change, keyup changed delay:350ms from:input[name='search']"
+            class="grid grid-cols-1 sm:grid-cols-2 {% if is_manager_or_admin %}lg:grid-cols-6{% else %}lg:grid-cols-5{% endif %} gap-3 items-end">
+        <input type="hidden" name="partial" value="content">
+        <input type="hidden" name="view" id="workstation-active-view-input" value="{{ active_view|default:'calendar' }}">
+
+        <!-- Year Select -->
+        <div>
+          <label for="workstation-year" class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1">
+            <i class="fa-regular fa-calendar text-xs me-1"></i>{% translate "Year" %}
+          </label>
+          <select id="workstation-year"
+                  name="year"
+                  class="py-2 px-3 block w-full border-gray-200 shadow-2xs rounded-lg text-xs font-medium focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300">
+            {% for y in available_years %}
+              <option value="{{ y }}" {% if current_year == y %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Month Select -->
+        <div>
+          <label for="workstation-month" class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1">
+            <i class="fa-regular fa-calendar-days text-xs me-1"></i>{% translate "Month" %}
+          </label>
+          <select id="workstation-month"
+                  name="month"
+                  class="py-2 px-3 block w-full border-gray-200 shadow-2xs rounded-lg text-xs font-medium focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300">
+            {% for m_num, m_name in months_list %}
+              <option value="{{ m_num }}" {% if current_month_num == m_num %}selected{% endif %}>{{ m_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Staff Selector (Admins/Managers Only) -->
+        {% if is_manager_or_admin %}
+          <div>
+            <label for="workstation-staff" class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1">
+              <i class="fa-solid fa-user-gear text-xs me-1"></i>{% translate "Staff" %}
+            </label>
+            <select id="workstation-staff"
+                    name="staff"
+                    class="py-2 px-3 block w-full border-gray-200 shadow-2xs rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300">
+              <option value="">{% translate "All Staff" %}</option>
+              {% for staff in staff_members %}
+                <option value="{{ staff.id }}" {% if selected_staff and selected_staff.id == staff.id %}selected{% endif %}>
+                  {{ staff.fullname }} ({{ staff.get_user_type_display }})
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+
+        <!-- Client Filter -->
+        <div>
+          <label for="workstation-client" class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1">
+            <i class="fa-regular fa-building text-xs me-1"></i>{% translate "Client" %}
+          </label>
+          <select id="workstation-client"
+                  name="client"
+                  class="py-2 px-3 block w-full border-gray-200 shadow-2xs rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300">
+            <option value="">{% translate "All Clients" %}</option>
+            {% for client in clients %}
+              <option value="{{ client.id }}" {% if selected_client_id == client.id|stringformat:"s" %}selected{% endif %}>{{ client.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label for="workstation-status" class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1">
+            <i class="fa-solid fa-filter text-xs me-1"></i>{% translate "Status" %}
+          </label>
+          <select id="workstation-status"
+                  name="status"
+                  class="py-2 px-3 block w-full border-gray-200 shadow-2xs rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300">
+            <option value="">{% translate "All Statuses" %}</option>
+            {% for value, label in status_choices %}
+              <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Search Input -->
+        <div class="sm:col-span-2 {% if is_manager_or_admin %}lg:col-span-6{% else %}lg:col-span-5{% endif %} pt-1 flex flex-col sm:flex-row items-center gap-3">
+          <div class="relative flex-1 w-full">
+            <input type="text"
+                   id="workstation-search"
+                   name="search"
+                   value="{{ search_query }}"
+                   placeholder="{% translate 'Search by job title or client name...' %}"
+                   class="py-2 px-3 ps-9 block w-full border-gray-200 shadow-2xs rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:placeholder-neutral-500">
+            <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3 text-gray-400">
+              <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button type="submit"
+                    class="py-2 px-4 inline-flex justify-center items-center gap-x-2 text-xs font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 shadow-2xs w-full sm:w-auto cursor-pointer">
+              <i class="fa-solid fa-magnifying-glass text-xs"></i>
+              {% translate "Apply" %}
+            </button>
+            <a href="{% url 'dashboard:job:workstation' %}?year={{ current_year }}&month={{ current_month_num }}"
+               class="py-2 px-3.5 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 shadow-2xs hover:bg-gray-50 focus:outline-hidden dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 whitespace-nowrap cursor-pointer">
+              <i class="fa-solid fa-rotate-left text-xs text-gray-500 dark:text-neutral-400"></i>
+              {% translate "Reset Filters" %}{% if active_filters_count > 0 %} ({{ active_filters_count }}){% endif %}
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Main Content Area (Metrics + Multi-View Panes) -->
+    {% include "job/workstation_partials/content_wrapper.html" %}
+  </div>
+{% endblock dashboard_content_block %}
+
+{% block extra_js %}
+  <script>
+    document.body.addEventListener('htmx:afterSwap', function() {
+      if (window.HSStaticMethods) {
+        window.HSStaticMethods.autoInit();
+      }
+    });
+  </script>
+{% endblock extra_js %}

@@ -1,0 +1,256 @@
+{% extends "core/layouts/dashboard_base.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% translate "Notifications" %} | LedgerFlare
+{% endblock title %}
+
+{% block dashboard_content %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        
+        <!-- Page Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-neutral-100 tracking-tight">
+                    {% translate "Notification Center" %}
+                </h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-neutral-400">
+                    {% translate "Stay updated with activity, assignments, and discussions across your workspace." %}
+                </p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                {% if unread_count > 0 %}
+                    <button type="button" 
+                            id="markAllReadPageBtn"
+                            class="w-full sm:w-auto py-2 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-xl border border-transparent bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-xs dark:focus:ring-offset-neutral-900">
+                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        <span>{% translate "Mark all as read" %}</span>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        <!-- End Page Header -->
+
+        <!-- Main Card Container -->
+        <div class="bg-white border border-gray-200/80 rounded-2xl shadow-xs dark:bg-neutral-900 dark:border-neutral-800 overflow-hidden">
+            
+            <!-- Responsive Filter Tabs Bar -->
+            <div class="px-4 sm:px-6 py-3 border-b border-gray-200/80 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-900/50">
+                <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto scrollbar-none py-1">
+                    <a href="?filter=all" 
+                       class="py-2 px-3.5 inline-flex items-center gap-x-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-colors {% if current_filter == 'all' or not current_filter %}bg-white text-gray-900 shadow-xs dark:bg-neutral-800 dark:text-white{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-neutral-800/60{% endif %}">
+                        <span>{% translate "All" %}</span>
+                        <span class="py-0.5 px-2 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-neutral-700 dark:text-neutral-300">
+                            {{ total_count }}
+                        </span>
+                    </a>
+
+                    <a href="?filter=unread" 
+                       class="py-2 px-3.5 inline-flex items-center gap-x-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-colors {% if current_filter == 'unread' %}bg-white text-blue-600 shadow-xs dark:bg-neutral-800 dark:text-blue-400{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-neutral-800/60{% endif %}">
+                        <span>{% translate "Unread" %}</span>
+                        {% if unread_count > 0 %}
+                            <span class="py-0.5 px-2 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 animate-pulse">
+                                {{ unread_count }}
+                            </span>
+                        {% endif %}
+                    </a>
+
+                    <a href="?filter=discussion" 
+                       class="py-2 px-3.5 inline-flex items-center gap-x-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-colors {% if current_filter == 'discussion' %}bg-white text-emerald-600 shadow-xs dark:bg-neutral-800 dark:text-emerald-400{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-neutral-800/60{% endif %}">
+                        <svg class="shrink-0 size-3.5 text-emerald-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <span>{% translate "Discussions" %}</span>
+                    </a>
+
+                    <a href="?filter=job" 
+                       class="py-2 px-3.5 inline-flex items-center gap-x-2 text-xs sm:text-sm font-medium rounded-lg whitespace-nowrap transition-colors {% if current_filter == 'job' %}bg-white text-indigo-600 shadow-xs dark:bg-neutral-800 dark:text-indigo-400{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-neutral-800/60{% endif %}">
+                        <svg class="shrink-0 size-3.5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                        <span>{% translate "Jobs & Tasks" %}</span>
+                    </a>
+                </div>
+            </div>
+            <!-- End Responsive Filter Tabs Bar -->
+
+            <!-- Notifications List -->
+            <ul class="divide-y divide-gray-100 dark:divide-neutral-800/80">
+                {% for item in notifications %}
+                    <li class="group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-5 gap-4 hover:bg-gray-50/80 dark:hover:bg-neutral-800/50 transition-all cursor-pointer notification-item-row {% if not item.is_read %}bg-blue-50/40 dark:bg-blue-950/20 border-l-4 border-blue-600 dark:border-blue-500{% else %}border-l-4 border-transparent{% endif %}"
+                        data-pk="{{ item.pk }}"
+                        data-url="{{ item.notification.get_absolute_url }}">
+                        
+                        <div class="flex items-start gap-x-3.5 sm:gap-x-4 min-w-0 flex-1">
+                            <!-- Avatar / Role Badge -->
+                            <div class="relative shrink-0 mt-0.5">
+                                {% with staff_details=item.notification.actor.get_staff_details %}
+                                    {% if staff_details.profile_picture %}
+                                        <img class="size-9 sm:size-10 rounded-full object-cover ring-2 ring-white dark:ring-neutral-900" src="{{ staff_details.profile_picture.url }}" alt="{{ item.notification.actor.fullname }}">
+                                    {% else %}
+                                        <div class="size-9 sm:size-10 rounded-full bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-neutral-300 flex items-center justify-center font-semibold text-sm ring-2 ring-white dark:ring-neutral-900">
+                                            {% if item.notification.actor %}
+                                                {{ item.notification.actor.first_name|slice:":1" }}{{ item.notification.actor.last_name|slice:":1" }}
+                                            {% else %}
+                                                <svg class="size-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+
+                                {% if not item.is_read %}
+                                    <span class="absolute -top-0.5 -right-0.5 size-3 bg-blue-600 rounded-full ring-2 ring-white dark:ring-neutral-900"></span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Notification Content -->
+                            <div class="min-w-0 flex-1 space-y-1">
+                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm">
+                                    <span class="font-bold text-gray-900 dark:text-white">
+                                        {% if item.notification.actor %}{{ item.notification.actor.fullname }}{% else %}{% translate "System" %}{% endif %}
+                                    </span>
+                                    
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-neutral-300">
+                                        {{ item.notification.get_actor_role_display }}
+                                    </span>
+
+                                    <span class="text-gray-500 dark:text-neutral-400">
+                                        {{ item.notification.get_verb_display|lower }}
+                                    </span>
+                                </div>
+
+                                {% with breadcrumb=item.notification.get_entity_breadcrumb %}
+                                    {% if breadcrumb %}
+                                        <div class="flex flex-wrap items-center gap-x-1.5 text-xs text-gray-500 dark:text-neutral-400 pt-0.5 font-medium">
+                                            <span class="inline-flex items-center gap-x-1 text-blue-600 dark:text-blue-400 font-semibold">
+                                                <svg class="size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                                {{ breadcrumb.client_name }}
+                                            </span>
+                                            {% if breadcrumb.target_title %}
+                                                <span class="text-gray-300 dark:text-neutral-600">›</span>
+                                                <span class="text-gray-700 dark:text-neutral-300">{{ breadcrumb.target_type }}: {{ breadcrumb.target_title|truncatechars:40 }}</span>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+
+                                <div class="text-sm font-medium text-gray-800 dark:text-neutral-200 line-clamp-2 leading-snug">
+                                    {{ item.notification.message_template|safe }}
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-2 pt-1">
+                                    {% if item.notification.content_type %}
+                                        <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-md text-[11px] font-semibold tracking-wide uppercase 
+                                            {% if item.notification.content_type.model == 'discussion' or item.notification.content_type.model == 'discussionproxy' %}
+                                                bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/40
+                                            {% elif item.notification.content_type.model == 'job' or item.notification.content_type.model == 'jobproxy' %}
+                                                bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-800/40
+                                            {% elif item.notification.content_type.model == 'specialassignment' or item.notification.content_type.model == 'specialassignmentproxy' %}
+                                                bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/50 dark:border-amber-800/40
+                                            {% else %}
+                                                bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300 border border-gray-200/60 dark:border-neutral-700/60
+                                            {% endif %}">
+                                            {{ item.notification.content_type.model }}
+                                        </span>
+                                    {% endif %}
+
+                                    {% with status_badge=item.notification.get_entity_status_badge %}
+                                        {% if status_badge %}
+                                            <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-md text-[11px] font-semibold tracking-wide uppercase {{ status_badge.bg_css }}">
+                                                {{ status_badge.label }}
+                                            </span>
+                                        {% endif %}
+                                    {% endwith %}
+
+                                    <span class="text-xs text-gray-400 dark:text-neutral-500" title="{{ item.created_at|date:'N j, Y, g:i a' }}">
+                                        {{ item.created_at|timesince }} {% translate "ago" %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start pt-2 sm:pt-0 border-t sm:border-0 border-gray-100 dark:border-neutral-800">
+                            {% if not item.is_read %}
+                                <button type="button" 
+                                        class="mark-single-read-btn py-1.5 px-3 inline-flex items-center gap-x-1.5 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 transition-colors"
+                                        data-pk="{{ item.pk }}">
+                                    <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                    <span>{% translate "Mark as read" %}</span>
+                                </button>
+                            {% endif %}
+                            
+                            <span class="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-neutral-300 transition-colors hidden sm:block">
+                                <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="py-12 px-4 text-center">
+                        <div class="max-w-sm mx-auto space-y-3">
+                            <div class="size-14 bg-gray-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mx-auto text-gray-400 dark:text-neutral-500">
+                                {% if current_filter == 'unread' %}
+                                    <svg class="size-7 text-emerald-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                {% else %}
+                                    <svg class="size-7" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                                {% endif %}
+                            </div>
+                            
+                            <h4 class="text-base font-bold text-gray-900 dark:text-neutral-100">
+                                {% if current_filter == 'unread' %}
+                                    {% translate "You're all caught up!" %}
+                                {% else %}
+                                    {% translate "No notifications found" %}
+                                {% endif %}
+                            </h4>
+                            
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-neutral-400">
+                                {% if current_filter == 'unread' %}
+                                    {% translate "You have read all your notifications." %}
+                                {% else %}
+                                    {% translate "There are no notifications matching your current filter." %}
+                                {% endif %}
+                            </p>
+
+                            {% if current_filter != 'all' %}
+                                <div class="pt-2">
+                                    <a href="?filter=all" class="text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400">
+                                        {% translate "View all notifications" %}
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <!-- End Notifications List -->
+
+            <!-- Pagination Container -->
+            {% if is_paginated %}
+                <div class="px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200/80 dark:border-neutral-800 bg-gray-50/30 dark:bg-neutral-900/30">
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-neutral-400">
+                        {% blocktranslate with start=page_obj.start_index end=page_obj.end_index count=paginator.count %}
+                            Showing <span class="font-semibold text-gray-900 dark:text-white">{{ start }}</span> to <span class="font-semibold text-gray-900 dark:text-white">{{ end }}</span> of <span class="font-semibold text-gray-900 dark:text-white">{{ count }}</span> items
+                        {% endblocktranslate %}
+                    </p>
+
+                    <div class="inline-flex gap-x-2">
+                        {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}&filter={{ current_filter }}" 
+                               class="py-1.5 px-3 inline-flex items-center gap-x-1.5 text-xs sm:text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-xs hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 transition-colors">
+                                <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                {% translate "Previous" %}
+                            </a>
+                        {% endif %}
+
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}&filter={{ current_filter }}" 
+                               class="py-1.5 px-3 inline-flex items-center gap-x-1.5 text-xs sm:text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-xs hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 transition-colors">
+                                {% translate "Next" %}
+                                <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            <!-- End Pagination Container -->
+        </div>
+    </div>
+{% endblock dashboard_content %}

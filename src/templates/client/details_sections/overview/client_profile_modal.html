@@ -1,0 +1,242 @@
+{% load i18n %}
+{% load humanize %}
+
+<!-- Client Full Profile Modal -->
+<div id="client-full-profile-modal"
+     tabindex="-1"
+     role="dialog"
+     aria-hidden="true"
+     class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none">
+    <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:min-h-full sm:w-full sm:max-w-2xl sm:mx-auto">
+        <div class="bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200 dark:border-neutral-700">
+                <div>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">
+                        <i class="fa-solid fa-id-card mr-2 text-blue-600"></i>
+                        {% translate "Client Profile" %}
+                    </h3>
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                        {{ object.name }}
+                    </p>
+                </div>
+                <button type="button"
+                        class="flex-shrink-0 inline-flex justify-center items-center size-8 rounded-lg border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all dark:bg-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-600 dark:focus:ring-offset-neutral-800"
+                        data-hs-overlay="#client-full-profile-modal">
+                    <span class="sr-only">{% translate "Close" %}</span>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-4 sm:p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                
+                <!-- Basic Information Section -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-neutral-700">
+                        <i class="fa-solid fa-circle-info text-blue-600"></i>
+                        {% translate "Basic Information" %}
+                    </h4>
+                    <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Name" %}</dt>
+                        <dd class="sm:col-span-2 text-sm text-gray-800 dark:text-white">{{ object.name|default:"---" }}</dd>
+                        
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Industry" %}</dt>
+                        <dd class="sm:col-span-2 text-sm text-gray-800 dark:text-white">{{ object.industry|default:"---" }}</dd>
+                        
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Website" %}</dt>
+                        <dd class="sm:col-span-2 text-sm">
+                            {% if object.website %}
+                                <a href="{{ object.website }}" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">
+                                    {{ object.website }}
+                                </a>
+                            {% else %}
+                                <span class="text-gray-400 dark:text-gray-500">---</span>
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Status" %}</dt>
+                        <dd class="sm:col-span-2 text-sm">
+                            {% if object.status == CON_ENABLED %}
+                                <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 dark:bg-teal-800/30 dark:text-teal-500">
+                                    <i class="fa-solid fa-circle-check text-[8px]"></i>
+                                    {{ object.get_status_display }}
+                                </span>
+                            {% elif object.status == CON_DISABLED %}
+                                <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">
+                                    <i class="fa-solid fa-circle-pause text-[8px]"></i>
+                                    {{ object.get_status_display }}
+                                </span>
+                            {% elif object.status == CON_ARCHIVED %}
+                                <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-medium border border-gray-200 bg-white text-gray-800 shadow-sm dark:bg-slate-900 dark:border-gray-700 dark:text-white">
+                                    <i class="fa-solid fa-archive text-[8px]"></i>
+                                    {{ object.get_status_display }}
+                                </span>
+                            {% endif %}
+                        </dd>
+                    </dl>
+                </div>
+                
+                <!-- Contact Information Section -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-neutral-700">
+                        <i class="fa-solid fa-address-card text-green-600"></i>
+                        {% translate "Contact Information" %}
+                    </h4>
+                    <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Email Address" %}</dt>
+                        <dd class="sm:col-span-2 text-sm">
+                            {% if object.email %}
+                                <a href="mailto:{{ object.email }}" class="text-blue-600 hover:underline dark:text-blue-400">
+                                    {{ object.email }}
+                                </a>
+                            {% else %}
+                                <span class="text-gray-400 dark:text-gray-500">---</span>
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Phone Number" %}</dt>
+                        <dd class="sm:col-span-2 text-sm">
+                            {% if object.phone_number %}
+                                <a href="tel:{{ object.phone_number }}" class="text-blue-600 hover:underline dark:text-blue-400">
+                                    {{ object.phone_number }}
+                                </a>
+                            {% else %}
+                                <span class="text-gray-400 dark:text-gray-500">---</span>
+                            {% endif %}
+                        </dd>
+                    </dl>
+                </div>
+                
+                <!-- Address Section -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-neutral-700">
+                        <i class="fa-solid fa-location-dot text-red-600"></i>
+                        {% translate "Address" %}
+                    </h4>
+                    <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Street" %}</dt>
+                        <dd class="sm:col-span-2 text-sm text-gray-800 dark:text-white">{{ object.street|default:"---" }}</dd>
+                        
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "City" %}</dt>
+                        <dd class="sm:col-span-2 text-sm text-gray-800 dark:text-white">{{ object.city|default:"---" }}</dd>
+                        
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "State" %}</dt>
+                        <dd class="sm:col-span-2 text-sm text-gray-800 dark:text-white">{{ object.state|default:"---" }}</dd>
+                        
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Postcode" %}</dt>
+                        <dd class="sm:col-span-2 text-sm text-gray-800 dark:text-white">{{ object.postcode|default:"---" }}</dd>
+                        
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Country" %}</dt>
+                        <dd class="sm:col-span-2 text-sm text-gray-800 dark:text-white">
+                            {% if object.street or object.city or object.state or object.postcode %}
+                                USA
+                            {% else %}
+                                ---
+                            {% endif %}
+                        </dd>
+                    </dl>
+                </div>
+                
+                <!-- Description Section -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-neutral-700">
+                        <i class="fa-solid fa-align-left text-purple-600"></i>
+                        {% translate "Description" %}
+                    </h4>
+                    <div class="bg-gray-50 dark:bg-neutral-900 rounded-lg p-4">
+                        {% if object.description %}
+                            <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                                {{ object.description }}
+                            </p>
+                        {% else %}
+                            <p class="text-sm text-gray-400 dark:text-gray-500">---</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Additional Information Section -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-neutral-700">
+                        <i class="fa-solid fa-tags text-orange-600"></i>
+                        {% translate "Categories & Tags" %}
+                    </h4>
+                    <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Categories" %}</dt>
+                        <dd class="sm:col-span-2">
+                            {% if object.categories.all %}
+                                <div class="flex flex-wrap gap-1.5">
+                                    {% for category in object.categories.all %}
+                                        <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-400">
+                                            <i class="fa-solid fa-tag text-[8px]"></i>
+                                            {{ category.name }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <span class="text-sm text-gray-400 dark:text-gray-500">---</span>
+                            {% endif %}
+                        </dd>
+                    </dl>
+                </div>
+                
+                <!-- Logo Section -->
+                {% if object.company_logo %}
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-neutral-700">
+                            <i class="fa-solid fa-image text-pink-600"></i>
+                            {% translate "Company Logo" %}
+                        </h4>
+                        <div class="flex items-center gap-4">
+                            <img src="{{ object.company_logo.url }}" 
+                                 alt="{{ object.name }}" 
+                                 class="w-20 h-20 rounded-lg border-2 border-gray-200 object-cover dark:border-neutral-700" />
+                            <a href="{{ object.company_logo.url }}" 
+                               target="_blank"
+                               download
+                               class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+                                <i class="fa-solid fa-download mr-1"></i>
+                                {% translate "Download Logo" %}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                <!-- System Information Section -->
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-800 dark:text-white flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-neutral-700">
+                        <i class="fa-solid fa-clock text-gray-600"></i>
+                        {% translate "System Information" %}
+                    </h4>
+                    <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Created" %}</dt>
+                        <dd class="sm:col-span-2 text-sm text-gray-800 dark:text-white">
+                            {{ object.created_at|date:"F d, Y H:i" }}
+                        </dd>
+                        
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{% translate "Last Updated" %}</dt>
+                        <dd class="sm:col-span-2 text-sm text-gray-800 dark:text-white">
+                            {{ object.updated_at|date:"F d, Y H:i" }} ({{ object.updated_at|naturaltime }})
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="flex justify-end gap-2 px-4 py-3 sm:px-6 bg-gray-50 border-t border-gray-200 rounded-b-xl dark:bg-neutral-900 dark:border-neutral-700">
+                <button type="button"
+                        class="py-2 px-4 inline-flex items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+                        data-hs-overlay="#client-full-profile-modal">
+                    {% translate "Close" %}
+                </button>
+                <button type="button"
+                        data-hs-overlay="#update-client-modal"
+                        class="py-2 px-4 inline-flex items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                    <i class="fa-solid fa-pen"></i>
+                    {% translate "Edit Client" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Client Full Profile Modal -->

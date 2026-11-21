@@ -60,7 +60,8 @@
         <!-- ========== END FOOTER ========== -->
     </div>
     {% block externaljs %}
-        <script>
+        <script nonce="{{ request.csp_nonce }}">
+
             document.getElementById('currentYear').textContent = new Date().getFullYear();
         </script>
     {% endblock externaljs %}

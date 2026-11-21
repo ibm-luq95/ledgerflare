@@ -6,7 +6,7 @@ from django.views.generic import (
 
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
-from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_BOOKKEEPER, CON_CFO
 from core.views.mixins import BWLoginRequiredMixin, BWBaseListViewMixin
 from job.filters import JobFilter
 from job.models import JobProxy
@@ -35,7 +35,9 @@ class JobArchiveListView(
     pagination_list_url_name = "dashboard:archive:jobs:list"
     base_url_name = "dashboard:job"
     empty_label = _("job(s)")
-    subtitle = _("Jobs archive".title())
+    subtitle = _(
+        "Completed and archived fiscal jobs, past reconciliation periods, and closed engagements."
+    )
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -51,6 +53,10 @@ class JobArchiveListView(
         if self.request.user.user_type == CON_BOOKKEEPER:
             queryset = self.request.user.bookkeeper.get_proxy_model().get_user_jobs(
                 is_archived=True
+            )
+        elif self.request.user.user_type == CON_CFO:
+            queryset = JobProxy.archive_objects.filter(
+                client__cfos__user=self.request.user
             )
         self.filterset = JobFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs

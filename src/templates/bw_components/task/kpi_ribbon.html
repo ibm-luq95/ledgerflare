@@ -1,0 +1,125 @@
+{% load i18n humanize %}
+
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 my-4 sm:my-6 mx-2 sm:mx-4 md:mx-0">
+    <!-- Card 1: Total Tasks -->
+    <a href="{% url 'dashboard:task:list' %}"
+       class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-3.5 sm:p-4 md:p-5 hover:border-blue-400 hover:shadow-xs transition-all dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-600 group">
+        <div class="flex justify-between items-center">
+            <p class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 group-hover:text-blue-600 dark:text-neutral-400 dark:group-hover:text-blue-400 transition-colors truncate">
+                {% translate "Total Tasks" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-8 sm:size-9 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 transition-colors">
+                <svg class="size-4 sm:size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                    <path d="m9 14 2 2 4-4"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-2.5 sm:mt-3">
+            <h3 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-neutral-200">
+                {{ kpi_stats.total_tasks|default:0|intcomma }}
+            </h3>
+            <p class="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 truncate">
+                {% translate "All active & completed" %}
+            </p>
+        </div>
+    </a>
+    <!-- End Card 1 -->
+
+    <!-- Card 2: In Progress -->
+    <a href="{% url 'dashboard:task:list' %}?status=in_progress"
+       class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-3.5 sm:p-4 md:p-5 hover:border-sky-400 hover:shadow-xs transition-all dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-600 group">
+        <div class="flex justify-between items-center">
+            <p class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 group-hover:text-sky-600 dark:text-neutral-400 dark:group-hover:text-sky-400 transition-colors truncate">
+                {% translate "In Progress" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-8 sm:size-9 bg-sky-50 text-sky-600 rounded-lg group-hover:bg-sky-100 dark:bg-sky-900/30 dark:text-sky-400 transition-colors">
+                <svg class="size-4 sm:size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-2.5 sm:mt-3">
+            <h3 class="text-xl sm:text-2xl font-bold text-sky-600 dark:text-sky-400">
+                {{ kpi_stats.in_progress_tasks|default:0|intcomma }}
+            </h3>
+            <p class="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 truncate">
+                {% translate "Currently in progress" %}
+            </p>
+        </div>
+    </a>
+    <!-- End Card 2 -->
+
+    <!-- Card 3: Past Due -->
+    <a href="{% url 'dashboard:task:list' %}?status=past_due"
+       class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-3.5 sm:p-4 md:p-5 hover:border-rose-400 hover:shadow-xs transition-all dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-600 group">
+        <div class="flex justify-between items-center">
+            <p class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 group-hover:text-rose-600 dark:text-neutral-400 dark:group-hover:text-rose-400 transition-colors truncate">
+                {% translate "Past Due" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-8 sm:size-9 bg-rose-50 text-rose-600 rounded-lg group-hover:bg-rose-100 dark:bg-rose-900/30 dark:text-rose-400 transition-colors">
+                <svg class="size-4 sm:size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-2.5 sm:mt-3">
+            <h3 class="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400">
+                {{ kpi_stats.past_due_tasks|default:0|intcomma }}
+            </h3>
+            <p class="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 truncate">
+                {% translate "Overdue tasks" %}
+            </p>
+        </div>
+    </a>
+    <!-- End Card 3 -->
+
+    <!-- Card 4: Urgent -->
+    <a href="{% url 'dashboard:task:list' %}?task_type=urgent"
+       class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-3.5 sm:p-4 md:p-5 hover:border-amber-400 hover:shadow-xs transition-all dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-600 group">
+        <div class="flex justify-between items-center">
+            <p class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 group-hover:text-amber-600 dark:text-neutral-400 dark:group-hover:text-amber-400 transition-colors truncate">
+                {% translate "Urgent" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-8 sm:size-9 bg-amber-50 text-amber-600 rounded-lg group-hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 transition-colors">
+                <svg class="size-4 sm:size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-2.5 sm:mt-3">
+            <h3 class="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400">
+                {{ kpi_stats.urgent_tasks|default:0|intcomma }}
+            </h3>
+            <p class="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 truncate">
+                {% translate "High priority" %}
+            </p>
+        </div>
+    </a>
+    <!-- End Card 4 -->
+
+    <!-- Card 5: Completed -->
+    <a href="{% url 'dashboard:task:list' %}?status=completed"
+       class="col-span-2 sm:col-span-1 flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-3.5 sm:p-4 md:p-5 hover:border-emerald-400 hover:shadow-xs transition-all dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-600 group">
+        <div class="flex justify-between items-center">
+            <p class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gray-500 group-hover:text-emerald-600 dark:text-neutral-400 dark:group-hover:text-emerald-400 transition-colors truncate">
+                {% translate "Completed" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-8 sm:size-9 bg-emerald-50 text-emerald-600 rounded-lg group-hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 transition-colors">
+                <svg class="size-4 sm:size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-2.5 sm:mt-3">
+            <h3 class="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                {{ kpi_stats.completed_tasks|default:0|intcomma }}
+            </h3>
+            <p class="mt-0.5 sm:mt-1 text-[11px] sm:text-xs text-gray-500 dark:text-neutral-400 truncate">
+                {% translate "Closed & completed" %}
+            </p>
+        </div>
+    </a>
+    <!-- End Card 5 -->
+</div>

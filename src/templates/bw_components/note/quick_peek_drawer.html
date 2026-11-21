@@ -1,0 +1,39 @@
+{% load i18n %}
+
+<!-- Quick Peek Backdrop -->
+<div id="noteQuickPeekBackdrop"
+     class="fixed inset-0 bg-gray-900/50 dark:bg-neutral-900/80 backdrop-blur-xs z-70 hidden transition-opacity duration-300"
+     aria-hidden="true">
+</div>
+
+<!-- Quick Peek Slide-Over Drawer -->
+<div id="noteQuickPeekDrawer"
+     class="fixed top-0 end-0 h-full w-full max-w-lg bg-white dark:bg-neutral-900 shadow-2xl z-80 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto flex flex-col border-s border-gray-200 dark:border-neutral-800"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="noteQuickPeekDrawerLabel">
+    <!-- Drawer Header -->
+    <div class="flex items-center justify-between p-4 sm:p-5 border-b border-gray-200 dark:border-neutral-800 shrink-0 sticky top-0 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xs z-10">
+        <div class="flex items-center gap-x-2">
+            <span class="size-2 rounded-full bg-blue-600"></span>
+            <h2 id="noteQuickPeekDrawerLabel" class="text-sm font-bold text-gray-800 dark:text-neutral-200">
+                {% translate "Note Quick Peek" %}
+            </h2>
+        </div>
+        <button type="button"
+                id="closeNoteQuickPeekBtn"
+                class="size-8 inline-flex justify-center items-center rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-100 focus:outline-hidden dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 cursor-pointer transition-colors"
+                aria-label="Close">
+            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Drawer Dynamic Content Body -->
+    <div id="noteQuickPeekDrawerBody" class="p-4 sm:p-6 grow">
+        <div class="flex items-center justify-center py-20 text-gray-400">
+            <span class="animate-spin inline-block size-7 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500" role="status" aria-label="loading"></span>
+        </div>
+    </div>
+</div>

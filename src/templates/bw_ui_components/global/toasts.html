@@ -1,9 +1,9 @@
 {% load i18n %}
 
-<div class="fixed top-20 right-0 hidden z-50 space-y-3"
+<div class="fixed top-5 end-5 hidden z-[9999] space-y-3 pointer-events-none"
      id="toasts-wrapper">
     <!-- Toast -->
-    <div class="max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700"
+    <div class="max-w-xs bg-white border border-gray-200 rounded-xl shadow-2xl dark:bg-neutral-800 dark:border-neutral-700 pointer-events-auto"
          role="alert"
          tabindex="-1"
          aria-labelledby="hs-toast-normal-example-label">
@@ -20,7 +20,7 @@
                 </svg>
             </div>
             <div class="ms-3">
-                <p id="msg" class="text-sm text-gray-700 dark:text-neutral-400">
+                <p id="msg" class="text-sm font-medium text-gray-700 dark:text-neutral-300">
                 </p>
             </div>
         </div>

@@ -1,0 +1,118 @@
+{% load i18n humanize %}
+
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 mx-2 sm:mx-4 md:mx-0">
+    <!-- Card 1: Total Notes -->
+    <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}"
+       class="flex flex-col bg-white border border-gray-200 hover:border-blue-400 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-blue-500 transition-all group">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                {% translate "Total Notes" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-900/30 dark:text-blue-400">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-neutral-200">
+                {{ kpi_stats.total_notes|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "All active notes" %}
+            </p>
+        </div>
+    </a>
+
+    <!-- Card 2: Client Notes -->
+    <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}?note_section=client"
+       class="flex flex-col bg-white border border-gray-200 hover:border-emerald-400 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-emerald-500 transition-all group">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                {% translate "Client Notes" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] bg-emerald-50 text-emerald-600 rounded-lg dark:bg-emerald-900/30 dark:text-emerald-400">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                {{ kpi_stats.client_notes|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Client level records" %}
+            </p>
+        </div>
+    </a>
+
+    <!-- Card 3: Job Notes -->
+    <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}?note_section=job"
+       class="flex flex-col bg-white border border-gray-200 hover:border-indigo-400 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-indigo-500 transition-all group">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                {% translate "Job Notes" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] bg-indigo-50 text-indigo-600 rounded-lg dark:bg-indigo-900/30 dark:text-indigo-400">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                {{ kpi_stats.job_notes|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Linked to jobs" %}
+            </p>
+        </div>
+    </a>
+
+    <!-- Card 4: Task Notes -->
+    <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}?note_section=task"
+       class="flex flex-col bg-white border border-gray-200 hover:border-amber-400 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-amber-500 transition-all group">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 group-hover:text-amber-600 dark:group-hover:text-amber-400">
+                {% translate "Task Notes" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] bg-amber-50 text-amber-600 rounded-lg dark:bg-amber-900/30 dark:text-amber-400">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                {{ kpi_stats.task_notes|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Task annotations" %}
+            </p>
+        </div>
+    </a>
+
+    <!-- Card 5: Recent (7 Days) -->
+    <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}?created=this_week"
+       class="flex flex-col bg-white border border-gray-200 hover:border-purple-400 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-purple-500 transition-all group">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 group-hover:text-purple-600 dark:group-hover:text-purple-400">
+                {% translate "Recent (7 Days)" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] bg-purple-50 text-purple-600 rounded-lg dark:bg-purple-900/30 dark:text-purple-400">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                {{ kpi_stats.recent_notes|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Created this week" %}
+            </p>
+        </div>
+    </a>
+</div>

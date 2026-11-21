@@ -1,0 +1,82 @@
+{% load i18n %}
+{% load humanize %}
+
+<!-- Chart of Accounts Summary Placeholder -->
+<div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
+    <!-- Header -->
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">
+                    <i class="fa-solid fa-chart-pie mr-2 text-indigo-600"></i>
+                    {% translate "Chart of Accounts" %}
+                </h3>
+                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    {% translate "Financial account categories summary" %}
+                </p>
+            </div>
+            <button type="button"
+                    class="py-2 px-3 inline-flex items-center gap-2 rounded-md border border-gray-200 font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
+                <i class="fa-solid fa-gear"></i>
+                {% translate "Manage" %}
+            </button>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="p-4 sm:p-6">
+        {% if accounts %}
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+                {% for account in accounts %}
+                    <!-- Account Category Card -->
+                    <div class="bg-gradient-to-br from-{{ account.color }}-50 to-white border border-{{ account.color }}-100 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all dark:from-neutral-800 dark:to-neutral-900 dark:border-neutral-700">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-{{ account.color }}-100 text-{{ account.color }}-600 rounded-lg flex items-center justify-center dark:bg-{{ account.color }}-900/30 dark:text-{{ account.color }}-400">
+                                <i class="fa-solid {{ account.icon }} text-sm"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            {{ account.category }}
+                        </p>
+                        <p class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">
+                            ${{ account.balance|intcomma }}
+                        </p>
+                        <a href="javascript:;"
+                           class="mt-2 inline-flex items-center gap-1 text-xs font-medium text-{{ account.color }}-600 hover:text-{{ account.color }}-800 dark:text-{{ account.color }}-400 dark:hover:text-{{ account.color }}-300">
+                            {% translate "View" %}
+                            <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- View All Link -->
+            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
+                <a href="javascript:;"
+                   class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                    {% translate "View Full Chart of Accounts" %}
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="flex flex-col items-center justify-center py-8 sm:py-12">
+                <div class="w-16 h-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center dark:bg-neutral-800">
+                    <i class="fa-solid fa-chart-pie text-2xl"></i>
+                </div>
+                <h4 class="mt-4 text-sm font-semibold text-gray-800 dark:text-white">
+                    {% translate "No chart of accounts set up" %}
+                </h4>
+                <p class="mt-1 text-xs sm:text-sm text-center text-gray-500 dark:text-gray-400">
+                    {% translate "Configure your chart of accounts to organize financial transactions" %}
+                </p>
+                <button type="button"
+                        class="mt-4 py-2 px-4 inline-flex items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                    <i class="fa-solid fa-plus"></i>
+                    {% translate "Set Up Accounts" %}
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<!-- End Chart of Accounts Summary Placeholder -->

@@ -23,6 +23,7 @@ class SpecialAssignmentProxy(SpecialAssignment):
 
     class Meta(SpecialAssignment.Meta):
         proxy = True
+        indexes = []
 
     # def get_all_messages(self):
     #     from discussion.models import DiscussionProxy

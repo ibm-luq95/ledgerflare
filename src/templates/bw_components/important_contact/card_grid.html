@@ -1,0 +1,151 @@
+{% load i18n core_tags %}
+
+<div id="contactCardGridContainer" class="hidden mx-2 sm:mx-4 md:mx-0">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for object in object_list %}
+            <div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all group">
+                <!-- Card Top: Avatar + Role Badge + Actions Dropdown -->
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="shrink-0 size-11 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-bold text-sm flex items-center justify-center shadow-2xs">
+                            {{ object.contact_first_name|slice:":1" }}{{ object.contact_last_name|slice:":1" }}
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="text-sm font-bold text-gray-900 dark:text-neutral-100 truncate">
+                                {{ object.full_name }}
+                            </h3>
+                            <div class="mt-1">
+                                {% if object.contact_label == 'payroll' %}
+                                    <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800">
+                                        {% translate "Payroll" %}
+                                    </span>
+                                {% elif object.contact_label == 'ceo' %}
+                                    <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800">
+                                        {% translate "CEO" %}
+                                    </span>
+                                {% elif object.contact_label == 'other' %}
+                                    <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800">
+                                        {% translate "Other" %}
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center py-0.5 px-2 rounded-full text-[10px] font-medium bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                        {{ object.get_contact_label_display|default:object.contact_label }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1">
+                        <!-- Quick Peek Trigger -->
+                        <button type="button"
+                                class="contact-quick-peek-trigger size-7 inline-flex justify-center items-center rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-blue-600 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-blue-400 shadow-2xs transition-colors cursor-pointer"
+                                data-quick-peek-url="{% url 'dashboard:important_contact:quick-peek' object.pk %}"
+                                title="{% translate 'Quick Peek' %}">
+                            <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+
+                        <!-- Actions Dropdown -->
+                        <div class="hs-dropdown relative inline-flex">
+                            <button id="hs-contact-card-dropdown-{{ object.pk }}"
+                                    type="button"
+                                    class="hs-dropdown-toggle size-7 inline-flex justify-center items-center rounded-lg text-gray-500 hover:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors"
+                                    aria-haspopup="menu"
+                                    aria-expanded="false"
+                                    aria-label="Actions">
+                                <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                                </svg>
+                            </button>
+
+                            <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-40 bg-white shadow-xl rounded-xl p-1.5 mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700 z-50 text-start"
+                                 role="menu"
+                                 aria-orientation="vertical"
+                                 aria-labelledby="hs-contact-card-dropdown-{{ object.pk }}">
+                                <button type="button"
+                                        class="contact-quick-peek-trigger w-full flex items-center gap-x-2 py-1.5 px-2.5 rounded-lg text-xs text-gray-700 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                        data-quick-peek-url="{% url 'dashboard:important_contact:quick-peek' object.pk %}">
+                                    <svg class="size-3.5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    {% translate "Quick Peek" %}
+                                </button>
+                                <a class="flex items-center gap-x-2 py-1.5 px-2.5 rounded-lg text-xs text-gray-700 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                   href="{% url 'dashboard:important_contact:update' object.pk %}">
+                                    <svg class="size-3.5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                                    </svg>
+                                    {% translate "Edit" %}
+                                </a>
+                                <a class="flex items-center gap-x-2 py-1.5 px-2.5 rounded-lg text-xs text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-neutral-700"
+                                   href="{% url 'dashboard:important_contact:delete' object.pk %}">
+                                    <svg class="size-3.5 text-red-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                    </svg>
+                                    {% translate "Delete" %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Company & Linked Client -->
+                <div class="space-y-1.5 mb-4 grow">
+                    {% if object.company_name %}
+                        <div class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-neutral-300">
+                            <svg class="size-3.5 text-gray-400 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M16 18h.01"/>
+                            </svg>
+                            <span class="font-medium truncate">{{ object.company_name }}</span>
+                        </div>
+                    {% endif %}
+
+                    <!-- Linked Clients -->
+                    <div class="flex items-center gap-1 flex-wrap pt-1">
+                        {% for client_obj in object.client.all %}
+                            <a href="{% url 'dashboard:client:details' client_obj.pk %}"
+                               class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 font-medium text-[11px] transition-colors truncate max-w-[150px]">
+                                <svg class="size-2.5 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                                </svg>
+                                <span class="truncate">{{ client_obj.name }}</span>
+                            </a>
+                        {% empty %}
+                            <span class="text-gray-400 dark:text-neutral-500 italic text-[11px]">{% translate "Unassigned to Client" %}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Quick Action Buttons: Email, Call, Website -->
+                <div class="grid grid-cols-2 gap-2 pt-3 border-t border-gray-100 dark:border-neutral-800 text-xs">
+                    {% if object.contact_email %}
+                        <a href="mailto:{{ object.contact_email }}"
+                           class="py-1.5 px-2 inline-flex justify-center items-center gap-x-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors truncate font-medium">
+                            <svg class="size-3 text-blue-600 dark:text-blue-400 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                            </svg>
+                            <span class="truncate">{% translate "Email" %}</span>
+                        </a>
+                    {% endif %}
+
+                    {% if object.contact_phone %}
+                        <a href="tel:{{ object.contact_phone }}"
+                           class="py-1.5 px-2 inline-flex justify-center items-center gap-x-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors truncate font-medium">
+                            <svg class="size-3 text-emerald-600 dark:text-emerald-400 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                            <span class="truncate">{% translate "Call" %}</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-span-full p-12 text-center bg-white border border-gray-200 rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
+                <p class="text-sm font-medium text-gray-600 dark:text-neutral-400">{% translate "No contacts found." %}</p>
+                <p class="text-xs text-gray-400 dark:text-neutral-500 mt-1">{% translate "Try adjusting your filters or create a new contact." %}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>

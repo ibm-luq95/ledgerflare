@@ -1,37 +1,265 @@
-{% extends "core/layouts/home.html" %}
-
+{% extends "core/layouts/auth.html" %}
 {% load i18n %}
 
-{% load crispy_forms_tags %}
+{% block auth_content %}
+<div class="min-h-screen flex flex-col lg:flex-row w-full bg-[#0E1015]">
 
-{% block home_content %}
-    <div class="w-full max-w-xl p-6 mx-auto">
-        <div class="bg-white border border-gray-200 rounded-xl shadow-2xs dark:bg-neutral-900 dark:border-neutral-700">
-            <div class="p-4 sm:p-7">
-                <div class="text-center">
-                    <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">
-                        {% translate "Sign in" %}
-                    </h1>
+    <!-- ========== LEFT SHOWCASE PANEL (Desktop / Tablet Large) ========== -->
+    <section aria-label="Brand Overview" class="hidden lg:flex lg:w-1/2 xl:w-7/12 relative flex-col justify-between p-12 xl:p-16 overflow-hidden bg-[#0A0C10] border-r border-zinc-800/80 text-zinc-100">
+        
+        <!-- Top: Brand Header -->
+        <div class="relative z-10 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                {% if get_web_app_settings.logo %}
+                    <img src="{{ get_web_app_settings.logo.url }}"
+                         alt="{{ get_web_app_settings.name|default:'LedgerFlare' }}"
+                         class="h-9 w-auto object-contain" />
+                {% else %}
+                    <div class="size-9 rounded-lg bg-zinc-800 border border-zinc-700/80 flex items-center justify-center text-zinc-100 font-semibold shadow-xs">
+                        <i class="fa-solid fa-shapes text-sm"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <span class="block text-base font-semibold tracking-tight text-white">
+                        {{ get_web_app_settings.name|default:"LedgerFlare" }}
+                    </span>
+                    <span class="block text-2xs font-mono uppercase tracking-wider text-zinc-400">
+                        Financial Practice OS
+                    </span>
                 </div>
-                <div class="mt-5">
-                    <!-- Form -->
-                    <form method="post">
-                        {% csrf_token %}
-                        {# Start input to prevent autofill - only for development #}
-                        {# <input autocomplete="false" name="hidden" type="text" class="hidden" /> #}
-                        {# End input to prevent autofill - only for development #}
-                        <div class="grid gap-y-4">
-                            {{ form }}
-                            <button type="submit"
-                                    id="submit"
-                                    class="inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white transition-all bg-blue-500 border border-transparent rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
-                                {% translate "Sign in" %}
-                            </button>
+            </div>
+            <span class="inline-flex items-center gap-x-1.5 py-1 px-2.5 rounded-md text-2xs font-mono text-zinc-400 border border-zinc-800 bg-zinc-900/80">
+                <span class="size-1.5 rounded-full bg-emerald-500"></span>
+                v2.6 Enterprise
+            </span>
+        </div>
+
+        <!-- Middle: Financial Architecture & Practice Telemetry -->
+        <div class="relative z-10 my-auto py-10 max-w-lg">
+            <h1 class="text-3xl xl:text-4xl font-semibold tracking-tight text-white leading-tight">
+                High-precision accounting & practice workflows.
+            </h1>
+            <p class="mt-3.5 text-sm text-zinc-400 leading-relaxed">
+                The central operating platform for client bookkeeping, automated general ledger tasks, and strategic CFO advisory.
+            </p>
+
+            <!-- Concept A: Practice Job & Workflow Pipeline -->
+            <div class="mt-8 rounded-xl bg-zinc-900/90 border border-zinc-800/80 p-5 shadow-xs">
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-zinc-800/80 text-2xs font-mono text-zinc-400 tracking-wider uppercase">
+                    <span>Practice Dispatch & Workflows</span>
+                    <span class="text-emerald-400 font-medium">● Active</span>
+                </div>
+                <div class="space-y-3.5 text-xs">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-sm text-zinc-300 mt-0.5"><i class="fa-solid fa-clipboard-list"></i></span>
+                            <div>
+                                <div class="font-medium text-white">Monthly Bookkeeping & Jobs</div>
+                                <div class="text-2xs text-zinc-400 mt-0.5">Bank feeds, journal entries, and recurring tax tasks</div>
+                            </div>
                         </div>
-                    </form>
-                    <!-- End Form -->
+                        <span class="text-2xs font-mono text-zinc-400 bg-zinc-950 px-2 py-0.5 rounded border border-zinc-800">Assigned</span>
+                    </div>
+
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-sm text-zinc-300 mt-0.5"><i class="fa-solid fa-vault"></i></span>
+                            <div>
+                                <div class="font-medium text-white">Encrypted Client Vault</div>
+                                <div class="text-2xs text-zinc-400 mt-0.5">Software credentials, tax logins, and records</div>
+                            </div>
+                        </div>
+                        <span class="text-2xs font-mono text-zinc-400 bg-zinc-950 px-2 py-0.5 rounded border border-zinc-800">Secured</span>
+                    </div>
+
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-sm text-zinc-300 mt-0.5"><i class="fa-solid fa-chart-line"></i></span>
+                            <div>
+                                <div class="font-medium text-white">CFO Advisory Suite</div>
+                                <div class="text-2xs text-zinc-400 mt-0.5">Cash flow forecast, reviews, and client KPIs</div>
+                            </div>
+                        </div>
+                        <span class="text-2xs font-mono text-zinc-400 bg-zinc-950 px-2 py-0.5 rounded border border-zinc-800">Live</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Pillar Badges -->
+            <div class="grid grid-cols-2 gap-3 mt-4 text-2xs font-medium text-zinc-400">
+                <div class="flex items-center gap-2 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/60">
+                    <i class="fa-solid fa-lock text-zinc-400 text-xs"></i>
+                    <span>AES-256 Client Vault</span>
+                </div>
+                <div class="flex items-center gap-2 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/60">
+                    <i class="fa-solid fa-user-shield text-zinc-400 text-xs"></i>
+                    <span>Role-Scoped Permissions</span>
                 </div>
             </div>
         </div>
-    </div>
-{% endblock home_content %}
+
+        <!-- Bottom: Trust Footer -->
+        <div class="relative z-10 flex items-center justify-between pt-6 border-t border-zinc-800/80 text-xs text-zinc-500 font-mono">
+            <span>Restricted Practice Portal</span>
+            <span>© {% now "Y" %} {{ get_web_app_settings.name|default:"LedgerFlare" }}</span>
+        </div>
+    </section>
+
+    <!-- ========== RIGHT AUTHENTICATION PANEL ========== -->
+    <main id="home-content" role="main" class="w-full lg:w-1/2 xl:w-5/12 flex flex-col justify-between p-6 sm:p-12 xl:p-16 bg-white dark:bg-[#111318] border-l border-zinc-200 dark:border-zinc-800/80 overflow-y-auto">
+        
+        <!-- Mobile Header (Visible on < lg) -->
+        <div class="flex lg:hidden items-center justify-between pb-6 border-b border-zinc-100 dark:border-zinc-800/80">
+            <div class="flex items-center gap-2.5">
+                {% if get_web_app_settings.logo %}
+                    <img src="{{ get_web_app_settings.logo.url }}"
+                         alt="{{ get_web_app_settings.name|default:'LedgerFlare' }}"
+                         class="h-8 w-auto object-contain" />
+                {% else %}
+                    <div class="size-8 rounded-lg bg-zinc-900 dark:bg-zinc-800 text-white flex items-center justify-center text-xs font-semibold">
+                        <i class="fa-solid fa-shapes"></i>
+                    </div>
+                {% endif %}
+                <span class="text-base font-semibold text-zinc-900 dark:text-white">
+                    {{ get_web_app_settings.name|default:"LedgerFlare" }}
+                </span>
+            </div>
+            <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded text-2xs font-mono text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800">
+                <span class="size-1.5 rounded-full bg-emerald-500"></span>
+                Active
+            </span>
+        </div>
+
+        <!-- Center: Authentication Box -->
+        <div class="my-auto py-6 sm:py-8 w-full max-w-sm mx-auto">
+            
+            <!-- Header Text -->
+            <div class="text-left mb-6">
+                <h2 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                    {% translate "Sign in" %}
+                </h2>
+                <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                    {% translate "Authenticate with your role credentials to continue." %}
+                </p>
+            </div>
+
+            <!-- Flash & Error Messages -->
+            {% if messages %}
+                <div class="mb-5">
+                    {% include "components/inc/messages.html" %}
+                </div>
+            {% endif %}
+
+            <!-- Form -->
+            <form method="post" id="bw-login-form" class="space-y-4" novalidate>
+                {% csrf_token %}
+
+                <!-- Non-Field Errors -->
+                {% if form.non_field_errors %}
+                    <div class="p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-300 text-xs font-medium">
+                        {% for error in form.non_field_errors %}
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-exclamation text-red-500"></i>
+                                <span>{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Field 1: Role Selector -->
+                <div>
+                    {{ form.user_type }}
+                    {% if form.user_type.errors %}
+                        {% for error in form.user_type.errors %}
+                            <p class="text-xs text-red-600 dark:text-red-400 mt-1 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-exclamation text-2xs"></i>
+                                <span>{{ error }}</span>
+                            </p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Field 2: Email Address -->
+                <div>
+                    <label for="id_email" class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+                        {% translate "Email Address" %}
+                    </label>
+                    <div class="relative rounded-xl">
+                        <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3 text-zinc-400 dark:text-zinc-500">
+                            <i class="fa-solid fa-envelope text-xs"></i>
+                        </div>
+                        {{ form.email }}
+                    </div>
+                    {% if form.email.errors %}
+                        {% for error in form.email.errors %}
+                            <p class="text-xs text-red-600 dark:text-red-400 mt-1 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-exclamation text-2xs"></i>
+                                <span>{{ error }}</span>
+                            </p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Field 3: Password -->
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label for="id_password" class="block text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                            {% translate "Password" %}
+                        </label>
+                        <a href="{% url 'auth:reset' %}"
+                           class="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors">
+                            {% translate "Forgot password?" %}
+                        </a>
+                    </div>
+                    <div class="relative rounded-xl">
+                        <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3 text-zinc-400 dark:text-zinc-500">
+                            <i class="fa-solid fa-lock text-xs"></i>
+                        </div>
+                        {{ form.password }}
+                        <button type="button"
+                                data-auth-password-toggle
+                                data-target-input="id_password"
+                                aria-label="Toggle password visibility"
+                                class="absolute inset-y-0 end-0 flex items-center pe-3 text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 focus:outline-none transition-colors">
+                            <i class="fa-regular fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                    {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                            <p class="text-xs text-red-600 dark:text-red-400 mt-1 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-exclamation text-2xs"></i>
+                                <span>{{ error }}</span>
+                            </p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Submit Action -->
+                <div class="pt-2">
+                    <button type="submit"
+                            id="bw-login-submit-btn"
+                            class="w-full py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-xl bg-zinc-900 hover:bg-zinc-800 active:bg-black text-white dark:bg-zinc-100 dark:hover:bg-white dark:active:bg-zinc-200 dark:text-zinc-950 shadow-xs focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-300 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none">
+                        <span data-submit-text>{% translate "Sign In" %}</span>
+                        <i data-submit-icon class="fa-solid fa-arrow-right text-xs ml-0.5 transition-transform group-hover:translate-x-0.5"></i>
+                        <span data-submit-spinner style="display: none;" class="size-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Security Trust Microcopy -->
+            <div class="mt-6 pt-5 border-t border-zinc-100 dark:border-zinc-800/80 text-center">
+                <p class="text-2xs font-mono text-zinc-400 dark:text-zinc-500">
+                    <i class="fa-solid fa-shield-halved text-emerald-600 dark:text-emerald-500 mr-1"></i>
+                    Role-Scoped Permissions • Protected Session
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="pt-4 text-center text-xs text-zinc-400 dark:text-zinc-500">
+            <span>{% translate "LedgerFlare Practice Management" %}</span>
+        </footer>
+    </main>
+
+</div>
+{% endblock auth_content %}

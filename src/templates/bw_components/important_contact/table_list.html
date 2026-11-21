@@ -1,27 +1,31 @@
 {% extends "bw_components/layouts/table_list_base.html" %}
 
-{% load i18n %}
+{% load i18n core_tags %}
 
 {# Start Table Header #}
 {% block header_title %}
     {% translate header_title %}
 {% endblock header_title %}
 {# End Table Header #}
+
 {# Start Table Subtitle #}
 {% block header_subtitle %}
     {% translate header_subtitle %}
 {% endblock header_subtitle %}
 {# End Table Subtitle #}
+
 {# Start Table ID Block #}
 {% block table_id_block %}
     {{ app_label|add:'_table' }}
 {% endblock table_id_block %}
 {# End Table ID Block #}
+
 {# Start Custom Css Class #}
 {% block custom_css_class_name %}
-    important-contact-table-list
+    important-contacts-table-list w-full
 {% endblock custom_css_class_name %}
 {# End Custom Css Class #}
+
 {% if is_show_create_btn is True %}
     {# Start Create Button Block #}
     {% block create_btn_block %}
@@ -29,215 +33,236 @@
     {% endblock create_btn_block %}
     {# End Create Button Block #}
 {% endif %}
-{# Start Table Header Columns #}
+
+{# Start Desktop Table Header Columns #}
 {% block thead_block %}
-    <tr>
+    <tr class="border-b border-gray-200 bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800/60">
         {% if is_checkbox_enabled is True %}
-            <th scope="col" class="pl-6 py-3 text-left">
+            <th scope="col" class="ps-6 py-3.5 text-start w-10">
                 <label for="{{ column|add:'-checkbox' }}" class="flex">
                     <input type="checkbox"
-                           class="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800 {{ BW_DISABLED_DISABLED_INPUTS_CSS_CLASSES }} {{ BW_BASE_INPUT_CSS_CLASSES }}"
+                           class="shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500"
                            id="{{ column|add:'-checkbox' }}"
                            disabled />
                     <span class="sr-only">{{ column|title }}</span>
                 </label>
             </th>
         {% endif %}
-        <th scope="col" class="px-6 py-3 text-left">
+
+        <th scope="col" class="px-6 py-3.5 text-start">
             <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Label" %}
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Contact Name & Role" %}
                 </span>
-                <div class="flex justify-center items-center w-5 h-5 border border-gray-200 group-hover:bg-gray-200 text-gray-500 rounded dark:border-gray-700 dark:group-hover:bg-gray-700 dark:text-gray-400">
-                    <svg class="w-2.5 h-2.5"
-                         width="16"
-                         height="16"
-                         viewBox="0 0 16 16"
-                         fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.55921 0.287451C7.86808 -0.0958171 8.40096 -0.0958167 8.70982 0.287451L12.9295 5.52367C13.3857 6.08979 13.031 7 12.3542 7H3.91488C3.23806 7 2.88336 6.08979 3.33957 5.52367L7.55921 0.287451Z" fill="currentColor" />
-                        <path d="M8.70983 15.7125C8.40096 16.0958 7.86808 16.0958 7.55921 15.7125L3.33957 10.4763C2.88336 9.9102 3.23806 9 3.91488 9H12.3542C13.031 9 13.3857 9.9102 12.9295 10.4763L8.70983 15.7125Z" fill="currentColor" />
-                    </svg>
-                </div>
+                {% include "bw_components/global/table_list/sort_icon.html" %}
             </div>
         </th>
-        <th scope="col" class="px-6 py-3 text-left">
+
+        <th scope="col" class="px-6 py-3.5 text-start">
             <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Full Name" %}
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Company & Client" %}
                 </span>
-                <div class="flex justify-center items-center w-5 h-5 border border-gray-200 group-hover:bg-gray-200 text-gray-500 rounded dark:border-gray-700 dark:group-hover:bg-gray-700 dark:text-gray-400">
-                    <svg class="w-2.5 h-2.5"
-                         width="16"
-                         height="16"
-                         viewBox="0 0 16 16"
-                         fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.55921 0.287451C7.86808 -0.0958171 8.40096 -0.0958167 8.70982 0.287451L12.9295 5.52367C13.3857 6.08979 13.031 7 12.3542 7H3.91488C3.23806 7 2.88336 6.08979 3.33957 5.52367L7.55921 0.287451Z" fill="currentColor" />
-                        <path d="M8.70983 15.7125C8.40096 16.0958 7.86808 16.0958 7.55921 15.7125L3.33957 10.4763C2.88336 9.9102 3.23806 9 3.91488 9H12.3542C13.031 9 13.3857 9.9102 12.9295 10.4763L8.70983 15.7125Z" fill="currentColor" />
-                    </svg>
-                </div>
+                {% include "bw_components/global/table_list/sort_icon.html" %}
             </div>
         </th>
-        <th scope="col" class="px-6 py-3 text-left">
+
+        <th scope="col" class="px-6 py-3.5 text-start">
             <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Email Address" %}
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Contact Details" %}
                 </span>
-                <div class="flex justify-center items-center w-5 h-5 border border-gray-200 group-hover:bg-gray-200 text-gray-500 rounded dark:border-gray-700 dark:group-hover:bg-gray-700 dark:text-gray-400">
-                    <svg class="w-2.5 h-2.5"
-                         width="16"
-                         height="16"
-                         viewBox="0 0 16 16"
-                         fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.55921 0.287451C7.86808 -0.0958171 8.40096 -0.0958167 8.70982 0.287451L12.9295 5.52367C13.3857 6.08979 13.031 7 12.3542 7H3.91488C3.23806 7 2.88336 6.08979 3.33957 5.52367L7.55921 0.287451Z" fill="currentColor" />
-                        <path d="M8.70983 15.7125C8.40096 16.0958 7.86808 16.0958 7.55921 15.7125L3.33957 10.4763C2.88336 9.9102 3.23806 9 3.91488 9H12.3542C13.031 9 13.3857 9.9102 12.9295 10.4763L8.70983 15.7125Z" fill="currentColor" />
-                    </svg>
-                </div>
+                {% include "bw_components/global/table_list/sort_icon.html" %}
             </div>
         </th>
-        <th scope="col" class="px-6 py-3 text-left">
+
+        <th scope="col" class="px-6 py-3.5 text-start">
             <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Phone Number" %}
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Location" %}
                 </span>
-                <div class="flex justify-center items-center w-5 h-5 border border-gray-200 group-hover:bg-gray-200 text-gray-500 rounded dark:border-gray-700 dark:group-hover:bg-gray-700 dark:text-gray-400">
-                    <svg class="w-2.5 h-2.5"
-                         width="16"
-                         height="16"
-                         viewBox="0 0 16 16"
-                         fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.55921 0.287451C7.86808 -0.0958171 8.40096 -0.0958167 8.70982 0.287451L12.9295 5.52367C13.3857 6.08979 13.031 7 12.3542 7H3.91488C3.23806 7 2.88336 6.08979 3.33957 5.52367L7.55921 0.287451Z" fill="currentColor" />
-                        <path d="M8.70983 15.7125C8.40096 16.0958 7.86808 16.0958 7.55921 15.7125L3.33957 10.4763C2.88336 9.9102 3.23806 9 3.91488 9H12.3542C13.031 9 13.3857 9.9102 12.9295 10.4763L8.70983 15.7125Z" fill="currentColor" />
-                    </svg>
-                </div>
+                {% include "bw_components/global/table_list/sort_icon.html" %}
             </div>
         </th>
-        {% if is_client_enabled is True or extra_context.is_client_enabled is True %}
-            <th scope="col" class="px-6 py-3 text-left">
-                <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Client" %}
-                    </span>
-                    <div class="flex justify-center items-center w-5 h-5 border border-gray-200 group-hover:bg-gray-200 text-gray-500 rounded dark:border-gray-700 dark:group-hover:bg-gray-700 dark:text-gray-400">
-                        <svg class="w-2.5 h-2.5"
-                             width="16"
-                             height="16"
-                             viewBox="0 0 16 16"
-                             fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7.55921 0.287451C7.86808 -0.0958171 8.40096 -0.0958167 8.70982 0.287451L12.9295 5.52367C13.3857 6.08979 13.031 7 12.3542 7H3.91488C3.23806 7 2.88336 6.08979 3.33957 5.52367L7.55921 0.287451Z" fill="currentColor" />
-                            <path d="M8.70983 15.7125C8.40096 16.0958 7.86808 16.0958 7.55921 15.7125L3.33957 10.4763C2.88336 9.9102 3.23806 9 3.91488 9H12.3542C13.031 9 13.3857 9.9102 12.9295 10.4763L8.70983 15.7125Z" fill="currentColor" />
-                        </svg>
-                    </div>
-                </div>
+
+        {% if is_actions_menu_enabled is True %}
+            <th scope="col" class="px-6 py-3.5 text-end">
+                <span class="text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
+                    {% translate "Actions" %}
+                </span>
             </th>
         {% endif %}
-        {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
-            <th scope="col" class="px-6 py-3 text-left">
-                <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Created" %}
-                    </span>
-                    <div class="flex justify-center items-center w-5 h-5 border border-gray-200 group-hover:bg-gray-200 text-gray-500 rounded dark:border-gray-700 dark:group-hover:bg-gray-700 dark:text-gray-400">
-                        <svg class="w-2.5 h-2.5"
-                             width="16"
-                             height="16"
-                             viewBox="0 0 16 16"
-                             fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7.55921 0.287451C7.86808 -0.0958171 8.40096 -0.0958167 8.70982 0.287451L12.9295 5.52367C13.3857 6.08979 13.031 7 12.3542 7H3.91488C3.23806 7 2.88336 6.08979 3.33957 5.52367L7.55921 0.287451Z" fill="currentColor" />
-                            <path d="M8.70983 15.7125C8.40096 16.0958 7.86808 16.0958 7.55921 15.7125L3.33957 10.4763C2.88336 9.9102 3.23806 9 3.91488 9H12.3542C13.031 9 13.3857 9.9102 12.9295 10.4763L8.70983 15.7125Z" fill="currentColor" />
-                        </svg>
-                    </div>
-                </div>
-            </th>
-        {% endif %}
-        <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2"></div>
-        </th>
     </tr>
 {% endblock thead_block %}
-{# End Table Header Columns #}
+{# End Desktop Table Header Columns #}
+
 {# Start Table Body #}
 {% block tbody_block %}
     {% for object in object_list %}
-        <tr>
+        <tr class="hover:bg-gray-50/80 dark:hover:bg-neutral-800/50 transition-colors border-b border-gray-100 dark:border-neutral-800/80 group">
             {% if is_checkbox_enabled is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="pl-6 py-3">
-                        <label for="{{ object.pk|add:'-checkbox' }}" class="flex">
-                            <input type="checkbox"
-                                   class="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800 {{ BW_DISABLED_DISABLED_INPUTS_CSS_CLASSES }} {{ BW_BASE_INPUT_CSS_CLASSES }}"
-                                   id="{{ object.pk|add:'-checkbox' }}"
-                                   disabled />
-                            <span class="sr-only">{{ object.name|title }}</span>
-                        </label>
-                    </div>
+                <td class="ps-6 py-4 w-10">
+                    <label for="{{ object.pk }}-checkbox" class="flex">
+                        <input type="checkbox"
+                               class="row-checkbox shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500"
+                               id="{{ object.pk }}-checkbox"
+                               value="{{ object.pk }}" />
+                        <span class="sr-only">{% translate "Select Row" %}</span>
+                    </label>
                 </td>
             {% endif %}
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <a href="{% url base_url_name|add:':update' object.pk %}">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">
-                            {{ object.get_contact_label_display }}
+
+            <!-- Contact Name, Avatar & Role -->
+            <td class="px-6 py-4">
+                <div class="flex items-center gap-x-3">
+                    <!-- Quick Peek Trigger -->
+                    <button type="button"
+                            class="contact-quick-peek-trigger shrink-0 size-7 inline-flex justify-center items-center rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-blue-600 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-blue-400 shadow-2xs transition-colors cursor-pointer"
+                            data-quick-peek-url="{% url 'dashboard:important_contact:quick-peek' object.pk %}"
+                            title="{% translate 'Quick Peek' %}">
+                        <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+
+                    <!-- Monogram Avatar -->
+                    <div class="shrink-0 size-9 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-bold text-xs flex items-center justify-center">
+                        {{ object.contact_first_name|slice:":1" }}{{ object.contact_last_name|slice:":1" }}
+                    </div>
+
+                    <div class="min-w-0">
+                        <span class="text-sm font-semibold text-gray-900 dark:text-neutral-100 block truncate">
+                            {{ object.full_name }}
                         </span>
+                        <div class="mt-0.5">
+                            {% if object.contact_label == 'payroll' %}
+                                <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800">
+                                    {% translate "Payroll" %}
+                                </span>
+                            {% elif object.contact_label == 'ceo' %}
+                                <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800">
+                                    {% translate "CEO" %}
+                                </span>
+                            {% elif object.contact_label == 'other' %}
+                                <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800">
+                                    {% translate "Other" %}
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center py-0.5 px-2 rounded-full text-[10px] font-medium bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                    {{ object.get_contact_label_display|default:object.contact_label }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </td>
+
+            <!-- Company Name & Linked Client -->
+            <td class="px-6 py-4 whitespace-nowrap text-xs">
+                {% if object.company_name %}
+                    <span class="font-medium text-gray-800 dark:text-neutral-200 block truncate max-w-[170px]">
+                        {{ object.company_name }}
+                    </span>
+                {% endif %}
+
+                <div class="flex items-center gap-1 flex-wrap mt-0.5">
+                    {% for client_obj in object.client.all %}
+                        <a href="{% url 'dashboard:client:details' client_obj.pk %}"
+                           class="inline-flex items-center gap-x-1 py-0.5 px-1.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 font-medium text-[11px] transition-colors truncate max-w-[140px]">
+                            <svg class="size-2.5 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                            </svg>
+                            <span class="truncate">{{ client_obj.name }}</span>
+                        </a>
+                    {% empty %}
+                        <span class="text-gray-400 dark:text-neutral-500 italic text-[11px]">{% translate "Unassigned" %}</span>
+                    {% endfor %}
+                </div>
+            </td>
+
+            <!-- Contact Details (Email + Phone) -->
+            <td class="px-6 py-4 whitespace-nowrap text-xs">
+                {% if object.contact_email %}
+                    <a href="mailto:{{ object.contact_email }}"
+                       class="text-blue-600 hover:underline dark:text-blue-400 block truncate max-w-[180px]">
+                        {{ object.contact_email }}
                     </a>
-                </div>
+                {% endif %}
+
+                {% if object.contact_phone %}
+                    <a href="tel:{{ object.contact_phone }}"
+                       class="text-gray-600 hover:text-gray-900 dark:text-neutral-400 dark:hover:text-neutral-200 block truncate max-w-[180px] text-[11px] mt-0.5">
+                        {{ object.contact_phone }}
+                    </a>
+                {% endif %}
             </td>
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.contact_fullname }}</span>
-                </div>
+
+            <!-- Location Details -->
+            <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-600 dark:text-neutral-400">
+                {% if object.contact_city or object.contact_state %}
+                    <span class="font-medium text-gray-800 dark:text-neutral-200 block">
+                        {{ object.contact_city|default:"" }}{% if object.contact_city and object.contact_state %}, {% endif %}{{ object.contact_state|default:"" }}
+                    </span>
+                    {% if object.contact_postcode %}
+                        <span class="text-[11px] text-gray-400 dark:text-neutral-500">{{ object.contact_postcode }}</span>
+                    {% endif %}
+                {% else %}
+                    <span class="text-gray-400 dark:text-neutral-500 italic">{% translate "N/A" %}</span>
+                {% endif %}
             </td>
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.contact_email }}</span>
-                </div>
-            </td>
-            <td class="h-px w-px whitespace-nowrap">
-                <div class="px-6 py-3">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.contact_phone }}</span>
-                </div>
-            </td>
-            {% if is_client_enabled is True or extra_context.is_client_enabled is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="px-6 py-3">
-                        {% if object.client.exists is True %}
-                            <a href="{% url 'dashboard:client:details' object.client.get.pk %}">
-                                <span class="text-sm text-gray-600 dark:text-gray-400">{{ object.client.get.name|safe }}</span>
+
+            <!-- Actions Menu Dropdown -->
+            {% if is_actions_menu_enabled is True %}
+                <td class="px-6 py-4 whitespace-nowrap text-end text-xs">
+                    <div class="hs-dropdown relative inline-flex">
+                        <button id="hs-contact-table-dropdown-{{ object.pk }}"
+                                type="button"
+                                class="hs-dropdown-toggle py-1.5 px-2 inline-flex justify-center items-center gap-2 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-hidden dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors"
+                                aria-haspopup="menu"
+                                aria-expanded="false"
+                                aria-label="Dropdown">
+                            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                            </svg>
+                        </button>
+
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-40 bg-white shadow-xl rounded-xl p-1.5 mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700 z-50 text-start"
+                             role="menu"
+                             aria-orientation="vertical"
+                             aria-labelledby="hs-contact-table-dropdown-{{ object.pk }}">
+                            <button type="button"
+                                    class="contact-quick-peek-trigger w-full flex items-center gap-x-2 py-1.5 px-2.5 rounded-lg text-xs text-gray-700 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                    data-quick-peek-url="{% url 'dashboard:important_contact:quick-peek' object.pk %}">
+                                <svg class="size-3.5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                {% translate "Quick Peek" %}
+                            </button>
+                            <a class="flex items-center gap-x-2 py-1.5 px-2.5 rounded-lg text-xs text-gray-700 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                               href="{% url 'dashboard:important_contact:update' object.pk %}">
+                                <svg class="size-3.5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                                </svg>
+                                {% translate "Edit" %}
                             </a>
-                        {% else %}
-                            ---
-                        {% endif %}
+                            <a class="flex items-center gap-x-2 py-1.5 px-2.5 rounded-lg text-xs text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-neutral-700"
+                               href="{% url 'dashboard:important_contact:delete' object.pk %}">
+                                <svg class="size-3.5 text-red-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                </svg>
+                                {% translate "Delete" %}
+                            </a>
+                        </div>
                     </div>
                 </td>
             {% endif %}
-            {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    {% bw_date date_txt=object.created_at is_in_table_list=True %}
-                </td>
-            {% endif %}
-            <td class="h-px w-px whitespace-nowrap text-center">
-                {% if is_actions_menu_enabled is True %}
-                    {% bw_actions_dropdown actions_items=actions_items actions_base_url=actions_base_url actions_app_name=actions_app_name object=object %}
-                {% endif %}
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="6" class="p-12 text-center text-gray-500 dark:text-neutral-400">
+                <p class="text-sm font-medium">{% translate "No contacts found matching your criteria." %}</p>
             </td>
         </tr>
     {% endfor %}
 {% endblock tbody_block %}
 {# End Table Body #}
-{# Start Table Results #}
-{% block results_block %}
-    {{ object_list.count }}/{{ total_records }}
-{% endblock results_block %}
-{# End Table Results #}
-{# Start Table Pagination #}
-{% block pagination_block %}
-
-    {% include "components/inc/dashboard/table_list/table_list_pagination.html" with page_obj=page_obj pagination_list_url_name=pagination_list_url_name %}
-
-{% endblock pagination_block %}
-{# End Table Pagination #}

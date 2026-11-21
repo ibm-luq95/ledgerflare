@@ -6,8 +6,12 @@ from core.constants import EXCLUDED_FIELDS
 
 
 class ClientAccountSerializer(serializers.ModelSerializer):
+    has_password = serializers.SerializerMethodField()
 
     class Meta:
         model = ClientAccount
         exclude = EXCLUDED_FIELDS
-        # depth = 1
+        extra_kwargs = {"account_password": {"write_only": True}}
+
+    def get_has_password(self, obj: ClientAccount) -> bool:
+        return bool(obj.account_password)

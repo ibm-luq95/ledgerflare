@@ -1,27 +1,37 @@
 {% extends "core/layouts/dashboard_content_base.html" %}
 
-{% load development_tags %}
+{% load i18n development_tags %}
 
 {% block dashboard_content_block %}
-    {# Page Heading #}
+<div id="specialAssignmentListRoot" class="space-y-4">
+    {# Enterprise Header #}
+    {% include "bw_components/special_assignment/header.html" with page_header=page_header subtitle=subtitle is_show_create_btn=is_show_create_btn app_label=app_label actions_base_url=actions_base_url kpi_stats=kpi_stats total_records=total_records %}
 
-    {% include "components/inc/dashboard/content_header.html" with title="Special assignments" subtitle="Special assignments" is_show_create_btn=True app_label=app_label actions_base_url="dashboard:special_assignment" %}
-
-    {# End Page Heading #}
-    {# Start Filter Form #}
-    {% if filter_form %}
-        {% component "bw_filter_form" filter_form=filter_form filter_cancel_url="dashboard:special_assignment:list" %}{% endcomponent %}
+    {# KPI Summary Ribbon #}
+    {% if kpi_stats %}
+        {% include "bw_components/special_assignment/kpi_ribbon.html" with kpi_stats=kpi_stats pagination_list_url_name=pagination_list_url_name %}
     {% endif %}
-    {# End Filter Form #}
-    {% if object_list %}
-        <!-- Table Section -->
 
-        {% include "bw_components/special_assignment/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at header_title="Special assignments" header_subtitle="Special assignments custom specific assignments to clients" is_show_create_btn=True app_label=app_label page_obj=page_obj pagination_list_url_name="dashboard:special_assignment:list" is_filters_enabled=True is_actions_menu_enabled=True actions_items="show,update,delete" actions_app_name=app_label actions_base_url="dashboard:special_assignment" base_url_name="dashboard:special_assignment" filter_form=filter_form filter_cancel_url="dashboard:special_assignment:list" object_list=object_list is_header_enabled=True is_footer_enabled=True %}
-
-        <!-- End Table Section -->
-    {% else %}
-
-        {% include "bw_ui_components/global/empty_card.html" with label="special assignments" %}
-
+    {# Collapsible Filter Accordion Card #}
+    {% if is_filters_enabled is not False %}
+        {% include "bw_components/special_assignment/filter_accordion.html" with kpi_stats=kpi_stats filter_form=filter_form pagination_list_url_name=pagination_list_url_name is_show_create_btn=is_show_create_btn actions_base_url=actions_base_url is_filters_enabled=is_filters_enabled filter_form_id=filter_form_id %}
     {% endif %}
+
+    {# Table Presentation Layout #}
+    <div id="saTableContainer">
+        {% if object_list or page_obj %}
+            {% include "bw_components/special_assignment/table_list.html" with is_checkbox_enabled=is_checkbox_enabled is_show_created_at=is_show_created_at header_title=table_header_title header_subtitle=table_header_subtitle app_label=app_label pagination_list_url_name=pagination_list_url_name is_filters_enabled=is_filters_enabled is_actions_menu_enabled=is_actions_menu_enabled actions_items=actions_items actions_app_name=app_label actions_base_url=actions_base_url base_url_name=base_url_name is_header_enabled=is_header_enabled is_footer_enabled=is_footer_enabled extra_context=extra_context page_obj=page_obj total_records=total_records object_list=object_list %}
+        {% else %}
+            {% include "bw_ui_components/global/empty_card.html" with label=empty_label|default:"special assignment" %}
+        {% endif %}
+    </div>
+
+    {# Card Grid Presentation Layout #}
+    {% if object_list or page_obj %}
+        {% include "bw_components/special_assignment/card_grid.html" with object_list=object_list page_obj=page_obj %}
+    {% endif %}
+
+    {# Slide-Over Quick Peek Drawer #}
+    {% include "bw_components/special_assignment/quick_peek_drawer.html" %}
+</div>
 {% endblock dashboard_content_block %}

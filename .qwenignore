@@ -15,6 +15,7 @@ ENV/
 # Node modules and dependencies
 node_modules/
 npm-debug.log*
+src/htmlcov/
 yarn-debug.log*
 yarn-error.log*
 
@@ -181,3 +182,36 @@ docs/_build/
 # Backup files
 *.bak
 *.backup
+
+.direnv
+.qaiprompts
+.analysis
+/.qwenrc
+/.aiignore
+/.qwen/
+/.qwenignore
+/.envrc
+/.base
+/.opencode
+opencode.jsonc
+.my_own_prompts
+!.gemini
+.base
+src/bun.lock
+src/node_modules/
+!undefined
+.todos
+OPENCODE_AGENT.md
+src/public
+docker
+Exported_From_CLI
+docker-compose.yaml
+.mypy_cache
+_base_app_packages
+.dockerignore
+_base_app_packages
+.dockerignore
+!my_plans
+!OPENCODE_AGENTS.md
+!AGENTS.md
+!CONTEXT.md

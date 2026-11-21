@@ -4,16 +4,52 @@ import traceback
 from django.db import transaction
 from rest_framework import serializers
 
+from core.choices import ServiceNameEnum
 from staff_briefcase.models import StaffAccounts, StaffBriefcase
 
 
 class StaffAccountsSerializer(serializers.ModelSerializer):
-    briefcase = serializers.UUIDField(required=True)
+    briefcase = serializers.UUIDField(required=True, write_only=True)
+    has_password = serializers.SerializerMethodField()
+    name = serializers.ChoiceField(
+        choices=ServiceNameEnum.choices,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
+    url = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
+    username_email = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
+    password = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        write_only=True,
+    )
 
     class Meta:
         model = StaffAccounts
-        fields = ("title", "url", "briefcase", "username_email", "password", "name")
+        fields = (
+            "id",
+            "title",
+            "url",
+            "briefcase",
+            "username_email",
+            "password",
+            "has_password",
+            "name",
+        )
         depth = 1
+
+    def get_has_password(self, obj: StaffAccounts) -> bool:
+        return bool(obj.password)
 
     def create(self, validated_data):
         try:

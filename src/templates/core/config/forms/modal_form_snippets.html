@@ -2,35 +2,49 @@
 {% load widget_tweaks %}
 
 {% bw_split_form_hidden_and_not_inputs form_object=form as all_form_inputs %}
-<div class="grid sm:grid-cols-12 gap-2 sm:gap-4 first:pt-0 last:pb-0 first:border-transparent">
+
+{# Responsive Grid: Each field takes full width on all screens #}
+<div class="grid grid-cols-1 gap-3 lg:gap-4 first:pt-0 last:pb-0 first:border-transparent">
     {% for field in all_form_inputs.normal_inputs %}
-        <div class="sm:col-span-3">
+        {# Each field takes full width on all screens #}
+        <div class="col-span-1">
+        
+            {# Label: Always block (above field) on all screens #}
             <label for="{{ field.id_for_label }}"
-                   class="inline-block text-sm font-medium text-gray-500 mt-2.5">
-                {# {{ field.label }} - {{ field|field_type }} #}
+                   class="block text-sm font-medium text-gray-500 my-1.5">
                 {{ field.label }}
                 {% if field.field.required is True %}
-                    <span class="text-[14px] mx-1">*</span>
+                    <span class="text-[14px] mx-1 text-red-500">*</span>
                 {% endif %}
             </label>
-        </div>
-        {% bw_get_form_widget_attrs_as_dict field.field as widget_attrs %}
-        <div class="sm:col-span-9">
-            {# {{ field.value }} #}
-            <!-- Radio -->
+            
+            {# Get widget attributes #}
+            {% bw_get_form_widget_attrs_as_dict field.field as widget_attrs %}
+            
+            {# Field rendering based on type #}
+            <!-- Radio/Checkbox (Boolean) -->
             {% if field|field_type == 'booleanfield' %}
-                {{ field|add_class:"rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" }}
-                <!-- Date -->
-            {% elif field|field_type == 'datefield' or field|field_type == 'emailfield' or field|field_type == "passwordfield" or field|field_type == "charfield" or field|field_type == 'datetimefield' or field|field_type == 'urlfield' or field|field_type == "decimalfield" or field|field_type == "integerfield" or field|field_type == "slugfield" or field|field_type == "uuidfield" or field|field_type == "urlfield" %}
+                <div class="mt-2">
+                    {{ field|add_class:"rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" }}
+                    {% if field.help_text %}
+                        <p class="text-xs text-gray-500 mt-1">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                
+            <!-- Date, Email, Password, Char, DateTime, URL, Decimal, Integer, Slug, UUID -->
+            {% elif field|field_type == 'datefield' or field|field_type == 'emailfield' or field|field_type == "passwordfield" or field|field_type == "charfield" or field|field_type == 'datetimefield' or field|field_type == 'urlfield' or field|field_type == "decimalfield" or field|field_type == "integerfield" or field|field_type == "slugfield" or field|field_type == "uuidfield" %}
                 {% with placeholder="placeholder:"|add:widget_attrs.placeholder %}
                     {{ field|add_class:"py-2 px-3 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"|attr:placeholder }}
                 {% endwith %}
+                
+            <!-- Multiple Choice (Checkboxes) -->
             {% elif field|field_type == "modelmultiplechoicefield" or field|field_type == "multiplechoicefield" %}
                 {% if field.field.widget.choices %}
-                    <div class="grid space-y-2">
+                    {# Responsive checkbox grid: 1 col mobile, 2 col tablet, 3 col desktop #}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
                         {% for choice in field %}
                             <div class="relative flex items-start">
-                                <div class="flex items-center h-5 mt-1">
+                                <div class="flex items-center h-5">
                                     <input type="checkbox"
                                            class="border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                                            aria-describedby="checkbox-description-{{ choice.id_for_label }}"
@@ -41,9 +55,8 @@
                                                checked
                                            {% endif %} />
                                 </div>
-                                <label for="{{ choice.id_for_label }}" class="ml-3">
-                                    <span class="block text-sm font-semibold text-gray-800 dark:text-gray-300">{{ choice.choice_label }}</span>
-                                    <!-- <span id="checkbox-description-{{ choice.id_for_label }}" class="block text-sm text-gray-600 dark:text-gray-500">Notify me when this action happens.</span> -->
+                                <label for="{{ choice.id_for_label }}" class="ml-3 text-sm">
+                                    <span class="block text-sm font-medium text-gray-800 dark:text-gray-300">{{ choice.choice_label }}</span>
                                 </label>
                             </div>
                         {% endfor %}
@@ -53,10 +66,9 @@
                         {% translate "No data" %}
                     </p>
                 {% endif %}
+                
+            <!-- Single Choice (Select, Radio) -->
             {% elif field|field_type == "modelchoicefield" or field|field_type == "typedchoicefield" or field|field_type == "choicefield" %}
-                {# {{ field.field.widget.choices }} #}
-                {# {{ field.field.widget|bw_get_form_field_type }} #}
-                {# CheckboxSelectMultiple, Select, SelectMultiple #}
                 {% if field.is_hidden is False %}
                     {% if field.field.widget.choices %}
                         {% if field.field.widget|bw_get_form_field_type == "Select" or field.field.widget|bw_get_form_field_type == "SelectMultiple" %}
@@ -66,7 +78,6 @@
                                         multiple
                                     {% endif %}
                                     class="py-2 px-3 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
-                                <!-- <option selected>Open this select menu</option> -->
                                 {% for choice in field %}
                                     <option value="{{ choice.data.value }}"
                                             {% if choice.data.selected is True %}
@@ -78,60 +89,68 @@
                             </select>
                         {% elif field.field.widget|bw_get_form_field_type == "CheckboxSelectMultiple" %}
                             {% if field.field.widget.choices %}
-                                {% for choice in field %}
-                                    {% if forloop.first %}
-                                        <div class="flex gap-x-6 mt-2.5">
-                                        {% endif %}
-                                        <div class="flex">
-                                            <input type="checkbox"
-                                                   name="{{ field.name }}"
-                                                   {% if choice.data.selected is True %}
-                                                       checked
-                                                   {% endif %}
-                                                   value="{{ choice.data.value }}"
-                                                   class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
-                                                   id="{{ choice.data.attrs.id }}" />
-                                            <label for="{{ choice.data.attrs.id }}"
-                                                   class="text-sm text-gray-500 ml-3 dark:text-gray-400">
-                                                {{ choice.choice_label }}
+                                {# Responsive checkbox grid #}
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
+                                    {% for choice in field %}
+                                        <div class="relative flex items-start">
+                                            <div class="flex items-center h-5">
+                                                <input type="checkbox"
+                                                       name="{{ field.name }}"
+                                                       {% if choice.data.selected is True %}
+                                                           checked
+                                                       {% endif %}
+                                                       value="{{ choice.data.value }}"
+                                                       class="border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                                                       id="{{ choice.id_for_label }}" />
+                                            </div>
+                                            <label for="{{ choice.id_for_label }}" class="ml-3 text-sm">
+                                                <span class="block text-sm font-medium text-gray-800 dark:text-gray-300">{{ choice.choice_label }}</span>
                                             </label>
                                         </div>
-                                        {% if forloop.counter|divisibleby:3 %}
-                                        </div>
-                                        <div class="flex gap-x-6 mt-2.5">
-                                        {% endif %}
-                                        {% if forloop.last %}
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
+                                    {% endfor %}
+                                </div>
                             {% endif %}
                         {% endif %}
                     {% endif %}
                 {% else %}
                     {{ field }}
                 {% endif %}
+                
+            <!-- File/Image Fields -->
             {% elif field|field_type == "filefield" or field|field_type == "imagefield" %}
                 {{ field|add_class:"block w-full border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 file:bg-transparent file:border-0 file:bg-gray-100 file:mr-4 file:py-2 file:px-4 dark:file:bg-gray-700 dark:file:text-gray-400"|attr:"placeholder:" }}
+                
+            <!-- Textarea (Rich Text Editor, Notes, etc.) -->
+            {% elif field|field_type == "textfield" %}
+                {{ field|add_class:"block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" }}
+                
+            <!-- Fallback -->
             {% else %}
-                <!-- Fallback -->
                 {{ field }}
             {% endif %}
-            {% if field.help_text %}
-                <p class="text-xs text-gray-500 mt-2"
+            
+            {# Help Text #}
+            {% if field.help_text and field|field_type != 'booleanfield' %}
+                <p class="text-xs text-gray-500 mt-1.5"
                    id="hs-input-helper-text-{{ field.id_for_label }}">
                     {{ field.help_text|safe }}
                 </p>
             {% endif %}
+            
+            {# Error Messages #}
             {% if field.errors %}
                 {% for error in field.errors %}
-                    <p class="text-sm text-red-600 mt-2"
+                    <p class="text-sm text-red-600 mt-1.5"
                        id="{{ field.id_for_label|add:'-error' }}">
                         {{ error }}
                     </p>
                 {% endfor %}
             {% endif %}
-        </div>
+            
+        </div> {# End field wrapper #}
     {% endfor %}
+    
+    {# Hidden Inputs #}
     {% if all_form_inputs.hidden_inputs %}
         {% for hidden_input in all_form_inputs.hidden_inputs %}
             {{ hidden_input }}

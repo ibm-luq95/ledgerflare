@@ -16,7 +16,6 @@ class ScheduledNotification(BaseModelMixin):
     is_seen = models.BooleanField(_("seen"), default=False)
 
     class Meta(BaseModelMixin.Meta):
-
         indexes = [
             models.Index(name="job_scheduled_is_seen_idx", fields=["is_seen"]),
         ]

@@ -1,0 +1,77 @@
+{% load i18n %}
+
+<!-- BACKDROP & WRAPPER: Hidden by default, controls absolute positioning and dark overlay -->
+<div id="{{ modal_css_id }}" 
+     class="ldgf-modal hidden fixed inset-0 z-[80] bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-0 opacity-0 transition-opacity duration-200 ease-out"
+     role="dialog" 
+     aria-modal="true" 
+     aria-labelledby="{{ modal_css_id }}-title">
+    
+    <!-- DIALOG CONTAINER: Controls sizing, background, and the scale animation -->
+    <div class="ldgf-modal-dialog w-full max-w-[95%] {{ modal_size_class }} bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-sm rounded-xl flex flex-col scale-95 transition-transform duration-200 ease-out">
+        
+        <!-- HEADER -->
+        <div class="flex justify-between items-center py-3 px-4 sm:px-6 border-b dark:border-gray-700 flex-shrink-0">
+            <h3 id="{{ modal_css_id }}-title" class="font-bold text-gray-800 dark:text-white text-sm sm:text-base line-clamp-2">
+                {% translate modal_title %}
+            </h3>
+            <button type="button" 
+                    class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-gray-700 transition-all"
+                    data-ldgf-dismiss="modal" 
+                    aria-label="{% translate 'Close' %}">
+                <span class="sr-only">{% translate "Close" %}</span>
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- BODY: Scrollable content area -->
+        <div class="ldgf-modal-body p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-200px)] flex-shrink-0">
+            {% if is_form_modal %}
+                <form action="{{ form_action_url }}" 
+                      id="{{ form_id }}" 
+                      method="{{ form_method|default:'post' }}"
+                      {% if is_upload_form %}enctype="multipart/form-data"{% endif %}>
+                    
+                    <fieldset form="{{ form_id }}">
+                        {% csrf_token %}
+                        
+                        {% if enable_hidden_method %}
+                            <input type="hidden" name="_method" value="patch">
+                        {% endif %}
+                        
+                        {% if extra_hidden_inputs_markup_list %}
+                            {% for hidden_input in extra_hidden_inputs_markup_list %}
+                                {{ hidden_input|safe }}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if is_only_checkbox_form %}
+                            {% include "bw_ui_components/elements/forms/checkbox_only_form.html" with form=form_object custom_styled=custom_styled_checkboxes %}
+                        {% else %}
+                            {{ form_object }}
+                        {% endif %}
+                    </fieldset>
+                </form>
+            {% else %}
+                <!-- Non-form content projection via caller (if used as block tag later) or empty -->
+            {% endif %}
+        </div>
+
+        <!-- FOOTER -->
+        <div class="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-2 sm:gap-3 py-3 px-4 sm:px-6 border-t dark:border-gray-700 flex-shrink-0 bg-gray-50 dark:bg-gray-800/50 rounded-b-xl">
+            <button type="button" 
+                    class="w-full sm:w-auto py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-lg border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+                    data-ldgf-dismiss="modal">
+                {% translate "Cancel" %}
+            </button>
+            
+            {% if is_submit_btn_enabled %}
+                <button form="{{ form_id }}" 
+                        type="submit" 
+                        class="w-full sm:w-auto py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-lg border border-transparent font-semibold bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                    {% translate form_submit_text %}
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>

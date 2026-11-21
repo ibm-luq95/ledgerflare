@@ -1,0 +1,168 @@
+{% load i18n %}
+{% load humanize %}
+
+<!-- Client Profile Card -->
+<div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
+    <!-- Header -->
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">
+                    <i class="fa-solid fa-id-card mr-2 text-blue-600"></i>
+                    {% translate "Client Profile" %}
+                </h3>
+                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    {% translate "Complete client information" %}
+                </p>
+            </div>
+            <button type="button"
+                    data-hs-overlay="#client-full-profile-modal"
+                    class="py-2 px-3 inline-flex items-center gap-2 rounded-md border border-gray-200 font-medium bg-white text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
+                <i class="fa-solid fa-eye"></i>
+                {% translate "View Full Profile" %}
+            </button>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="p-4 sm:p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <!-- Basic Info -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide dark:text-gray-400 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-blue-600"></i>
+                    {% translate "Basic Information" %}
+                </h4>
+                
+                <div class="space-y-2">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-tag text-gray-400 mt-0.5"></i>
+                        <div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{% translate "Name" %}</p>
+                            <p class="text-sm font-medium text-gray-800 dark:text-white">{{ object.name|default:"---" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-briefcase text-gray-400 mt-0.5"></i>
+                        <div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{% translate "Industry" %}</p>
+                            <p class="text-sm font-medium text-gray-800 dark:text-white">{{ object.industry|default:"---" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-globe text-gray-400 mt-0.5"></i>
+                        <div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{% translate "Website" %}</p>
+                            {% if object.website %}
+                                <a href="{{ object.website }}" target="_blank" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
+                                    {{ object.website }}
+                                </a>
+                            {% else %}
+                                <p class="text-sm text-gray-400 dark:text-gray-500">---</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide dark:text-gray-400 flex items-center gap-2">
+                    <i class="fa-solid fa-address-card text-green-600"></i>
+                    {% translate "Contact Information" %}
+                </h4>
+                
+                <div class="space-y-2">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-envelope text-gray-400 mt-0.5"></i>
+                        <div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{% translate "Email" %}</p>
+                            {% if object.email %}
+                                <a href="mailto:{{ object.email }}" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
+                                    {{ object.email }}
+                                </a>
+                            {% else %}
+                                <p class="text-sm text-gray-400 dark:text-gray-500">---</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-phone text-gray-400 mt-0.5"></i>
+                        <div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{% translate "Phone" %}</p>
+                            {% if object.phone_number %}
+                                <a href="tel:{{ object.phone_number }}" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
+                                    {{ object.phone_number }}
+                                </a>
+                            {% else %}
+                                <p class="text-sm text-gray-400 dark:text-gray-500">---</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Address -->
+            <div class="space-y-3 md:col-span-2">
+                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide dark:text-gray-400 flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-red-600"></i>
+                    {% translate "Address" %}
+                </h4>
+                
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-map-pin text-gray-400 mt-0.5"></i>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{% translate "Full Address" %}</p>
+                        {% if object.street or object.city or object.state or object.postcode %}
+                            <p class="text-sm font-medium text-gray-800 dark:text-white">
+                                {% if object.street %}{{ object.street }}{% endif %}
+                                {% if object.city %}, {{ object.city }}{% endif %}
+                                {% if object.state %}, {{ object.state }}{% endif %}
+                                {% if object.postcode %} {{ object.postcode }}{% endif %}
+                            </p>
+                        {% else %}
+                            <p class="text-sm text-gray-400 dark:text-gray-500">---</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Description -->
+            {% if object.description %}
+                <div class="space-y-3 md:col-span-2">
+                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide dark:text-gray-400 flex items-center gap-2">
+                        <i class="fa-solid fa-align-left text-purple-600"></i>
+                        {% translate "Description" %}
+                    </h4>
+                    
+                    <div class="flex items-start gap-2">
+                        <div class="flex-1 bg-gray-50 dark:bg-neutral-900 rounded-lg p-3">
+                            <p class="text-sm text-gray-700 dark:text-gray-300 line-clamp-3">
+                                {{ object.description }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="px-4 sm:px-6 py-3 bg-gray-50 border-t border-gray-200 rounded-b-xl dark:bg-neutral-900 dark:border-neutral-700">
+        <div class="flex items-center justify-between">
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+                <i class="fa-solid fa-clock mr-1"></i>
+                {% translate "Last updated" %} {{ object.updated_at|naturaltime }}
+            </p>
+            <button type="button"
+                    data-hs-overlay="#client-full-profile-modal"
+                    class="text-xs font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                {% translate "See all details" %} →
+            </button>
+        </div>
+    </div>
+</div>
+<!-- End Client Profile Card -->

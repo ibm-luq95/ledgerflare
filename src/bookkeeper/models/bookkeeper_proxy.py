@@ -38,6 +38,7 @@ class BookkeeperProxy(Bookkeeper):
 
     class Meta(Bookkeeper.Meta):
         proxy = True
+        indexes = []
 
     def delete(self):
         """
@@ -203,6 +204,7 @@ class BookkeeperProxy(Bookkeeper):
         items_dict["documents"] = []
         items_dict["notes"] = []
         items_dict["jobs"] = []
+        tasks_list = []
         documents = []
         notes_list = []
         # get tasks from jobs
@@ -213,45 +215,40 @@ class BookkeeperProxy(Bookkeeper):
             for job in jobs:
                 tasks = job.tasks.all()
                 if tasks:
-                    items_dict["tasks"] = tasks
+                    tasks_list.extend(tasks)
                     for task in tasks:
                         docs = task.documents.all()
                         if docs:
-                            # documents += [doc for doc in docs]
-                            documents += docs
-                            items_dict["documents"] = documents
+                            documents.extend(docs)
 
                         notes = task.notes.all()
                         if notes:
-                            # notes_list += [note for note in notes]
-                            notes_list += notes
-                            items_dict["notes"] = notes_list
+                            notes_list.extend(notes)
                 job_documents = job.documents.all()
                 if job_documents:
-                    documents += job_documents
-                    items_dict["documents"] = documents
+                    documents.extend(job_documents)
 
         clients = self.clients.all()
         if clients:
             for client in clients:
                 notes = client.notes.all()
                 if notes:
-                    items_dict["notes"] += notes
-                documents = client.documents.all()
-                if documents:
-                    items_dict["documents"] += documents
-        if items_dict["notes"]:
-            notes_pks = [note.pk for note in items_dict["notes"]]
+                    notes_list.extend(notes)
+                docs = client.documents.all()
+                if docs:
+                    documents.extend(docs)
+        if notes_list:
+            notes_pks = [note.pk for note in notes_list]
             items_dict["notes"] = Note.objects.filter(pk__in=notes_pks)
         else:
             items_dict["notes"] = Note.objects.none()
-        if items_dict["tasks"]:
-            tasks_pks = [task.pk for task in items_dict["tasks"]]
+        if tasks_list:
+            tasks_pks = [task.pk for task in tasks_list]
             items_dict["tasks"] = TaskProxy.objects.filter(pk__in=tasks_pks)
         else:
             items_dict["tasks"] = TaskProxy.objects.none()
-        if items_dict["documents"]:
-            documents_pks = [doc.pk for doc in items_dict["documents"]]
+        if documents:
+            documents_pks = [doc.pk for doc in documents]
             items_dict["documents"] = Document.objects.filter(pk__in=documents_pks)
         else:
             items_dict["documents"] = Document.objects.none()

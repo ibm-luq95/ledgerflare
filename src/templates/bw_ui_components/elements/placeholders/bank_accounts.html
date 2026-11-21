@@ -1,0 +1,140 @@
+{% load i18n %}
+{% load humanize %}
+
+<!-- Bank Accounts Placeholder Section -->
+<div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
+    <!-- Header -->
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">
+                    <i class="fa-solid fa-building-columns mr-2 text-blue-600"></i>
+                    {% translate "Bank Accounts" %}
+                </h3>
+                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    {% translate "Client bank accounts and financial institutions" %}
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button"
+                        class="py-2 px-3 inline-flex items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                    <i class="fa-solid fa-plus"></i>
+                    {% translate "Add Account" %}
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="p-4 sm:p-6">
+        {% if accounts %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for account in accounts %}
+                    <!-- Account Card -->
+                    <div class="group relative bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300 dark:from-neutral-800 dark:to-neutral-900 dark:border-neutral-700">
+                        <!-- Card Header -->
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 text-white rounded-full flex items-center justify-center">
+                                    <i class="fa-solid fa-building-columns text-sm sm:text-base"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800 dark:text-white text-sm sm:text-base">
+                                        {{ account.bank_name }}
+                                    </h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ account.account_type }}
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center gap-1.5 py-1 px-2 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500">
+                                <i class="fa-solid fa-circle-check text-[8px]"></i>
+                                {% translate "Active" %}
+                            </span>
+                        </div>
+                        
+                        <!-- Account Details -->
+                        <div class="space-y-2 mb-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-gray-500 dark:text-gray-400">{% translate "Account" %}</span>
+                                <span class="text-sm font-mono font-medium text-gray-700 dark:text-gray-300">
+                                    {{ account.account_number }}
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-gray-500 dark:text-gray-400">{% translate "Balance" %}</span>
+                                <span class="text-base font-bold text-gray-800 dark:text-white">
+                                    ${{ account.balance|intcomma }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Account Name -->
+                        <p class="text-xs text-gray-600 dark:text-gray-400 truncate mb-3">
+                            {{ account.account_name }}
+                        </p>
+                        
+                        <!-- Actions -->
+                        <div class="flex items-center gap-2 pt-3 border-t border-blue-100 dark:border-neutral-700">
+                            <button type="button"
+                                    class="flex-1 py-1.5 px-2 text-xs font-medium rounded-md border border-blue-200 text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/20">
+                                <i class="fa-solid fa-eye mr-1"></i>
+                                {% translate "View" %}
+                            </button>
+                            <button type="button"
+                                    class="flex-1 py-1.5 px-2 text-xs font-medium rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800">
+                                <i class="fa-solid fa-pen mr-1"></i>
+                                {% translate "Edit" %}
+                            </button>
+                        </div>
+                    </div>
+                    <!-- End Account Card -->
+                {% endfor %}
+                
+                <!-- Add New Account Card -->
+                <div class="group relative bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 hover:bg-blue-50/50 transition-all duration-300 dark:bg-neutral-800/50 dark:border-neutral-600 dark:hover:border-blue-700">
+                    <button type="button"
+                            class="w-full h-full flex flex-col items-center justify-center py-8">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center group-hover:bg-blue-200 group-hover:text-blue-600 transition-colors dark:bg-neutral-700 dark:text-neutral-400">
+                            <i class="fa-solid fa-plus text-lg sm:text-xl"></i>
+                        </div>
+                        <p class="mt-3 text-sm font-medium text-gray-600 group-hover:text-blue-700 dark:text-gray-400 dark:group-hover:text-blue-400">
+                            {% translate "Add New Account" %}
+                        </p>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-500">
+                            {% translate "Connect a bank account" %}
+                        </p>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- View All Link -->
+            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
+                <a href="javascript:;"
+                   class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                    {% translate "View All Bank Accounts" %}
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="flex flex-col items-center justify-center py-8 sm:py-12">
+                <div class="w-16 h-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center dark:bg-neutral-800">
+                    <i class="fa-solid fa-building-columns text-2xl"></i>
+                </div>
+                <h4 class="mt-4 text-sm font-semibold text-gray-800 dark:text-white">
+                    {% translate "No bank accounts yet" %}
+                </h4>
+                <p class="mt-1 text-xs sm:text-sm text-center text-gray-500 dark:text-gray-400">
+                    {% translate "Add your first bank account to start tracking financial transactions" %}
+                </p>
+                <button type="button"
+                        class="mt-4 py-2 px-4 inline-flex items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                    <i class="fa-solid fa-plus"></i>
+                    {% translate "Add Account" %}
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<!-- End Bank Accounts Placeholder Section -->

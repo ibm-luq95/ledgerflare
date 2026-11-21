@@ -40,13 +40,23 @@ class StaffNotesListView(
         context.setdefault(
             "component_path", "bw_components/staff_briefcase/notes/table_list.html"
         )
-        context.setdefault("subtitle", _("staff notes subtitle".title()))
-        context.setdefault("actions_base_url", "dashboard:briefcase:briefcase_staff_notes")
+        context.setdefault(
+            "subtitle",
+            _(
+                "Private memos, working references, and operational reminders for staff members."
+            ),
+        )
+        context.setdefault(
+            "actions_base_url", "dashboard:briefcase:briefcase_staff_notes"
+        )
         context.setdefault(
             "filter_cancel_url", "dashboard:briefcase:briefcase_staff_notes:list"
         )
         context.setdefault("table_header_title", _("C"))
-        context.setdefault("table_header_subtitle", _("staff notes subtitle"))
+        context.setdefault(
+            "table_header_subtitle",
+            _("Personal work notes, draft summaries, and internal reminders."),
+        )
         context.setdefault("is_show_create_btn", True)
         context.setdefault(
             "pagination_list_url_name", "dashboard:briefcase:briefcase_staff_notes:list"
@@ -78,6 +88,9 @@ class StaffNotesListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        user = self.request.user
+        if not user.is_superuser:
+            queryset = queryset.filter(briefcase__user=user)
         self.filterset = StaffNotesFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
@@ -99,6 +112,12 @@ class StaffNotesUpdateView(
     # success_url = reverse_lazy("dashboard:note:list")
     model = StaffNotes
     BASE_SUCCESS_URL = "dashboard:briefcase:briefcase_staff_notes:list"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(briefcase__user=self.request.user)
+        return queryset
 
     # template_name_suffix = "_create_client"
 
@@ -135,13 +154,11 @@ class StaffNotesCreateView(
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context.setdefault("title", _("Create staff note"))
-        context.update(
-            {
-                "form_css_id": "mainStaffNotesCreateForm",
-                "form_title": _("Create new staff note"),
-                "form_subtitle": _("Subtitle"),
-            }
-        )
+        context.update({
+            "form_css_id": "mainStaffNotesCreateForm",
+            "form_title": _("Create new staff note"),
+            "form_subtitle": _("Subtitle"),
+        })
         return context
 
 
@@ -160,11 +177,19 @@ class StaffNotesDeleteView(
     success_message = _("Staff note deleted successfully")
     success_url = reverse_lazy("dashboard:briefcase:briefcase_staff_notes:list")
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(briefcase__user=self.request.user)
+        return queryset
+
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context.setdefault("title", _("Delete note"))
-        context.setdefault("cancel_url", "dashboard:briefcase:briefcase_staff_notes:list")
+        context.setdefault(
+            "cancel_url", "dashboard:briefcase:briefcase_staff_notes:list"
+        )
         context.setdefault("object", self.get_object())
         context.setdefault("object_name", "staff note")
         context.setdefault("form_css_id", "staffNoteDeleteForm")

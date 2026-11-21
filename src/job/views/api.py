@@ -1,5 +1,6 @@
 import traceback
 
+from django.db import models
 from django.utils.translation import gettext as _
 from rest_framework import permissions
 from rest_framework import status
@@ -11,6 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from core.api.permissions import BaseApiPermissionMixin
+from core.api.mixins import RoleScopedQuerysetMixin
 from core.utils import get_formatted_logger
 from job.models import JobProxy
 from job.serializers.job import JobSerializer
@@ -19,23 +21,57 @@ from job.serializers.job import JobSerializer
 logger = get_formatted_logger()
 
 
-class JobViewSet(ModelViewSet):
+class JobViewSet(RoleScopedQuerysetMixin, ModelViewSet):
     serializer_class = JobSerializer
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
-    authentication_classes = [TokenAuthentication]
     perm_slug = "job.job"
-    queryset = JobProxy.original_objects.all()
+    queryset = JobProxy.objects.all()
+    filterset_fields = [
+        "status",
+        "state",
+        "job_type",
+        "client",
+        "managed_by",
+        "is_deleted",
+    ]
+    search_fields = ["title", "description", "client__name"]
+    ordering_fields = ["created_at", "updated_at", "title", "status", "due_date"]
+    ordering = ["-created_at"]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.select_related("client", "managed_by").prefetch_related(
+            "tasks", "categories"
+        )
+
+    def scope_queryset_for_bookkeeper(self, queryset, bookkeeper):
+        return queryset.filter(
+            models.Q(managed_by=bookkeeper.user)
+            | models.Q(client__bookkeepers=bookkeeper)
+        ).distinct()
+
+    def scope_queryset_for_cfo(self, queryset, cfo):
+        return queryset.filter(client__cfos=cfo)
 
 
-class UpdateJobApiView(APIView):
+class UpdateJobApiView(RoleScopedQuerysetMixin, APIView):
     permission_classes = (permissions.IsAuthenticated, BaseApiPermissionMixin)
     perm_slug = "job.job"
-    authentication_classes = [TokenAuthentication]
+    queryset = JobProxy.objects.all()
+
+    def scope_queryset_for_bookkeeper(self, queryset, bookkeeper):
+        return queryset.filter(
+            models.Q(managed_by=bookkeeper.user)
+            | models.Q(client__bookkeepers=bookkeeper)
+        ).distinct()
+
+    def scope_queryset_for_cfo(self, queryset, cfo):
+        return queryset.filter(client__cfos=cfo)
 
     def put(self, request: Request, *args, **kwargs):
         try:
             data = request.data
-            job_object = JobProxy.original_objects.get(pk=data.get("jobId"))
+            job_object = self.get_queryset().get(pk=data.get("jobId"))
             del data["jobId"]
             # debugging_print(data)
 

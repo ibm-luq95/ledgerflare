@@ -1,0 +1,22 @@
+{% extends "core/layouts/home.html" %}
+
+{% block home_content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 dark:bg-slate-900">
+  <div class="max-w-md w-full space-y-8 text-center bg-white p-8 rounded-xl shadow-md border border-gray-200 dark:bg-slate-800 dark:border-slate-700">
+    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mb-4">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m0-6V7a4 4 4 4 0 118 0v4m-8 0h8a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6a2 2 0 012-2z" />
+      </svg>
+    </div>
+    <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">Account Temporarily Locked</h2>
+    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+      Too many failed login attempts have been detected from your IP or username. For security purposes, access is blocked for 15 minutes.
+    </p>
+    <div class="mt-6">
+      <a href="{% url 'auth:login' %}" class="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        Return to Login
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

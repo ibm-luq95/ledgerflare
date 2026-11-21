@@ -532,7 +532,8 @@
         </div>
     </section>
     <!-- Enhanced JS: Pagination sync + Enter key support -->
-    <script>
+    <script nonce="{{ request.csp_nonce }}">
+
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof HSDropdown !== 'undefined') {
                 HSDropdown.autoInit();

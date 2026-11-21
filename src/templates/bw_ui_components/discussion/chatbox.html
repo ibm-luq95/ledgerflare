@@ -3,183 +3,157 @@
 {% load static %}
 {% load bw_users_tags %}
 
-<section id="chatbox" class="my-2">
-    <div class="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6 space-y-6">
-        <div class="text-xl font-semibold text-gray-800 pb-3">
-            {% translate "Discussions" %} ({{ object.discussions.count }})
-        </div>
-        <!-- Chat Message List -->
-        <div class="overflow-y-auto max-h-96 space-y-6">
-            <!-- Message with Avatar -->
-            {% for discussion in object.discussions.all %}
-                <div class="flex items-start gap-4">
-                    <img src="{% if discussion.get_managed_user.profile.profile_picture %} {{ discussion.get_managed_user.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %}  {% endif %}"
-                         width="40"
-                         height="40"
-                         alt="Avatar"
-                         class="w-12 h-12 rounded-full" />
-                    <div class="{% if forloop.counter0|divisibleby:2 %}
-                                    bg-blue-50
-                                {% else %}
-                                    bg-gray-50
-                                {% endif %}
-                                p-4 rounded-lg shadow-sm max-w-[80%]">
-                        <p class="text-xs font-semibold text-gray-600">
-                            {{ discussion.get_managed_user }}
-                        </p>
-                        <p class="text-sm font-medium text-gray-700 mt-1">
-                            {% autoescape off %}
-                                {{ discussion.body|safe }}
-                            {% endautoescape %}
-                            {# {{ discussion.body|safe|escape }} #}
-                        </p>
-                        <div class="text-xs text-gray-500 mt-2">
-                            {{ discussion.created_at|naturaltime }}
-                        </div>
-                        <!-- Attachment Icon -->
-                        {% if discussion.attachment %}
-                            <div class="flex items-center gap-1 mt-2 text-xs text-blue-600">
-                                <a href="{{ discussion.attachment.url }}"
-                                   download="{{ discussion.attachment.url }}"
-                                   data-hs-tooltip-placement="top"
-                                   title="View attachment">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                         class="h-4 w-4"
-                                         fill="none"
-                                         viewBox="0 0 24 24"
-                                         stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828L17.828 9M5 13V6a2 2 0 012-2h11a2 2 0 012 2v7" />
-                                    </svg>
-                                </a>
-                                <span>{% translate "Attachment" %}</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-                {% comment %}
-                {% if discussion.discussion_replies.all %}
-                <!-- Reply with Avatar -->
-                <div class="pl-6 mt-3 border-l-2 border-blue-200 space-y-3">
-                    {% for reply in discussion.discussion_replies.all %}
-                        <!-- Reply with Attachment -->
-                        <div class="flex items-start gap-3">
-                            <img src="{% if reply.get_managed_user.profile.profile_picture %} {{ reply.get_managed_user.profile.profile_picture.url }} {% else %} {% static 'img/default_staff.png' %}  {% endif %}" width="40" height="40" alt="Avatar" class="w-10 h-10 rounded-full" />
-                            <div class="bg-gray-50 p-3 rounded-lg shadow-sm max-w-[80%]">
-                                <p class="text-xs font-semibold text-gray-600">{{ reply.get_managed_user }}</p>
-                                <p class="text-sm font-medium text-gray-700 mt-1">{{ reply.body|safe }}</p>
-                                <div class="text-xs text-gray-500 mt-2">{{ reply.created_at|naturaltime }}</div>
-                                {% if reply.attachment %}
-                                    <!-- Attachment Icon -->
-                                    <div class="flex items-center gap-1 mt-2 text-xs text-blue-600">
-                                        <a href="{{ reply.attachment.url }}" download="{{ reply.attachment.url }}" data-hs-tooltip-placement="top" title="View attachment">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828L17.828 9M5 13V6a2 2 0 012-2h11a2 2 0 012 2v7" />
-                                            </svg>
-                                        </a>
-                                        <span>{% translate "Attachment" %}</span>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    
-                    {% endfor %}
-                </div>
-                <!-- Reply with Avatar -->
-            {% endif %}
-                {% endcomment %}
-            {% empty %}
-                <p class="italic">
-                    {% translate "No discussions yet." %}
-                </p>
-            {% endfor %}
-            <!-- Attachment Icon -->
-            {% comment %}
-          <!-- Another Message -->
-        <div class="flex items-start gap-4">
-          <img src="{% static 'img/default_staff.png' %}" width="40" height="40" alt="Avatar" class="w-12 h-12 rounded-full" />
-          <div class="bg-blue-50 p-4 rounded-lg shadow-sm max-w-[80%]">
-            <p class="text-xs font-semibold text-gray-600">John Doe</p>
-            <p class="text-sm font-medium text-gray-700 mt-1">Do you have any updates on the project?</p>
-            <div class="text-xs text-gray-500 mt-2">10:20 AM</div>
+<section id="chatbox" class="w-full space-y-4">
+  {# ========================================== #}
+  {# 1. DISCUSSION MESSAGE STREAM               #}
+  {# ========================================== #}
+  <div id="chatbox-messages"
+       class="overflow-y-auto max-h-[420px] sm:max-h-[480px] space-y-4 p-1 sm:p-2 pr-2 sm:pr-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-neutral-600 transition-colors">
+    {% for discussion in object.discussions.all|dictsort:"created_at" %}
+      {% include "bw_ui_components/discussion/single_message.html" with discussion=discussion request=request %}
+    {% empty %}
+      <div id="chatbox-empty-state"
+           class="flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-dashed border-gray-200 dark:border-neutral-800">
+        <span class="flex items-center justify-center size-12 rounded-full bg-blue-50 text-blue-500 dark:bg-blue-900/30 dark:text-blue-400 mb-3">
+          <i class="fa-regular fa-comments text-xl"></i>
+        </span>
+        <h4 class="text-sm font-semibold text-gray-800 dark:text-white">
+          {% translate "No discussions yet" %}
+        </h4>
+        <p class="text-xs text-gray-500 dark:text-neutral-400 mt-1 max-w-sm">
+          {% translate "Start the conversation by posting an update or sharing instructions below." %}
+        </p>
+      </div>
+    {% endfor %}
+  </div>
+
+  {# ========================================== #}
+  {# 2. SECURE HTMX MESSAGE INPUT FORM          #}
+  {# ========================================== #}
+  {% if display_form is True %}
+    <form hx-post="{% url 'dashboard:discussion:htmx_create' %}"
+          hx-target="#chatbox-messages"
+          hx-swap="beforeend"
+          hx-encoding="multipart/form-data"
+          hx-indicator="#chatbox-spinner"
+          class="pt-2"
+          id="replyForm">
+      <fieldset class="space-y-2.5" form="replyForm">
+        {% csrf_token %}
+        {% if object.job_type is not None or object.get_job_type_display is not None %}
+          <input type="hidden" name="job" value="{{ object.pk }}" id="job" />
+        {% else %}
+          <input type="hidden"
+                 name="special_assignment"
+                 value="{{ object.pk }}"
+                 id="special_assignment" />
+        {% endif %}
+
+        {# Modern Floating Composer Dock #}
+        <div class="flex flex-col rounded-2xl border border-gray-200 bg-white shadow-xs p-2.5 sm:p-3 dark:bg-neutral-900 dark:border-neutral-800 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all">
+          <div class="flex items-center gap-2">
+            {# File Upload Button #}
+            <label for="attachment"
+                   class="flex items-center justify-center size-9 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-gray-100 dark:text-neutral-400 dark:hover:text-blue-400 dark:hover:bg-neutral-800 cursor-pointer transition-colors shrink-0"
+                   title="{% translate 'Attach file' %}">
+              <i class="fa-solid fa-paperclip text-sm"></i>
+            </label>
+            <input id="attachment"
+                   name="attachment"
+                   type="file"
+                   class="hidden"
+                   onchange="showFileName(event)" />
+
+            {# Text Input #}
+            <input type="text"
+                   name="body"
+                   id="body"
+                   placeholder="{% translate 'Type your message or update here...' %}"
+                   required
+                   class="flex-1 bg-transparent border-0 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:outline-hidden focus:ring-0 px-2 py-1" />
+
+            {# Send Button #}
+            <button type="submit"
+                    form="replyForm"
+                    class="inline-flex items-center justify-center gap-1.5 py-2 px-3.5 sm:px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm shadow-2xs focus:outline-hidden focus:bg-blue-700 transition-all shrink-0">
+              <span id="chatbox-spinner" class="htmx-indicator hidden inline-flex items-center">
+                <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+              </span>
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+              <span class="hidden sm:inline">{% translate "Send" %}</span>
+            </button>
+          </div>
+
+          {# Dynamic File Attachment Preview Tag #}
+          <div id="file-preview-wrapper" class="hidden items-center gap-1.5 px-2 pt-2 border-t border-gray-100 dark:border-neutral-800 mt-2 text-xs">
+            <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/40">
+              <i class="fa-solid fa-file text-[11px]"></i>
+              <span id="file-name" class="truncate max-w-[220px]"></span>
+              <button type="button" onclick="clearSelectedFile()" class="ml-1 text-blue-500 hover:text-blue-700 dark:hover:text-blue-200">
+                <i class="fa-solid fa-xmark text-[10px]"></i>
+              </button>
+            </span>
           </div>
         </div>
-            {% endcomment %}
-        </div>
-        <!-- Chat Message List -->
-        {% if display_form is True %}
-            <!-- Input Form -->
-            <form action="{% url 'dashboard:discussion:api:discussion-api-router-list' %}"
-                  method="post"
-                  class="pt-4"
-                  id="replyForm">
-                <fieldset class="flex flex-col gap-3" form="replyForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="sender" id="sender" value="{{ user.pk }}" />
-                    <input type="hidden"
-                           disabled
-                           name="special_assignment"
-                           class="{{ BW_FULL_INPUT_CSS_CLASSES }}"
-                           value="{{ object.pk }}" />
-                    <input type="hidden"
-                           name="{{ request.user.user_type }}"
-                           class="{{ BW_FULL_INPUT_CSS_CLASSES }}"
-                           disabled
-                           value="{% bw_get_staff_member_pk user=request.user %}" />
-                    <input type="hidden"
-                           name="special_assignment"
-                           value="{{ object.pk }}"
-                           id="special_assignment" />
-                    <div class="flex items-center gap-3">
-                        <!-- File Upload Button -->
-                        <label for="attachment"
-                               class="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition shadow-sm cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="h-6 w-6 text-gray-600"
-                                 viewBox="0 0 448 512">
-                                <path d="M364.2 83.8c-24.4-24.4-64-24.4-88.4 0l-184 184c-42.1 42.1-42.1 110.3 0 152.4s110.3 42.1 152.4 0l152-152c10.9-10.9 28.7-10.9 39.6 0s10.9 28.7 0 39.6l-152 152c-64 64-167.6 64-231.6 0s-64-167.6 0-231.6l184-184c46.3-46.3 121.3-46.3 167.6 0s46.3 121.3 0 167.6l-176 176c-28.6 28.6-75 28.6-103.6 0s-28.6-75 0-103.6l144-144c10.9-10.9 28.7-10.9 39.6 0s10.9 28.7 0 39.6l-144 144c-6.7 6.7-6.7 17.7 0 24.4s17.7 6.7 24.4 0l176-176c24.4-24.4 24.4-64 0-88.4z" />
-                            </svg>
-                        </label>
-                        <input id="attachment"
-                               name="attachment"
-                               type="file"
-                               class="hidden"
-                               onchange="showFileName(event)" />
-                        <!-- Input Field -->
-                        <input type="text"
-                               name="body"
-                               id="body"
-                               placeholder="{% trans 'Type a message...' %}"
-                               required
-                               class="flex-1 bg-gray-100 border rounded-lg px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring focus:ring-blue-200" />
-                        <!-- Send Button -->
-                        <button type="submit"
-                                form="replyForm"
-                                class="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition shadow-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="h-5 w-5"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                            </svg>
-                            <!-- <span>{% translate "Send" %}</span> -->
-                        </button>
-                    </div>
-                    <!-- File Name Display -->
-                    <span id="file-name" class="text-xs text-gray-500 mt-1"></span>
-                </fieldset>
-            </form>
-            <!-- Input Form -->
-        {% endif %}
-    </div>
-    <!-- JavaScript -->
-    <script>
-        function showFileName(event) {
-            const fileInput = event.target;
-            const fileNameSpan = document.getElementById('file-name');
-            const fileName = fileInput.files[0]?.name || 'No file selected';
-            fileNameSpan.textContent = fileName;
+      </fieldset>
+    </form>
+  {% endif %}
+
+  {# ========================================== #}
+  {# 3. CSP-COMPLIANT JAVASCRIPT LOGIC          #}
+  {# ========================================== #}
+  <script nonce="{{ request.csp_nonce }}">
+    function showFileName(event) {
+      const fileInput = event.target;
+      const fileNameSpan = document.getElementById('file-name');
+      const previewWrapper = document.getElementById('file-preview-wrapper');
+      const fileName = fileInput.files[0]?.name || '';
+      if (fileName && fileNameSpan) {
+        fileNameSpan.textContent = fileName;
+        if (previewWrapper) {
+          previewWrapper.classList.remove('hidden');
+          previewWrapper.classList.add('flex');
         }
-        //document.getElementById('chatbox').scrollTop = document.getElementById('chatbox').scrollHeight;
-    </script>
+      }
+    }
+
+    function clearSelectedFile() {
+      const fileInput = document.getElementById('attachment');
+      const fileNameSpan = document.getElementById('file-name');
+      const previewWrapper = document.getElementById('file-preview-wrapper');
+      if (fileInput) fileInput.value = '';
+      if (fileNameSpan) fileNameSpan.textContent = '';
+      if (previewWrapper) {
+        previewWrapper.classList.add('hidden');
+        previewWrapper.classList.remove('flex');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const msgBox = document.getElementById('chatbox-messages');
+      if (msgBox) {
+        msgBox.scrollTop = msgBox.scrollHeight;
+      }
+    });
+
+    document.body.addEventListener('htmx:afterRequest', (event) => {
+      if (event.detail.target && (event.detail.target.id === 'chatbox-messages' || event.detail.elt?.id === 'replyForm')) {
+        if (event.detail.successful) {
+          const form = document.getElementById('replyForm');
+          if (form) {
+            form.reset();
+          }
+          clearSelectedFile();
+          const empty = document.getElementById('chatbox-empty-state');
+          if (empty) {
+            empty.remove();
+          }
+          const el = document.getElementById('chatbox-messages');
+          if (el) {
+            el.scrollTop = el.scrollHeight;
+          }
+        }
+      }
+    });
+  </script>
 </section>

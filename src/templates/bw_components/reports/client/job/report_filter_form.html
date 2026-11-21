@@ -1,0 +1,193 @@
+{% load i18n widget_tweaks core_tags %}
+
+<div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-xs dark:bg-neutral-800 dark:border-neutral-700 mb-6 mx-1 sm:mx-0 transition-all print:hidden">
+    <!-- Filter Card Header with Toggle -->
+    <div class="flex justify-between items-center px-5 py-3.5 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex items-center gap-2">
+            <span class="inline-flex justify-center items-center w-7 h-7 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                <i class="fa-solid fa-filter text-xs"></i>
+            </span>
+            <h2 class="text-sm font-bold text-gray-800 dark:text-neutral-200">
+                {% translate "Filter Report" %}
+            </h2>
+        </div>
+
+        <button type="button" class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-lg text-xs font-semibold text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-neutral-400 dark:hover:text-neutral-200 dark:hover:bg-neutral-700 transition-colors" id="reportFilterCollapseToggle">
+            <span>{% translate "Toggle Filters" %}</span>
+            <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 rotate-180"></i>
+        </button>
+    </div>
+
+    <!-- Filter Form Body -->
+    <div id="reportFilterCollapseArea" class="w-full overflow-hidden transition-all duration-300">
+        <!-- Quick Presets Bar -->
+        <div class="px-5 py-3 border-b border-gray-200 dark:border-neutral-700 bg-gray-50/70 dark:bg-neutral-900/50 flex flex-wrap items-center justify-between gap-2.5">
+            <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                <span class="font-semibold text-gray-500 dark:text-neutral-400 mr-1 flex items-center gap-1">
+                    <i class="fa-solid fa-bookmark text-[10px] text-blue-500"></i>
+                    {% translate "Presets:" %}
+                </span>
+
+                <!-- System Presets -->
+                <a href="{% url 'dashboard:reports:clients_reports:job_reports_list' %}?period_year={{ selected_period_year }}"
+                   data-preset-type="all"
+                   class="system-preset-link inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 shadow-2xs dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700 dark:hover:bg-neutral-700 transition-all">
+                    <i class="fa-solid fa-globe text-[10px] text-gray-400"></i>
+                    {% translate "All Clients" %}
+                </a>
+
+                <a href="{% url 'dashboard:reports:clients_reports:job_reports_list' %}?period_year={{ selected_period_year }}&health_status=action_needed"
+                   data-preset-type="action_needed"
+                   class="system-preset-link inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white text-rose-700 hover:bg-rose-50 border border-rose-200 shadow-2xs dark:bg-neutral-800 dark:text-rose-300 dark:border-rose-900/50 dark:hover:bg-rose-950/30 transition-all">
+                    <i class="fa-solid fa-circle-exclamation text-[10px] text-rose-500"></i>
+                    {% translate "Needs Action" %}
+                </a>
+
+                <a href="{% url 'dashboard:reports:clients_reports:job_reports_list' %}?period_year={{ selected_period_year }}&health_status=at_risk"
+                   data-preset-type="at_risk"
+                   class="system-preset-link inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white text-amber-700 hover:bg-amber-50 border border-amber-200 shadow-2xs dark:bg-neutral-800 dark:text-amber-300 dark:border-amber-900/50 dark:hover:bg-amber-950/30 transition-all">
+                    <i class="fa-solid fa-triangle-exclamation text-[10px] text-amber-500"></i>
+                    {% translate "At Risk" %}
+                </a>
+
+                <a href="{% url 'dashboard:reports:clients_reports:job_reports_list' %}?period_year={{ selected_period_year }}&order_by=jobs_count"
+                   data-preset-type="jobs_count"
+                   class="system-preset-link inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white text-blue-700 hover:bg-blue-50 border border-blue-200 shadow-2xs dark:bg-neutral-800 dark:text-blue-300 dark:border-blue-900/50 dark:hover:bg-blue-950/30 transition-all">
+                    <i class="fa-solid fa-arrow-down-9-1 text-[10px] text-blue-500"></i>
+                    {% translate "Top Volume" %}
+                </a>
+
+                <a href="{% url 'dashboard:reports:clients_reports:job_reports_list' %}?period_year={{ selected_period_year }}&order_by=current_week"
+                   data-preset-type="current_week"
+                   class="system-preset-link inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white text-emerald-700 hover:bg-emerald-50 border border-emerald-200 shadow-2xs dark:bg-neutral-800 dark:text-emerald-300 dark:border-emerald-900/50 dark:hover:bg-emerald-950/30 transition-all">
+                    <i class="fa-solid fa-calendar-week text-[10px] text-emerald-500"></i>
+                    {% translate "Due This Week" %}
+                </a>
+
+                <!-- Dynamic Custom Presets Container -->
+                <div id="customPresetsContainer" class="flex flex-wrap items-center gap-1.5"></div>
+            </div>
+
+            <!-- Action Controls on Presets Bar -->
+            <div class="flex items-center gap-2">
+                <button type="button" id="btnClearAllPresets" class="hidden inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium text-gray-500 hover:text-rose-600 dark:text-neutral-400 dark:hover:text-rose-400 transition-colors cursor-pointer" title="{% translate 'Clear all saved custom presets' %}">
+                    <i class="fa-regular fa-trash-can text-[10px]"></i>
+                    {% translate "Clear Presets" %}
+                </button>
+
+                <button type="button" id="btnSaveFilterPreset" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 transition-all cursor-pointer">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    {% translate "Save View" %}
+                </button>
+            </div>
+        </div>
+
+        <form method="get" id="clientJobsReportFilterForm" action="{% url 'dashboard:reports:clients_reports:job_reports_list' %}" class="p-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+                <!-- 1. Client Filter -->
+                <div class="flex flex-col">
+                    <label for="{{ filter_form.clients.id_for_label }}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1.5">
+                        <i class="fa-solid fa-building text-[10px] text-gray-400 mr-1"></i>
+                        {{ filter_form.clients.label }}
+                    </label>
+                    <div class="relative">
+                        {% render_field filter_form.clients class="py-2 px-3 block w-full border-gray-200 rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:focus:ring-neutral-600 shadow-xs" %}
+                    </div>
+                </div>
+
+                <!-- 2. Client Categories Filter -->
+                <div class="flex flex-col">
+                    <label for="{{ filter_form.categories.id_for_label }}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1.5">
+                        <i class="fa-solid fa-tags text-[10px] text-gray-400 mr-1"></i>
+                        {{ filter_form.categories.label }}
+                    </label>
+                    <div class="relative">
+                        {% render_field filter_form.categories class="py-2 px-3 block w-full border-gray-200 rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:focus:ring-neutral-600 shadow-xs" %}
+                    </div>
+                </div>
+
+                <!-- 3. Job Categories Filter -->
+                <div class="flex flex-col">
+                    <label for="{{ filter_form.job_categories.id_for_label }}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1.5">
+                        <i class="fa-solid fa-briefcase text-[10px] text-gray-400 mr-1"></i>
+                        {{ filter_form.job_categories.label }}
+                    </label>
+                    <div class="relative">
+                        {% render_field filter_form.job_categories class="py-2 px-3 block w-full border-gray-200 rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:focus:ring-neutral-600 shadow-xs" %}
+                    </div>
+                </div>
+
+                <!-- 4. Period Year Filter -->
+                <div class="flex flex-col">
+                    <label for="{{ filter_form.period_year.id_for_label }}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1.5">
+                        <i class="fa-regular fa-calendar-days text-[10px] text-gray-400 mr-1"></i>
+                        {{ filter_form.period_year.label }}
+                    </label>
+                    <div class="relative">
+                        {% render_field filter_form.period_year class="py-2 px-3 block w-full border-gray-200 rounded-lg text-xs font-medium focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:focus:ring-neutral-600 shadow-xs" %}
+                    </div>
+                </div>
+
+                <!-- 5. Managed By (Staff) Filter -->
+                <div class="flex flex-col">
+                    <label for="{{ filter_form.managed_by.id_for_label }}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1.5">
+                        <i class="fa-solid fa-user-tie text-[10px] text-gray-400 mr-1"></i>
+                        {{ filter_form.managed_by.label }}
+                    </label>
+                    <div class="relative">
+                        {% render_field filter_form.managed_by class="py-2 px-3 block w-full border-gray-200 rounded-lg text-xs focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:focus:ring-neutral-600 shadow-xs" %}
+                    </div>
+                </div>
+
+                <!-- 6. Health Status Filter -->
+                <div class="flex flex-col">
+                    <label for="{{ filter_form.health_status.id_for_label }}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1.5">
+                        <i class="fa-solid fa-heart-pulse text-[10px] text-rose-500 mr-1"></i>
+                        {{ filter_form.health_status.label }}
+                    </label>
+                    <div class="relative">
+                        {% render_field filter_form.health_status class="py-2 px-3 block w-full border-gray-200 rounded-lg text-xs font-medium focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:focus:ring-neutral-600 shadow-xs" %}
+                    </div>
+                </div>
+
+                <!-- 7. Sort By Filter -->
+                <div class="flex flex-col">
+                    <label for="{{ filter_form.order_by.id_for_label }}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1.5">
+                        <i class="fa-solid fa-arrow-down-wide-short text-[10px] text-blue-500 mr-1"></i>
+                        {{ filter_form.order_by.label }}
+                    </label>
+                    <div class="relative">
+                        {% render_field filter_form.order_by class="py-2 px-3 block w-full border-gray-200 rounded-lg text-xs font-medium focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:focus:ring-neutral-600 shadow-xs" %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons Footer -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mt-5 pt-4 border-t border-gray-200 dark:border-neutral-700">
+                <!-- Per Page Selector (if present) -->
+                {% if per_page_filter_form %}
+                    <div class="flex items-center gap-2">
+                        <label for="{{ per_page_filter_form.per_page.id_for_label }}" class="text-xs font-semibold text-gray-600 dark:text-neutral-400">
+                            {% translate "Per Page" %}:
+                        </label>
+                        {% render_field per_page_filter_form.per_page form="clientJobsReportFilterForm" class="py-1.5 px-3 block min-w-[85px] border-gray-200 rounded-lg text-xs font-medium focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300 shadow-xs" %}
+                    </div>
+                {% else %}
+                    <div></div>
+                {% endif %}
+
+                <!-- Filter Actions -->
+                <div class="flex items-center gap-2">
+                    <a href="{% url 'dashboard:reports:clients_reports:job_reports_list' %}" class="inline-flex items-center gap-1.5 py-2 px-3.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600 transition-colors">
+                        <i class="fa-solid fa-rotate-left text-[11px]"></i>
+                        {% translate "Reset" %}
+                    </a>
+                    <button type="submit" class="inline-flex items-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-colors">
+                        <i class="fa-solid fa-magnifying-glass text-[11px]"></i>
+                        {% translate "Apply Filters" %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

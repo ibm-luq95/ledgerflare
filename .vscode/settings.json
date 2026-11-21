@@ -18,7 +18,7 @@
   "djlint.useNewLinterOutputParser": true,
   // "djlint.preserveBlankLines": true
   "djlint.useVenv": false,
-  "djlint.pythonPath": "${userHome}/.virtualenvs/Leadger_Flear_Venv3.14/bin/python3",
+  "djlint.pythonPath": "/home/ibrahim-pc/.virtualenvs/Leadger_Flear_Venv3.14/bin/python3",
   "windsurfPyright.analysis.inlayHints.variableTypes": true,
   "windsurfPyright.analysis.inlayHints.genericTypes": true,
   "windsurfPyright.analysis.inlayHints.functionReturnTypes": true,
@@ -26,7 +26,6 @@
   "windsurfPyright.analysis.inlayHints.callArgumentNames": true,
   "windsurfPyright.analysis.include": ["./src"],
   "windsurfPyright.analysis.typeCheckingMode": "standard",
-  "npm-intellisense.importQuotes": "\"",
   "path-intellisense.showHiddenFiles": true,
   "ruff.format.preview": true,
   "ruff.lineLength": 88,
@@ -194,10 +193,13 @@
     "editor.defaultFormatter": "monosans.djlint"
   },
   "eslint.run": "onSave",
-  "eslint.workingDirectories": [
-    "${workspaceFolder}"
-  ],
+  "eslint.workingDirectories": ["${workspaceFolder}"],
   "windsurfPyright.importStrategy": "fromEnvironment",
   "windsurfPyright.analysis.useTypingExtensions": true,
-  "windsurfPyright.analysis.logLevel": "Trace"
+  "windsurfPyright.analysis.logLevel": "Trace",
+
+  "npm-intellisense.importES6": true,
+  "npm-intellisense.importQuotes": "'",
+  "npm-intellisense.importLinebreak": ";\r\n",
+  "npm-intellisense.importDeclarationType": "const"
 }

@@ -3,7 +3,6 @@ import traceback
 from pathlib import PosixPath
 from datetime import datetime, date
 import json
-import decouple
 from django.core.management import BaseCommand
 from django.db import transaction
 from django.utils.translation import gettext as _
@@ -73,7 +72,7 @@ class ExportingCommandMixin(BaseCommand, CommandStdOutputMixin):
                 help=_("File format"),
                 required=False,
             )
-        except decouple.decouple.UndefinedValueError:
+        except KeyError:
             DebuggingPrint.print("[red bold] Export directory not exists!")
             return
         except Exception as e:

@@ -1,0 +1,53 @@
+{% load i18n %}
+{% load elements.placeholders %}
+
+<!-- Contacts & Relations Tab Content -->
+<div id="contacts-relations-tab"
+     class="hidden"
+     role="tabpanel"
+     aria-labelledby="contacts-relations-tab-btn">
+    
+    <div class="space-y-6">
+        <!-- Important Contacts Section (Existing) -->
+        <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700">
+            <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-neutral-700">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">
+                            <i class="fa-solid fa-address-book mr-2 text-blue-600"></i>
+                            {% translate "Important Contacts" %}
+                        </h3>
+                        <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                            {% translate "Key people and organizations" %}
+                        </p>
+                    </div>
+                    <div>
+                        {% bw_create_btn_js_modal js_create_btn_css_id="createImportantContactBtn" modal_css_id="createImportantContactModal" app_name="important_contact" %}
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 sm:p-6">
+                {% if object.important_contacts.all %}
+                    {% include "bw_components/important_contact/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at header_title="" header_subtitle="" is_show_create_btn=False app_label="important_contact" pagination_list_url_name="dashboard:important_contact:list" is_filters_enabled=False is_actions_menu_enabled=True actions_items="show,update,delete" actions_app_name="important_contact" actions_base_url="dashboard:important_contact" base_url_name="dashboard:important_contact" filter_cancel_url="dashboard:important_contact:list" object_list=object.important_contacts.all is_client_enabled=False %}
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
+                        <a href="javascript:;"
+                           class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                            {% translate "View All Contacts" %}
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                {% else %}
+                    {% include "bw_ui_components/global/empty_card.html" with label="contacts" %}
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Customers Section (Placeholder) -->
+        {% placeholder_customers client=object limit=5 %}
+        
+        <!-- Vendors Section (Placeholder) -->
+        {% placeholder_vendors client=object limit=5 %}
+    </div>
+</div>
+<!-- End Contacts & Relations Tab Content -->

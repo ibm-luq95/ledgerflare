@@ -1,0 +1,74 @@
+{% load i18n core_tags %}
+
+<div class="flex flex-col bg-white border border-gray-200 rounded-xl p-5 md:p-6 shadow-xs dark:bg-neutral-800 dark:border-neutral-700 mb-6 mx-1 sm:mx-0">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <!-- Left Title Section -->
+        <div>
+            <!-- Breadcrumbs -->
+            <nav class="flex items-center gap-x-2 text-xs font-medium text-gray-500 dark:text-neutral-400 mb-2" aria-label="Breadcrumb">
+                <span>{% translate "Dashboard" %}</span>
+                <i class="fa-solid fa-chevron-right text-[10px] text-gray-400"></i>
+                <a href="{% url 'dashboard:reports:clients_reports:job_reports_list' %}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    {% translate "Reports" %}
+                </a>
+                <i class="fa-solid fa-chevron-right text-[10px] text-gray-400"></i>
+                <span class="text-blue-600 dark:text-blue-400 font-semibold">{% translate "Jobs Matrix" %}</span>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white shadow-md shadow-blue-500/25">
+                    <i class="fa-solid fa-chart-column text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-neutral-100 tracking-tight">
+                        {% translate "Client Jobs Report" %}
+                    </h1>
+                    <p class="text-xs md:text-sm text-gray-500 dark:text-neutral-400 mt-0.5">
+                        {% translate "Annual schedule matrix, completion progress, and status distribution across client accounts." %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Badges & Actions Section -->
+        <div class="flex flex-wrap items-center gap-2 self-start md:self-center">
+            <!-- Fiscal Year Badge -->
+            <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/80 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800">
+                <i class="fa-regular fa-calendar text-[11px]"></i>
+                <span>FY {{ selected_period_year }}</span>
+            </span>
+
+            <!-- Total Clients Badge -->
+            <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold bg-gray-50 text-gray-700 border border-gray-200 dark:bg-neutral-700 dark:text-neutral-300 dark:border-neutral-600">
+                <i class="fa-solid fa-users text-[11px]"></i>
+                <span>{{ total_clients_count }} {% translate "Clients" %}</span>
+            </span>
+
+            <!-- Export Dropdown -->
+            <div class="hs-dropdown relative inline-flex print:hidden">
+                <button id="hs-dropdown-export" type="button" class="hs-dropdown-toggle inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs hover:bg-emerald-100 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-900/50 transition-colors" aria-haspopup="menu" aria-expanded="false" aria-label="Export Menu">
+                    <i class="fa-solid fa-file-export text-[11px]"></i>
+                    <span>{% translate "Export" %}</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] hs-dropdown-open:rotate-180 transition-transform"></i>
+                </button>
+
+                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-44 bg-white shadow-xl rounded-xl p-1.5 mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700 z-50" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-export">
+                    <a class="flex items-center gap-x-2.5 py-2 px-3 rounded-lg text-xs text-gray-800 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors" href="{% url 'dashboard:reports:clients_reports:job_reports_export_excel' %}?{{ request.GET.urlencode }}">
+                        <i class="fa-solid fa-file-excel text-emerald-600 text-sm"></i>
+                        <span>{% translate "Excel (.xlsx)" %}</span>
+                    </a>
+                    <a class="flex items-center gap-x-2.5 py-2 px-3 rounded-lg text-xs text-gray-800 hover:bg-gray-100 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors" href="{% url 'dashboard:reports:clients_reports:job_reports_export_csv' %}?{{ request.GET.urlencode }}">
+                        <i class="fa-solid fa-file-csv text-blue-600 text-sm"></i>
+                        <span>{% translate "CSV (.csv)" %}</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Print Action Button -->
+            <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-medium bg-white text-gray-700 border border-gray-200 shadow-2xs hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors print:hidden">
+                <i class="fa-solid fa-print text-[11px]"></i>
+                <span class="hidden sm:inline">{% translate "Print" %}</span>
+            </button>
+        </div>
+    </div>
+</div>

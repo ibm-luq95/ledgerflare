@@ -60,7 +60,8 @@ class FilterCreatedMixin(HelpfulFilterSet):
             QuerySet[Any]: The filtered queryset.
 
         """
-        date: Optional[datetime] = None
+        if not value:
+            return queryset
 
         if value == "today":
             date = timezone.now()
@@ -76,5 +77,5 @@ class FilterCreatedMixin(HelpfulFilterSet):
             now = timezone.now()
             return queryset.filter(created_at__month=now.month, created_at__year=now.year)
 
-        else:
-            return queryset.none()
+        return queryset
+

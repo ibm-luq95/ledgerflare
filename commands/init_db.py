@@ -4,12 +4,26 @@ import traceback
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
-from decouple import Config, RepositoryEnv
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from mysql.connector import MySQLConnection
 from mysql.connector import errors
 from prettyprinter import pprint
 
 from commands_helpers import colored_print
+
+
+class DbSettings(BaseSettings):
+    WHEREAMI: str = "LOCAL"
+    DB_HOST: str = "127.0.0.1"
+    DB_PORT: int = 5432
+    DB_NAME: str
+    DB_USER: str
+    DB_PASSWORD: str
+
+    model_config = SettingsConfigDict(
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
 
 def verbose_output(named_args: Namespace, msg: str, color: str = "yellow") -> None:
@@ -19,11 +33,13 @@ def verbose_output(named_args: Namespace, msg: str, color: str = "yellow") -> No
 
 def init_db_command():
     try:
-        parent = Path.cwd().parent
-        env_path = parent / "src" / ".env"
-        env_file = env_path / ".env"
-        config = Config(RepositoryEnv(env_file))
-        whereami = config("WHEREAMI", cast=str)
+        root_dir = Path(__file__).resolve().parent.parent
+        env_file = root_dir / "src" / ".env" / ".env"
+        
+        # Load and validate settings via Pydantic
+        db_settings = DbSettings(_env_file=env_file)
+        
+        whereami = db_settings.WHEREAMI
         parser = ArgumentParser()
         output_group = parser.add_mutually_exclusive_group()
         main_group = parser.add_mutually_exclusive_group()
@@ -58,8 +74,8 @@ def init_db_command():
             conn_config = {
                 "user": "root",
                 "password": mysql_root_password,
-                "host": config("DB_HOST", cast=str),
-                "port": config("DB_PORT", cast=str),
+                "host": db_settings.DB_HOST,
+                "port": str(db_settings.DB_PORT),
                 "autocommit": False,
             }
             if args.rais_warning is True:
@@ -75,23 +91,23 @@ def init_db_command():
                     sql_statements = {
                         "create_db": (
                             "CREATE DATABASE IF NOT EXISTS"
-                            f" {config('DB_NAME', cast=str)} CHARACTER SET utf8;"
+                            f" {db_settings.DB_NAME} CHARACTER SET utf8;"
                         ),
                         "create_user": (
-                            f"CREATE USER IF NOT EXISTS '{config('DB_USER', cast=str)}'@'"
-                            f"{config('DB_HOST', cast=str)}' "
-                            f"IDENTIFIED BY '{config('DB_PASSWORD', cast=str)}';"
+                            f"CREATE USER IF NOT EXISTS '{db_settings.DB_USER}'@'"
+                            f"{db_settings.DB_HOST}' "
+                            f"IDENTIFIED BY '{db_settings.DB_PASSWORD}';"
                         ),
                         "grant": (
-                            f"GRANT ALL PRIVILEGES ON {config('DB_NAME', cast=str)}.* TO '"
-                            f"{config('DB_USER', cast=str)}'@'{config('DB_HOST', cast=str)}';"
+                            f"GRANT ALL PRIVILEGES ON {db_settings.DB_NAME}.* TO '"
+                            f"{db_settings.DB_USER}'@'{db_settings.DB_HOST}';"
                         ),
                         "flush": "FLUSH PRIVILEGES;",
                     }
                     colored_print(
                         text=(
-                            f"Start initializing {config('DB_NAME', cast=str)} and user"
-                            f" {config('DB_USER', cast=str)}"
+                            f"Start initializing {db_settings.DB_NAME} and user"
+                            f" {db_settings.DB_USER}"
                         ),
                         color="cyan",
                     )
@@ -101,8 +117,8 @@ def init_db_command():
                     colored_print(
                         text=(
                             "Do you want to delete database"
-                            f" {config('DB_NAME', cast=str)} and user"
-                            f" {config('DB_USER', cast=str)}? [Y|N] "
+                            f" {db_settings.DB_NAME} and user"
+                            f" {db_settings.DB_USER}? [Y|N] "
                         ),
                         color="yellow",
                     )
@@ -114,11 +130,11 @@ def init_db_command():
                     elif confirm == "y":
                         sql_statements = {
                             "drop_user": (
-                                f"DROP USER IF EXISTS '{config('DB_USER', cast=str)}'@'"
-                                f"{config('DB_HOST', cast=str)}';"
+                                f"DROP USER IF EXISTS '{db_settings.DB_USER}'@'"
+                                f"{db_settings.DB_HOST}';"
                             ),
                             "drop_db": (
-                                f"DROP DATABASE IF EXISTS {config('DB_NAME', cast=str)}"
+                                f"DROP DATABASE IF EXISTS {db_settings.DB_NAME}"
                             ),
                             "flush": "FLUSH PRIVILEGES;",
                         }

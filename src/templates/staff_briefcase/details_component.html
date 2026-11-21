@@ -1,351 +1,509 @@
 {% load i18n %}
+{% load humanize %}
+{% load static %}
+{% load elements.js_modal %}
+{% load bw_users_tags %}
 
-<section id="briefcaseWrapper">
-    <section id="briefcase-wrapper" class="w-full">
-        <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
-            <div class="container mx-auto">
-                <div class="flex flex-nowrap">
-                    <div class="border-e border-gray-200 dark:border-gray-700">
-                        <nav class="flex flex-col space-y-2"
-                             aria-label="Tabs"
-                             role="tablist"
-                             data-hs-tabs-vertical="true">
-                            <button type="button"
-                                    class="hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600 py-1 pe-4 inline-flex items-center gap-x-2 border-e-2 border-transparent text-sm whitespace-nowrap text-gray-600 hover:text-blue-600 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-blue-500 active"
-                                    id="notes-tab-item"
-                                    data-hs-tab="#notes-tab"
-                                    aria-controls="notes-tab"
-                                    role="tab">{% translate "Notes" %}</button>
-                            <button type="button"
-                                    class="hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600 py-1 pe-4 inline-flex items-center gap-x-2 border-e-2 border-transparent text-sm whitespace-nowrap text-gray-600 hover:text-blue-600 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-blue-500"
-                                    id="documents-tab-item"
-                                    data-hs-tab="#documents-tab"
-                                    aria-controls="documents-tab"
-                                    role="tab">{% translate "Documents" %}</button>
-                            <button type="button"
-                                    class="hs-tab-active:border-blue-500 hs-tab-active:text-blue-600 dark:hs-tab-active:text-blue-600 py-1 pe-4 inline-flex items-center gap-x-2 border-e-2 border-transparent text-sm whitespace-nowrap text-gray-600 hover:text-blue-600 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-blue-500"
-                                    id="vertical-tab-with-border-item-3"
-                                    data-hs-tab="#vertical-tab-with-border-3"
-                                    aria-controls="vertical-tab-with-border-3"
-                                    role="tab">{% translate "Accounts" %}</button>
-                        </nav>
-                    </div>
-                    <div class="ms-3 grow">
-                        <div id="notes-tab" role="tabpanel" aria-labelledby="notes-tab-item">
-                            <div class="header-block ">
-                                <div class="flex justify-between">
-                                    <div>
-                                        <h4 class="text-xl dark:text-white">{% translate "Notes" %}</h4>
-                                    </div>
-                                    <div>
-                                        <button type="button"
-                                                class="py-2 px-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-blue-900 dark:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                                                data-hs-overlay="#createBriefcaseNoteModal">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="mb-3 mt-1 dark:border-white" />
-                            <div class="flex flex-col">
-                                {% if object.briefcase.notes.all %}
-                                    <div class="-m-1.5 overflow-x-auto">
-                                        <div class="p-1.5 min-w-full inline-block align-middle">
-                                            <div class="border rounded-lg shadow overflow-hidden dark:border-gray-700 dark:shadow-gray-900">
-                                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                                    {# <caption class="py-2 text-start text-sm text-gray-600 dark:text-gray-500">{% translate "List of notes" %}</caption> #}
-                                                    <thead class="bg-gray-50 dark:bg-gray-700">
-                                                        <tr>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                {% translate "Title" %}
-                                                            </th>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                {% translate "Body" %}
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                                        {% for s_note in object.briefcase.notes.all %}
-                                                            <tr>
-                                                                <td class="px-6 py-4 text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                                    <p class="text-balance text-sm italic">{{ s_note.title|safe }}</p>
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
-                                                                    <p class="text-balance">{{ s_note.note|safe }}</p>
-                                                                </td>
-                                                            </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% else %}
+{% with briefcase=object.briefcase|default:object %}
+{% with staff_user=briefcase.user|default:object %}
+{% with staff_member=staff_user.get_staff_member_object.staff_object %}
 
-                                    {% include "bw_ui_components/global/empty_card.html" with label="staff notes" %}
+<section id="briefcaseWrapper" class="w-full space-y-6">
 
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div id="documents-tab"
-                             class="hidden"
-                             role="tabpanel"
-                             aria-labelledby="documents-tab-item">
-                            <div class="header-block ">
-                                <div class="flex justify-between">
-                                    <div>
-                                        <h4 class="text-xl dark:text-white">{% translate "Documents" %}</h4>
-                                    </div>
-                                    <div>
-                                        <button type="button"
-                                                class="py-2 px-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-blue-900 dark:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                                                data-hs-overlay="#createBriefcaseDocumentModal">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="mb-3 mt-1 dark:border-white" />
-                            {% if object.briefcase.documents.all %}
-                                <div class="flex flex-col">
-                                    <div class="-m-1.5 overflow-x-auto">
-                                        <div class="p-1.5 min-w-full inline-block align-middle">
-                                            <div class="border rounded-lg shadow overflow-hidden dark:border-gray-700 dark:shadow-gray-900">
-                                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                                    {# <caption class="py-2 text-start text-sm text-gray-600 dark:text-gray-500">{% translate "List of notes" %}</caption> #}
-                                                    <thead class="bg-gray-50 dark:bg-gray-700">
-                                                        <tr>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                {% translate "Title" %}
-                                                            </th>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                {% translate "File" %}
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                                        {% for s_document in object.briefcase.documents.all %}
-                                                            <tr>
-                                                                <td class="px-6 py-4 text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                                    <p class="text-balance italic">{{ s_document.title|safe }}</p>
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
-                                                                    <a href="{{ s_document.document_file.url|safe }}"
-                                                                       download="{{ s_document.document_file.url|safe }}"
-                                                                       class="py-3 pr-4 pl-1.5 inline-flex items-center gap-x-2 text-sm font-semibold text-center rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-blue-900 dark:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 size-[30px]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                                             width="24"
-                                                                             height="24"
-                                                                             fill="currentColor"
-                                                                             class="flex-shrink-0 size-4"
-                                                                             viewBox="0 0 16 16">
-                                                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
-                                                                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
-                                                                        </svg>
-                                                                    </a>
-                                                                </td>
-                                                            </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% else %}
-
-                                {% include "bw_ui_components/global/empty_card.html" with label="staff documents" %}
-
-                            {% endif %}
-                        </div>
-                        <div id="vertical-tab-with-border-3"
-                             class="hidden"
-                             role="tabpanel"
-                             aria-labelledby="vertical-tab-with-border-item-3">
-                            <div class="header-block ">
-                                <div class="flex justify-between">
-                                    <div>
-                                        <h4 class="text-xl dark:text-white">{% translate "Accounts" %}</h4>
-                                    </div>
-                                    <div>
-                                        <button type="button"
-                                                class="py-2 px-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-blue-900 dark:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                                                data-hs-overlay="#createBriefcaseAccountModal">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="mb-3 mt-1 dark:border-white" />
-                            {% if object.briefcase.accounts.all %}
-                                <div class="flex flex-col">
-                                    <div class="-m-1.5 overflow-x-auto">
-                                        <div class="p-1.5 min-w-full inline-block align-middle">
-                                            <div class="border rounded-lg shadow overflow-hidden dark:border-gray-700 dark:shadow-gray-900">
-                                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                                    {# <caption class="py-2 text-start text-sm text-gray-600 dark:text-gray-500">{% translate "List of notes" %}</caption> #}
-                                                    <thead class="bg-gray-50 dark:bg-gray-700">
-                                                        <tr>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                {% translate "Title" %}
-                                                            </th>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                {% translate "Name" %}
-                                                            </th>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                {% translate "URL" %}
-                                                            </th>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                {% translate "Username" %}
-                                                            </th>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                {% translate "Password" %}
-                                                            </th>
-                                                            <th scope="col"
-                                                                class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                                                #
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                                        {% for s_account in object.briefcase.accounts.all %}
-                                                            <tr>
-                                                                <td class="px-6 py-4 text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                                    <p class="text-balance italic">{{ s_account.title|safe }}</p>
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                                    {{ s_account.get_name_display|safe }}
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                                    <div>
-                                                                        <div class="flex rounded-md shadow-sm">
-                                                                            <input type="url"
-                                                                                   id="url-input-{{ s_account.pk }}"
-                                                                                   disabled
-                                                                                   data-label="Account URL"
-                                                                                   readonly
-                                                                                   value="{{ s_account.url }}"
-                                                                                   name="url-input-{{ s_account.pk }}"
-                                                                                   class="{{ BW_FULL_INPUT_CSS_CLASSES }} ca-credentials-input py-1 px-2 block w-full border-gray-200 shadow-sm rounded-l-md text-xs focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" />
-                                                                            <button type="button"
-                                                                                    disabled
-                                                                                    data-credentials-id="url-input-{{ s_account.pk }}"
-                                                                                    class="{{ BW_FULL_INPUT_CSS_CLASSES }} ca-credentials-btn inline-flex flex-shrink-0 justify-center items-center w-[2rem] hover:text-white rounded-r-md border border-transparent font-semibold bg-blue-100 text-blue-500 hover:bg-blue-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all text-sm dark:focus:ring-offset-gray-800">
-                                                                                <i class="fa-solid fa-clipboard w-4 h-4"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
-                                                                    <div>
-                                                                        <div class="flex rounded-md shadow-sm">
-                                                                            <input type="text"
-                                                                                   id="username-input-{{ s_account.pk }}"
-                                                                                   disabled
-                                                                                   data-label="Username"
-                                                                                   value="{{ s_account.username_email }}"
-                                                                                   readonly
-                                                                                   name="username-input-{{ s_account.pk }}"
-                                                                                   class="{{ BW_FULL_INPUT_CSS_CLASSES }} ca-credentials-input py-1 px-2 block w-full border-gray-200 shadow-sm rounded-l-md text-xs focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" />
-                                                                            <button type="button"
-                                                                                    disabled
-                                                                                    data-credentials-id="username-input-{{ s_account.pk }}"
-                                                                                    class="{{ BW_FULL_INPUT_CSS_CLASSES }} ca-credentials-btn inline-flex flex-shrink-0 justify-center items-center w-[2rem] hover:text-white rounded-r-md border border-transparent font-semibold bg-blue-100 text-blue-500 hover:bg-blue-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all text-sm dark:focus:ring-offset-gray-800">
-                                                                                <i class="fa-solid fa-clipboard w-4 h-4"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
-                                                                    <div>
-                                                                        <div class="grid grid-cols-3 gap-1">
-                                                                            <div class="col-span-2">
-                                                                                <input type="password"
-                                                                                       readonly
-                                                                                       id="password-input-{{ s_account.pk }}"
-                                                                                       name="password-input-{{ s_account.pk }}"
-                                                                                       disabled
-                                                                                       value="{{ s_account.decrypted_password }}"
-                                                                                       data-label="Password"
-                                                                                       class="{{ BW_FULL_INPUT_CSS_CLASSES }} ca-credentials-input py-1 px-2 block w-full border-gray-200 rounded-md text-xs focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" />
-                                                                            </div>
-                                                                            <div>
-                                                                                <div class="hs-tooltip inline-block">
-                                                                                    <button type="button"
-                                                                                            disabled
-                                                                                            data-credentials-id="password-input-{{ s_account.pk }}"
-                                                                                            class="{{ BW_FULL_INPUT_CSS_CLASSES }} ca-credentials-btn hs-tooltip-toggle mr-1 inline-flex flex-shrink-0 justify-center items-center gap-2 h-[1.7rem] w-[1.7rem] rounded-full border border-transparent hover:text-white font-semibold bg-blue-100 text-blue-500 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm  dark:focus:ring-offset-gray-800">
-                                                                                        <i class="fa-solid fa-clipboard w-3 h-3"></i>
-                                                                                        <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity hover:text-white inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                                                                              role="tooltip">{% translate "Copy" %}</span>
-                                                                                    </button>
-                                                                                </div>
-                                                                                <div class="hs-tooltip inline-block">
-                                                                                    <button type="button"
-                                                                                            disabled
-                                                                                            data-credentials-id="password-input-{{ s_account.pk }}"
-                                                                                            data-is-visible="false"
-                                                                                            class="{{ BW_FULL_INPUT_CSS_CLASSES }} ca-show-password-btn hs-tooltip-toggle mr-1 inline-flex flex-shrink-0 justify-center items-center gap-2 h-[1.7rem] w-[1.7rem] rounded-full border border-transparent font-semibold bg-blue-100 text-blue-500 hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm  dark:focus:ring-offset-gray-800">
-                                                                                        <span class="ca-icon">
-                                                                                            <i class="fa-solid fa-eye w-3 h-3"></i>
-                                                                                        </span>
-                                                                                        <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-sm dark:bg-slate-700"
-                                                                                              role="tooltip">{% translate "Show" %}</span>
-                                                                                    </button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="px-6 py-4 text-end text-sm font-medium">
-                                                                    <button type="button"
-                                                                            class="py-3 pr-4 pl-1.5 inline-flex items-center gap-x-2 text-sm font-semibold text-center rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-blue-900 dark:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 size-[30px]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                                             width="16"
-                                                                             height="16"
-                                                                             fill="currentColor"
-                                                                             class="flex-shrink-0 size-4"
-                                                                             viewBox="0 0 16 16">
-                                                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                                                                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                                                                        </svg>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% else %}
-
-                                {% include "bw_ui_components/global/empty_card.html" with label="staff account" %}
-
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+  {# ========================================== #}
+  {# 1. STAFF IDENTITY HERO BAR                 #}
+  {# ========================================== #}
+  <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-5 sm:p-6 dark:bg-neutral-900 dark:border-neutral-800">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      
+      {# Left: Staff Avatar & Identity #}
+      <div class="flex items-center gap-4 min-w-0">
+        <div class="relative shrink-0">
+          <img class="size-16 sm:size-20 rounded-2xl object-cover ring-2 ring-blue-500/20 shadow-xs"
+               src="{% if staff_member.profile.profile_picture %}{{ staff_member.profile.profile_picture.url }}{% else %}{% static 'img/default_staff.png' %}{% endif %}"
+               alt="{{ staff_user.fullname|default:staff_user.email }}" />
+          <span class="absolute -bottom-1 -right-1 size-4 sm:size-4.5 rounded-full border-2 border-white dark:border-neutral-900 {% if staff_user.is_active %}bg-emerald-500{% else %}bg-gray-400{% endif %}"
+                title="{% if staff_user.is_active %}{% translate 'Active Staff' %}{% else %}{% translate 'Inactive' %}{% endif %}">
+          </span>
         </div>
-    </section>
+
+        <div class="min-w-0 space-y-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white truncate">
+              {{ staff_user.fullname|default:staff_user.email }}
+            </h1>
+            
+            {# Role Badge #}
+            <span class="py-1 px-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider
+              {% if staff_user.user_type == 'manager' %}bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300
+              {% elif staff_user.user_type == 'bookkeeper' %}bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300
+              {% elif staff_user.user_type == 'assistant' %}bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300
+              {% elif staff_user.user_type == 'cfo' %}bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300
+              {% else %}bg-gray-100 text-gray-800 dark:bg-neutral-800 dark:text-neutral-300{% endif %}">
+              {{ staff_user.get_user_type_display|default:staff_user.user_type }}
+            </span>
+          </div>
+
+          {# Contact Chips #}
+          <div class="flex flex-wrap items-center gap-y-1 gap-x-3.5 text-xs text-gray-500 dark:text-neutral-400">
+            {% if staff_user.email %}
+              <span class="inline-flex items-center gap-1.5">
+                <i class="fa-regular fa-envelope text-gray-400"></i>
+                <a href="mailto:{{ staff_user.email }}" class="hover:text-blue-600 transition-colors">{{ staff_user.email }}</a>
+              </span>
+            {% endif %}
+            {% if staff_member.profile.phone_number %}
+              <span class="inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-phone text-gray-400"></i>
+                <a href="tel:{{ staff_member.profile.phone_number }}" class="hover:text-blue-600 transition-colors">{{ staff_member.profile.phone_number }}</a>
+              </span>
+            {% endif %}
+            <span class="inline-flex items-center gap-1.5">
+              <i class="fa-regular fa-calendar text-gray-400"></i>
+              {% translate "Joined" %} {{ staff_user.date_joined|date:"M Y" }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {# Right: Quick Actions #}
+      <div class="flex flex-wrap items-center gap-2 sm:gap-2.5 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100 dark:border-neutral-800">
+        <button type="button"
+                class="inline-flex items-center gap-1.5 py-2 px-3 sm:px-3.5 rounded-xl bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200/60 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800/40 text-xs sm:text-sm font-semibold shadow-2xs transition-colors"
+                data-hs-overlay="#createBriefcaseNoteModal">
+          <i class="fa-solid fa-note-sticky text-xs"></i>
+          <span>{% translate "New Note" %}</span>
+        </button>
+
+        <button type="button"
+                class="inline-flex items-center gap-1.5 py-2 px-3 sm:px-3.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/60 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/40 text-xs sm:text-sm font-semibold shadow-2xs transition-colors"
+                data-hs-overlay="#createBriefcaseDocumentModal">
+          <i class="fa-solid fa-cloud-arrow-up text-xs"></i>
+          <span>{% translate "Upload Doc" %}</span>
+        </button>
+
+        <button type="button"
+                class="inline-flex items-center gap-1.5 py-2 px-3.5 sm:px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold shadow-2xs transition-colors"
+                data-hs-overlay="#createBriefcaseAccountModal">
+          <i class="fa-solid fa-key text-xs"></i>
+          <span>{% translate "Add Account" %}</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  {# ========================================== #}
+  {# 2. SUMMARY STAT TILES (3 Metric Cards)     #}
+  {# ========================================== #}
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+    {# Card 1: Notes #}
+    <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800 hover:border-amber-300/60 transition-colors">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400">
+          {% translate "Internal Notes" %}
+        </span>
+        <div class="size-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center dark:bg-amber-950/40 dark:text-amber-400">
+          <i class="fa-solid fa-note-sticky text-sm"></i>
+        </div>
+      </div>
+      <div class="mt-3">
+        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ briefcase.notes.count }}
+        </div>
+        <div class="text-xs text-gray-500 dark:text-neutral-400 mt-0.5">
+          {% translate "Memos & private notes" %}
+        </div>
+      </div>
+    </div>
+
+    {# Card 2: Documents #}
+    <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800 hover:border-blue-300/60 transition-colors">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400">
+          {% translate "Stored Documents" %}
+        </span>
+        <div class="size-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center dark:bg-blue-950/40 dark:text-blue-400">
+          <i class="fa-solid fa-folder-open text-sm"></i>
+        </div>
+      </div>
+      <div class="mt-3">
+        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ briefcase.documents.count }}
+        </div>
+        <div class="text-xs text-gray-500 dark:text-neutral-400 mt-0.5">
+          {% translate "Forms & identity files" %}
+        </div>
+      </div>
+    </div>
+
+    {# Card 3: Accounts Vault #}
+    <div class="bg-white border border-gray-200 shadow-xs rounded-2xl p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-800 hover:border-emerald-300/60 transition-colors">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400">
+          {% translate "Credential Vault" %}
+        </span>
+        <div class="size-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center dark:bg-emerald-950/40 dark:text-emerald-400">
+          <i class="fa-solid fa-shield-halved text-sm"></i>
+        </div>
+      </div>
+      <div class="mt-3">
+        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ briefcase.accounts.count }}
+        </div>
+        <div class="text-xs text-gray-500 dark:text-neutral-400 mt-0.5">
+          {% translate "Encrypted portal accounts" %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ========================================== #}
+  {# 3. MAIN WORKBENCH & SEGMENTED TABS         #}
+  {# ========================================== #}
+  <div class="bg-white border border-gray-200 shadow-xs rounded-2xl dark:bg-neutral-900 dark:border-neutral-800 overflow-hidden">
+    
+    {# Horizontal Segmented Pill Tab Bar #}
+    <div class="border-b border-gray-200 dark:border-neutral-800 px-3 sm:px-6 pt-3 pb-0 bg-gray-50/50 dark:bg-neutral-900/50">
+      <nav class="flex space-x-2 sm:space-x-3 overflow-x-auto no-scrollbar" aria-label="Tabs" role="tablist">
+        {# Tab 1: Notes #}
+        <button type="button"
+                class="hs-tab-active:bg-white hs-tab-active:text-blue-600 hs-tab-active:shadow-xs hs-tab-active:border-b-2 hs-tab-active:border-blue-600 dark:hs-tab-active:bg-neutral-800 dark:hs-tab-active:text-blue-400 shrink-0 py-2.5 sm:py-3 px-3 sm:px-4 inline-flex items-center gap-1.5 sm:gap-2 font-semibold text-xs sm:text-sm text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-neutral-200 transition-all rounded-t-xl active whitespace-nowrap"
+                id="notes-tab-item"
+                data-hs-tab="#notes-tab"
+                aria-controls="notes-tab"
+                role="tab">
+          <i class="fa-solid fa-note-sticky text-xs"></i>
+          <span>{% translate "Internal Notes" %}</span>
+          <span class="py-0.5 px-2 rounded-full text-[11px] font-bold bg-gray-100 text-gray-600 dark:bg-neutral-700 dark:text-neutral-300">
+            {{ briefcase.notes.count }}
+          </span>
+        </button>
+
+        {# Tab 2: Documents #}
+        <button type="button"
+                class="hs-tab-active:bg-white hs-tab-active:text-blue-600 hs-tab-active:shadow-xs hs-tab-active:border-b-2 hs-tab-active:border-blue-600 dark:hs-tab-active:bg-neutral-800 dark:hs-tab-active:text-blue-400 shrink-0 py-2.5 sm:py-3 px-3 sm:px-4 inline-flex items-center gap-1.5 sm:gap-2 font-semibold text-xs sm:text-sm text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-neutral-200 transition-all rounded-t-xl whitespace-nowrap"
+                id="documents-tab-item"
+                data-hs-tab="#documents-tab"
+                aria-controls="documents-tab"
+                role="tab">
+          <i class="fa-solid fa-folder-open text-xs"></i>
+          <span>{% translate "Attached Documents" %}</span>
+          <span class="py-0.5 px-2 rounded-full text-[11px] font-bold bg-gray-100 text-gray-600 dark:bg-neutral-700 dark:text-neutral-300">
+            {{ briefcase.documents.count }}
+          </span>
+        </button>
+
+        {# Tab 3: Accounts Vault #}
+        <button type="button"
+                class="hs-tab-active:bg-white hs-tab-active:text-blue-600 hs-tab-active:shadow-xs hs-tab-active:border-b-2 hs-tab-active:border-blue-600 dark:hs-tab-active:bg-neutral-800 dark:hs-tab-active:text-blue-400 shrink-0 py-2.5 sm:py-3 px-3 sm:px-4 inline-flex items-center gap-1.5 sm:gap-2 font-semibold text-xs sm:text-sm text-gray-500 hover:text-gray-800 dark:text-neutral-400 dark:hover:text-neutral-200 transition-all rounded-t-xl whitespace-nowrap"
+                id="accounts-tab-item"
+                data-hs-tab="#accounts-tab"
+                aria-controls="accounts-tab"
+                role="tab">
+          <i class="fa-solid fa-key text-xs"></i>
+          <span>{% translate "Credentials Vault" %}</span>
+          <span class="py-0.5 px-2 rounded-full text-[11px] font-bold bg-gray-100 text-gray-600 dark:bg-neutral-700 dark:text-neutral-300">
+            {{ briefcase.accounts.count }}
+          </span>
+        </button>
+      </nav>
+    </div>
+
+    {# Tab Content Body #}
+    <div class="p-4 sm:p-6">
+      
+      {# ---------------------------------------- #}
+      {# TAB 1: NOTES & MEMOS                     #}
+      {# ---------------------------------------- #}
+      <div id="notes-tab" role="tabpanel" aria-labelledby="notes-tab-item" class="space-y-4">
+        <div class="flex items-center justify-between gap-3 pb-3 border-b border-gray-100 dark:border-neutral-800">
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white">
+              {% translate "Personal Working Notes" %}
+            </h3>
+            <p class="text-xs text-gray-500 dark:text-neutral-400">
+              {% translate "Memos, instructions, and checklist items private to this staff member." %}
+            </p>
+          </div>
+          <button type="button"
+                  class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200/60 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800/40 transition-colors"
+                  data-hs-overlay="#createBriefcaseNoteModal">
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span>{% translate "Add Note" %}</span>
+          </button>
+        </div>
+
+        {% if briefcase.notes.all %}
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for s_note in briefcase.notes.all %}
+              <div class="flex flex-col justify-between bg-white border border-gray-200 rounded-xl p-4.5 shadow-2xs hover:shadow-xs transition-shadow dark:bg-neutral-800/60 dark:border-neutral-700/60">
+                <div class="space-y-2">
+                  <div class="flex items-start justify-between gap-2">
+                    <h4 class="font-bold text-sm text-gray-900 dark:text-white leading-snug line-clamp-2">
+                      {{ s_note.title|safe }}
+                    </h4>
+                    <span class="size-6 rounded-md bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 flex items-center justify-center shrink-0 text-xs">
+                      <i class="fa-solid fa-note-sticky"></i>
+                    </span>
+                  </div>
+                  <div class="text-xs text-gray-600 dark:text-neutral-300 leading-relaxed break-words line-clamp-6">
+                    {{ s_note.note|safe }}
+                  </div>
+                </div>
+                <div class="pt-3 mt-3 border-t border-gray-100 dark:border-neutral-700/50 flex items-center justify-between text-[11px] text-gray-400 dark:text-neutral-500">
+                  <span>{{ s_note.created_at|naturaltime }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          {% include "bw_ui_components/global/empty_card.html" with label="staff notes" %}
+        {% endif %}
+      </div>
+
+      {# ---------------------------------------- #}
+      {# TAB 2: ATTACHED DOCUMENTS                #}
+      {# ---------------------------------------- #}
+      <div id="documents-tab" class="hidden space-y-4" role="tabpanel" aria-labelledby="documents-tab-item">
+        <div class="flex items-center justify-between gap-3 pb-3 border-b border-gray-100 dark:border-neutral-800">
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white">
+              {% translate "Briefcase Documents & Attachments" %}
+            </h3>
+            <p class="text-xs text-gray-500 dark:text-neutral-400">
+              {% translate "Certifications, onboarding documents, and compliance forms." %}
+            </p>
+          </div>
+          <button type="button"
+                  class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/60 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/40 transition-colors"
+                  data-hs-overlay="#createBriefcaseDocumentModal">
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span>{% translate "Upload Document" %}</span>
+          </button>
+        </div>
+
+        {% if briefcase.documents.all %}
+          <div class="w-full overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <div class="border border-gray-200 rounded-xl overflow-hidden dark:border-neutral-700 min-w-[500px]">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                <thead class="bg-gray-50/80 dark:bg-neutral-800">
+                  <tr>
+                    <th scope="col" class="px-5 py-3 text-start text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400 min-w-[220px]">
+                      {% translate "Document Title" %}
+                    </th>
+                    <th scope="col" class="px-5 py-3 text-start text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400 whitespace-nowrap">
+                      {% translate "Added Date" %}
+                    </th>
+                    <th scope="col" class="px-5 py-3 text-end text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400 whitespace-nowrap">
+                      {% translate "Action" %}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
+                  {% for s_document in briefcase.documents.all %}
+                    <tr class="hover:bg-gray-50/50 dark:hover:bg-neutral-800/50 transition-colors">
+                      <td class="px-5 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        <div class="flex items-center gap-3">
+                          <span class="flex items-center justify-center size-9 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 shrink-0">
+                            <i class="fa-solid fa-file-lines text-sm"></i>
+                          </span>
+                          <div class="min-w-0">
+                            <p class="font-semibold text-gray-900 dark:text-white leading-tight">
+                              {{ s_document.title|safe }}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-5 py-4 text-xs text-gray-500 dark:text-neutral-400 whitespace-nowrap">
+                        {{ s_document.created_at|date:"M d, Y" }}
+                      </td>
+                      <td class="px-5 py-4 text-end text-sm whitespace-nowrap">
+                        <a href="{{ s_document.document_file.url|safe }}"
+                           download
+                           class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs border border-blue-200/60 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/40 transition-colors">
+                          <i class="fa-solid fa-download text-[11px]"></i>
+                          <span>{% translate "Download" %}</span>
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {% else %}
+          {% include "bw_ui_components/global/empty_card.html" with label="staff documents" %}
+        {% endif %}
+      </div>
+
+      {# ---------------------------------------- #}
+      {# TAB 3: CREDENTIALS VAULT                 #}
+      {# ---------------------------------------- #}
+      <div id="accounts-tab" class="hidden space-y-4" role="tabpanel" aria-labelledby="accounts-tab-item">
+        <div class="flex items-center justify-between gap-3 pb-3 border-b border-gray-100 dark:border-neutral-800">
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white">
+              {% translate "Encrypted Credential Vault" %}
+            </h3>
+            <p class="text-xs text-gray-500 dark:text-neutral-400">
+              {% translate "Securely encrypted client logins, portal URLs, and system access accounts." %}
+            </p>
+          </div>
+          <button type="button"
+                  class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/60 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800/40 transition-colors"
+                  data-hs-overlay="#createBriefcaseAccountModal">
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span>{% translate "Add Account" %}</span>
+          </button>
+        </div>
+
+        {% if briefcase.accounts.all %}
+          <div class="w-full overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <div class="border border-gray-200 rounded-xl overflow-hidden dark:border-neutral-700 min-w-[700px]">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                <thead class="bg-gray-50/80 dark:bg-neutral-800">
+                  <tr>
+                    <th scope="col" class="px-5 py-3 text-start text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400 min-w-[180px]">
+                      {% translate "Account / Service" %}
+                    </th>
+                    <th scope="col" class="px-5 py-3 text-start text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400 min-w-[160px]">
+                      {% translate "Portal URL" %}
+                    </th>
+                    <th scope="col" class="px-5 py-3 text-start text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400 min-w-[180px]">
+                      {% translate "Username / Email" %}
+                    </th>
+                    <th scope="col" class="px-5 py-3 text-start text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-neutral-400 min-w-[200px]">
+                      {% translate "Password" %}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
+                  {% for s_account in briefcase.accounts.all %}
+                    <tr class="hover:bg-gray-50/50 dark:hover:bg-neutral-800/50 transition-colors">
+                      {# Account Title #}
+                      <td class="px-5 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        <div class="flex items-center gap-3">
+                          <span class="flex items-center justify-center size-9 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 shrink-0">
+                            <i class="fa-solid fa-key text-xs"></i>
+                          </span>
+                          <div class="min-w-0">
+                            <p class="font-bold text-gray-900 dark:text-white leading-tight truncate">
+                              {{ s_account.title|safe }}
+                            </p>
+                            <span class="text-xs text-gray-500 dark:text-neutral-400">
+                              {{ s_account.get_name_display|default:s_account.name }}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {# URL Launch #}
+                      <td class="px-5 py-4 text-xs">
+                        {% if s_account.url %}
+                          <div class="flex items-center gap-1.5">
+                            <input type="hidden"
+                                   id="url-input-{{ s_account.pk }}"
+                                   data-label="Account URL"
+                                   value="{{ s_account.url }}" />
+                            <a href="{{ s_account.url }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium truncate max-w-[160px]">
+                              <span>{{ s_account.url }}</span>
+                              <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                            <button type="button"
+                                    data-credentials-id="url-input-{{ s_account.pk }}"
+                                    class="ca-credentials-btn size-7 inline-flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-neutral-200 dark:hover:bg-neutral-800 transition-colors"
+                                    title="{% translate 'Copy URL' %}">
+                              <i class="fa-regular fa-clipboard text-xs"></i>
+                            </button>
+                          </div>
+                        {% else %}
+                          <span class="text-gray-400 dark:text-neutral-500">—</span>
+                        {% endif %}
+                      </td>
+
+                      {# Username #}
+                      <td class="px-5 py-4 text-xs">
+                        <div class="flex items-center gap-2">
+                          <input type="text"
+                                 id="username-input-{{ s_account.pk }}"
+                                 data-label="Username"
+                                 value="{{ s_account.username_email }}"
+                                 readonly
+                                 class="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg px-2.5 py-1 text-xs text-gray-800 dark:text-neutral-200 font-mono max-w-[160px] truncate focus:outline-hidden" />
+                          <button type="button"
+                                  data-credentials-id="username-input-{{ s_account.pk }}"
+                                  class="ca-credentials-btn size-7 inline-flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 transition-colors"
+                                  title="{% translate 'Copy Username' %}">
+                            <i class="fa-regular fa-clipboard text-xs"></i>
+                          </button>
+                        </div>
+                      </td>
+
+                      {# Password #}
+                      <td class="px-5 py-4 text-xs">
+                        <div class="flex items-center gap-1.5">
+                          <input type="password"
+                                 readonly
+                                 id="password-input-{{ s_account.pk }}"
+                                 placeholder="••••••••"
+                                 value=""
+                                 data-label="Password"
+                                 class="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg px-2.5 py-1 text-xs text-gray-800 dark:text-neutral-200 font-mono w-24 tracking-widest focus:outline-hidden" />
+                          
+                          {# Show / Hide Toggle #}
+                          <button type="button"
+                                  data-credentials-id="password-input-{{ s_account.pk }}"
+                                  data-reveal-endpoint="{% url 'dashboard:briefcase:briefcase_staff_accounts:api:reveal-password' s_account.pk %}"
+                                  data-is-visible="false"
+                                  class="ca-show-password-btn size-7 inline-flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-neutral-400 dark:hover:text-neutral-200 dark:hover:bg-neutral-800 transition-colors"
+                                  title="{% translate 'Show/Hide Password' %}">
+                            <span class="ca-icon">
+                              <i class="fa-solid fa-eye text-xs"></i>
+                            </span>
+                          </button>
+
+                          {# Copy Password #}
+                          <button type="button"
+                                  data-credentials-id="password-input-{{ s_account.pk }}"
+                                  data-reveal-endpoint="{% url 'dashboard:briefcase:briefcase_staff_accounts:api:reveal-password' s_account.pk %}"
+                                  class="ca-credentials-btn size-7 inline-flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 transition-colors"
+                                  title="{% translate 'Copy Password' %}">
+                            <i class="fa-regular fa-clipboard text-xs"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {% else %}
+          {% include "bw_ui_components/global/empty_card.html" with label="staff account" %}
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
 </section>
+
 {# Start create briefcase note modal #}
 {% bw_js_modal modal_css_id="createBriefcaseNoteModal" modal_size="md" modal_title="Create new briefcase note" is_submit_btn_enabled=True is_form_modal=True form_object=briefcase_note_form is_upload_form=False form_id="createBriefcaseNoteForm" form_submit_text="Create" action_url="dashboard:briefcase:briefcase_staff_notes:api:staff-note-api-router-list" %}
 {# End create briefcase note modal #}
+
 {# Start create briefcase document modal #}
 {% bw_js_modal modal_css_id="createBriefcaseDocumentModal" modal_size="md" modal_title="Create new briefcase document" is_submit_btn_enabled=True is_form_modal=True form_object=briefcase_document_form is_upload_form=True form_id="createBriefcaseDocumentForm" form_submit_text="Create" action_url="dashboard:briefcase:briefcase_staff_documents:api:staff-documents-api-router-list" %}
 {# End create briefcase document modal #}
+
 {# Start create briefcase account modal #}
 {% bw_js_modal modal_css_id="createBriefcaseAccountModal" modal_size="md" modal_title="Create new briefcase account" is_submit_btn_enabled=True is_form_modal=True form_object=briefcase_account_form is_upload_form=True form_id="createBriefcaseAccountForm" form_submit_text="Create" action_url="dashboard:briefcase:briefcase_staff_accounts:api:staff-accounts-api-router-list" %}
 {# End create briefcase account modal #}
+
+{% endwith %}
+{% endwith %}
+{% endwith %}

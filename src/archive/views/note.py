@@ -5,7 +5,7 @@ from django.views.generic import ListView
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
-from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_BOOKKEEPER, CON_CFO
 from core.views.mixins import BWBaseListViewMixin, BWLoginRequiredMixin
 from note.filters import NoteFilter
 from django.utils.translation import gettext as _
@@ -41,7 +41,9 @@ class NoteArchiveListView(
     pagination_list_url_name = "dashboard:archive:notes:list"
     base_url_name = "dashboard:note"
     empty_label = _("note(s)")
-    subtitle = _("Notes archive".title())
+    subtitle = _(
+        "Archived internal annotations, legacy comments, and historical client notes."
+    )
     actions_items = "update,delete"
 
     def get_context_data(self, **kwargs):
@@ -59,6 +61,10 @@ class NoteArchiveListView(
                 self.request.user.bookkeeper.get_proxy_model().get_all_related_items(
                     "notes"
                 )
+            )
+        elif self.request.user.user_type == CON_CFO:
+            queryset = NoteProxy.archive_objects.filter(
+                client__cfos__user=self.request.user
             )
         self.filterset = NoteFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs

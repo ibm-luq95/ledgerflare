@@ -1,0 +1,87 @@
+{% load i18n %}
+
+<div class="p-4 hover:bg-gray-50/70 transition dark:hover:bg-neutral-750">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <!-- Left: Job & Client info -->
+    <div class="flex items-start gap-3">
+      <button type="button" data-task-toggle="agenda-job-{{ job.id }}" class="mt-0.5 text-gray-400 hover:text-gray-600 dark:hover:text-neutral-300 focus:outline-hidden cursor-pointer">
+        <i class="fa-solid fa-chevron-right text-xs transition-transform"></i>
+      </button>
+
+      <div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <h5 class="text-sm font-semibold text-gray-800 dark:text-neutral-200">
+            <button type="button"
+                    data-hs-overlay="#job-modal-{{ job.id }}"
+                    class="text-start hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">
+              {{ job.title }}
+            </button>
+          </h5>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium
+            {% if job.status == 'completed' %}
+              bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300
+            {% elif job.status == 'in_progress' %}
+              bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300
+            {% elif job.status == 'past_due' %}
+              bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300
+            {% else %}
+              bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300
+            {% endif %}">
+            {{ job.get_status_display }}
+          </span>
+        </div>
+
+        <div class="mt-1 flex items-center gap-4 text-xs text-gray-500 dark:text-neutral-400 flex-wrap">
+          {% if job.client %}
+            <span class="inline-flex items-center gap-1">
+              <i class="fa-regular fa-building text-xs"></i>
+              {{ job.client.name }}
+            </span>
+          {% endif %}
+          {% if job.due_date %}
+            <span class="inline-flex items-center gap-1 {% if is_overdue %}text-red-600 dark:text-red-400 font-medium{% elif is_today %}text-blue-600 dark:text-blue-400 font-medium{% endif %}">
+              <i class="fa-regular fa-clock text-xs"></i>
+              {% translate "Due" %}: {{ job.due_date|date:"M d, Y" }}
+            </span>
+          {% endif %}
+          <span class="inline-flex items-center gap-1">
+            <i class="fa-solid fa-list-check text-xs"></i>
+            {{ job.tasks.all|length }} {% translate "tasks" %}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Quick Action Links -->
+    <div class="flex items-center gap-2 self-end sm:self-center">
+      <button type="button" data-task-toggle="agenda-job-{{ job.id }}" class="px-2.5 py-1 text-xs font-medium rounded-lg border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 shadow-2xs dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 cursor-pointer">
+        {% translate "Toggle Tasks" %}
+      </button>
+      <a href="{{ job.get_absolute_url }}" class="p-1.5 text-gray-500 hover:text-blue-600 rounded-lg hover:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700">
+        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Collapsible Task Sub-list -->
+  <div data-task-list="agenda-job-{{ job.id }}" class="hidden mt-3 ps-7 pt-3 border-t border-gray-100 dark:border-neutral-700 space-y-2">
+    <h6 class="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-neutral-500">
+      {% translate "Job Tasks Checklist" %}
+    </h6>
+    {% for task in job.tasks.all %}
+      <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-neutral-900/60 text-xs">
+        <div class="flex items-center gap-2">
+          <i class="{% if task.is_completed %}fa-solid fa-circle-check text-emerald-500{% else %}fa-regular fa-circle text-gray-400{% endif %} text-xs"></i>
+          <span class="{% if task.is_completed %}line-through text-gray-400 dark:text-neutral-500{% endif %}">
+            {{ task.title }}
+          </span>
+        </div>
+        <span class="text-[10px] text-gray-400 dark:text-neutral-500">
+          {{ task.get_task_type_display|default:"" }}
+        </span>
+      </div>
+    {% empty %}
+      <p class="text-xs text-gray-400 italic py-1">{% translate "No tasks created for this job yet." %}</p>
+    {% endfor %}
+  </div>
+</div>

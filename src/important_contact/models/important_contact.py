@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-#
 import re
 
 from django.core import validators
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 # from client.models import Client
 from core.choices import ImportantContactLabelsEnum
+from core.fields import EncryptedTextField
 from core.models.mixins import BaseModelMixin
 
 
@@ -50,7 +50,7 @@ class ImportantContact(BaseModelMixin):
     )
     contact_phone = models.CharField(_("phone"), max_length=80, null=False, blank=True)
     contact_website = models.URLField(_("website"), null=True, blank=True)
-    contact_notes = models.TextField(_("notes"), null=True, blank=True)
+    contact_notes = EncryptedTextField(_("notes"), null=True, blank=True)
     custom_fields = models.JSONField(_("custom_fields"), null=True, blank=True)
 
     class Meta(BaseModelMixin.Meta):

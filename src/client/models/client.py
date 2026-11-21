@@ -1,28 +1,33 @@
-# -*- coding: utf-8 -*-#
-from PIL import Image
 from django.core import validators
 from django.db import models
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
+from PIL import Image
 
+from client_category.models import ClientCategory
 from core.choices import ClientStatusEnum
-from core.models.mixins import BaseModelMixin
+from core.constants.file_types_validation import IMAGES_FT
+from core.models.mixins import BaseModelMixin, SanitizeHTMLFieldsMixin
 from core.models.mixins.access_proxy_models_mixin import AccessProxyModelMixin
 from core.utils import FileValidator
-from client_category.models import ClientCategory
 from important_contact.models import ImportantContact
 
+
 file_validator = FileValidator(
-    max_size=1024 * 1000, content_types=("image/png", "image/jpeg")
+    max_size=15 * 1024 * 1024,
+    content_types=IMAGES_FT,
+    scan_malware=True,
 )
 
 
-class Client(BaseModelMixin, AccessProxyModelMixin):
+class Client(BaseModelMixin, AccessProxyModelMixin, SanitizeHTMLFieldsMixin):
     """This is client model
 
     Args:
         BaseModelMixin (models.Model): Django base model mixin
     """
+
+    SANITY_HTML_FIELDS = ("description",)
 
     categories = models.ManyToManyField(
         to=ClientCategory, related_name="clients", blank=True
@@ -74,7 +79,7 @@ class Client(BaseModelMixin, AccessProxyModelMixin):
         ordering = ["name"]
 
     def save(self, *args, **kwargs):
-        super(Client, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         try:
             if self.company_logo:
                 image = Image.open(self.company_logo.path)
@@ -86,4 +91,4 @@ class Client(BaseModelMixin, AccessProxyModelMixin):
             pass
 
     def get_absolute_url(self):
-        reverse_lazy("dashboard:client:details", kwargs={"pk": self.pk})
+        return reverse_lazy("dashboard:client:details", kwargs={"pk": self.pk})

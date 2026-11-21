@@ -1,11 +1,14 @@
+import csv
 from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q
-from django.http import Http404
+from django.db.models import Count, Q
+from django.http import Http404, HttpResponse
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.views import View
 from django.views.generic import CreateView
 from django.views.generic import DeleteView
 from django.views.generic import DetailView
@@ -21,14 +24,18 @@ from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
 from core.constants.status_labels import CON_ARCHIVED
 from core.constants.status_labels import CON_COMPLETED
 from core.constants.status_labels import CON_DRAFT
+from core.constants.status_labels import CON_PAST_DUE
 from core.constants.users import CON_ASSISTANT
 from core.constants.users import CON_BOOKKEEPER
 from core.constants.users import CON_CFO
 from core.constants.users import CON_MANAGER
 from core.models.querysets.base_queryset import BaseQuerySetMixin
 from core.utils.developments.debugging_print_object import DebuggingPrint
-from core.views.mixins import BWBaseListViewMixin
-from core.views.mixins import BWLoginRequiredMixin
+from core.views.mixins import (
+    BWBaseListViewMixin,
+    BWLoginRequiredMixin,
+    BWObjectAccessRequiredMixin,
+)
 from core.views.mixins.update_previous_mixin import UpdateReturnPreviousMixin
 from discussion.forms import DiscussionMiniForm
 from document.forms import DocumentForm
@@ -55,7 +62,7 @@ class JobListView(
     permission_required = "job.can_view_list"
 
     permission_denied_message = _("You do not have permission to access this page.")
-    template_name = "core/crudl/list.html"
+    template_name = "job/list.html"
     model = JobProxy
 
     paginate_by = LIST_VIEW_PAGINATE_BY
@@ -71,20 +78,15 @@ class JobListView(
     component_path = "bw_components/job/table_list.html"
     actions_base_url = "dashboard:job"
     filter_cancel_url = "dashboard:job:list"
-    subtitle = _("jobs for all clients".title())
+    subtitle = _(
+        "Track client engagements, recurring accounting workflows, deadlines, and project deliverables."
+    )
     pagination_list_url_name = "dashboard:job:list"
     base_url_name = "dashboard:job"
     empty_label = _("jobs")
     actions_items = "details,update,delete"
 
-    # def paginate_queryset(self, queryset, page_size):
-    #     queryset = JobProxy.objects.filter(
-    #         ~Q(status__in=[CON_ARCHIVED, CON_COMPLETED, CON_DRAFT])
-    #     ).order_by("title")
-    #     return super().paginate_queryset(queryset, page_size)
-
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
 
         if self.request.GET:
@@ -92,13 +94,44 @@ class JobListView(
         else:
             context["title"] = _("Jobs")
 
-        # DebuggingPrint.pprint(dir(self.paginator_class))
-        # DebuggingPrint.pprint(dir(self.paginator_class.count))
-        # DebuggingPrint.log(self.paginator_class.page())
-        # context.setdefault("filter_form", self.filterset.form)
+        base_qs = JobProxy.objects.get_queryset()
+        if self.request.user.user_type == CON_BOOKKEEPER:
+            base_qs = self.request.user.bookkeeper.get_proxy_model().get_all_jobs()
+        elif self.request.user.user_type == CON_CFO:
+            base_qs = JobProxy.objects.get_queryset().filter(
+                client__cfos__user=self.request.user
+            )
+
+        today = timezone.now().date()
+        kpi_stats = base_qs.aggregate(
+            total_jobs=Count("id", distinct=True),
+            in_progress_jobs=Count(
+                "id", filter=Q(status=JobStatusEnum.IN_PROGRESS), distinct=True
+            ),
+            past_due_jobs=Count(
+                "id",
+                filter=(
+                    Q(status=JobStatusEnum.PAST_DUE)
+                    | (
+                        Q(due_date__lt=today)
+                        & ~Q(status=JobStatusEnum.COMPLETED)
+                        & ~Q(status=JobStatusEnum.ARCHIVED)
+                    )
+                ),
+                distinct=True,
+            ),
+            need_info_jobs=Count(
+                "id", filter=Q(state=JobStateEnum.NEED_INFO), distinct=True
+            ),
+            completed_jobs=Count(
+                "id", filter=Q(status=JobStatusEnum.COMPLETED), distinct=True
+            ),
+        )
+        context["kpi_stats"] = kpi_stats
+        context.setdefault("filter_form", getattr(self.filterset, "form", None))
         context.setdefault("filter_form_id", "jobFilterForm")
-        context.setdefault("table_header_subtitle", _("Jobs subtitle"))
-        context.setdefault("total_records", JobProxy.objects.active().count())
+        context.setdefault("table_header_subtitle", _("Jobs for all clients"))
+        context.setdefault("total_records", kpi_stats.get("total_jobs", 0))
         context.setdefault(
             "extra_context", {"is_show_client": True, "is_hide_manager": False}
         )
@@ -118,7 +151,13 @@ class JobListView(
                 "categories_add_form": JobCategoryForm,
                 "categories_add_form_css_id": "jobCategoriesCreateForm",
                 "categories_add_form_css_class": "filterCategoryForms",
-                "categories_object_list": JobCategory.objects.all(),
+                "categories_object_list": JobCategory.objects.annotate(
+                    jobs_count=Count(
+                        "jobs",
+                        filter=Q(jobs__is_deleted=False),
+                        distinct=True,
+                    )
+                ),
                 "categories_modal_title": _("Job categories"),
                 "category_app_label": "job_category",
                 "is_actions_menu_enabled": False,
@@ -129,37 +168,160 @@ class JobListView(
         )
         context.setdefault("visibility_filter_form", JobVisibilityForm)
 
-        # debugging_print(self.filterset.form["name"])
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset()
         show_all_jobs = self.request.GET.get("show_all_jobs")
-        if show_all_jobs:
-            # queryset = JobProxy.objects.filter(
-            #     ~Q(status__in=[CON_ARCHIVED, CON_COMPLETED, CON_DRAFT])
-            # ).order_by("title")
-            queryset = JobProxy.original_objects.all()
+        status_filter = self.request.GET.get("status")
+
+        queryset = JobProxy.objects.get_queryset()
+
         if self.request.user.user_type == CON_BOOKKEEPER:
-            # queryset = self.request.user.bookkeeper.get_proxy_model().get_user_jobs()
             if show_all_jobs:
-                queryset = (
-                    self.request.user.bookkeeper.get_proxy_model().get_all_jobs()
-                )
+                queryset = self.request.user.bookkeeper.get_proxy_model().get_all_jobs()
             else:
                 queryset = (
                     self.request.user.bookkeeper.get_proxy_model().get_user_jobs()
                 )
         elif self.request.user.user_type == CON_CFO:
-            clients = self.request.user.cfo.get_proxy_model().clients.all()
-            jobs = Job.objects.none()
-            for client in clients:
-                jobs |= client.jobs.all()
-            queryset = jobs
+            queryset = JobProxy.objects.get_queryset().filter(
+                client__cfos__user=self.request.user
+            )
+
+        if not status_filter and not show_all_jobs:
+            queryset = queryset.exclude(
+                status__in=[CON_ARCHIVED, CON_COMPLETED, CON_DRAFT]
+            )
+
+        queryset = (
+            queryset
+            .select_related("client", "managed_by")
+            .prefetch_related("categories")
+            .annotate(
+                total_tasks_count=Count("tasks", distinct=True),
+                completed_tasks_count=Count(
+                    "tasks", filter=Q(tasks__is_completed=True), distinct=True
+                ),
+                discussions_count=Count("discussions", distinct=True),
+                documents_count=Count("documents", distinct=True),
+            )
+        )
 
         self.filterset = JobFilter(self.request.GET, queryset=queryset)
 
         return self.filterset.qs
+
+
+class JobExportView(
+    PermissionRequiredMixin,
+    BWLoginRequiredMixin,
+    View,
+):
+    """Export filtered jobs to CSV."""
+
+    permission_required = "job.can_view_list"
+
+    def get(self, request, *args, **kwargs):
+        queryset = JobProxy.objects.get_queryset()
+        if request.user.user_type == CON_BOOKKEEPER:
+            queryset = request.user.bookkeeper.get_proxy_model().get_user_jobs()
+        elif request.user.user_type == CON_CFO:
+            queryset = JobProxy.objects.get_queryset().filter(
+                client__cfos__user=request.user
+            )
+
+        queryset = (
+            queryset
+            .select_related("client", "managed_by")
+            .prefetch_related("categories")
+            .annotate(
+                total_tasks_count=Count("tasks", distinct=True),
+                completed_tasks_count=Count(
+                    "tasks", filter=Q(tasks__is_completed=True), distinct=True
+                ),
+            )
+        )
+
+        filterset = JobFilter(request.GET, queryset=queryset)
+        filtered_qs = filterset.qs
+
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="jobs_export.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow([
+            "Job Title",
+            "Client",
+            "Managed By",
+            "Status",
+            "State",
+            "Job Type",
+            "Period Year",
+            "Period Month",
+            "Start Date",
+            "Due Date",
+            "Total Tasks",
+            "Completed Tasks",
+            "Categories",
+            "Created At",
+        ])
+
+        for job_obj in filtered_qs:
+            categories_str = ", ".join(c.name for c in job_obj.categories.all())
+            writer.writerow([
+                job_obj.title or "",
+                str(job_obj.client) if job_obj.client else "No client",
+                str(job_obj.managed_by) if job_obj.managed_by else "Unassigned",
+                job_obj.get_status_display(),
+                job_obj.get_state_display() if job_obj.state else "",
+                job_obj.get_job_type_display() if job_obj.job_type else "",
+                job_obj.period_year or "",
+                job_obj.get_period_month_display() if job_obj.period_month else "",
+                (job_obj.start_date.strftime("%Y-%m-%d") if job_obj.start_date else ""),
+                (job_obj.due_date.strftime("%Y-%m-%d") if job_obj.due_date else ""),
+                getattr(job_obj, "total_tasks_count", 0),
+                getattr(job_obj, "completed_tasks_count", 0),
+                categories_str,
+                (job_obj.created_at.strftime("%Y-%m-%d") if job_obj.created_at else ""),
+            ])
+
+        return response
+
+
+class JobQuickPeekView(
+    PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
+    BWLoginRequiredMixin,
+    DetailView,
+):
+    """Render lightweight partial HTML for Quick Peek Slide-Over Drawer."""
+
+    permission_required = "job.can_view_list"
+    model = JobProxy
+    template_name = "bw_components/job/quick_peek_content.html"
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("client", "managed_by")
+            .prefetch_related("categories", "tasks", "notes", "documents")
+            .annotate(
+                total_tasks_count=Count("tasks", distinct=True),
+                completed_tasks_count=Count(
+                    "tasks", filter=Q(tasks__is_completed=True), distinct=True
+                ),
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        job = self.get_object()
+        context["job"] = job
+        context["tasks"] = job.tasks.all()
+        context["notes"] = job.notes.all()[:5]
+        context["documents"] = job.documents.all()[:5]
+        return context
 
 
 class JobCreateView(
@@ -194,26 +356,16 @@ class JobCreateView(
 
 class JobDetailsView(
     PermissionRequiredMixin,
-    UserPassesTestMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     SuccessMessageMixin,
     DetailView,
 ):
-    # permission_required = ["job.view_job", "job.view_jobproxy"]
     permission_required = "job.view_job"
     permission_denied_message = _("You do not have permission to access this page.")
     template_name = "job/details.html"
     model = JobProxy
-
-    # template_name_suffix = "_create_client"
-
-    def test_func(self) -> bool:
-        user = self.request.user
-        if user.user_type == CON_ASSISTANT or user.user_type == CON_MANAGER:
-            return True
-        else:
-            return self.get_object().managed_by == user
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -295,8 +447,7 @@ class JobDetailsView(
             raise AttributeError(
                 _(
                     "Generic detail view %s must be called with either an object pk"
-                    " or a slug in the URLconf."
-                    % self.__class__.__name__
+                    " or a slug in the URLconf." % self.__class__.__name__
                 )
             )
         try:
@@ -312,23 +463,20 @@ class JobDetailsView(
 
 class JobUpdateView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     SuccessMessageMixin,
     UpdateReturnPreviousMixin,
     UpdateView,
 ):
-    # permission_required = ["job.change_job", "job.change_jobproxy"]
     permission_required = "job.change_job"
     permission_denied_message = _("You do not have permission to access this page.")
     template_name = "job/update.html"
     form_class = JobForm
     success_message = _("Job updated successfully")
-    # success_url = reverse_lazy("dashboard:job:list")
     model = JobProxy
     BASE_SUCCESS_URL = "dashboard:job:list"
-
-    # template_name_suffix = "_create_client"
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -339,6 +487,7 @@ class JobUpdateView(
 
 class JobDeleteView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     BWBaseListViewMixin,
@@ -346,7 +495,6 @@ class JobDeleteView(
     DeleteView,
 ):
     template_name = "core/crudl/delete.html"
-    # permission_required = ["job.delete_job", "job.delete_jobproxy"]
     permission_required = "job.delete_job"
     permission_denied_message = _("You do not have permission to access this page.")
     model = JobProxy

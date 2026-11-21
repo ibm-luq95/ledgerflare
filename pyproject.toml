@@ -1,53 +1,187 @@
 [project]
-name = "Leadgerflare_Web_Application"
-version = "1.0"
-description = "Add your description here"
+name = "ledgerflare"
+version = "1.0.0"
+description = "LedgerFlare — Financial SaaS management and accounting platform."
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+license = { text = "Proprietary" }
+dependencies = [
+  "apscheduler",
+  "beautifulsoup4>=4.15.0",
+  "click",
+  "colorama",
+  "crispy-tailwind",
+  "cryptography",
+  "Django~=6.0",
+  "django-admin-rangefilter",
+  "django-auditlog",
+  "django-axes>=6.0.0",
+  "django-components",
+  "django-cors-headers",
+  "django-crispy-forms",
+  "django-csp>=4.0.0",
+  "django-extensions",
+  "django-filter",
+  "django-guardian",
+  "django-import-export",
+  "django-log-viewer",
+  "django-maintenance-mode",
+  "django-session-timeout",
+  "django-valkey",
+  "django-vite-boilerplate",
+  "django-widget-tweaks",
+  "djangorestframework",
+  "drf-spectacular",
+  "drf-standardized-errors",
+  "gunicorn",
+  "inflection",
+  "nh3>=0.3.6",
+  "numpy",
+  "openpyxl>=3.1.5",
+  "pandas",
+  "Pillow",
+  "prettyprinter",
+  "prettytable",
+  "psycopg[binary]",
+  "pydantic",
+  "pydantic-settings",
+  "python-dateutil",
+  "python-json-logger",
+  "python-magic",
+  "PyYAML",
+  "requests",
+  "rich",
+  "sentry-sdk[django]",
+  "termcolor",
+  "valkey",
+  "whitenoise",
+]
 
-[tool.black]
-line-length = 85
-target-version = ['py314'] # Updated to Python 3.13
-preview = true
-unstable-feature = true
-unstable = true
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+[dependency-groups]
+dev = [
+  "bpython",
+  "colorlog",
+  "coverage>=7.15.2",
+  "django-admin-cli",
+  "django-coverage-plugin>=3.2.2",
+  "django-debug-toolbar",
+  "django-debugtools>=2.0",
+  "django-model-info",
+  "ipython",
+  "playwright>=1.62.0",
+  "Werkzeug",
+]
+
+testing = [
+  "factory-boy",
+  "faker",
+  "model-bakery",
+  "pytest",
+  "pytest-cov",
+  "pytest-django",
+]
+
+lint = [
+  "bandit",
+  "djlint",
+  "ruff",
+]
+
+types = [
+  "django-stubs",
+  "django-stubs-ext",
+  "djangorestframework-stubs[compatible-mypy]",
+  "mypy",
+  "mypy-extensions",
+  "types-requests",
+]
+
+docs = [
+  "autotyping",
+  "infer-types",
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocstrings[python]",
+  "MonkeyType",
+  "sphinx",
+]
+
+[tool.uv]
+package = false
+default-groups = ["dev", "testing", "lint", "types"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "beach_wood_financial_proj.settings.test"
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+pythonpath = ["src"]
+testpaths = ["src"]
+addopts = "-p no:warnings --ignore=src/core/views/test_logging.py --ignore=src/core/views/test_security_logging.py --ignore=src/core/views/test_sql_logging.py"
+markers = [
+  "unit: Fast unit tests (models, serializers, helpers)",
+  "integration: Integration & view tests",
+  "security: Encryption, audit logging, middleware tests",
+  "guardian: Object-level permission tests",
+  "workflow: Multi-app end-to-end integration workflows",
+  "slow: Long running tests (deselect with '-m \"not slow\"')",
+  "e2e: End-to-end browser tests",
+]
+
+[tool.django-stubs]
+django_settings_module = "beach_wood_financial_proj.settings.test"
 
 [tool.isort]
-py_version = 313 # Updated to Python 3.13
+py_version = 314
 profile = "django"
-line_length = 85
-force_single_line = true
+line_length = 88
+force_single_line = false
 use_parentheses = true
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
-known_first_party = ["your_project_name"] # Replace with your project's name
+known_first_party = [
+  "beach_wood_financial_proj",
+  "beach_wood_user",
+  "bw_ui_components",
+  "client",
+  "client_account",
+  "client_accounting",
+  "client_category",
+  "components",
+  "core",
+  "dashboard",
+  "discussion",
+  "document",
+  "document_template",
+  "fiscal_year",
+  "home",
+  "important_contact",
+  "job",
+  "job_category",
+  "job_template",
+  "lf_notifications",
+  "manager",
+  "note",
+  "note_template",
+  "reports",
+  "site_settings",
+  "special_assignment",
+  "special_assignment_template",
+  "staff_briefcase",
+  "task",
+  "task_item",
+  "task_template",
+]
 known_third_party = [
-    "django",
-    "numpy",
-    "pandas",
-] # Add your third-party dependencies
+  "django",
+  "rest_framework",
+  "numpy",
+  "pandas",
+]
 
 [tool.djlint]
 profile = "django"
 extension = "html,djhtml"
 indent = 4
-# exclude directories and file patterns (comma separated)
-exclude = ".venv,venv,.tox,build,dist,node_modules,src,src/**,**/*.py,**/__pycache__,**/migrations/**"
+exclude = ".venv,venv,.tox,build,dist,node_modules,src/staticfiles,src/static/build,media,**/*.py,**/__pycache__,**/migrations/**"
 blank_line_after_tag = "load,extends,include"
 blank_line_before_tag = "load,extends,include"
 max_line_length = 95
@@ -56,92 +190,13 @@ format_js = true
 format_css = true
 ignore = "H006, H014"
 
-[tool.ruff]
-line-length = 91
-target-version = "py314" # Updated to Python 3.13
-indent-width = 4
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-]
-extend-exclude = ["docs", "test", "tests"]
-
-[tool.ruff.lint]
-# select = ["F", "E", "B", "I", "UP", "SIM"]
-# ignore = ["D", "CPY", "T20", "DOC", "PGH"]
-select = [
-    'A',     # flake8-builtins
-    'ASYNC', # https://docs.astral.sh/ruff/rules/#flake8-async-async
-    'B',     # flake8-bugbear
-    'BLE',   # flake8-blind-except
-    'C4',    # unnecessary comprehensions, map()
-    'COM',   # flake8-commas
-    'DTZ',   # flake8-datetimez
-    'E',     # pycodestyle
-    'ERA',   # No commented out code
-    'EXE',   # flake8-executable
-    'F',     # pyflakes
-    'FLY',   # flynt
-    'G',     # flake8-logging-format
-    'I',     # isort
-    'ICN',   # https://github.com/joaopalmeiro/flake8-import-conventions
-    'ISC',   # https://pypi.org/project/flake8-implicit-str-concat/
-    'LOG',   # flake8-logging
-    'PERF',  # perflint
-    'PIE',   # https://pypi.org/project/flake8-pie/
-    'PLC',   # Pylint conventions
-    'PLE',   # Pylint error
-    'PLW',   # Pylint warnings
-    'PT',    # https://pypi.org/project/flake8-pytest-style/
-    'PTH',   # flake8 use pathlib
-    'RET',   # https://pypi.org/project/flake8-return/
-    'RUF',   # Ruff rules
-    'S',     # https://docs.astral.sh/ruff/rules/#flake8-bandit-s
-    'SIM',   # https://pypi.org/project/flake8-simplify/
-    'T',     # flake8-debugger
-    'TRY',   # tryceratops
-    'UP',    # pyupgrade
-    'W',     # pycodestyle
-    "UP",
-    #'ARG',  # flake8 unused arguments (not really helpful, unused func args are common and ok)
-    # 'D', # pydocstyle (too much)
-    #'N',  # pep8-naming (too opinionated)
-    #'NPY', # numpy
-    #'PD', # pandas
-    'PL', # Full Pylint (too much)
-    #'PLR',  # Pylint refactor (too much/too opinionated)
-]
-fixable = ["ALL"]
-unfixable = []
-preview = true
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["E402"]
-"**/{tests,docs,tools}/*" = ["E402"]
-
-
 [tool.mypy]
-python_version = "3.14"             # Updated to Python 3.13
+python_version = "3.14"
+mypy_path = "src"
+plugins = [
+  "mypy_django_plugin.main",
+  "mypy_drf_plugin.main",
+]
 ignore_missing_imports = true
 follow_imports = "silent"
 no_implicit_optional = true
@@ -161,8 +216,8 @@ disallow_subclassing_any = true
 exclude = ["docs", "test", "tests"]
 
 [tool.bandit]
-targets = ["."]
-skips = ["B101"] # Example: Skip assert statement checks
+targets = ["src"]
+skips = ["B101"]
 
 [tool.docformatter]
 wrap-summaries = 82
@@ -171,3 +226,23 @@ blank = true
 pre-summary-newline = true
 pre-summary-space = true
 make-summary-multi-line = true
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+  "*/tests/*",
+  "*/migrations/*",
+  "src/beach_wood_financial_proj/settings/*",
+  "src/beach_wood_financial_proj/wsgi.py",
+  "src/beach_wood_financial_proj/asgi.py",
+  "src/manage.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+]

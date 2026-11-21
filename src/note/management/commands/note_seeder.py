@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 import random
 import textwrap
 import traceback
@@ -76,5 +75,5 @@ class Command(BaseSeederCommandMixin):
                 )
                 # DebuggingPrint.pprint(table_obj)
 
-        except Exception as ex:
+        except Exception:
             self.stdout_output("error", traceback.format_exc())

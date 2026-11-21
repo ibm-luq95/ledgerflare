@@ -1,0 +1,72 @@
+<!-- Top Metrics Row -->
+{% load i18n %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <!-- Total Jobs -->
+  <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-800 dark:border-neutral-700">
+    <div class="flex items-center gap-x-3">
+      <div class="shrink-0 flex justify-center items-center size-11 bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-900/30 dark:text-blue-400">
+        <i class="fa-solid fa-briefcase text-lg"></i>
+      </div>
+      <div>
+        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-400 font-medium">
+          {% translate "Total Jobs" %}
+        </p>
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-neutral-200">
+          {{ metrics.total_jobs }}
+        </h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- In Progress -->
+  <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-800 dark:border-neutral-700">
+    <div class="flex items-center gap-x-3">
+      <div class="shrink-0 flex justify-center items-center size-11 bg-amber-50 text-amber-600 rounded-lg dark:bg-amber-900/30 dark:text-amber-400">
+        <i class="fa-solid fa-spinner text-lg"></i>
+      </div>
+      <div>
+        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-400 font-medium">
+          {% translate "In Progress" %}
+        </p>
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-neutral-200">
+          {{ metrics.in_progress }}
+        </h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Tasks -->
+  <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-800 dark:border-neutral-700">
+    <div class="flex items-center gap-x-3">
+      <div class="shrink-0 flex justify-center items-center size-11 bg-purple-50 text-purple-600 rounded-lg dark:bg-purple-900/30 dark:text-purple-400">
+        <i class="fa-solid fa-list-check text-lg"></i>
+      </div>
+      <div>
+        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-400 font-medium">
+          {% translate "Pending Tasks" %}
+        </p>
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-neutral-200">
+          {{ metrics.pending_tasks }}
+        </h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed -->
+  <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl p-4 md:p-5 dark:bg-neutral-800 dark:border-neutral-700">
+    <div class="flex items-center gap-x-3">
+      <div class="shrink-0 flex justify-center items-center size-11 bg-emerald-50 text-emerald-600 rounded-lg dark:bg-emerald-900/30 dark:text-emerald-400">
+        <i class="fa-solid fa-circle-check text-lg"></i>
+      </div>
+      <div>
+        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-400 font-medium">
+          {% translate "Completed" %}
+        </p>
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-neutral-200">
+          {{ metrics.completed }}
+        </h3>
+      </div>
+    </div>
+  </div>
+</div>

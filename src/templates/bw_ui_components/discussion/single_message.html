@@ -1,0 +1,98 @@
+{% load i18n %}
+{% load humanize %}
+{% load static %}
+
+{% if discussion.sender == request.user or discussion.get_managed_user.user == request.user %}
+  {# ---------------------------------------- #}
+  {# CURRENT USER MESSAGE (Right Aligned)     #}
+  {# ---------------------------------------- #}
+  <div class="flex flex-row-reverse items-start gap-3">
+    {% if request.user.profile.profile_picture %}
+      <img src="{{ request.user.profile.profile_picture.url }}"
+           alt="{{ request.user.fullname }}"
+           class="size-9 rounded-full object-cover shrink-0 border border-blue-200 dark:border-blue-800" />
+    {% else %}
+      <img src="{% static 'img/default_staff.png' %}"
+           alt="{{ request.user.fullname }}"
+           class="size-9 rounded-full object-cover shrink-0 border border-blue-200 dark:border-blue-800" />
+    {% endif %}
+
+    <div class="max-w-[85%] sm:max-w-[75%] space-y-1 text-right">
+      <div class="flex items-center justify-end gap-2 text-xs text-gray-500 dark:text-neutral-400">
+        <span class="font-medium text-gray-900 dark:text-neutral-200">
+          {% translate "You" %}
+        </span>
+        <span class="text-[11px] text-gray-400 dark:text-neutral-500">
+          {{ discussion.created_at|naturaltime }}
+        </span>
+      </div>
+
+      <div class="inline-block text-left bg-blue-600 text-white p-3.5 sm:p-4 rounded-2xl rounded-tr-xs shadow-2xs">
+        <div class="text-sm font-normal leading-relaxed break-words">
+          {{ discussion.body|safe }}
+        </div>
+
+        {% if discussion.attachment %}
+          <div class="mt-2.5 pt-2.5 border-t border-blue-500/60">
+            <a href="{{ discussion.attachment.url }}"
+               download="{{ discussion.attachment.url }}"
+               class="inline-flex items-center gap-2 py-1.5 px-3 rounded-lg bg-blue-700/80 hover:bg-blue-700 text-white text-xs font-medium transition-colors">
+              <i class="fa-solid fa-paperclip text-[11px]"></i>
+              <span class="truncate max-w-[180px]">{{ discussion.attachment.name }}</span>
+              <i class="fa-solid fa-download text-[10px] ml-1 opacity-80"></i>
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% else %}
+  {# ---------------------------------------- #}
+  {# TEAM MEMBER MESSAGE (Left Aligned)       #}
+  {# ---------------------------------------- #}
+  <div class="flex items-start gap-3">
+    {% if discussion.get_managed_user.profile.profile_picture %}
+      <img src="{{ discussion.get_managed_user.profile.profile_picture.url }}"
+           alt="{{ discussion.get_managed_user.user.fullname }}"
+           class="size-9 rounded-full object-cover shrink-0 border border-gray-200 dark:border-neutral-700" />
+    {% else %}
+      <img src="{% static 'img/default_staff.png' %}"
+           alt="{{ discussion.get_managed_user }}"
+           class="size-9 rounded-full object-cover shrink-0 border border-gray-200 dark:border-neutral-700" />
+    {% endif %}
+
+    <div class="max-w-[85%] sm:max-w-[75%] space-y-1">
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <span class="font-bold text-gray-900 dark:text-white">
+          {{ discussion.get_managed_user.user.fullname|default:discussion.get_managed_user }}
+        </span>
+        {% if discussion.get_managed_user.user.user_type %}
+          <span class="py-0.5 px-2 rounded-md text-[10px] font-semibold bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+            {{ discussion.get_managed_user.user.user_type|capfirst }}
+          </span>
+        {% endif %}
+        <span class="text-[11px] text-gray-400 dark:text-neutral-500">
+          {{ discussion.created_at|naturaltime }}
+        </span>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200/80 p-3.5 sm:p-4 rounded-2xl rounded-tl-xs shadow-2xs dark:bg-neutral-800/80 dark:border-neutral-700/60 text-gray-800 dark:text-neutral-200">
+        <div class="text-sm font-normal leading-relaxed break-words">
+          {{ discussion.body|safe }}
+        </div>
+
+        {% if discussion.attachment %}
+          <div class="mt-2.5 pt-2.5 border-t border-gray-200 dark:border-neutral-700">
+            <a href="{{ discussion.attachment.url }}"
+               download="{{ discussion.attachment.url }}"
+               class="inline-flex items-center gap-2 py-1.5 px-3 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-800 text-xs font-medium shadow-2xs dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800 transition-colors">
+              <i class="fa-solid fa-paperclip text-blue-500 text-[11px]"></i>
+              <span class="truncate max-w-[180px]">{{ discussion.attachment.name }}</span>
+              <i class="fa-solid fa-download text-[10px] text-gray-400 ml-1"></i>
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endif %}

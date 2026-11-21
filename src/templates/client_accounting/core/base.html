@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+{% nospaces %}
+<html lang="en" class="h-full">
+    <head>
+        <!-- CSRF Meta Tag -->
+        <meta name="csrf-token" content="{{ csrf_token }}" />
+
+
+
+        {% include "core/inc/meta_tags.html" with get_web_app_settings=get_web_app_settings %}
+
+        <title>
+            {% block title %}
+                {{ title }}
+            {% endblock title %}
+        </title>
+
+        {% include "core/inc/css.html" %}
+
+        {% block externalcss %}
+        {% endblock externalcss %}
+    </head>
+    <body class="bg-gray-50 dark:bg-neutral-900 hs-overlay-body-open hs-overlay-body-open:overflow-hidden">
+        <!-- ========== HEADER ========== -->
+        {% if request.user.is_authenticated %}
+
+            {% include "client_accounting/core/top_navbar.html" %}
+
+        {% endif %}
+        <!-- ========== END HEADER ========== -->
+        <!-- ========== MAIN CONTENT ========== -->
+        <!-- Start left side bar -->
+        {% if request.user.is_authenticated %}
+
+            {% include "client_accounting/core/client_left_sidebar.html" %}
+
+        {% endif %}
+        <!-- End left side bar -->
+        {# Start Toasts #}
+
+        {% include "bw_ui_components/global/toasts.html" %}
+
+        {# End Toasts #}
+        <!-- Content -->
+        <div class="sm:hs-overlay-layout-open:ms-56 py-3 min-h-160 transition-all duration-300">
+            {# Start Flash Message #}
+
+            {% include "components/inc/messages.html" %}
+
+            {# End Flash Message #}
+            {% block dashboard_content_block %}
+            {% endblock dashboard_content_block %}
+        </div>
+        <!-- End Content -->
+        <!-- ========== END MAIN CONTENT ========== -->
+        <script nonce="{{ request.csp_nonce }}">
+            (function() {
+                window.CSRF_TOKEN = "{{ csrf_token }}";
+                const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                if (csrfMeta) {
+                    window.csrfToken = csrfMeta.getAttribute('content');
+                }
+            })();
+        </script>
+
+
+
+
+        {% include "core/inc/js.html" %}
+
+        {% block externaljs %}
+        {% endblock externaljs %}
+    </body>
+</html>
+{% endnospaces %}

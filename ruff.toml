@@ -27,112 +27,140 @@ exclude = [
     "site-packages",
     "venv",
 ]
+
 # Same as Black.
 line-length = 88
 indent-width = 4
-# Assume Python 3.13
+
+# WARNING: Ensure you are actually using Python 3.14. If not, change to "py311" or "py312".
 target-version = "py314"
 
-
 [lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
-# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
-# McCabe complexity (`C901`) by default.
+# Consolidated, clean list of enabled rules. No duplicates, no trailing spaces.
 select = [
-    'A',     # flake8-builtins
-    'ASYNC', # https://docs.astral.sh/ruff/rules/#flake8-async-async
-    'B',     # flake8-bugbear
-    'BLE',   # flake8-blind-except
-    'C4',    # unnecessary comprehensions, map()
-    'COM',   # flake8-commas
-    'DTZ',   # flake8-datetimez
-    'E',     # pycodestyle
-    'ERA',   # No commented out code
-    'EXE',   # flake8-executable
-    'F',     # pyflakes
-    'FLY',   # flynt
-    'G',     # flake8-logging-format
-    'I',     # isort
-    'ICN',   # https://github.com/joaopalmeiro/flake8-import-conventions
-    'ISC',   # https://pypi.org/project/flake8-implicit-str-concat/
-    'LOG',   # flake8-logging
-    'PERF',  # perflint
-    'PIE',   # https://pypi.org/project/flake8-pie/
-    'PLC',   # Pylint conventions
-    'PLE',   # Pylint error
-    'PLW',   # Pylint warnings
-    'PT',    # https://pypi.org/project/flake8-pytest-style/
-    'PTH',   # flake8 use pathlib
-    'RET',   # https://pypi.org/project/flake8-return/
-    'RUF',   # Ruff rules
-    'S',     # https://docs.astral.sh/ruff/rules/#flake8-bandit-s
-    'SIM',   # https://pypi.org/project/flake8-simplify/
-    'T',     # flake8-debugger
-    'TRY',   # tryceratops
-    'UP',    # pyupgrade
-    'W',     # pycodestyle
-    "UP",
-    #'ARG',  # flake8 unused arguments (not really helpful, unused func args are common and ok)
-    # 'D', # pydocstyle (too much)
-    #'N',  # pep8-naming (too opinionated)
-    #'NPY', # numpy
-    #'PD', # pandas
-    'PL', # Full Pylint (too much)
-    #'PLR',  # Pylint refactor (too much/too opinionated)
+    "A",     # flake8-builtins
+    "ASYNC", # flake8-async
+    "B",     # flake8-bugbear
+    "BLE",   # flake8-blind-except
+    "C4",    # flake8-comprehensions
+    "COM",   # flake8-commas
+    "D",     # pydocstyle (REQUIRED for your strict docstring enforcement)
+    "DJ",    # flake8-django
+    "DTZ",   # flake8-datetimez
+    "E",     # pycodestyle errors
+    "ERA",   # eradicate (commented out code)
+    "EXE",   # flake8-executable
+    "F",     # pyflakes
+    "FLY",   # flynt
+    "G",     # flake8-logging-format
+    "I",     # isort
+    "ICN",   # flake8-import-conventions
+    "ISC",   # flake8-implicit-str-concat
+    "LOG",   # flake8-logging
+    "N",     # pep8-naming
+    "PERF",  # perflint
+    "PIE",   # flake8-pie
+    "PLC",   # Pylint conventions
+    "PLE",   # Pylint errors
+    "PLW",   # Pylint warnings
+    "PT",    # flake8-pytest-style
+    "PTH",   # flake8-use-pathlib
+    "RET",   # flake8-return
+    "RUF",   # Ruff-specific rules
+    "S",     # flake8-bandit (security)
+    "SIM",   # flake8-simplify
+    "T",     # flake8-debugger
+    "TRY",   # tryceratops
+    "UP",    # pyupgrade
+    "W",     # pycodestyle warnings
 ]
+
 ignore = [
-    "B027",
-    "FBT003",
-    "C901",
-    "PLR0911",
-    "PLR0912",
-    "PLR0913",
-    "PLR0915",
-    "T201",
-    "FIX002",
+    "B027",    # Empty method in abstract base class (often intentional in Django)
+    "FBT003",  # Boolean positional value in function call
+    "C901",    # McCabe complexity (handled better by cognitive complexity tools, or ignored)
+    "PLR0911", # Too many return statements
+    "PLR0912", # Too many branches
+    "PLR0913", # Too many arguments to function call (common in Django forms/views)
+    "PLR0915", # Too many statements
+    "T201",    # print found (handled in per-file-ignores for scripts/commands)
+    "FIX002",  # Line contains TODO (too noisy)
+    "TID252",  # Relative imports (opinionated, often disabled)
+    "G003",    # Logging statement uses + (sometimes unavoidable)
+    "G004",    # Logging statement uses f-string (acceptable in modern Python)
+    "S603",    # subprocess call (common in management commands)
+    "S607",    # Starting a process with a partial executable path
+    "ERA001",  # Found commented out code (sometimes needed for quick debugging)
+    "PLC0415", # import should be at top-level of file (sometimes needed for lazy loading)
+    "F401",    # Imported but unused (handled better in per-file-ignores for __init__.py)
+    "D205",    # 1 blank line required between summary line and description (too strict)
+    "PLR6301", # Method could be a function or static method (Django models do this often)
+    "COM812",  # Missing trailing comma (conflicts with Ruff formatter in some edge cases)
+]
+
+# Allow fix for all enabled rules when `--fix` is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# ENFORCE STRICT REST/Sphinx DOCSTRINGS
+[lint.pydocstyle]
+convention = "pep257" # This enforces :param:, :type:, :return:, :raises: style
+
+[lint.per-file-ignores]
+# Tests: Allow asserts, magic numbers, hardcoded passwords, and missing docstrings
+"**/tests/**" = [
+    "PLR2004",
+    "S101",
+    "S105",
+    "S106",
     "TID252",
     "D100",
     "D101",
     "D102",
     "D103",
     "D104",
-    "D105",
-    "D106",
-    "D107",
-    "G003",
-    "G004",
-    "S603",
-    "S607",
-    "ERA001",
-    "PLC0415",
-    "F401",
-    "D205",
-    "PLR6301",
+    "E501",
 ]
-# Allow fix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
-# Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+"tests/**/*" = [
+    "PLR2004",
+    "S101",
+    "S105",
+    "S106",
+    "TID252",
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "E501",
+]
+"src/tests/**/*" = ["PLR2004", "S101", "S105", "S106", "TID252", "D100", "D103", "E501"]
 
-
-# 4. Ignore `E402` (import violations) in all `__init__.py` files, and in selected subdirectories.
-[lint.per-file-ignores]
-"tests/**/*" = ["PLR2004", "S101", "TID252"]
-"src/tests/**/*" = ["PLR2004", "S101", "TID252", "D100", "D103"]
+# Settings: Allow star imports and long lines
 "**/settings/*.py" = ["E501", "F403", "F405"]
 "**/settings.py" = ["E501", "F403", "F405"]
+
+# Models: Allow many arguments (fields) and Django-specific patterns
 "**/models.py" = ["PLR0913", "DJ008"]
-"__init__.py" = ["F401"]
-"src/**/__init__.py" = ["F401"]
+
+# Init files: Allow unused imports (for exposing APIs)
+"__init__.py" = ["F401", "D104"]
+"src/**/__init__.py" = ["F401", "D104"]
+
+# Conftest: Allow missing module/function docstrings
 "conftest.py" = ["D100", "D103"]
-"scripts/**" = ["T201"]
-"src/scripts/**" = ["T201"]
+
+# Scripts and Management Commands: Allow print statements
+"scripts/**" = ["T201", "D100", "D103"]
+"src/scripts/**" = ["T201", "D100", "D103"]
+"**/management/commands/**" = ["T201", "D100", "D103"]
+
+# Migrations: Ignore ALL linting (they are auto-generated)
 "**/migrations/**" = ["ALL"]
 "src/**/migrations/**" = ["ALL"]
-"**/management/commands/**" = ["T201"]
-"src/**/management/commands/**" = ["T201"]
-
 
 [format]
 # Like Black, use double quotes for strings.
@@ -143,22 +171,15 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+# Enable preview features (including better docstring formatting).
 preview = true
-# Enable auto-formatting of code examples in docstrings. Markdown,
-# reStructuredText code/literal blocks and doctests are all supported.
-#
-# This is currently disabled by default, but it is planned for this
-# to be opt-out in the future.
+# Enable auto-formatting of code examples in docstrings.
 docstring-code-format = true
-# Set the line length limit used when formatting code snippets in
-# docstrings.
-#
-# This only has an effect when the `docstring-code-format` setting is
-# enabled.
+# Set the line length limit used when formatting code snippets in docstrings.
 docstring-code-line-length = "dynamic"
 
-
 [lint.isort]
-force-single-line = true
+# Changed to false. true causes massive vertical bloat in Django projects.
+force-single-line = false
 force-sort-within-sections = false
 lines-after-imports = 2

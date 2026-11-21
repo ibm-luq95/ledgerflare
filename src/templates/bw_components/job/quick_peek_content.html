@@ -1,0 +1,205 @@
+{% load i18n core_tags %}
+
+<div class="space-y-6">
+    <!-- Header: Job Title + Client + Status + Quick Link -->
+    <div class="flex items-start justify-between gap-4 pb-5 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex items-start gap-3.5">
+            <span class="inline-flex items-center justify-center size-12 rounded-xl bg-blue-100 text-blue-800 font-bold text-lg border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800 shadow-2xs shrink-0">
+                {{ job.title|slice:":1"|upper }}
+            </span>
+            <div>
+                <h3 class="text-base font-bold text-gray-900 dark:text-neutral-100">
+                    {{ job.title }}
+                </h3>
+                {% if job.client %}
+                    <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                        {{ job.client.name }}
+                    </p>
+                {% else %}
+                    <p class="text-xs text-gray-400 italic">
+                        {% translate "No client assigned" %}
+                    </p>
+                {% endif %}
+                <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                    {% bw_badge code=job.status text=job.get_status_display is_solid=False size="sm" %}
+                    {% if job.state %}
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-neutral-400">
+                            {{ job.get_state_display }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'dashboard:job:details' job.pk %}"
+           class="py-1.5 px-3 inline-flex items-center gap-x-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition-colors shrink-0">
+            {% translate "Full Details" %}
+            <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Quick Metrics & Deadlines -->
+    <div class="grid grid-cols-3 gap-2.5 text-center">
+        <div class="bg-gray-50 dark:bg-neutral-800/60 p-3 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+            <span class="block text-sm font-bold text-gray-800 dark:text-neutral-200">
+                {{ job.completed_tasks_count|default:0 }}/{{ job.total_tasks_count|default:0 }}
+            </span>
+            <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                {% translate "Tasks Done" %}
+            </span>
+        </div>
+
+        <div class="bg-gray-50 dark:bg-neutral-800/60 p-3 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+            <span class="block text-sm font-bold text-gray-800 dark:text-neutral-200">
+                {% if job.period_year %}{{ job.period_year }}{% else %}—{% endif %}
+            </span>
+            <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                {% translate "Period Year" %}
+            </span>
+        </div>
+
+        <div class="p-3 rounded-xl border {% if job.is_job_pass_due %}bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800/40{% else %}bg-gray-50 border-gray-100 dark:bg-neutral-800/60 dark:border-neutral-700/60{% endif %}">
+            <span class="block text-xs font-bold {% if job.is_job_pass_due %}text-red-600 dark:text-red-400{% else %}text-gray-800 dark:text-neutral-200{% endif %}">
+                {{ job.due_date|date:"M d, Y"|default:"—" }}
+            </span>
+            <span class="block text-[10px] {% if job.is_job_pass_due %}text-red-500 dark:text-red-400 font-bold{% else %}text-gray-500 dark:text-neutral-400{% endif %} uppercase tracking-wider">
+                {% if job.is_job_pass_due %}{% translate "Past Due" %}{% else %}{% translate "Due Date" %}{% endif %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Job Details & Assignments -->
+    <div class="space-y-3">
+        <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+            {% translate "Job Information" %}
+        </h4>
+        <div class="bg-gray-50/70 dark:bg-neutral-800/40 rounded-xl p-3.5 space-y-2.5 text-xs border border-gray-100 dark:border-neutral-800">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500 dark:text-neutral-400">{% translate "Managed By:" %}</span>
+                <span class="font-medium text-gray-800 dark:text-neutral-200">
+                    {{ job.managed_by|default:_("Unassigned") }}
+                </span>
+            </div>
+
+            {% if job.job_type %}
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-500 dark:text-neutral-400">{% translate "Job Type:" %}</span>
+                    <span class="font-medium text-gray-800 dark:text-neutral-200">
+                        {{ job.get_job_type_display }}
+                    </span>
+                </div>
+            {% endif %}
+
+            {% if job.period_month %}
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-500 dark:text-neutral-400">{% translate "Period Month:" %}</span>
+                    <span class="font-medium text-gray-800 dark:text-neutral-200">
+                        {{ job.get_period_month_display }}
+                    </span>
+                </div>
+            {% endif %}
+
+            {% if job.start_date %}
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-500 dark:text-neutral-400">{% translate "Start Date:" %}</span>
+                    <span class="font-medium text-gray-800 dark:text-neutral-200">
+                        {{ job.start_date|date:"M d, Y" }}
+                    </span>
+                </div>
+            {% endif %}
+
+            {% if job.description %}
+                <div class="pt-2 border-t border-gray-100 dark:border-neutral-800">
+                    <span class="text-gray-500 dark:text-neutral-400 block mb-1">{% translate "Description:" %}</span>
+                    <p class="text-gray-700 dark:text-neutral-300 leading-relaxed whitespace-pre-line">
+                        {{ job.description|striptags|truncatewords:30 }}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- View-Only Task Checklist Section -->
+    <div class="space-y-3">
+        <div class="flex items-center justify-between">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Task Checklist" %} ({{ tasks|length }})
+            </h4>
+            <a href="{% url 'dashboard:job:details' job.pk %}#tasks"
+               class="text-xs text-blue-600 hover:underline dark:text-blue-400">
+                {% translate "Manage" %} &rarr;
+            </a>
+        </div>
+
+        {% if tasks %}
+            <div class="space-y-2">
+                {% for task in tasks %}
+                    <div class="flex items-start gap-2.5 p-2.5 rounded-lg border border-gray-100 bg-white dark:bg-neutral-800/60 dark:border-neutral-700/60 text-xs">
+                        <div class="shrink-0 mt-0.5">
+                            {% if task.is_completed %}
+                                <svg class="size-4 text-emerald-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 6 9 17l-5-5"/>
+                                </svg>
+                            {% else %}
+                                <div class="size-4 rounded border border-gray-300 dark:border-neutral-600"></div>
+                            {% endif %}
+                        </div>
+                        <div class="grow">
+                            <span class="{% if task.is_completed %}line-through text-gray-400 dark:text-neutral-500{% else %}text-gray-800 dark:text-neutral-200 font-medium{% endif %}">
+                                {{ task.title }}
+                            </span>
+                            {% if task.due_date %}
+                                <p class="text-[10px] text-gray-400 mt-0.5">
+                                    {% translate "Due:" %} {{ task.due_date|date:"M d" }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-4 bg-gray-50 dark:bg-neutral-800/40 rounded-xl border border-gray-100 dark:border-neutral-800 text-xs text-gray-400">
+                {% translate "No tasks created for this job yet." %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Recent Notes Section -->
+    {% if notes %}
+        <div class="space-y-3">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Recent Notes" %} ({{ notes|length }})
+            </h4>
+            <div class="space-y-2">
+                {% for note in notes %}
+                    <div class="p-3 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-700/60 text-xs">
+                        <p class="text-gray-700 dark:text-neutral-300 leading-snug">
+                            {{ note.title|default:note.note|striptags|truncatewords:20 }}
+                        </p>
+                        <span class="text-[10px] text-gray-400 mt-1 block">
+                            {{ note.created_at|date:"M d, Y" }}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Bottom Actions -->
+    <div class="pt-4 border-t border-gray-200 dark:border-neutral-700 flex items-center gap-2">
+        <a href="{% url 'dashboard:job:details' job.pk %}"
+           class="w-full py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden shadow-2xs transition-all">
+            <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            {% translate "Open Full Job Details" %}
+        </a>
+
+        <a href="{% url 'dashboard:job:update' job.pk %}"
+           class="py-2 px-3 inline-flex justify-center items-center gap-x-1.5 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-2xs">
+            {% translate "Edit" %}
+        </a>
+    </div>
+</div>

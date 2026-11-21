@@ -38,7 +38,7 @@ class AccessProxyModelMixin(models.Model):
 
         """
         model = None
-        model_name = self._meta.verbose_name
+        model_name = self._meta.model_name
         match model_name:
             case "bookkeeper":
                 from bookkeeper.models.bookkeeper_proxy import BookkeeperProxy

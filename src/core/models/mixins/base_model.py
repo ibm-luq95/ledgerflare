@@ -3,6 +3,7 @@
 import uuid
 from typing import Optional
 
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -50,7 +51,7 @@ class BaseModelMixin(DiffingMixin, GetModelInstanceAsDictMixin, models.Model):
     metadata = models.JSONField(
         _("metadata"), null=True, blank=True, default=dict, editable=False
     )
-    is_deleted = models.BooleanField(_("is deleted"), default=False, editable=False)
+    is_deleted = models.BooleanField(_("is deleted"), default=False, db_index=True, editable=False)
     created_at = models.DateTimeField(
         _("created at"), default=timezone.now, editable=False
     )
@@ -68,6 +69,9 @@ class BaseModelMixin(DiffingMixin, GetModelInstanceAsDictMixin, models.Model):
 
     class Meta:
         abstract = True
+        indexes = [
+            GinIndex(fields=["metadata"]),
+        ]
         # base_manager_name = "objects"
         # ordering = ["-created_at", "-updated_at"]
         # ordering = ["-created_at"]

@@ -1,0 +1,117 @@
+{% load i18n humanize %}
+
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 mx-2 sm:mx-4 md:mx-0">
+    <!-- Card 1: Total Assignments -->
+    <a href="{% url pagination_list_url_name %}"
+       class="flex flex-col bg-white border border-gray-200 hover:border-blue-400 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-blue-500 transition-all group">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                {% translate "Total Active" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-900/30 dark:text-blue-400">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-neutral-200">
+                {{ kpi_stats.total_assignments|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Active workload" %}
+            </p>
+        </div>
+    </a>
+
+    <!-- Card 2: In Progress -->
+    <a href="{% url pagination_list_url_name %}?status=in_progress"
+       class="flex flex-col bg-white border border-gray-200 hover:border-amber-400 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-amber-500 transition-all group">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 group-hover:text-amber-600 dark:group-hover:text-amber-400">
+                {% translate "In Progress" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] bg-amber-50 text-amber-600 rounded-lg dark:bg-amber-900/30 dark:text-amber-400">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                {{ kpi_stats.in_progress|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Currently underway" %}
+            </p>
+        </div>
+    </a>
+
+    <!-- Card 3: Overdue / Urgent -->
+    <div class="flex flex-col bg-white border {% if kpi_stats.overdue > 0 %}border-red-300 dark:border-red-800/60 bg-red-50/20 dark:bg-red-900/10{% else %}border-gray-200 dark:border-neutral-700{% endif %} rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider {% if kpi_stats.overdue > 0 %}text-red-600 dark:text-red-400{% else %}text-gray-500 dark:text-neutral-400{% endif %}">
+                {% translate "Overdue" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] {% if kpi_stats.overdue > 0 %}bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400 animate-pulse{% else %}bg-gray-100 text-gray-500 dark:bg-neutral-800 dark:text-neutral-400{% endif %} rounded-lg">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold {% if kpi_stats.overdue > 0 %}text-red-600 dark:text-red-400{% else %}text-gray-800 dark:text-neutral-200{% endif %}">
+                {{ kpi_stats.overdue|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs {% if kpi_stats.overdue > 0 %}text-red-500 dark:text-red-400{% else %}text-gray-500 dark:text-neutral-400{% endif %}">
+                {% translate "Past due date" %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Card 4: Unseen / Unread -->
+    <a href="{% url pagination_list_url_name %}?is_seen=False"
+       class="flex flex-col bg-white border border-gray-200 hover:border-purple-400 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-purple-500 transition-all group">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 group-hover:text-purple-600 dark:group-hover:text-purple-400">
+                {% translate "Unseen" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] bg-purple-50 text-purple-600 rounded-lg dark:bg-purple-900/30 dark:text-purple-400">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                {{ kpi_stats.unseen|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Awaiting staff review" %}
+            </p>
+        </div>
+    </a>
+
+    <!-- Card 5: Archive / Completed -->
+    <a href="{% url 'dashboard:archive:special_assignment:list' %}"
+       class="flex flex-col bg-white border border-gray-200 hover:border-emerald-400 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-emerald-500 transition-all group">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                {% translate "Completed" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[36px] bg-emerald-50 text-emerald-600 rounded-lg dark:bg-emerald-900/30 dark:text-emerald-400">
+                <svg class="size-4.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                {% translate "Archive" %}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "View completed history" %}
+            </p>
+        </div>
+    </a>
+</div>

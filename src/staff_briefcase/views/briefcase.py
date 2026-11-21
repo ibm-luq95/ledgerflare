@@ -1,19 +1,28 @@
-# -*- coding: utf-8 -*-#
+from __future__ import annotations
+
+from typing import Any
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Q
+from django.db.models import QuerySet
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView, DetailView, ListView
 
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
-from core.views.mixins import BWLoginRequiredMixin, BWBaseListViewMixin
+from core.constants.users import CON_ASSISTANT, CON_MANAGER
+from core.views.mixins import (
+    BWBaseListViewMixin,
+    BWLoginRequiredMixin,
+    BWManagerAssistantAccessMixin,
+    BWObjectAccessRequiredMixin,
+)
 from staff_briefcase.forms import (
-    BriefcaseNoteMiniForm,
-    BriefcaseDocumentMiniForm,
     BriefcaseAccountMiniForm,
+    BriefcaseDocumentMiniForm,
+    BriefcaseNoteMiniForm,
 )
 from staff_briefcase.models import StaffBriefcase
 
@@ -31,11 +40,9 @@ class StaffBriefcaseListView(
     paginate_by = LIST_VIEW_PAGINATE_BY
     list_type = "list"
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["title"] = _("Staff Briefcases")
-        # context.setdefault("filter_form", self.filterset.form)
         context.setdefault("list_type", self.list_type)
         context.setdefault("page_header", _("Briefcases".title()))
         context.setdefault(
@@ -44,20 +51,22 @@ class StaffBriefcaseListView(
         context.setdefault(
             "subtitle",
             _(
-                "Briefcases include documents and notes belongs to staff members".capitalize()
+                "Personal staff workspace, private working notes, and assigned engagement references."
             ),
         )
         context.setdefault("actions_base_url", "dashboard:briefcase")
         context.setdefault("filter_cancel_url", "dashboard:special_assignment:list")
         context.setdefault("table_header_title", _("C"))
-        context.setdefault("table_header_subtitle", _("Briefcases subtitle"))
+        context.setdefault(
+            "table_header_subtitle",
+            _("Personal briefcase items, workspace notes, and quick references."),
+        )
         context.setdefault("is_show_create_btn", True)
         context.setdefault("pagination_list_url_name", "dashboard:briefcase:list")
         context.setdefault("is_filters_enabled", False)
         context.setdefault("is_actions_menu_enabled", True)
         context.setdefault("is_header_enabled", True)
         context.setdefault("is_footer_enabled", True)
-        # context.setdefault("actions_items", "details,update,delete")
         context.setdefault("actions_items", "details,")
         context.setdefault("base_url_name", "dashboard:briefcase")
         context.setdefault("empty_label", _("briefcases"))
@@ -75,22 +84,18 @@ class StaffBriefcaseListView(
             },
         )
         context.setdefault("filter_form_id", "staffBriefcaseFilterForm")
-
-        # debugging_print(self.filterset.form["name"])
         return context
 
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     if self.request.user.user_type == CON_BOOKKEEPER:
-    #         queryset = (
-    #             self.request.user.bookkeeper.get_proxy_model().special_assignments.all()
-    #         )
-    #     self.filterset = SpecialAssignmentFilter(self.request.GET, queryset=queryset)
-    #     return self.filterset.qs
+    def get_queryset(self) -> QuerySet[StaffBriefcase]:
+        user = self.request.user
+        if user.is_superuser or user.user_type in (CON_MANAGER, CON_ASSISTANT):
+            return super().get_queryset()
+        return StaffBriefcase.objects.filter(user=user)
 
 
 class StaffBriefcaseDetailView(
     PermissionRequiredMixin,
+    BWObjectAccessRequiredMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     DetailView,
@@ -98,35 +103,35 @@ class StaffBriefcaseDetailView(
     permission_required = "staff_briefcase.view_staffbriefcase"
     template_name = "staff_briefcase/details.html"
     model = StaffBriefcase
-    # context_object_name = "briefcase"
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["title"] = _(f"Briefcase - {self.get_object().user.fullname}")
-        briefcase_note_form = BriefcaseNoteMiniForm(
-            initial={"briefcase": self.get_object().pk}
+        briefcase = self.get_object()
+        context["title"] = _(f"Briefcase - {briefcase.user.fullname}")
+        context.setdefault(
+            "briefcase_note_form",
+            BriefcaseNoteMiniForm(initial={"briefcase": briefcase.pk}),
         )
-        briefcase_document_form = BriefcaseDocumentMiniForm(
-            initial={"briefcase": self.get_object().pk}
+        context.setdefault(
+            "briefcase_document_form",
+            BriefcaseDocumentMiniForm(initial={"briefcase": briefcase.pk}),
         )
-        briefcase_account_form = BriefcaseAccountMiniForm(
-            initial={"briefcase": self.get_object().pk}
+        context.setdefault(
+            "briefcase_account_form",
+            BriefcaseAccountMiniForm(initial={"briefcase": briefcase.pk}),
         )
-        context.setdefault("briefcase_note_form", briefcase_note_form)
-        context.setdefault("briefcase_document_form", briefcase_document_form)
-        context.setdefault("briefcase_account_form", briefcase_account_form)
-
         return context
 
 
 class StaffBriefcaseCreateView(
     PermissionRequiredMixin,
+    BWManagerAssistantAccessMixin,
     BWLoginRequiredMixin,
     BWSiteSettingsViewMixin,
     SuccessMessageMixin,
     CreateView,
 ):
-    permission_required = "staff_briefcase.add_briefcase"
+    permission_required = "staff_briefcase.add_staffbriefcase"
     template_name = "core/crudl/create.html"
     model = StaffBriefcase
+    success_url = reverse_lazy("dashboard:briefcase:list")

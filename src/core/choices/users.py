@@ -6,7 +6,7 @@ Date: 5/10/24
 
 Description: beach_wood_user's choices
 """
-import stringcase
+import inflection
 from django.db import models
 from django.utils.translation import gettext as _
 
@@ -28,20 +28,20 @@ from core.constants.users import (
 
 
 class BeachWoodUserTypeEnum(models.TextChoices):
-    MANAGER = CON_MANAGER, _(stringcase.sentencecase(CON_MANAGER))
-    ASSISTANT = CON_ASSISTANT, _(stringcase.sentencecase(CON_ASSISTANT))
-    BOOKKEEPER = CON_BOOKKEEPER, _(stringcase.sentencecase(CON_BOOKKEEPER))
-    CFO = CON_CFO, _(stringcase.sentencecase(CON_CFO))
+    MANAGER = CON_MANAGER, _(inflection.humanize(CON_MANAGER))
+    ASSISTANT = CON_ASSISTANT, _(inflection.humanize(CON_ASSISTANT))
+    BOOKKEEPER = CON_BOOKKEEPER, _(inflection.humanize(CON_BOOKKEEPER))
+    CFO = CON_CFO, _(inflection.humanize(CON_CFO))
 
 
 class BeachWoodUserStatusEnum(models.TextChoices):
-    ENABLED = CON_ENABLED, _(stringcase.sentencecase(CON_ENABLED))
-    PENDING = CON_PENDING, _(stringcase.sentencecase(CON_PENDING))
-    CANCELED = CON_CANCELED, _(stringcase.sentencecase(CON_CANCELED))
-    DISABLED = CON_DISABLED, _(stringcase.sentencecase(CON_DISABLED))
-    ARCHIVED = CON_ARCHIVED, _(stringcase.sentencecase(CON_ARCHIVED))
+    ENABLED = CON_ENABLED, _(inflection.humanize(CON_ENABLED))
+    PENDING = CON_PENDING, _(inflection.humanize(CON_PENDING))
+    CANCELED = CON_CANCELED, _(inflection.humanize(CON_CANCELED))
+    DISABLED = CON_DISABLED, _(inflection.humanize(CON_DISABLED))
+    ARCHIVED = CON_ARCHIVED, _(inflection.humanize(CON_ARCHIVED))
 
 
 class BeachWoodUserTypesEnum(models.TextChoices):
-    DEVELOPER = CON_DEVELOPER, _(stringcase.sentencecase(CON_DEVELOPER))
-    USER = CON_USER, _(stringcase.sentencecase(CON_USER))
+    DEVELOPER = CON_DEVELOPER, _(inflection.humanize(CON_DEVELOPER))
+    USER = CON_USER, _(inflection.humanize(CON_USER))

@@ -6,11 +6,20 @@ from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
-from core.models.mixins import BaseModelMixin
+from core.constants.file_types_validation import IMAGES_FT
+from core.models.mixins import BaseModelMixin, SanitizeHTMLFieldsMixin
+from core.utils import FileValidator
 from .help_text import HELP_MESSAGES
 
+logo_validator = FileValidator(
+    max_size=15 * 1024 * 1024,
+    content_types=IMAGES_FT,
+    scan_malware=True,
+)
 
-class SiteSettings(BaseModelMixin):
+
+class SiteSettings(BaseModelMixin, SanitizeHTMLFieldsMixin):
+    SANITY_HTML_FIELDS = ("description", "og_description")
     """This is web app site settings model
 
     Args:
@@ -80,6 +89,7 @@ class SiteSettings(BaseModelMixin):
         upload_to="app_logo/",
         null=True,
         blank=True,
+        validators=[logo_validator],
         help_text=HELP_MESSAGES.get("logo"),
     )
     phone = models.CharField(

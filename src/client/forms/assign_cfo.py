@@ -1,14 +1,15 @@
 from typing import Optional
 
+from django import forms
+
 from bookkeeper.models import BookkeeperProxy
 from cfo.models import CFOProxy
 from client.models import ClientProxy
 from core.forms.mixins.base_form_mixin import BWBaseFormMixin
-from django import forms
 
 
 class AssignCFOForm(BWBaseFormMixin):
-    def __init__(self, client: Optional[ClientProxy] = None, *args, **kwargs):
+    def __init__(self, client: ClientProxy | None = None, *args, **kwargs):
         super(BWBaseFormMixin, self).__init__(*args, **kwargs)
         if client is not None:
             client_cfos = client.cfos.all()

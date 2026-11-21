@@ -9,11 +9,12 @@ from django.db import transaction
 from django.utils.translation import gettext as _
 
 from core.constants.users import (
-    BOOKKEEPER_GROUP_NAME,
-    MANAGER_GROUP_NAME,
     ASSISTANT_GROUP_NAME,
-    READONLY_NEW_STAFF_MEMBER_GROUP_NAME,
+    BOOKKEEPER_GROUP_NAME,
     DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER,
+    DEFAULT_READONLY_PERMISSIONS_NEW_STAFF_MEMBER,
+    MANAGER_GROUP_NAME,
+    READONLY_NEW_STAFF_MEMBER_GROUP_NAME,
 )
 from core.management.mixins import CommandStdOutputMixin
 from core.utils import debugging_print
@@ -164,12 +165,11 @@ class Command(BaseCommand, CommandStdOutputMixin):
                             " already exists"
                         ),
                     )
-                for content_type_item in DEFAULT_PERMISSIONS_NEW_STAFF_MEMBER:
+                for content_type_item in DEFAULT_READONLY_PERMISSIONS_NEW_STAFF_MEMBER:
                     content_type_object = ContentType.objects.get(
                         app_label=content_type_item["app_label"],
                         model=content_type_item["model_label"],
                     )
-                    # debugging_print(content_type_object)
                     permissions_codename_labels = content_type_item.get(
                         "permissions_codename_labels"
                     )

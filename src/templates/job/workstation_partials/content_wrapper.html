@@ -1,0 +1,132 @@
+{% load i18n %}
+
+<div id="workstation-content-container" data-active-view="{{ active_view|default:'calendar' }}">
+  <!-- Metrics Bar -->
+  {% include "job/workstation_partials/metrics_bar.html" %}
+
+  <!-- Controls Bar: Period Navigation + View Tabs Switcher -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 bg-white border border-gray-200 rounded-xl p-3.5 shadow-2xs dark:bg-neutral-800 dark:border-neutral-700">
+    <!-- Period Navigator -->
+    <div class="flex items-center gap-3">
+      <div class="inline-flex rounded-lg shadow-2xs">
+        <a href="?year={{ prev_year }}&month={{ prev_month }}&client={{ selected_client_id }}&status={{ selected_status }}&staff={{ selected_staff.id|default:'' }}"
+           hx-get="{% url 'dashboard:job:workstation' %}?year={{ prev_year }}&month={{ prev_month }}&client={{ selected_client_id }}&status={{ selected_status }}&staff={{ selected_staff.id|default:'' }}&partial=content"
+           hx-target="#workstation-content-container"
+           hx-swap="outerHTML"
+           hx-indicator="#workstation-loading-indicator"
+           hx-push-url="?year={{ prev_year }}&month={{ prev_month }}"
+           class="py-1.5 px-2.5 inline-flex justify-center items-center text-xs font-medium rounded-s-lg border border-gray-200 bg-white text-gray-700 shadow-2xs hover:bg-gray-50 focus:outline-hidden dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700">
+          <i class="fa-solid fa-chevron-left text-xs me-1"></i>
+          {% translate "Prev" %}
+        </a>
+        <a href="?year={{ next_year }}&month={{ next_month }}&client={{ selected_client_id }}&status={{ selected_status }}&staff={{ selected_staff.id|default:'' }}"
+           hx-get="{% url 'dashboard:job:workstation' %}?year={{ next_year }}&month={{ next_month }}&client={{ selected_client_id }}&status={{ selected_status }}&staff={{ selected_staff.id|default:'' }}&partial=content"
+           hx-target="#workstation-content-container"
+           hx-swap="outerHTML"
+           hx-indicator="#workstation-loading-indicator"
+           hx-push-url="?year={{ next_year }}&month={{ next_month }}"
+           class="py-1.5 px-2.5 inline-flex justify-center items-center text-xs font-medium rounded-e-lg border border-s-0 border-gray-200 bg-white text-gray-700 shadow-2xs hover:bg-gray-50 focus:outline-hidden dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700">
+          {% translate "Next" %}
+          <i class="fa-solid fa-chevron-right text-xs ms-1"></i>
+        </a>
+      </div>
+
+      <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-neutral-200 flex items-center gap-2">
+        <i class="fa-regular fa-calendar-check text-blue-600 dark:text-blue-400"></i>
+        {{ current_month_name }} {{ current_year }}
+      </h3>
+    </div>
+
+    <!-- View Switcher Tabs -->
+    <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-lg dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700">
+      <button type="button"
+              data-view-btn="calendar"
+              class="inline-flex items-center gap-x-2 py-1.5 px-3 text-xs rounded-md transition focus:outline-hidden cursor-pointer">
+        <i class="fa-regular fa-calendar text-xs"></i>
+        {% translate "Calendar" %}
+      </button>
+
+      <button type="button"
+              data-view-btn="kanban"
+              class="inline-flex items-center gap-x-2 py-1.5 px-3 text-xs rounded-md transition focus:outline-hidden cursor-pointer">
+        <i class="fa-solid fa-table-columns text-xs"></i>
+        {% translate "Kanban Board" %}
+      </button>
+
+      <button type="button"
+              data-view-btn="agenda"
+              class="inline-flex items-center gap-x-2 py-1.5 px-3 text-xs rounded-md transition focus:outline-hidden cursor-pointer">
+        <i class="fa-solid fa-list-ul text-xs"></i>
+        {% translate "Agenda List" %}
+      </button>
+    </div>
+  </div>
+
+  <!-- Results & Feedback Status Bar -->
+  <div class="flex items-center justify-between px-1 py-1 mb-4 text-xs text-gray-500 dark:text-neutral-400">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span>
+        {% blocktranslate count counter=jobs|length %}
+          Showing <strong>1</strong> job for {{ current_month_name }} {{ current_year }}
+        {% plural %}
+          Showing <strong>{{ counter }}</strong> jobs for {{ current_month_name }} {{ current_year }}
+        {% endblocktranslate %}
+      </span>
+      {% if active_filters_count > 0 %}
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-800/50 dark:text-amber-300">
+          <i class="fa-solid fa-filter text-[10px]"></i>
+          {{ active_filters_count }} {% translate "filters active" %}
+        </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Empty Results Fallback Card -->
+  {% if not jobs %}
+    <div class="bg-white border border-dashed border-gray-300 rounded-xl p-8 md:p-12 text-center dark:bg-neutral-800 dark:border-neutral-700 mb-6">
+      <div class="size-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-neutral-700">
+        <i class="fa-regular fa-calendar-xmark text-2xl text-gray-400 dark:text-neutral-400"></i>
+      </div>
+      <h3 class="text-base font-bold text-gray-800 dark:text-white">
+        {% translate "No jobs found for this period" %}
+      </h3>
+      <p class="text-xs text-gray-500 dark:text-neutral-400 mt-1 max-w-md mx-auto">
+        {% if active_filters_count > 0 %}
+          {% translate "No scheduled jobs match your current filter selections. Try resetting the filters or selecting another month/year." %}
+        {% else %}
+          {% translate "There are no jobs scheduled for" %} {{ current_month_name }} {{ current_year }}. {% translate "Use the year and month selectors above to explore other periods." %}
+        {% endif %}
+      </p>
+      {% if active_filters_count > 0 %}
+        <div class="mt-4 flex items-center justify-center gap-3">
+          <a href="{% url 'dashboard:job:workstation' %}?year={{ current_year }}&month={{ current_month_num }}"
+             class="py-2 px-3.5 inline-flex items-center gap-x-1.5 text-xs font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-700">
+            <i class="fa-solid fa-rotate-left text-xs"></i>
+            {% translate "Reset Filters" %}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <!-- Multi-View Panes -->
+  <div>
+    <!-- 1. Calendar View Pane -->
+    <div data-view-pane="calendar">
+      {% include "job/workstation_partials/calendar_view.html" %}
+    </div>
+
+    <!-- 2. Kanban Board View Pane -->
+    <div data-view-pane="kanban" class="hidden">
+      {% include "job/workstation_partials/kanban_view.html" %}
+    </div>
+
+    <!-- 3. Agenda View Pane -->
+    <div data-view-pane="agenda" class="hidden">
+      {% include "job/workstation_partials/agenda_view.html" %}
+    </div>
+  </div>
+
+  <!-- Job Enterprise Details Modals -->
+  {% include "job/workstation_partials/job_modals.html" %}
+</div>

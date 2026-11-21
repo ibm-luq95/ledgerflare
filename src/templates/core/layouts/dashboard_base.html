@@ -2,8 +2,10 @@
 {% nospaces %}
 <html lang="en" class="h-full">
     <head>
-        <!-- CSRF Token Meta Tag - Add this to your base template -->
+        <!-- CSRF Meta Tag -->
         <meta name="csrf-token" content="{{ csrf_token }}" />
+
+
 
         {% include "core/inc/meta_tags.html" with get_web_app_settings=get_web_app_settings %}
 
@@ -29,21 +31,7 @@
         <!-- ========== MAIN CONTENT ========== -->
         <!-- Start left side bar -->
         {% if request.user.is_authenticated %}
-            {% if debug %}
-                {% if request.resolver_match.view_name == "dashboard:client:details" or request.resolver_match.view_name == "dashboard:client:transactions" or request.resolver_match.view_name == "dashboard:client:journal_entry" or request.resolver_match.view_name == "dashboard:client:bank_register" or request.resolver_match.view_name == "dashboard:client:chart_of_accounts" or request.resolver_match.view_name == "dashboard:client:expense_create" %}
-
-                    {% include "components/inc/dashboard/client_left_sidebar.html" %}
-
-                {% else %}
-
-                    {% include "components/inc/dashboard/left_side.html" %}
-
-                {% endif %}
-            {% else %}
-
-                {% include "components/inc/dashboard/left_side.html" %}
-
-            {% endif %}
+            {% include "components/inc/dashboard/left_side.html" %}
         {% endif %}
         <!-- End left side bar -->
         {# Start Toasts #}
@@ -52,7 +40,7 @@
 
         {# End Toasts #}
         <!-- Content -->
-        <div class="sm:hs-overlay-layout-open:ms-64 py-3 min-h-160 transition-all duration-300">
+        <div class="sm:hs-overlay-layout-open:ms-56 py-3 min-h-160 transition-all duration-300 print:ms-0 print:p-0 print:m-0">
             {# Start Flash Message #}
 
             {% include "components/inc/messages.html" %}
@@ -63,21 +51,17 @@
         </div>
         <!-- End Content -->
         <!-- ========== END MAIN CONTENT ========== -->
-        <script defer>
-            const t = "{{ request.session.auth_token }}";
-            window.AUTH_TOKEN = t;
-            window.CSRF_TOKEN = "{{ csrf_token }}";
-            // Freeze object to prevent modification
-            Object.defineProperty(window, 'AUTH_TOKEN', {
-                configurable: false,
-                writable: false,
-                value: window.AUTH_TOKEN
-            });
+        <script nonce="{{ request.csp_nonce }}">
+            (function() {
+                window.CSRF_TOKEN = "{{ csrf_token }}";
+                const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                if (csrfMeta) {
+                    window.csrfToken = csrfMeta.getAttribute('content');
+                }
+            })();
         </script>
-        <script>
-            // Make CSRF token available globally
-            window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        </script>
+
+
 
         {% include "core/inc/js.html" %}
 
@@ -86,3 +70,4 @@
     </body>
 </html>
 {% endnospaces %}
+

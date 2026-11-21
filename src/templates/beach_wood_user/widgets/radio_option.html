@@ -1,19 +1,30 @@
-<li class="inline-flex items-center gap-x-2.5 py-3 px-4 text-sm font-medium bg-white border border-gray-200 text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg sm:-ms-px sm:mt-0 sm:first:rounded-se-none sm:first:rounded-es-lg sm:last:rounded-es-none sm:last:rounded-se-lg dark:bg-neutral-800 dark:border-neutral-700 dark:text-white">
-    <div class="relative flex items-start w-full">
-        <div class="flex items-center h-5">
-            <input name="{{ widget.name }}" type="{{ widget.type }}" {% if widget.value != None %}value="{{ widget.value|stringformat:'s' }}"{% endif %} class="border-gray-200 rounded-full disabled:opacity-50 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" 
-                {% include "django/forms/widgets/attrs.html" %}
-                 />
-            </div>
-            {% if widget.wrap_label %}
-                <label {% if widget.attrs.id %}for="{{ widget.attrs.id }}"{% endif %}
-                       class="ms-3 block w-full text-sm text-gray-600 dark:text-neutral-500">
-                    {% if widget.label == "Cfo" %}
-                        {{ widget.label|upper }}
-                    {% else %}
-                        {{ widget.label }}
-                    {% endif %}
-                </label>
-            {% endif %}
-        </div>
-    </li>
+<label class="group relative flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg cursor-pointer transition-all duration-150 select-none text-center text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 has-[:checked]:bg-white has-[:checked]:text-zinc-950 has-[:checked]:shadow-xs has-[:checked]:font-semibold dark:has-[:checked]:bg-zinc-700 dark:has-[:checked]:text-zinc-50 dark:has-[:checked]:shadow-xs">
+    <input name="{{ widget.name }}"
+           type="{{ widget.type }}"
+           {% if widget.value != None %}value="{{ widget.value|stringformat:'s' }}"{% endif %}
+           {% if widget.attrs.checked or widget.value == "manager" %}checked{% endif %}
+           class="sr-only"
+           {% include "django/forms/widgets/attrs.html" %} />
+    
+    <span class="text-xs text-zinc-400 group-hover:text-zinc-600 dark:text-zinc-500 dark:group-hover:text-zinc-300 group-has-[:checked]:text-zinc-900 dark:group-has-[:checked]:text-zinc-100 transition-colors">
+        {% if widget.value == "manager" %}
+            <i class="fa-solid fa-user-tie"></i>
+        {% elif widget.value == "assistant" %}
+            <i class="fa-solid fa-bolt"></i>
+        {% elif widget.value == "bookkeeper" %}
+            <i class="fa-solid fa-book-journal-whills"></i>
+        {% elif widget.value == "cfo" %}
+            <i class="fa-solid fa-chart-line"></i>
+        {% else %}
+            <i class="fa-solid fa-user"></i>
+        {% endif %}
+    </span>
+
+    <span class="text-xs tracking-tight">
+        {% if widget.label == "Cfo" %}
+            CFO
+        {% else %}
+            {{ widget.label }}
+        {% endif %}
+    </span>
+</label>

@@ -9,6 +9,7 @@ class CFOProxy(CFO):
 
     class Meta(CFO.Meta):
         proxy = True
+        indexes = []
 
     def delete(self):
         """

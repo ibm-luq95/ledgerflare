@@ -52,7 +52,6 @@ class Command(BaseCommand, CommandStdOutputMixin):
                     for special_assignment in all_special_assignments:
                         if not special_assignment.assigned_to:
                             if special_assignment.get_managed_user():
-
                                 DebuggingPrint.pprint(
                                     special_assignment.get_managed_user().user
                                 )

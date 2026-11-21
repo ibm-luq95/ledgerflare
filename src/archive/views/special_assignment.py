@@ -40,9 +40,10 @@ class SpecialAssignmentArchiveListView(
     pagination_list_url_name = "dashboard:archive:special_assignment:list"
     base_url_name = "dashboard:special_assignment"
     empty_label = _("assignment(s)")
-    subtitle = _("Special assignments archive".title())
+    subtitle = _(
+        "Completed and archived special assignments, closed investigations, and past deliverables."
+    )
     actions_items = "details,update,delete"
-
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context

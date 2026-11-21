@@ -8,13 +8,11 @@ from staff_briefcase.models import StaffNotes, StaffBriefcase
 
 
 class StaffNotesSerializer(serializers.ModelSerializer):
-    # briefcase = StaffBriefcaseSerializer(read_only=True)
-    briefcase = serializers.UUIDField(required=True)
+    briefcase = serializers.UUIDField(required=True, write_only=True)
 
     class Meta:
         model = StaffNotes
-        fields = ("title", "note", "briefcase")
-        # exclude = EXCLUDED_FIELDS
+        fields = ("id", "title", "note", "briefcase")
         depth = 1
 
     def create(self, validated_data):

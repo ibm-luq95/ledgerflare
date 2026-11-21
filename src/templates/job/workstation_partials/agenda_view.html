@@ -1,0 +1,122 @@
+{% load i18n %}
+
+<div class="space-y-6">
+  <!-- Group: Overdue -->
+  {% if agenda_groups.overdue %}
+    <div class="bg-white border border-red-200 rounded-xl shadow-2xs overflow-hidden dark:bg-neutral-800 dark:border-red-900/60">
+      <div class="bg-red-50/70 border-b border-red-200 px-4 py-2.5 flex items-center justify-between dark:bg-red-950/30 dark:border-red-900/60">
+        <div class="flex items-center gap-2 text-red-700 dark:text-red-400">
+          <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+          <h4 class="text-xs font-bold uppercase tracking-wider">
+            {% translate "Overdue Jobs" %}
+          </h4>
+        </div>
+        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300">
+          {{ agenda_groups.overdue|length }}
+        </span>
+      </div>
+      <div class="divide-y divide-gray-100 dark:divide-neutral-700">
+        {% for job in agenda_groups.overdue %}
+          {% include "job/workstation_partials/agenda_row.html" with job=job is_overdue=True %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Group: Due Today -->
+  {% if agenda_groups.today %}
+    <div class="bg-white border border-blue-200 rounded-xl shadow-2xs overflow-hidden dark:bg-neutral-800 dark:border-blue-900/60">
+      <div class="bg-blue-50/70 border-b border-blue-200 px-4 py-2.5 flex items-center justify-between dark:bg-blue-950/30 dark:border-blue-900/60">
+        <div class="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+          <i class="fa-solid fa-calendar-day text-sm"></i>
+          <h4 class="text-xs font-bold uppercase tracking-wider">
+            {% translate "Due Today" %}
+          </h4>
+        </div>
+        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">
+          {{ agenda_groups.today|length }}
+        </span>
+      </div>
+      <div class="divide-y divide-gray-100 dark:divide-neutral-700">
+        {% for job in agenda_groups.today %}
+          {% include "job/workstation_partials/agenda_row.html" with job=job is_today=True %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Group: Due This Week -->
+  {% if agenda_groups.this_week %}
+    <div class="bg-white border border-gray-200 rounded-xl shadow-2xs overflow-hidden dark:bg-neutral-800 dark:border-neutral-700">
+      <div class="bg-gray-50 border-b border-gray-200 px-4 py-2.5 flex items-center justify-between dark:bg-neutral-900 dark:border-neutral-700">
+        <div class="flex items-center gap-2 text-gray-700 dark:text-neutral-300">
+          <i class="fa-regular fa-calendar-days text-sm"></i>
+          <h4 class="text-xs font-bold uppercase tracking-wider">
+            {% translate "Due This Week" %}
+          </h4>
+        </div>
+        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 dark:bg-neutral-700 dark:text-neutral-300">
+          {{ agenda_groups.this_week|length }}
+        </span>
+      </div>
+      <div class="divide-y divide-gray-100 dark:divide-neutral-700">
+        {% for job in agenda_groups.this_week %}
+          {% include "job/workstation_partials/agenda_row.html" with job=job %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Group: Upcoming / Later This Month -->
+  {% if agenda_groups.upcoming %}
+    <div class="bg-white border border-gray-200 rounded-xl shadow-2xs overflow-hidden dark:bg-neutral-800 dark:border-neutral-700">
+      <div class="bg-gray-50 border-b border-gray-200 px-4 py-2.5 flex items-center justify-between dark:bg-neutral-900 dark:border-neutral-700">
+        <div class="flex items-center gap-2 text-gray-700 dark:text-neutral-300">
+          <i class="fa-regular fa-calendar text-sm"></i>
+          <h4 class="text-xs font-bold uppercase tracking-wider">
+            {% translate "Upcoming Later This Month" %}
+          </h4>
+        </div>
+        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 dark:bg-neutral-700 dark:text-neutral-300">
+          {{ agenda_groups.upcoming|length }}
+        </span>
+      </div>
+      <div class="divide-y divide-gray-100 dark:divide-neutral-700">
+        {% for job in agenda_groups.upcoming %}
+          {% include "job/workstation_partials/agenda_row.html" with job=job %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Group: Completed -->
+  {% if agenda_groups.completed %}
+    <div class="bg-white border border-gray-200 rounded-xl shadow-2xs overflow-hidden dark:bg-neutral-800 dark:border-neutral-700 opacity-90">
+      <div class="bg-emerald-50/50 border-b border-emerald-100 px-4 py-2.5 flex items-center justify-between dark:bg-emerald-950/20 dark:border-emerald-900/40">
+        <div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+          <i class="fa-solid fa-circle-check text-sm"></i>
+          <h4 class="text-xs font-bold uppercase tracking-wider">
+            {% translate "Completed Jobs" %}
+          </h4>
+        </div>
+        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">
+          {{ agenda_groups.completed|length }}
+        </span>
+      </div>
+      <div class="divide-y divide-gray-100 dark:divide-neutral-700">
+        {% for job in agenda_groups.completed %}
+          {% include "job/workstation_partials/agenda_row.html" with job=job is_completed=True %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if not jobs %}
+    <div class="p-8 text-center bg-white border border-gray-200 rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
+      <i class="fa-regular fa-folder-open text-3xl text-gray-400 mb-2"></i>
+      <p class="text-sm text-gray-500 dark:text-neutral-400">
+        {% translate "No jobs scheduled for this period or matching filters." %}
+      </p>
+    </div>
+  {% endif %}
+</div>

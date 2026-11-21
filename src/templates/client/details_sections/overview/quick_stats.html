@@ -1,0 +1,175 @@
+{% load i18n %}
+
+<!-- Quick Stats Row -->
+<section id="quick-stats-block" class="my-5">
+    <div class="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+        <!-- Jobs Card -->
+        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-800 dark:border-neutral-700 hover:shadow-md transition-shadow">
+            <div class="flex justify-between p-3 sm:p-4 gap-x-3">
+                <div class="min-w-0">
+                    <p class="text-xs tracking-wide text-gray-500 uppercase">{% translate "Jobs" %}</p>
+                    <div class="flex items-center mt-1 gap-x-1">
+                        <h3 class="text-lg sm:text-xl font-medium text-gray-800 dark:text-gray-200 truncate">
+                            {% if object.jobs %}
+                                {{ object.jobs.count }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h3>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] bg-blue-600 text-white rounded-full dark:bg-blue-900 dark:text-blue-200">
+                    <span class="inline-flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] rounded-full">
+                        <i class="fa-solid fa-business-time w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </span>
+                </div>
+            </div>
+            <a href="javascript:;" data-tab-trigger="jobs-tab"
+               class="px-3 sm:px-4 py-2 text-xs font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 border-t border-gray-200 dark:border-neutral-700 rounded-b-xl transition-colors">
+                {% translate "View" %} →
+            </a>
+        </div>
+        <!-- End Jobs Card -->
+
+        <!-- Tasks Card -->
+        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-800 dark:border-neutral-700 hover:shadow-md transition-shadow">
+            <div class="flex justify-between p-3 sm:p-4 gap-x-3">
+                <div class="min-w-0">
+                    <p class="text-xs tracking-wide text-gray-500 uppercase">{% translate "Tasks" %}</p>
+                    <div class="flex items-center mt-1 gap-x-1">
+                        <h3 class="text-lg sm:text-xl font-medium text-gray-800 dark:text-gray-200 truncate">
+                            {% if object.get_total_tasks_for_all_jobs %}
+                                {{ object.get_total_tasks_for_all_jobs }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h3>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] bg-blue-600 text-white rounded-full dark:bg-blue-900 dark:text-blue-200">
+                    <span class="inline-flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] rounded-full">
+                        <i class="fa-solid fa-list-check w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </span>
+                </div>
+            </div>
+            <a href="javascript:;" data-tab-trigger="jobs-tab"
+               class="px-3 sm:px-4 py-2 text-xs font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 border-t border-gray-200 dark:border-neutral-700 rounded-b-xl transition-colors">
+                {% translate "View" %} →
+            </a>
+        </div>
+        <!-- End Tasks Card -->
+
+        <!-- Assignments Card -->
+        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-800 dark:border-neutral-700 hover:shadow-md transition-shadow">
+            <div class="flex justify-between p-3 sm:p-4 gap-x-3">
+                <div class="min-w-0">
+                    <p class="text-xs tracking-wide text-gray-500 uppercase">{% translate "Assignments" %}</p>
+                    <div class="flex items-center mt-1 gap-x-1">
+                        <h3 class="text-lg sm:text-xl font-medium text-gray-800 dark:text-gray-200 truncate">
+                            {% if object.special_assignments %}
+                                {{ object.special_assignments.count }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h3>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] bg-blue-600 text-white rounded-full dark:bg-blue-900 dark:text-blue-200">
+                    <span class="inline-flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] rounded-full">
+                        <i class="fa-solid fa-list-ol w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </span>
+                </div>
+            </div>
+            <a href="javascript:;" data-tab-trigger="assignments-tab"
+               class="px-3 sm:px-4 py-2 text-xs font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 border-t border-gray-200 dark:border-neutral-700 rounded-b-xl transition-colors">
+                {% translate "View" %} →
+            </a>
+        </div>
+        <!-- End Assignments Card -->
+
+        <!-- Past Due Jobs Card -->
+        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-800 dark:border-neutral-700 hover:shadow-md transition-shadow">
+            <div class="flex justify-between p-3 sm:p-4 gap-x-3">
+                <div class="min-w-0">
+                    <p class="text-xs tracking-wide text-red-500 uppercase">{% translate "Past Due" %}</p>
+                    <div class="flex items-center mt-1 gap-x-1">
+                        <h3 class="text-lg sm:text-xl font-medium text-red-600 dark:text-gray-200 truncate">
+                            {% if object.get_all_past_due_jobs %}
+                                {{ object.get_all_past_due_jobs.count }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h3>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] bg-red-100 text-red-500 rounded-full dark:bg-red-900/30 dark:text-red-400">
+                    <span class="inline-flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] rounded-full">
+                        <i class="fa-solid fa-hourglass-end w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </span>
+                </div>
+            </div>
+            <a href="javascript:;" data-tab-trigger="jobs-tab"
+               class="px-3 sm:px-4 py-2 text-xs font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 border-t border-gray-200 dark:border-neutral-700 rounded-b-xl transition-colors">
+                {% translate "View" %} →
+            </a>
+        </div>
+        <!-- End Past Due Jobs Card -->
+
+        <!-- Contacts Card -->
+        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-800 dark:border-neutral-700 hover:shadow-md transition-shadow">
+            <div class="flex justify-between p-3 sm:p-4 gap-x-3">
+                <div class="min-w-0">
+                    <p class="text-xs tracking-wide text-gray-500 uppercase">{% translate "Contacts" %}</p>
+                    <div class="flex items-center mt-1 gap-x-1">
+                        <h3 class="text-lg sm:text-xl font-medium text-gray-800 dark:text-gray-200 truncate">
+                            {% if object.important_contacts %}
+                                {{ object.important_contacts.count }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h3>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] bg-blue-600 text-white rounded-full dark:bg-blue-900 dark:text-blue-200">
+                    <span class="inline-flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] rounded-full">
+                        <i class="fa-regular fa-address-book w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </span>
+                </div>
+            </div>
+            <a href="javascript:;" data-tab-trigger="contacts-tab"
+               class="px-3 sm:px-4 py-2 text-xs font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 border-t border-gray-200 dark:border-neutral-700 rounded-b-xl transition-colors">
+                {% translate "View" %} →
+            </a>
+        </div>
+        <!-- End Contacts Card -->
+
+        <!-- Accounts Card -->
+        <div class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-800 dark:border-neutral-700 hover:shadow-md transition-shadow">
+            <div class="flex justify-between p-3 sm:p-4 gap-x-3">
+                <div class="min-w-0">
+                    <p class="text-xs tracking-wide text-gray-500 uppercase">{% translate "Accounts" %}</p>
+                    <div class="flex items-center mt-1 gap-x-1">
+                        <h3 class="text-lg sm:text-xl font-medium text-gray-800 dark:text-gray-200 truncate">
+                            {% if object.client_accounts %}
+                                {{ object.client_accounts.count }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h3>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] bg-blue-600 text-white rounded-full dark:bg-blue-900 dark:text-blue-200">
+                    <span class="inline-flex justify-center items-center w-[40px] h-[40px] sm:w-[46px] sm:h-[46px] rounded-full">
+                        <i class="fa-solid fa-lock w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </span>
+                </div>
+            </div>
+            <a href="javascript:;" data-tab-trigger="accounts-tab"
+               class="px-3 sm:px-4 py-2 text-xs font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 border-t border-gray-200 dark:border-neutral-700 rounded-b-xl transition-colors">
+                {% translate "View" %} →
+            </a>
+        </div>
+        <!-- End Accounts Card -->
+    </div>
+</section>
+<!-- End Quick Stats Row -->

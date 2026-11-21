@@ -1,0 +1,13 @@
+{% load static %}
+{% load bw_users_tags %}
+
+<div class="vue-chatbox-container w-full"
+     data-vue-chatbox="true"
+     data-object-id="{{ object.pk }}"
+     data-object-type="{% if object.job_type is not None or object.get_job_type_display is not None %}job{% else %}special_assignment{% endif %}"
+     data-current-user-id="{{ request.user.pk }}"
+     data-current-user-name="{{ request.user.fullname|default:request.user.email }}"
+     data-current-user-avatar="{% if request.user.get_staff_member_object.staff_object.profile.profile_picture %}{{ request.user.get_staff_member_object.staff_object.profile.profile_picture.url }}{% else %}{% static 'img/default_staff.png' %}{% endif %}"
+     data-api-endpoint="{% url 'dashboard:discussion:api:discussion-api-router-list' %}"
+     data-csrf-token="{{ csrf_token }}">
+</div>

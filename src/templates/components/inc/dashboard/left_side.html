@@ -2,7 +2,7 @@
 
 <!-- Sidebar -->
 <div id="hs-sidebar-content-push"
-     class="hs-overlay [--body-scroll:true] lg:[--overlay-backdrop:false] [--is-layout-affect:true] [--opened:lg] [--auto-close:lg] hs-overlay-open:translate-x-0 lg:hs-overlay-layout-open:translate-x-0 lg:block lg:-translate-x-full lg:end-auto lg:bottom-0 w-64 [--body-scroll:true] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform h-full hidden fixed top-0 start-0 bottom-0 z-60 border-e bg-neutral-800 border-neutral-700"
+     class="hs-overlay [--body-scroll:true] lg:[--overlay-backdrop:false] [--is-layout-affect:true] [--opened:lg] [--auto-close:lg] hs-overlay-open:translate-x-0 lg:hs-overlay-layout-open:translate-x-0 lg:block lg:-translate-x-full lg:end-auto lg:bottom-0 w-56 [--body-scroll:true] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform h-full hidden fixed top-0 start-0 bottom-0 z-60 border-e bg-neutral-800 border-neutral-700 print:hidden"
      role="dialog"
      tabindex="-1"
      aria-label="Sidebar">
@@ -12,7 +12,7 @@
       <a class="flex-none font-semibold text-xl focus:outline-hidden focus:opacity-80 text-white"
          href="{% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_ASSISTANT %} {% url 'dashboard:manager:home' %} {% elif request.user.user_type == CON_BOOKKEEPER %} {% url 'dashboard:bookkeeper:home' %} {% elif request.user.user_type == CON_CFO %} {% url 'dashboard:cfo:home' %} {% endif %}"
          aria-label="{{ get_web_app_settings.name }}">
-        <img class="w-60 h-auto max-w-full max-h-full"
+        <img class="w-48 h-auto max-w-full max-h-full"
              width="116"
              height="32"
              src="{% if get_web_app_settings.logo %} {{ get_web_app_settings.logo.url }} {% endif %}"
@@ -21,7 +21,7 @@
       <div class="lg:hidden -me-2">
         <!-- Close Button -->
         <button type="button"
-                class="flex justify-center items-center gap-x-3 size-6 text-sm  rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden bg-neutral-800 border-neutral-700 text-neutral-400 hover:bg-neutral-700 focus:bg-neutral-700 hover:text-neutral-200 focus:text-neutral-200"
+                class="flex justify-center items-center gap-x-3 size-6 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden bg-neutral-800 border-neutral-700 text-neutral-400 hover:bg-neutral-700 focus:bg-neutral-700 hover:text-neutral-200 focus:text-neutral-200"
                 data-hs-overlay="#hs-sidebar-content-push">
           <svg class="shrink-0 size-4"
                xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@
            data-hs-accordion-always-open>
         <ul class="space-y-1">
           <li>
-            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-700 hover:bg-neutral-700 focus:bg-neutral-700 text-white"
+            <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if request.resolver_match.url_name == 'home' and 'dashboard' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                href="{% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_ASSISTANT %} {% url 'dashboard:manager:home' %} {% elif request.user.user_type == CON_BOOKKEEPER %} {% url 'dashboard:bookkeeper:home' %} {% elif request.user.user_type == CON_CFO %} {% url 'dashboard:cfo:home' %} {% endif %}">
               <svg class="size-4"
                    xmlns="http://www.w3.org/2000/svg"
@@ -67,10 +67,10 @@
             </a>
           </li>
           {% if perms.assistant.assistant_has_full_manager_permissions or request.user.is_superuser is True %}
-            <li class="hs-accordion" id="users-accordion">
+            <li class="hs-accordion {% if 'management_assistant' in request.resolver_match.namespaces or 'management_bookkeeper' in request.resolver_match.namespaces or 'managers' in request.resolver_match.namespaces or 'management_cfo' in request.resolver_match.namespaces %}active{% endif %}" id="users-accordion">
               <button type="button"
                       class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
-                      aria-expanded="true"
+                      aria-expanded="{% if 'management_assistant' in request.resolver_match.namespaces or 'management_bookkeeper' in request.resolver_match.namespaces or 'managers' in request.resolver_match.namespaces or 'management_cfo' in request.resolver_match.namespaces %}true{% else %}false{% endif %}"
                       aria-controls="users-accordion-collapse-1">
                 <i class="fa-solid fa-users-gear text-inherit"></i>
                 {% translate 'Staff' %}
@@ -100,25 +100,25 @@
                 </svg>
               </button>
               <div id="users-accordion-collapse-1"
-                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {% if 'management_assistant' not in request.resolver_match.namespaces and 'management_bookkeeper' not in request.resolver_match.namespaces and 'managers' not in request.resolver_match.namespaces and 'management_cfo' not in request.resolver_match.namespaces %}hidden{% endif %}"
                    role="region"
                    aria-labelledby="users-accordion">
                 <ul class="hs-accordion-group pt-1 ps-7 space-y-1"
                     data-hs-accordion-always-open>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'management_assistant' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:management_assistant:list' %}">{% translate 'Assistants' %}</a>
                   </li>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'management_bookkeeper' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:management_bookkeeper:list' %}">{% translate 'Bookkeepers' %}</a>
                   </li>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'managers' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:managers:list' %}">{% translate 'Managers' %}</a>
                   </li>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'management_cfo' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:management_cfo:list' %}">{% translate 'CFOs' %}</a>
                   </li>
                 </ul>
@@ -126,28 +126,35 @@
             </li>
           {% endif %}
           <li>
-            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'client' in request.resolver_match.namespaces and 'archive' not in request.resolver_match.namespaces and 'reports' not in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                href="{% url 'dashboard:client:list' %}">
               <i class="fa-solid fa-building-user text-inherit"></i>
               {% translate 'Clients' %}
             </a>
           </li>
           <li>
-            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if request.resolver_match.url_name == 'workstation' %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
+               href="{% url 'dashboard:job:workstation' %}">
+              <i class="fa-solid fa-calendar-check text-inherit"></i>
+              {% translate 'Workstation' %}
+            </a>
+          </li>
+          <li>
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'job' in request.resolver_match.namespaces and request.resolver_match.url_name != 'workstation' and 'archive' not in request.resolver_match.namespaces and 'reports' not in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                href="{% url 'dashboard:job:list' %}">
               <i class="fa-solid fa-briefcase text-inherit"></i>
               {% translate 'Jobs' %}
             </a>
           </li>
           <li>
-            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'task' in request.resolver_match.namespaces and 'archive' not in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                href="{% url 'dashboard:task:list' %}">
               <i class="fa-solid fa-list-check text-inherit"></i>
               {% translate 'Tasks' %}
             </a>
           </li>
           <li>
-            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'special_assignment' in request.resolver_match.namespaces and 'archive' not in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                href="{% url 'dashboard:special_assignment:list' %}">
               <i class="fa-solid fa-list-ol text-inherit"></i>
               {% translate 'Assignments' %}
@@ -155,21 +162,21 @@
           </li>
           {% if request.user.user_type != CON_CFO %}
             <li>
-              <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+              <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'note' in request.resolver_match.namespaces and 'archive' not in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                  href="{% url 'dashboard:note:list' %}">
                 <i class="fa-regular fa-note-sticky text-inherit"></i>
                 {% translate 'Notes' %}
               </a>
             </li>
             <li>
-              <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+              <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'important_contact' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                  href="{% url 'dashboard:important_contact:list' %}">
                 <i class="fa-regular fa-address-card text-inherit"></i>
                 {% translate 'Contacts' %}
               </a>
             </li>
             <li>
-              <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+              <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'briefcase' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                  href="{% url 'dashboard:briefcase:details' request.user.briefcase.pk %}">
                 <i class="fa-solid fa-briefcase text-inherit"></i>
                 {% translate 'Briefcase' %}
@@ -177,10 +184,10 @@
             </li>
           {% endif %}
           {% if request.user.user_type == CON_MANAGER or request.user.user_type == CON_CFO %}
-            <li class="hs-accordion" id="reports-accordion">
+            <li class="hs-accordion {% if 'reports' in request.resolver_match.namespaces %}active{% endif %}" id="reports-accordion">
               <button type="button"
                       class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
-                      aria-expanded="true"
+                      aria-expanded="{% if 'reports' in request.resolver_match.namespaces %}true{% else %}false{% endif %}"
                       aria-controls="reports-accordion-collapse-1">
                 <i class="fa-solid fa-filter text-inherit"></i>
                 {% translate 'Reports' %}
@@ -210,24 +217,24 @@
                 </svg>
               </button>
               <div id="reports-accordion-collapse-1"
-                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {% if 'reports' not in request.resolver_match.namespaces %}hidden{% endif %}"
                    role="region"
                    aria-labelledby="reports-accordion">
                 <ul class="hs-accordion-group pt-1 ps-7 space-y-1"
                     data-hs-accordion-always-open>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
-                       href="{% url 'dashboard:management_assistant:list' %}">{% translate 'Jobs' %}</a>
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'reports' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
+                       href="{% url 'dashboard:reports:clients_reports:job_reports_list' %}">{% translate 'Jobs' %}</a>
                   </li>
                 </ul>
               </div>
             </li>
           {% endif %}
           {% if perms.assistant.assistant_has_full_manager_permissions or request.user.is_superuser is True %}
-            <li class="hs-accordion" id="site-settings-accordion">
+            <li class="hs-accordion {% if 'site_settings' in request.resolver_match.namespaces %}active{% endif %}" id="site-settings-accordion">
               <button type="button"
                       class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
-                      aria-expanded="true"
+                      aria-expanded="{% if 'site_settings' in request.resolver_match.namespaces %}true{% else %}false{% endif %}"
                       aria-controls="site-settings-accordion-collapse-1">
                 <i class="fa-solid fa-gears text-inherit"></i>
                 {% translate 'Site Settings' %}
@@ -256,28 +263,28 @@
                   <path d="m6 9 6 6 6-6" />
                 </svg>
               </button>
-              <div id="reports-accordion-collapse-1"
-                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+              <div id="site-settings-accordion-collapse-1"
+                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {% if 'site_settings' not in request.resolver_match.namespaces %}hidden{% endif %}"
                    role="region"
-                   aria-labelledby="reports-accordion">
+                   aria-labelledby="site-settings-accordion">
                 <ul class="hs-accordion-group pt-1 ps-7 space-y-1"
                     data-hs-accordion-always-open>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if request.resolver_match.view_name == 'dashboard:site_settings:web_app_settings' or request.resolver_match.url_name == 'web_app_settings' %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:site_settings:web_app_settings' %}">{% translate 'Web App Settings' %}</a>
                   </li>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'section_description' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:site_settings:section_description:list' %}">{% translate 'Section descriptions' %}</a>
                   </li>
                 </ul>
               </div>
             </li>
-            <li class="hs-accordion" id="site-settings-accordion">
+            <li class="hs-accordion {% if 'archive' in request.resolver_match.namespaces %}active{% endif %}" id="archive-accordion">
               <button type="button"
                       class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
-                      aria-expanded="true"
-                      aria-controls="site-settings-accordion-collapse-1">
+                      aria-expanded="{% if 'archive' in request.resolver_match.namespaces %}true{% else %}false{% endif %}"
+                      aria-controls="archive-accordion-collapse-1">
                 <i class="fa-solid fa-box-archive text-inherit"></i>
                 {% translate 'Archive' %}
                 <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400"
@@ -305,49 +312,49 @@
                   <path d="m6 9 6 6 6-6" />
                 </svg>
               </button>
-              <div id="reports-accordion-collapse-1"
-                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+              <div id="archive-accordion-collapse-1"
+                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {% if 'archive' not in request.resolver_match.namespaces %}hidden{% endif %}"
                    role="region"
-                   aria-labelledby="reports-accordion">
+                   aria-labelledby="archive-accordion">
                 <ul class="hs-accordion-group pt-1 ps-7 space-y-1"
                     data-hs-accordion-always-open>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'archive' in request.resolver_match.namespaces and 'jobs' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:archive:jobs:list' %}">
                       <i class="fa-solid fa-briefcase w-3.5 h-3.5 -mr-1 text-inherit"></i>
                       {% translate 'Jobs' %}
                     </a>
                   </li>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'archive' in request.resolver_match.namespaces and 'clients' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:archive:clients:list' %}">
                       <i class="fa-solid fa-building-user text-inherit"></i>
                       {% translate 'Clients' %}
                     </a>
                   </li>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'archive' in request.resolver_match.namespaces and 'assignments' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:archive:special_assignment:list' %}">
                       <i class="fa-solid fa-file-lines text-inherit"></i>
                       {% translate 'Assignments' %}
                     </a>
                   </li>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'archive' in request.resolver_match.namespaces and 'tasks' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:archive:tasks:list' %}">
                       <i class="fa-regular fa-list-check text-inherit"></i>
                       {% translate 'Tasks' %}
                     </a>
                   </li>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'archive' in request.resolver_match.namespaces and 'documents' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:archive:documents:list' %}">
                       <i class="fa-regular fa-file text-inherit"></i>
                       {% translate 'Documents' %}
                     </a>
                   </li>
                   <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200"
+                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden {% if 'archive' in request.resolver_match.namespaces and 'notes' in request.resolver_match.namespaces %}bg-neutral-700 text-white{% else %}bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200{% endif %}"
                        href="{% url 'dashboard:archive:notes:list' %}">
                       <i class="fa-regular fa-note-sticky text-inherit"></i>
                       {% translate 'Notes' %}
@@ -357,51 +364,6 @@
               </div>
             </li>
           {% endif %}
-          {% comment %}
-          <li class="hs-accordion" id="projects-accordion">
-            <button type="button" class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200" aria-expanded="true" aria-controls="projects-accordion-sub-1-collapse-1">
-              <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z" />
-                <path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8" />
-                <path d="M15 2v5h5" />
-              </svg>Projects<svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m18 15-6-6-6 6" />
-              </svg>
-              <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-            <div id="projects-accordion-sub-1-collapse-1" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden" role="region" aria-labelledby="projects-accordion">
-              <ul class="pt-1 ps-7 space-y-1">
-                <li>
-                  <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200" href="#">Link 1</a>
-                </li>
-                <li>
-                  <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200" href="#">Link 2</a>
-                </li>
-                <li>
-                  <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200" href="#">Link 3</a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li>
-            <a class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg focus:outline-hidden bg-neutral-800 hover:bg-neutral-700 focus:bg-neutral-700 text-neutral-200" href="#">
-              <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                <line x1="16" x2="16" y1="2" y2="6" />
-                <line x1="8" x2="8" y1="2" y2="6" />
-                <line x1="3" x2="21" y1="10" y2="10" />
-                <path d="M8 14h.01" />
-                <path d="M12 14h.01" />
-                <path d="M16 14h.01" />
-                <path d="M8 18h.01" />
-                <path d="M12 18h.01" />
-                <path d="M16 18h.01" />
-              </svg>Calendar <span class="ms-auto py-0.5 px-1.5 inline-flex items-center gap-x-1.5 text-xs bg-gray-200 text-gray-800 rounded-full dark:bg-neutral-600 dark:text-neutral-200">New</span>
-            </a>
-          </li>
-          {% endcomment %}
         </ul>
       </div>
     </nav>

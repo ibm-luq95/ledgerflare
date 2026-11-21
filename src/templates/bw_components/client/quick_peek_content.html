@@ -1,0 +1,207 @@
+{% load i18n core_tags %}
+
+<div class="space-y-6">
+    <!-- Header: Client Avatar + Name + Status + Quick Links -->
+    <div class="flex items-start justify-between gap-4 pb-5 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex items-center gap-3.5">
+            {% if object.company_logo %}
+                <img class="size-14 rounded-xl object-cover border border-gray-200 dark:border-neutral-700 shadow-2xs"
+                     src="{{ object.company_logo.url }}"
+                     alt="{{ object.name }}" />
+            {% else %}
+                <span class="inline-flex items-center justify-center size-14 rounded-xl bg-blue-100 text-blue-800 font-bold text-xl border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800 shadow-2xs">
+                    {{ object.name|slice:":1"|upper }}
+                </span>
+            {% endif %}
+            <div>
+                <h3 class="text-base font-bold text-gray-900 dark:text-neutral-100">
+                    {{ object.name }}
+                </h3>
+                <p class="text-xs text-gray-500 dark:text-neutral-400">
+                    {{ object.industry|default:_("General Industry") }}
+                </p>
+                <div class="mt-1.5">
+                    {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'dashboard:client:details' object.pk %}"
+           class="py-1.5 px-3 inline-flex items-center gap-x-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition-colors">
+            {% translate "Full Profile" %}
+            <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Operational Health Indicators & Quick Counts -->
+    <div class="grid grid-cols-3 gap-2.5 text-center">
+        <div class="bg-gray-50 dark:bg-neutral-800/60 p-3 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+            <span class="block text-sm font-bold text-gray-800 dark:text-neutral-200">
+                {{ object.total_jobs_count|default:0 }}
+            </span>
+            <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                {% translate "Total Jobs" %}
+            </span>
+        </div>
+
+        <div class="bg-gray-50 dark:bg-neutral-800/60 p-3 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+            <span class="block text-sm font-bold text-gray-800 dark:text-neutral-200">
+                {{ object.total_tasks_count|default:0 }}
+            </span>
+            <span class="block text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                {% translate "Total Tasks" %}
+            </span>
+        </div>
+
+        <div class="p-3 rounded-xl border {% if object.past_due_jobs_count > 0 %}bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800/40{% else %}bg-gray-50 border-gray-100 dark:bg-neutral-800/60 dark:border-neutral-700/60{% endif %}">
+            <span class="block text-sm font-bold {% if object.past_due_jobs_count > 0 %}text-red-600 dark:text-red-400{% else %}text-gray-800 dark:text-neutral-200{% endif %}">
+                {{ object.past_due_jobs_count|default:0 }}
+            </span>
+            <span class="block text-[10px] {% if object.past_due_jobs_count > 0 %}text-red-500 dark:text-red-400{% else %}text-gray-500 dark:text-neutral-400{% endif %} uppercase tracking-wider">
+                {% translate "Past Due" %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Contact Information Section -->
+    <div class="space-y-3">
+        <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+            {% translate "Contact Information" %}
+        </h4>
+        <div class="bg-gray-50/70 dark:bg-neutral-800/40 rounded-xl p-3.5 space-y-2 text-xs border border-gray-100 dark:border-neutral-800">
+            {% if object.email %}
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-500 dark:text-neutral-400">{% translate "Email:" %}</span>
+                    <a href="mailto:{{ object.email }}" class="font-medium text-blue-600 hover:underline dark:text-blue-400">
+                        {{ object.email }}
+                    </a>
+                </div>
+            {% endif %}
+
+            {% if object.phone_number %}
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-500 dark:text-neutral-400">{% translate "Phone:" %}</span>
+                    <a href="tel:{{ object.phone_number }}" class="font-medium text-gray-800 hover:text-blue-600 dark:text-neutral-200">
+                        {{ object.phone_number }}
+                    </a>
+                </div>
+            {% endif %}
+
+            {% if object.city or object.state %}
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-500 dark:text-neutral-400">{% translate "Location:" %}</span>
+                    <span class="font-medium text-gray-800 dark:text-neutral-200">
+                        {{ object.city }}{% if object.city and object.state %}, {% endif %}{{ object.state }}
+                    </span>
+                </div>
+            {% endif %}
+
+            {% if object.website %}
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-500 dark:text-neutral-400">{% translate "Website:" %}</span>
+                    <a href="{{ object.website }}" target="_blank" rel="noopener noreferrer" class="font-medium text-blue-600 hover:underline dark:text-blue-400 truncate max-w-[200px]">
+                        {{ object.website }}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Assigned Team Members Section -->
+    <div class="space-y-3">
+        <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+            {% translate "Assigned Team" %}
+        </h4>
+        <div class="bg-gray-50/70 dark:bg-neutral-800/40 rounded-xl p-3.5 space-y-2.5 text-xs border border-gray-100 dark:border-neutral-800">
+            <!-- Bookkeepers -->
+            <div class="flex items-start justify-between gap-2">
+                <span class="text-gray-500 dark:text-neutral-400">{% translate "Bookkeepers:" %}</span>
+                <div class="text-end">
+                    {% for bookkeeper in object.bookkeepers.all %}
+                        <div class="font-medium text-gray-800 dark:text-neutral-200">{{ bookkeeper }}</div>
+                    {% empty %}
+                        <span class="text-amber-600 dark:text-amber-400 italic">{% translate "Unassigned" %}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- CFOs -->
+            <div class="flex items-start justify-between gap-2 pt-2 border-t border-gray-200/60 dark:border-neutral-700/60">
+                <span class="text-gray-500 dark:text-neutral-400">{% translate "CFOs:" %}</span>
+                <div class="text-end">
+                    {% for cfo in object.cfos.all %}
+                        <div class="font-medium text-gray-800 dark:text-neutral-200">{{ cfo }}</div>
+                    {% empty %}
+                        <span class="text-gray-400 italic">{% translate "None" %}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Jobs Section -->
+    <div class="space-y-3">
+        <div class="flex items-center justify-between">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Active Jobs" %}
+            </h4>
+            <span class="text-[11px] text-gray-500 dark:text-neutral-400">
+                {{ active_jobs.count }} {% translate "active" %}
+            </span>
+        </div>
+
+        {% if active_jobs %}
+            <div class="space-y-2">
+                {% for job in active_jobs %}
+                    <div class="flex items-center justify-between p-2.5 bg-gray-50 dark:bg-neutral-800/40 rounded-lg border border-gray-100 dark:border-neutral-800 text-xs">
+                        <div>
+                            <span class="font-semibold text-gray-900 dark:text-neutral-100 block">{{ job.title }}</span>
+                            <span class="text-[10px] text-gray-500 dark:text-neutral-400">
+                                {% if job.due_date %}{% translate "Due:" %} {{ job.due_date }}{% endif %}
+                            </span>
+                        </div>
+                        {% bw_badge code=job.status text=job.get_status_display is_solid=False size="sm" %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-xs text-gray-400 italic bg-gray-50 dark:bg-neutral-800/30 p-3 rounded-lg text-center">
+                {% translate "No active jobs in progress." %}
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- Recent Notes Section -->
+    {% if recent_notes %}
+        <div class="space-y-2.5">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Recent Notes" %}
+            </h4>
+            <div class="space-y-2">
+                {% for note in recent_notes %}
+                    <div class="p-3 bg-gray-50/70 dark:bg-neutral-800/30 rounded-xl border border-gray-100 dark:border-neutral-800 text-xs">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-medium text-gray-800 dark:text-neutral-200">{{ note.title|default:_("Note") }}</span>
+                            <span class="text-[10px] text-gray-400">{{ note.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <p class="text-gray-600 dark:text-neutral-400 line-clamp-2">{{ note.body|striptags }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Drawer Footer Actions -->
+    <div class="pt-4 border-t border-gray-200 dark:border-neutral-700 flex items-center justify-between gap-3">
+        <a href="{% url 'dashboard:client:update' object.pk %}"
+           class="w-full py-2 px-3 text-center text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-2xs">
+            {% translate "Edit Client" %}
+        </a>
+        <a href="{% url 'dashboard:client:details' object.pk %}"
+           class="w-full py-2 px-3 text-center text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-2xs transition-colors">
+            {% translate "View Details" %}
+        </a>
+    </div>
+</div>

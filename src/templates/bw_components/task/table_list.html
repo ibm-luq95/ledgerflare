@@ -1,255 +1,413 @@
 {% extends "bw_components/layouts/table_list_base.html" %}
 
-{% load i18n %}
-
-{% load core_tags %}
+{% load i18n core_tags %}
 
 {# Start Table Header #}
 {% block header_title %}
     {% translate header_title %}
 {% endblock header_title %}
 {# End Table Header #}
+
 {# Start Table Subtitle #}
 {% block header_subtitle %}
     {% translate header_subtitle %}
 {% endblock header_subtitle %}
 {# End Table Subtitle #}
+
 {# Start Table ID Block #}
 {% block table_id_block %}
     {{ app_label|add:'_table' }}
 {% endblock table_id_block %}
 {# End Table ID Block #}
+
 {# Start Custom Css Class #}
 {% block custom_css_class_name %}
-    task-table-list
+    task-table-list min-w-full divide-y divide-gray-200 dark:divide-neutral-700
 {% endblock custom_css_class_name %}
 {# End Custom Css Class #}
+
 {% if is_show_create_btn is True %}
     {# Start Create Button Block #}
     {% block create_btn_block %}
         {% component "tl_create_btn" app_name=app_label actions_base_url=actions_base_url %}{% endcomponent %}
-        {% comment %}
-{% bw_button btn_text="Click" btn_variant="success" btn_size="small" data_pk="eee" data_title="ddlel" is_disabled=True btn_type="button" %}
-        {% endcomment %}
     {% endblock create_btn_block %}
     {# End Create Button Block #}
 {% endif %}
+
 {# Start Table Header Columns #}
 {% block thead_block %}
-    <tr>
+    <tr class="border-b border-gray-200 bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800/60 text-xs font-semibold uppercase tracking-wider text-gray-700 dark:text-neutral-300">
         {% if is_checkbox_enabled is True %}
-            <th scope="col" class="pl-6 py-3 text-left">
+            <th scope="col" class="ps-3.5 py-3 text-start w-8">
                 <label for="{{ column|add:'-checkbox' }}" class="flex">
                     <input type="checkbox"
-                           class="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800 {{ BW_DISABLED_DISABLED_INPUTS_CSS_CLASSES }} {{ BW_BASE_INPUT_CSS_CLASSES }}"
+                           class="shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500"
                            id="{{ column|add:'-checkbox' }}"
                            disabled />
                     <span class="sr-only">{{ column|title }}</span>
                 </label>
             </th>
         {% endif %}
-        <th scope="col" class="px-6 py-3 text-left">
-            <div class="flex items-center gap-x-2">
-                <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                    {% translate "Title" %}
-                </span>
 
+        <!-- Task Title -->
+        <th scope="col" class="px-3.5 py-3 text-start whitespace-nowrap">
+            <div class="flex items-center gap-x-1.5">
+                <span>{% translate "Task Title" %}</span>
                 {% include "bw_components/global/table_list/sort_icon.html" %}
-
             </div>
         </th>
-        {% if extra_context.is_show_client_column is True or is_show_client_column is True %}
-            <th scope="col" class="px-6 py-3 text-left">
-                <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Client" %}
-                    </span>
 
+        <!-- Client -->
+        {% if extra_context.is_show_client_column is not False and is_show_client_column is not False %}
+            <th scope="col" class="px-3 py-3 text-start whitespace-nowrap">
+                <div class="flex items-center gap-x-1.5">
+                    <span>{% translate "Client" %}</span>
                     {% include "bw_components/global/table_list/sort_icon.html" %}
-
                 </div>
             </th>
         {% endif %}
-        {% if extra_context.is_show_job_column is True or is_show_job_column is True %}
-            <th scope="col" class="px-6 py-3 text-left">
-                <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Job" %}
-                    </span>
 
+        <!-- Job -->
+        {% if extra_context.is_show_job_column is not False and is_show_job_column is not False %}
+            <th scope="col" class="px-3 py-3 text-start whitespace-nowrap">
+                <div class="flex items-center gap-x-1.5">
+                    <span>{% translate "Job" %}</span>
                     {% include "bw_components/global/table_list/sort_icon.html" %}
-
                 </div>
             </th>
         {% endif %}
-        {% if extra_context.is_show_manager_column is True or is_show_manager_column is True %}
-            <th scope="col" class="px-6 py-3 text-left">
-                <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Manager" %}
-                    </span>
 
+        <!-- Manager -->
+        {% if is_hide_manager is False or extra_context.is_hide_manager is False or extra_context.is_show_manager_column is True or is_show_manager_column is True %}
+            <th scope="col" class="px-3 py-3 text-start whitespace-nowrap">
+                <div class="flex items-center gap-x-1.5">
+                    <span>{% translate "Managed By" %}</span>
                     {% include "bw_components/global/table_list/sort_icon.html" %}
-
                 </div>
             </th>
         {% endif %}
-        {% if extra_context.is_show_type_column is True or is_show_type_column is True %}
-            <th scope="col" class="px-6 py-3 text-left">
-                <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Type" %}
-                    </span>
 
+        <!-- Task Type -->
+        {% if extra_context.is_show_type_column is not False and is_show_type_column is not False %}
+            <th scope="col" class="px-3 py-3 text-start whitespace-nowrap">
+                <div class="flex items-center gap-x-1.5">
+                    <span>{% translate "Type" %}</span>
                     {% include "bw_components/global/table_list/sort_icon.html" %}
-
                 </div>
             </th>
         {% endif %}
-        {% if extra_context.is_show_status_column is True or is_show_status_column is True %}
-            <th scope="col" class="px-6 py-3 text-left">
-                <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Status" %}
-                    </span>
 
+        <!-- Status -->
+        {% if extra_context.is_show_status_column is not False and is_show_status_column is not False %}
+            <th scope="col" class="px-3 py-3 text-start whitespace-nowrap">
+                <div class="flex items-center gap-x-1.5">
+                    <span>{% translate "Status" %}</span>
                     {% include "bw_components/global/table_list/sort_icon.html" %}
-
                 </div>
             </th>
         {% endif %}
+
+        <!-- Created At -->
         {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
-            <th scope="col" class="px-6 py-3 text-left">
-                <div class="flex items-center gap-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                        {% translate "Created" %}
-                    </span>
-
+            <th scope="col" class="px-2.5 py-3 text-center whitespace-nowrap">
+                <div class="flex items-center justify-center gap-x-1.5">
+                    <span>{% translate "Created" %}</span>
                     {% include "bw_components/global/table_list/sort_icon.html" %}
-
                 </div>
             </th>
         {% endif %}
-        <th scope="col" class="px-6 py-3 text-left disable-sort">
-            <div class="flex items-center gap-x-2">
-            </div>
+
+        <!-- Actions -->
+        <th scope="col" class="pe-3.5 ps-1.5 py-3 text-end disable-sort whitespace-nowrap w-16">
+            <span>{% translate "Actions" %}</span>
         </th>
     </tr>
 {% endblock thead_block %}
 {# End Table Header Columns #}
+
 {# Start Table Body #}
 {% block tbody_block %}
-    {% for object in object_list %}
-        <tr>
+    {% for object in page_obj|default:object_list %}
+        <tr class="hover:bg-gray-50/80 dark:hover:bg-neutral-800/40 transition-colors text-xs">
             {% if is_checkbox_enabled is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="pl-6 py-3">
-                        <label for="{{ object.pk|add:'-checkbox' }}" class="flex">
-                            <input type="checkbox"
-                                   class="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800 {{ BW_DISABLED_DISABLED_INPUTS_CSS_CLASSES }} {{ BW_BASE_INPUT_CSS_CLASSES }}"
-                                   id="{{ object.pk|add:'-checkbox' }}"
-                                   disabled />
-                            <span class="sr-only">{{ object.title|title }}</span>
-                        </label>
-                    </div>
+                <td class="ps-3.5 py-2.5 whitespace-nowrap">
+                    <label for="{{ object.pk|add:'-checkbox' }}" class="flex">
+                        <input type="checkbox"
+                               class="shrink-0 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500"
+                               id="{{ object.pk|add:'-checkbox' }}"
+                               disabled />
+                        <span class="sr-only">{{ object.title|title }}</span>
+                    </label>
                 </td>
             {% endif %}
-            <td class="h-px w-px">
-                <div class="px-6 py-3">
-                    <a href="{% url base_url_name|add:':update' object.pk %}">
-                        <p class="line-clamp-4 text-sm text-gray-600 dark:text-gray-400">
-                            {{ object.title|safe }}
-                        </p>
-                    </a>
-                </div>
-            </td>
-            {% if extra_context.is_show_client_column is True or is_show_client_column is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="px-6 py-3">
-                        {% if object.get_client %}
-                            <a class="text-sm italic {{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} dark:text-gray-400"
-                               href="{% url 'dashboard:client:details' object.get_client.pk %}">
-                                {{ object.get_client|safe }}
-                            </a>
-                        {% else %}
-                            <span class="text-sm text-yellow-600 font-semibold italic dark:text-gray-400">{% translate "No client" %}</span>
-                        {% endif %}
-                    </div>
-                </td>
-            {% endif %}
-            {% if extra_context.is_show_job_column is True or is_show_job_column is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="px-6 py-3">
-                        {% if object.job %}
-                            <a href="{% url 'dashboard:job:details' object.job.pk %}"
-                               class="text-sm {{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }} dark:text-gray-400">
-                                {{ object.job }}
-                            </a>
-                        {% else %}
-                            <span class="text-sm text-yellow-600 dark:text-gray-400 italic font-semibold">
-                                {% translate "No job" %}
+
+            <!-- Title & Hints -->
+            <td class="px-3.5 py-2.5 whitespace-nowrap">
+                <div class="flex flex-col max-w-[260px]">
+                    <div class="flex items-center gap-x-2 min-w-0">
+                        <a href="{% url base_url_name|add:':update' object.pk %}"
+                           class="text-xs font-bold text-gray-900 hover:text-blue-600 dark:text-neutral-100 dark:hover:text-blue-400 transition-colors truncate"
+                           title="{{ object.title }}">
+                            {{ object.title }}
+                        </a>
+                        {% if object.is_completed %}
+                            <span class="shrink-0 inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                                ✓ {% translate "Done" %}
                             </span>
                         {% endif %}
                     </div>
+                    {% if object.hints %}
+                        <p class="text-[11px] text-gray-500 dark:text-neutral-400 truncate mt-0.5" title="{{ object.hints }}">
+                            {{ object.hints }}
+                        </p>
+                    {% endif %}
+                </div>
+            </td>
+
+            <!-- Client Column -->
+            {% if extra_context.is_show_client_column is not False and is_show_client_column is not False %}
+                <td class="px-3 py-2.5 whitespace-nowrap">
+                    {% if object.get_client %}
+                        <div class="flex items-center gap-x-1.5 max-w-[160px]">
+                            <span class="shrink-0 inline-flex items-center justify-center size-6 rounded-full bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300 text-[10px] font-bold">
+                                {{ object.get_client.name|slice:":1"|upper }}
+                            </span>
+                            <a href="{% url 'dashboard:client:details' object.get_client.pk %}"
+                               class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 truncate"
+                               title="{{ object.get_client.name }}">
+                                {{ object.get_client.name }}
+                            </a>
+                        </div>
+                    {% else %}
+                        <span class="text-xs text-gray-400 italic">{% translate "No client" %}</span>
+                    {% endif %}
                 </td>
             {% endif %}
-            {% if extra_context.is_show_manager_column is True or is_show_manager_column is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="px-6 py-3">
-                        {% if object.job.managed_by %}
+
+            <!-- Job Column -->
+            {% if extra_context.is_show_job_column is not False and is_show_job_column is not False %}
+                <td class="px-3 py-2.5 whitespace-nowrap">
+                    {% if object.job %}
+                        <div class="flex items-center gap-x-1.5 max-w-[180px]">
+                            <a href="{% url 'dashboard:job:details' object.job.pk %}"
+                               class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 truncate"
+                               title="{{ object.job.title }}">
+                                {{ object.job.title }}
+                            </a>
+                        </div>
+                    {% else %}
+                        <span class="text-xs text-gray-400 italic">{% translate "No job" %}</span>
+                    {% endif %}
+                </td>
+            {% endif %}
+
+            <!-- Manager Column -->
+            {% if is_hide_manager is False or extra_context.is_hide_manager is False or extra_context.is_show_manager_column is True or is_show_manager_column is True %}
+                <td class="px-3 py-2.5 whitespace-nowrap">
+                    {% if object.job.managed_by %}
+                        <div class="flex items-center gap-x-1.5 max-w-[140px]">
+                            <span class="shrink-0 inline-flex items-center justify-center size-6 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-[10px] font-bold">
+                                {{ object.job.managed_by.first_name|default:object.job.managed_by.email|slice:":1"|upper }}
+                            </span>
                             {% if request.user.user_type == CON_BOOKKEEPER %}
-                                <a href="javascript:;" class="disabledAnchorElement text-sm">{{ object.job.managed_by }}</a>
+                                <span class="text-xs text-gray-800 dark:text-neutral-200 truncate" title="{{ object.job.managed_by }}">
+                                    {{ object.job.managed_by }}
+                                </span>
                             {% else %}
                                 <a href="{% url 'dashboard:staff:member-details' object.job.managed_by.pk %}"
-                                   class="text-sm {{ BW_PRELINE_ANCHOR_TAG_DEFAULT_COLOR }}">{{ object.job.managed_by }}</a>
+                                   class="text-xs text-gray-800 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-blue-400 truncate"
+                                   title="{{ object.job.managed_by }}">
+                                    {{ object.job.managed_by }}
+                                </a>
                             {% endif %}
-                        {% else %}
-                            <span class="text-sm text-yellow-600 font-semibold italic dark:text-gray-400">{% translate "No manager" %}</span>
-                        {% endif %}
+                        </div>
+                    {% else %}
+                        <span class="inline-flex items-center py-0.5 px-1.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                            {% translate "Unassigned" %}
+                        </span>
+                    {% endif %}
+                </td>
+            {% endif %}
+
+            <!-- Task Type Column -->
+            {% if extra_context.is_show_type_column is not False and is_show_type_column is not False %}
+                <td class="px-3 py-2.5 whitespace-nowrap">
+                    {% if object.task_type %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-gray-100 text-gray-800 dark:bg-neutral-800 dark:text-neutral-200">
+                            {{ object.get_task_type_display }}
+                        </span>
+                    {% else %}
+                        <span class="text-xs text-gray-400 italic">—</span>
+                    {% endif %}
+                </td>
+            {% endif %}
+
+            <!-- Status Column -->
+            {% if extra_context.is_show_status_column is not False and is_show_status_column is not False %}
+                <td class="px-3 py-2.5 whitespace-nowrap">
+                    <div class="flex items-center gap-1">
+                        {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
                     </div>
                 </td>
             {% endif %}
-            {% if extra_context.is_show_type_column is True or is_show_type_column is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="px-6 py-3">
-                        {% if object.task_type %}
-                            <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium border border-gray-200 bg-white text-gray-800 shadow-sm dark:bg-slate-900 dark:border-gray-700 dark:text-white">{{ object.get_task_type_display }}</span>
-                        {% else %}
-                            <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500">{% translate "No type" %}</span>
-                        {% endif %}
-                    </div>
-                </td>
-            {% endif %}
-            {% if extra_context.is_show_status_column is True or is_show_status_column %}
-                <td class="h-px w-px whitespace-nowrap">
-                    <div class="px-6 py-3">
-                        {% bw_badge code=object.status text=object.get_status_display size="sm" %}
-                    </div>
-                </td>
-            {% endif %}
+
+            <!-- Created At Column -->
             {% if is_show_created_at is True or extra_context.is_show_created_at is True %}
-                <td class="h-px w-px whitespace-nowrap">
-                    {% bw_date date_txt=object.created_at is_in_table_list=True %}
+                <td class="px-2.5 py-2.5 text-center whitespace-nowrap text-gray-600 dark:text-neutral-400 text-xs">
+                    {{ object.created_at|date:"M d, Y" }}
                 </td>
             {% endif %}
-            <td class="h-px w-px whitespace-nowrap text-center">
-                {% if is_actions_menu_enabled is True %}
-                    {% bw_actions_dropdown actions_items=actions_items actions_base_url=actions_base_url actions_app_name=actions_app_name object=object %}
-                {% endif %}
+
+            <!-- Actions Dropdown & Quick Peek -->
+            <td class="pe-3.5 ps-1.5 py-2.5 text-end whitespace-nowrap">
+                <div class="flex items-center justify-end gap-1">
+                    <button type="button"
+                            class="quick-peek-task-btn quick-peek-btn size-6.5 inline-flex justify-center items-center rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-2xs"
+                            data-task-pk="{{ object.pk }}"
+                            data-task-url="{% url 'dashboard:task:quick-peek' object.pk %}"
+                            title="{% translate 'Quick Peek' %}">
+                        <svg class="size-3 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+
+                    {% if is_actions_menu_enabled is True %}
+                        {% bw_actions_dropdown actions_items=actions_items actions_base_url=actions_base_url actions_app_name=actions_app_name object=object %}
+                    {% endif %}
+                </div>
             </td>
         </tr>
     {% endfor %}
 {% endblock tbody_block %}
 {# End Table Body #}
+
+{# Start Mobile/Tablet Card Stack & Grid View Block #}
+{% block mobile_cards_block %}
+    <!-- Grid Cards View (Controlled by taskViewGridBtn) -->
+    <div id="taskGridView"
+         class="hidden p-4 sm:p-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {% for object in page_obj|default:object_list %}
+            <div class="flex flex-col justify-between bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-2xs hover:shadow-sm dark:bg-neutral-900 dark:border-neutral-700 transition-all">
+                <div>
+                    <!-- Top Row: Title + Status -->
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="shrink-0 inline-flex items-center justify-center size-9 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs border border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800">
+                                {{ object.title|slice:":1"|upper }}
+                            </span>
+                            <div class="min-w-0">
+                                <a href="{% url base_url_name|add:':update' object.pk %}"
+                                   class="text-xs font-bold text-gray-900 hover:text-blue-600 dark:text-neutral-100 dark:hover:text-blue-400 transition-colors block truncate"
+                                   title="{{ object.title }}">
+                                    {{ object.title }}
+                                </a>
+                                {% if object.get_client %}
+                                    <a href="{% url 'dashboard:client:details' object.get_client.pk %}"
+                                       class="text-[11px] text-blue-600 hover:underline dark:text-blue-400 block truncate"
+                                       title="{{ object.get_client.name }}">
+                                        {{ object.get_client.name }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-[11px] text-gray-400 italic">{% translate "No client" %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col items-end gap-1 shrink-0">
+                            {% bw_badge code=object.status text=object.get_status_display is_solid=False size="sm" %}
+                            {% if object.is_completed %}
+                                <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                                    ✓ {% translate "Done" %}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Hints / Subtext -->
+                    {% if object.hints %}
+                        <p class="text-xs text-gray-600 dark:text-neutral-400 mt-2 line-clamp-2">
+                            {{ object.hints }}
+                        </p>
+                    {% endif %}
+
+                    <!-- Pills: Task Type & Job -->
+                    <div class="flex flex-wrap gap-1 mt-2.5">
+                        {% if object.task_type %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                {{ object.get_task_type_display }}
+                            </span>
+                        {% endif %}
+                        {% if object.job %}
+                            <a href="{% url 'dashboard:job:details' object.job.pk %}"
+                               class="inline-flex items-center py-0.5 px-2 rounded-md text-[10px] font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition-colors truncate max-w-[180px]">
+                                💼 {{ object.job.title }}
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Metadata: Managed By & Created Date -->
+                    <div class="mt-3 pt-2.5 border-t border-gray-100 dark:border-neutral-800 space-y-1 text-[11px] text-gray-600 dark:text-neutral-400">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 dark:text-neutral-500">{% translate "Managed By:" %}</span>
+                            <span class="font-medium text-gray-800 dark:text-neutral-200">
+                                {{ object.job.managed_by|default:"Unassigned" }}
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 dark:text-neutral-500">{% translate "Created:" %}</span>
+                            <span class="font-medium text-gray-800 dark:text-neutral-200">
+                                {{ object.created_at|date:"M d, Y" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Footer Actions -->
+                <div class="mt-3 pt-2.5 border-t border-gray-100 dark:border-neutral-800 flex items-center justify-between">
+                    <button type="button"
+                            class="quick-peek-task-btn quick-peek-btn py-1 px-2.5 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-2xs"
+                            data-task-pk="{{ object.pk }}"
+                            data-task-url="{% url 'dashboard:task:quick-peek' object.pk %}">
+                        <svg class="size-3 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        {% translate "Quick Peek" %}
+                    </button>
+
+                    <div class="flex items-center gap-1.5">
+                        <a href="{% url base_url_name|add:':update' object.pk %}"
+                           class="py-1 px-2.5 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition-colors">
+                            {% translate "Edit" %}
+                            <svg class="size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m9 18 6-6-6-6"/>
+                            </svg>
+                        </a>
+                        {% if is_actions_menu_enabled is True %}
+                            {% bw_actions_dropdown actions_items=actions_items actions_base_url=actions_base_url actions_app_name=actions_app_name object=object %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock mobile_cards_block %}
+{# End Mobile/Tablet Card Stack & Grid View Block #}
+
 {# Start Table Results #}
 {% block results_block %}
-    {{ object_list.count }}/{{ total_records }}
+    {% if page_obj and page_obj.paginator.count > 0 %}
+        {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }}
+    {% elif object_list %}
+        {{ object_list|length }} of {{ total_records|default:object_list|length }}
+    {% else %}
+        0
+    {% endif %}
 {% endblock results_block %}
 {# End Table Results #}
+
 {# Start Table Pagination #}
 {% block pagination_block %}
-
     {% include "components/inc/dashboard/table_list/table_list_pagination.html" with page_obj=page_obj pagination_list_url_name=pagination_list_url_name %}
-
 {% endblock pagination_block %}
 {# End Table Pagination #}

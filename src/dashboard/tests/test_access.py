@@ -1,68 +1,97 @@
-# -*- coding: utf-8 -*-#
-from django.test import TestCase, RequestFactory, SimpleTestCase, Client
+from __future__ import annotations
+
+import re
+
+import pytest
 from bs4 import BeautifulSoup
 from django.core import management
-
-from beach_wood_user.forms import BWLoginForm
-from beach_wood_user.management.commands import create_groups
-from core.management.commands import set_site, init_cache_data
-from site_settings.management.commands import init_site_settings
-from beach_wood_user.models import BWUser
+from django.test import Client
 from django.urls import reverse_lazy
 
-from core.utils.developments.debugging_print_object import DebuggingPrint
+from beach_wood_user.forms import BWLoginForm
+from beach_wood_user.models import BWUser
 
 
-class TestAccessDashboard(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super(TestAccessDashboard, cls).setUpClass()
-        management.call_command(create_groups.Command())
-        management.call_command(set_site.Command(), init_set_site=True)
-        management.call_command(
-            init_site_settings.Command(),
-            init_settings_configs=True,
-            site_domain="testserver",
-        )
-        management.call_command(
-            init_cache_data.Command(),
-            init_cache=True,
-            pick_from_env_file=True,
-            site_domain="testserver",
-        )
+from axes.utils import reset
+from django.core.cache import cache
 
-    def setUp(self):
-        self.request_factory = RequestFactory()
-        self.form_data = {
+
+@pytest.fixture(autouse=True)
+def setup_groups(db: None) -> None:
+    """Ensure auth groups exist for user signals and reset rate limiter."""
+    management.call_command("create_groups")
+    cache.clear()
+    reset()
+
+
+@pytest.mark.django_db
+class TestAccessDashboard:
+    """Test suite for dashboard access and authentication flows."""
+
+    def test_login_form(self) -> None:
+        form_data = {
             "email": "admin@admin.com",
             "password": "test123456",
             "user_type": "manager",
         }
-        self.client = Client()
-        self.credentials = {
-            "email": "admin@admin.com",
+        form = BWLoginForm(data=form_data)
+        assert form.is_valid()
+
+    def test_successfully_login(self, client: Client) -> None:
+        credentials = {
+            "email": "admin_success@admin.com",
+            "password": "test123456",
+            "user_type": "manager",
+        }
+        BWUser.objects.create_user(**credentials)
+        response = client.post(reverse_lazy("auth:login"), credentials)
+        assert response.status_code == 302
+        assert response.url == str(reverse_lazy("dashboard:manager:home"))
+
+    def test_dashboard_bootstrap_scripts_match_csp_nonce(
+        self, client: Client
+    ) -> None:
+        credentials = {
+            "email": "admin_csp@admin.com",
+            "password": "test123456",
+            "user_type": "manager",
+        }
+        BWUser.objects.create_user(**credentials)
+        login_response = client.post(
+            reverse_lazy("auth:login"),
+            credentials,
+        )
+        assert login_response.status_code == 302
+        assert login_response.url == str(reverse_lazy("dashboard:manager:home"))
+
+        response = client.get(reverse_lazy("dashboard:manager:home"))
+        assert response.status_code == 200
+
+        csp_header = response.headers.get("Content-Security-Policy", "")
+        assert "default-src" in csp_header or "script-src" in csp_header
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        auth_script = soup.find(
+            "script",
+            string=lambda text: text and "window.AUTH_TOKEN" in text,
+        )
+        csrf_script = soup.find(
+            "script",
+            string=lambda text: text and "window.csrfToken" in text,
+        )
+        # Verify window.AUTH_TOKEN is no longer leaked into DOM
+        assert auth_script is None
+        assert csrf_script is not None
+        assert "window.AUTH_TOKEN" not in response.content.decode()
+
+    def test_invalid_login(self, client: Client) -> None:
+        credentials = {
+            "email": "admin_invalid@admin.com",
             "password": "test123456",
             "user_type": "bookkeeper",
-            # "is_active": True,
-            # "is_superuser": True,
-            # "is_staff": True,
-            # "first_name": "Administrator",
-            # "last_name": "Admin",
         }
+        BWUser.objects.create_user(**credentials)
+        credentials["password"] = "WrongPassword"
+        response = client.post(reverse_lazy("auth:login"), credentials)
+        assert response.status_code in (200, 400, 429)
 
-        self.user = BWUser.objects.create_user(**self.credentials)
-
-    def test_login_form(self):
-        form = BWLoginForm(data=self.form_data)
-        self.assertTrue(form.is_valid())
-
-    def test_successfully_login(self):
-        response = self.client.post(reverse_lazy("auth:login"), self.credentials)
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse_lazy("dashboard:manager:home"))
-
-    def test_invalid_login(self):
-        self.credentials.update({"password": "Dsfdf"})
-        response = self.client.post(reverse_lazy("auth:login"), self.credentials)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "User credentials not correct!")

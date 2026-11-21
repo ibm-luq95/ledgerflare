@@ -1,18 +1,15 @@
-# -*- coding: utf-8 -*-#
 from typing import Optional
 
 from django import forms
 from django.db import transaction
 from django.forms import CheckboxSelectMultiple
 from django.forms.utils import flatatt
+from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 
 from client.models import ClientProxy
 from core.constants.css_classes import BW_PRELINE_CHECKBOX_CSS_CLASSES
 from core.forms import BaseModelFormMixin
-
-from django.utils.html import format_html, format_html_join
-
 from core.forms.mixins.remove_fields_mixin import RemoveFieldsMixin
 from core.forms.widgets import RichHTMLEditorWidget
 from core.utils import debugging_print
@@ -77,8 +74,8 @@ class CustomCheckboxSelectMultiple(CheckboxSelectMultiple):
 class ClientForm(BaseModelFormMixin, RemoveFieldsMixin):
     field_order = ["name", "email", "categories", "bookkeepers", "important_contacts"]
 
-    def __init__(self, removed_fields: Optional[list] = None, *args, **kwargs):
-        super(ClientForm, self).__init__(*args, **kwargs)
+    def __init__(self, removed_fields: list | None = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         RemoveFieldsMixin.__init__(self, removed_fields=removed_fields)
         self.fields.pop("is_active")
 

@@ -1,17 +1,26 @@
 {% load i18n %}
 
 <div id="{{ modal_css_id }}"
-     class="bw-js-modal hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto [--overlay-backdrop:static]"
-     data-hs-overlay-keyboard="false">
-    <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all {{ modal_size_css_classes }}">
-        <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
-            <div class="flex justify-between items-center py-3 px-4 border-b dark:border-gray-700">
-                <h3 class="font-bold text-gray-800 dark:text-white">{% translate modal_title %}</h3>
+     class="bw-js-modal hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto pointer-events-none [--overlay-backdrop:rgba(0,0,0,0.5)]"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="{{ modal_css_id }}-title"
+     data-hs-overlay-keyboard="true">
+    {# Universal responsive modal - adapts to content #}
+    <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all w-full max-w-[95%] sm:max-w-[90%] lg:max-w-3xl mx-auto">
+        <div class="pointer-events-auto flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
+            <!-- Header -->
+            <div class="flex justify-between items-center py-3 px-4 sm:px-6 border-b dark:border-gray-700 flex-shrink-0">
+                <h3 id="{{ modal_css_id }}-title"
+                    class="font-bold text-gray-800 dark:text-white text-sm sm:text-base line-clamp-2">
+                    {% translate modal_title %}
+                </h3>
                 <button type="button"
-                        class="hs-dropdown-toggle inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-md text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800"
-                        data-hs-overlay="#{{ modal_css_id }}">
+                        class="inline-flex flex-shrink-0 justify-center items-center h-10 w-10 sm:h-8 sm:w-8 rounded-md text-gray-500 hover:text-gray-400 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800"
+                        data-hs-overlay="#{{ modal_css_id }}"
+                        aria-label="{% translate "Close" %}">
                     <span class="sr-only">{% translate "Close" %}</span>
-                    <svg class="w-3.5 h-3.5"
+                    <svg class="w-4 h-4 sm:w-3.5 sm:h-3.5"
                          width="8"
                          height="8"
                          viewBox="0 0 8 8"
@@ -21,19 +30,24 @@
                     </svg>
                 </button>
             </div>
-            <div class="p-4 h-auto overflow-auto">
+            <!-- Body (Scrollable) -->
+            <div class="p-4 sm:p-4 overflow-y-auto max-h-[calc(100vh-200px)] flex-shrink-0">
                 {% if is_form_modal is True %}
                     <form action="{{ form_action_url }}"
                           id="{{ form_id }}"
                           method="{{ form_method|default:'post' }}"
-                          {% if is_upload_form is True %}enctype="multipart/form-data"{% endif %}>
+                          {% if is_upload_form is True %}
+                              enctype="multipart/form-data"
+                          {% endif %}>
                         <fieldset form="{{ form_id }}">
                             {% csrf_token %}
                             {% if enable_hidden_method is True %}
                                 {% bw_hidden_method_input value="patch" %}
                             {% endif %}
                             {% if extra_hidden_inputs_markup_list %}
-                                {% for hidden_input in extra_hidden_inputs_markup_list %}{{ hidden_input|safe }}{% endfor %}
+                                {% for hidden_input in extra_hidden_inputs_markup_list %}
+                                    {{ hidden_input|safe }}
+                                {% endfor %}
                             {% endif %}
                             {% if is_only_checkbox_form is True %}
 
@@ -46,16 +60,17 @@
                     </form>
                 {% endif %}
             </div>
-            <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700">
+            <!-- Footer -->
+            <div class="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-2 sm:gap-3 py-3 px-4 sm:px-6 border-t dark:border-gray-700 flex-shrink-0">
                 <button type="button"
-                        disabled
-                        class="{{ BW_FULL_INPUT_CSS_CLASSES }} hs-dropdown-toggle py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-                        data-hs-overlay="#{{ modal_css_id }}">{% translate "Close" %}</button>
+                        class="w-full sm:w-auto {{ BW_FULL_INPUT_CSS_CLASSES }} py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+                        data-hs-overlay="#{{ modal_css_id }}">
+                    {% translate "Close" %}
+                </button>
                 {% if is_submit_btn_enabled is True %}
                     <button form="{{ form_id }}"
                             type="submit"
-                            disabled
-                            class="{{ BW_FULL_INPUT_CSS_CLASSES }} py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                            class="w-full sm:w-auto {{ BW_FULL_INPUT_CSS_CLASSES }} py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
                         {% translate form_submit_text %}
                     </button>
                 {% endif %}

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 from rest_framework import serializers
 
 from job.models import JobProxy
@@ -7,7 +6,7 @@ from note.models import Note
 
 class NoteSerializer(serializers.ModelSerializer):
     job = serializers.PrimaryKeyRelatedField(
-        queryset=JobProxy.original_objects.all(), many=False, required=False
+        queryset=JobProxy.objects.all(), many=False, required=False
     )
 
     class Meta:

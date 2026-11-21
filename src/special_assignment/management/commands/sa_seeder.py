@@ -52,7 +52,9 @@ class Command(BaseCommand, CommandStdOutputMixin):
                     bookkeeper for bookkeeper in BookkeeperProxy.objects.all()
                 ]
                 all_managers = [manager for manager in ManagerProxy.objects.all()]
-                all_assistants = [assistant for assistant in AssistantProxy.objects.all()]
+                all_assistants = [
+                    assistant for assistant in AssistantProxy.objects.all()
+                ]
                 all_staff_users_lst = all_assistants + all_bookkeepers + all_managers
 
                 for i in range(0, number, 1):
@@ -83,7 +85,9 @@ class Command(BaseCommand, CommandStdOutputMixin):
                             end_date="-1d",
                         ),
                         # "due_date": faker.date_between(start_date="-1y", end_date="today"),
-                        "due_date": faker.date_between(start_date="+4d", end_date="+5d"),
+                        "due_date": faker.date_between(
+                            start_date="+4d", end_date="+5d"
+                        ),
                     }
                     if isinstance(rand_main, JobProxy):
                         fake_data["job"] = rand_main

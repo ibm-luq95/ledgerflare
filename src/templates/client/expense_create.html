@@ -353,7 +353,8 @@
             </div>
         </form>
     </section>
-    <script>
+    <script nonce="{{ request.csp_nonce }}">
+
         document.addEventListener('DOMContentLoaded', function() {
             // 🔹 Attachment Upload
             const dropArea = document.getElementById('file-drop-area');

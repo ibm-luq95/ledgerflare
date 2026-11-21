@@ -1,0 +1,128 @@
+{% load i18n %}
+{% load humanize %}
+
+<!-- Activity Timeline Section -->
+<div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-white">
+                    <i class="fa-solid fa-clock-rotate-left mr-2 text-blue-600"></i>
+                    {% translate "Recent Activity" %}
+                </h3>
+                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    {% translate "Latest updates and actions" %}
+                </p>
+            </div>
+            <a href="javascript:;"
+               class="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                {% translate "View All" %}
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+    </div>
+    
+    <div class="p-4 sm:p-6">
+        <!-- Timeline Container -->
+        <div class="relative">
+            <!-- Timeline Line -->
+            <div class="absolute left-4 sm:left-5 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-neutral-700"></div>
+            
+            <!-- Timeline Items -->
+            <div class="space-y-4">
+                {% comment %} Note: This is a placeholder - will be populated with real activity data in future {% endcomment %}
+                
+                <!-- Sample Activity Item 1: Job Created -->
+                <div class="relative flex gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center dark:bg-blue-900/30 dark:text-blue-400 z-10">
+                        <i class="fa-solid fa-briefcase text-xs sm:text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-800 dark:text-white">
+                            <span class="font-semibold">{% translate "Job created" %}:</span>
+                            {% translate "Q1 2026 Tax Preparation" %}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            {% translate "2 days ago" %}
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Sample Activity Item 2: Document Uploaded -->
+                <div class="relative flex gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center dark:bg-green-900/30 dark:text-green-400 z-10">
+                        <i class="fa-solid fa-file-arrow-up text-xs sm:text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-800 dark:text-white">
+                            <span class="font-semibold">{% translate "Document uploaded" %}:</span>
+                            {% translate "Bank Statements - March" %}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            {% translate "3 days ago" %}
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Sample Activity Item 3: Note Added -->
+                <div class="relative flex gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center dark:bg-yellow-900/30 dark:text-yellow-400 z-10">
+                        <i class="fa-solid fa-note-sticky text-xs sm:text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-800 dark:text-white">
+                            <span class="font-semibold">{% translate "Note added" %}:</span>
+                            {% translate "Client meeting notes" %}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            {% translate "5 days ago" %}
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Sample Activity Item 4: Task Completed -->
+                <div class="relative flex gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center dark:bg-teal-900/30 dark:text-teal-400 z-10">
+                        <i class="fa-solid fa-circle-check text-xs sm:text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-800 dark:text-white">
+                            <span class="font-semibold">{% translate "Task completed" %}:</span>
+                            {% translate "Reconcile checking account" %}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            {% translate "1 week ago" %}
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Sample Activity Item 5: Assignment Created -->
+                <div class="relative flex gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center dark:bg-purple-900/30 dark:text-purple-400 z-10">
+                        <i class="fa-solid fa-clipboard-list text-xs sm:text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-800 dark:text-white">
+                            <span class="font-semibold">{% translate "Assignment created" %}:</span>
+                            {% translate "Review quarterly reports" %}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            {% translate "1 week ago" %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty State (Hidden by default, shown when no activity) -->
+        <div class="hidden flex-col items-center justify-center py-8">
+            <div class="w-12 h-12 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center dark:bg-neutral-800">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                {% translate "No recent activity" %}
+            </p>
+        </div>
+    </div>
+</div>
+<!-- End Activity Timeline Section -->

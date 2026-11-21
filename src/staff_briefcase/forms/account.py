@@ -14,7 +14,7 @@ from core.forms.widgets import BWPasswordInputWidget
 class BriefcaseAccountMiniForm(
     RemoveFieldsMixin, BWJSModalFormRendererMixin, BWBaseFormMixin
 ):
-    field_order = ["name", "title", "url", "username_email", "account_password"]
+    field_order = ["name", "title", "url", "username_email", "password"]
 
     def __init__(self, removed_fields: Optional[list] = None, *args, **kwargs):
         super(BWBaseFormMixin, self).__init__(*args, **kwargs)
@@ -24,5 +24,9 @@ class BriefcaseAccountMiniForm(
     url = forms.CharField(label=_("URL"), widget=forms.URLInput, required=False)
     username_email = forms.CharField(label=_("Username / Email"), required=False)
     password = forms.CharField(widget=BWPasswordInputWidget, required=False)
-    name = forms.ChoiceField(label=_("Name"), choices=ServiceNameEnum.choices)
+    name = forms.ChoiceField(
+        label=_("Service Name"),
+        choices=[("", _("--- Select Service (Optional) ---"))] + list(ServiceNameEnum.choices),
+        required=False,
+    )
     briefcase = forms.UUIDField(widget=forms.HiddenInput)

@@ -23,6 +23,7 @@ class TaskProxy(Task):
 
     class Meta(Task.Meta):
         proxy = True
+        indexes = []
 
     def get_is_completed_label(self) -> str:
         if self.is_completed is True:

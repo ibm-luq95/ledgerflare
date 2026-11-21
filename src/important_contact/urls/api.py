@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-#
-
 from rest_framework import routers
 
 from important_contact.views import ImportantContactViewSet
+
 
 app_name = "api"
 

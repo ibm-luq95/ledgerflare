@@ -14,7 +14,7 @@ class TaskSerializer(serializers.ModelSerializer):
     #     source="get_status_display", required=False
     # )
     job = serializers.PrimaryKeyRelatedField(
-        queryset=JobProxy.original_objects.all(), many=False
+        queryset=JobProxy.objects.all(), many=False
     )
 
     class Meta:

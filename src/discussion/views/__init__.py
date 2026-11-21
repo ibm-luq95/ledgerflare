@@ -1,3 +1,2 @@
-# -*- coding: utf-8 -*-#
-from .discussion import DiscussionListView
+from .discussion import DiscussionCreateHtmxView, DiscussionListView
 from .api import DiscussionViewSet

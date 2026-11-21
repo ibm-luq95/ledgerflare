@@ -1,0 +1,145 @@
+{% load i18n core_tags %}
+
+<div class="space-y-6">
+    <!-- Header: Avatar + Name + Role Badge + Actions -->
+    <div class="flex items-start justify-between gap-4 pb-5 border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex items-center gap-3">
+            <div class="shrink-0 size-12 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-bold text-base flex items-center justify-center shadow-xs">
+                {{ object.contact_first_name|slice:":1" }}{{ object.contact_last_name|slice:":1" }}
+            </div>
+            <div>
+                <div class="flex items-center gap-2 mb-1 flex-wrap">
+                    {% if object.contact_label == 'payroll' %}
+                        <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800">
+                            {% translate "Payroll" %}
+                        </span>
+                    {% elif object.contact_label == 'ceo' %}
+                        <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800">
+                            {% translate "CEO" %}
+                        </span>
+                    {% elif object.contact_label == 'other' %}
+                        <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800">
+                            {% translate "Other" %}
+                        </span>
+                    {% else %}
+                        <span class="inline-flex items-center py-0.5 px-2 rounded-full text-[11px] font-medium bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300">
+                            {{ object.get_contact_label_display|default:object.contact_label }}
+                        </span>
+                    {% endif %}
+                </div>
+                <h3 class="text-base font-bold text-gray-900 dark:text-neutral-100 leading-snug">
+                    {{ object.full_name }}
+                </h3>
+                {% if object.company_name %}
+                    <p class="text-xs text-gray-500 dark:text-neutral-400 mt-0.5">
+                        {{ object.company_name }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 shrink-0">
+            <a href="{% url 'dashboard:important_contact:update' object.pk %}"
+               class="py-1.5 px-3 inline-flex items-center gap-x-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition-colors">
+                <svg class="size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                </svg>
+                {% translate "Edit" %}
+            </a>
+            <a href="{% url 'dashboard:important_contact:delete' object.pk %}"
+               class="py-1.5 px-2.5 inline-flex items-center text-xs font-medium rounded-lg text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-neutral-800 transition-colors"
+               title="{% translate 'Delete' %}">
+                <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Direct Contact Actions (Email, Call, Website) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        {% if object.contact_email %}
+            <div class="p-3 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+                <span class="block text-[10px] uppercase font-semibold text-gray-400 dark:text-neutral-500 mb-1">{% translate "Email" %}</span>
+                <a href="mailto:{{ object.contact_email }}" class="font-semibold text-blue-600 hover:underline dark:text-blue-400 truncate block">
+                    {{ object.contact_email }}
+                </a>
+            </div>
+        {% endif %}
+
+        {% if object.contact_phone %}
+            <div class="p-3 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-700/60">
+                <span class="block text-[10px] uppercase font-semibold text-gray-400 dark:text-neutral-500 mb-1">{% translate "Phone" %}</span>
+                <a href="tel:{{ object.contact_phone }}" class="font-semibold text-emerald-600 hover:underline dark:text-emerald-400 truncate block">
+                    {{ object.contact_phone }}
+                </a>
+            </div>
+        {% endif %}
+
+        {% if object.contact_website %}
+            <div class="p-3 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-700/60 col-span-full">
+                <span class="block text-[10px] uppercase font-semibold text-gray-400 dark:text-neutral-500 mb-1">{% translate "Website" %}</span>
+                <a href="{{ object.contact_website }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-indigo-600 hover:underline dark:text-indigo-400 truncate block">
+                    {{ object.contact_website }}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Location & Address Card -->
+    {% if object.contact_city or object.contact_state or object.contact_postcode %}
+        <div class="p-3.5 bg-gray-50/70 dark:bg-neutral-800/40 rounded-xl border border-gray-100 dark:border-neutral-800 text-xs">
+            <h4 class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1.5">
+                {% translate "Location" %}
+            </h4>
+            <p class="font-medium text-gray-800 dark:text-neutral-200">
+                {{ object.contact_city|default:"" }}{% if object.contact_city and object.contact_state %}, {% endif %}{{ object.contact_state|default:"" }}
+                {% if object.contact_postcode %}({{ object.contact_postcode }}){% endif %}
+            </p>
+        </div>
+    {% endif %}
+
+    <!-- Linked Clients Section -->
+    <div class="space-y-2">
+        <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+            {% translate "Linked Clients" %}
+        </h4>
+        <div class="flex items-center gap-1.5 flex-wrap">
+            {% for client_obj in object.client.all %}
+                <a href="{% url 'dashboard:client:details' client_obj.pk %}"
+                   class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 font-medium text-xs transition-colors">
+                    <svg class="size-3.5 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    </svg>
+                    <span>{{ client_obj.name }}</span>
+                </a>
+            {% empty %}
+                <p class="text-xs text-gray-400 dark:text-neutral-500 italic">{% translate "No client accounts linked to this contact." %}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Notes & Description -->
+    {% if object.contact_notes or object.contact_description %}
+        <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Notes & Overview" %}
+            </h4>
+            <div class="p-3.5 bg-gray-50 dark:bg-neutral-800/60 rounded-xl border border-gray-100 dark:border-neutral-800 text-xs text-gray-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
+                {{ object.contact_notes|default:object.contact_description }}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Timestamps Summary -->
+    <div class="bg-gray-50/70 dark:bg-neutral-800/40 rounded-xl p-3 space-y-1 text-xs border border-gray-100 dark:border-neutral-800 text-gray-500 dark:text-neutral-400">
+        <div class="flex items-center justify-between text-[11px]">
+            <span>{% translate "Created:" %}</span>
+            <span class="font-medium text-gray-700 dark:text-neutral-300">{{ object.created_at|date:"M d, Y H:i" }}</span>
+        </div>
+        <div class="flex items-center justify-between text-[11px]">
+            <span>{% translate "Last Updated:" %}</span>
+            <span class="font-medium text-gray-700 dark:text-neutral-300">{{ object.updated_at|date:"M d, Y H:i" }}</span>
+        </div>
+    </div>
+</div>

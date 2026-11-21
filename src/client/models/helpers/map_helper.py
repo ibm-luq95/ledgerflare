@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-#
 from collections import defaultdict
 from typing import Optional
 
@@ -19,7 +18,7 @@ class ClientDetailsMap:
         "job_draft_count",
     ]
 
-    def __init__(self, client, filtered_by_year: Optional[str | int] = None):
+    def __init__(self, client, filtered_by_year: str | int | None = None):
         """
         Initialize the instance with the given client.
         """
@@ -161,7 +160,7 @@ class ClientDetailsMap:
 
     def all_reports(
         self,
-    ) -> None | dict[str, dict[str, None]] | dict[str, dict[str, None] | str | None]:
+    ) -> dict[str, dict[str, None]] | dict[str, dict[str, None] | str | None] | None:
         """
         This function retrieves all reports and organizes them by month, updating the months_data dictionary with the
         relevant counts. It returns the updated months_data dictionary if successful, or None if orgs_months is None.
@@ -189,7 +188,7 @@ class ClientDetailsMap:
         return all_data
 
     def create_all_months_template(
-        self, year: Optional[int | str] = None, is_with_year: bool = True
+        self, year: int | str | None = None, is_with_year: bool = True
     ) -> dict[str, dict[str, None]] | dict[str, dict[str, None] | str | None]:
         """
         Create a template for all months in a given year.
@@ -211,7 +210,7 @@ class ClientDetailsMap:
         months_idx = set([str(m) for m in months_idx])
         months_idx = list(months_idx)
         months_idx.sort(key=int)
-        data = {key: None for key in months_idx}
+        data = dict.fromkeys(months_idx)
         if is_with_year is False:
             return {"data": data}
         return {"year": year, "data": data}

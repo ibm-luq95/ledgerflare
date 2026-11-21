@@ -33,16 +33,14 @@ class DiscussionForm(BaseModelFormMixin, RemoveFieldsMixin, JoditFormMixin):
         RemoveFieldsMixin.__init__(self, removed_fields=removed_fields)
         JoditFormMixin.__init__(self, add_jodit_css_class=add_jodit_css_class)
         # self.fields["body"].widget.attrs.update({"rows": 5, "cols": 10})
-        self.fields.get("attachment").widget.attrs.update(
-            {
-                "accept": (
-                    f"{PDF_MIME_TYPE}, {DOCX_MIME_TYPE}, {DOC_MIME_TYPE}, {CSV_MIME_TYPE},"
-                    f" {PNG_MIME_TYPE}, {JPEG_MIME_TYPE}, {JPG_MIME_TYPE},"
-                    f" {PPTX_MIME_TYPE}, {PPT_MIME_TYPE}, {AVIF_MIME_TYPE},"
-                    f" {WEBP_MIME_TYPE}"
-                )
-            }
-        )
+        self.fields.get("attachment").widget.attrs.update({
+            "accept": (
+                f"{PDF_MIME_TYPE}, {DOCX_MIME_TYPE}, {DOC_MIME_TYPE}, {CSV_MIME_TYPE},"
+                f" {PNG_MIME_TYPE}, {JPEG_MIME_TYPE}, {JPG_MIME_TYPE},"
+                f" {PPTX_MIME_TYPE}, {PPT_MIME_TYPE}, {AVIF_MIME_TYPE},"
+                f" {WEBP_MIME_TYPE}"
+            )
+        })
 
     class Meta(BaseModelFormMixin.Meta):
         model = DiscussionProxy

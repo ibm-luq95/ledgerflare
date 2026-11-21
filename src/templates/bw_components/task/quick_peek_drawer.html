@@ -1,0 +1,42 @@
+{% load i18n core_tags %}
+
+<!-- Quick Peek Slide-Over Backdrop Overlay -->
+<div id="taskQuickPeekBackdrop"
+     class="quick-peek-backdrop hidden fixed inset-0 z-[70] bg-gray-900/50 backdrop-blur-xs transition-opacity duration-300"></div>
+
+<!-- Quick Peek Slide-Over Drawer Panel -->
+<div id="taskQuickPeekDrawer"
+     class="quick-peek-drawer fixed top-0 end-0 z-[80] h-full w-full max-w-md bg-white shadow-2xl transition-transform duration-300 ease-in-out translate-x-full dark:bg-neutral-900 dark:border-s dark:border-neutral-800 flex flex-col"
+     tabindex="-1"
+     aria-labelledby="taskQuickPeekDrawerLabel">
+    <!-- Drawer Top Bar -->
+    <div class="flex items-center justify-between py-3.5 px-5 border-b border-gray-200 dark:border-neutral-700 bg-gray-50/70 dark:bg-neutral-800/40">
+        <div class="flex items-center gap-2">
+            <svg class="size-4 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+            <h2 id="taskQuickPeekDrawerLabel" class="text-sm font-bold text-gray-800 dark:text-neutral-200">
+                {% translate "Task Quick Peek" %}
+            </h2>
+        </div>
+        <button type="button"
+                id="closeTaskQuickPeekBtn"
+                class="close-quick-peek-btn size-8 inline-flex justify-center items-center rounded-lg border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 transition-colors"
+                aria-label="Close Quick Peek">
+            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Drawer Body (Dynamically populated via fetch or rendered with task) -->
+    <div id="taskQuickPeekDrawerBody" class="quick-peek-drawer-body p-5 overflow-y-auto grow space-y-4 scrollbar-thin">
+        {% if task %}
+            {% include "bw_components/task/quick_peek_content.html" with task=task %}
+        {% else %}
+            <div class="flex items-center justify-center py-16 text-gray-400">
+                <span class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500" role="status" aria-label="loading"></span>
+            </div>
+        {% endif %}
+    </div>
+</div>

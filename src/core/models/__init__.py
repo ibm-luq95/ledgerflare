@@ -1,1 +1,3 @@
-from .crud_event_proxy import CRUDEventProxy
+from .log_entry_proxy import LogEntryProxy
+
+CRUDEventProxy = LogEntryProxy

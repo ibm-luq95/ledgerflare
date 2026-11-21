@@ -9,16 +9,19 @@ import random
 from django.db import transaction
 
 from core.choices import JobStatusEnum, JobTypeEnum, JobStateEnum
-from jobs.models import JobProxy, JobCategory
-from client.models import ClientProxy, ClientCategory
-from special_assignment.models import DiscussionProxy, SpecialAssignment
+from job.models import JobProxy
+from job_category.models import JobCategory
+from client.models import ClientProxy
+from client_category.models import ClientCategory
+from discussion.models import DiscussionProxy
+from special_assignment.models import SpecialAssignmentProxy
 
 # import colorama
 from colorama import Fore
 
-from core.management.mixins import CommandStdOutputMixin
+from core.management.mixins import CommandStdOutputMixin, ProductionGuardCommandMixin
 from core.utils import debugging_print
-from users.models import CustomUser
+from beach_wood_user.models import BWUser
 
 apps_maps = defaultdict(list)
 for model in apps.get_models():
@@ -26,7 +29,7 @@ for model in apps.get_models():
     apps_maps[model._meta.app_label].append(model._meta.object_name)
 
 
-class Command(BaseCommand, CommandStdOutputMixin):
+class Command(ProductionGuardCommandMixin, CommandStdOutputMixin, BaseCommand):
     help = "Seed django model with fake data"
     # _APPS_MAP = sorted(apps_maps.items())
     _APPS_MAP = apps_maps
@@ -36,7 +39,7 @@ class Command(BaseCommand, CommandStdOutputMixin):
         "discussion": DiscussionProxy,
         "client": ClientProxy,
         "client_category": ClientCategory,
-        "special_assignment": SpecialAssignment,
+        "special_assignment": SpecialAssignmentProxy,
     }
 
     def add_arguments(self, parser):

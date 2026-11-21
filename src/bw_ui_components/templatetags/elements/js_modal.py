@@ -3,14 +3,16 @@ import json
 import ast
 from django import template
 from django.urls import reverse_lazy
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 from core.utils import get_request_context, debugging_print
 
 register = template.Library()
 
 
-@register.inclusion_tag("bw_ui_components/elements/js_modal.html", takes_context=True)
+@register.inclusion_tag(
+    "bw_ui_components/elements/js_modal.html", takes_context=True
+)
 def bw_js_modal(context, *args, **kwargs) -> dict:
     context_data = get_request_context(context, kwargs)
     url = ""
@@ -18,33 +20,25 @@ def bw_js_modal(context, *args, **kwargs) -> dict:
     action_url_pk = kwargs.get("action_url_pk", None)
     extra_hidden_inputs = kwargs.get("extra_hidden_inputs", None)
     extra_hidden_inputs_markup_list = []
+
+    # Process extra hidden inputs
     if extra_hidden_inputs is not None:
-        # extra_hidden_inputs = str(extra_hidden_inputs)
         extra_hidden_inputs = ast.literal_eval(extra_hidden_inputs)
         for name, value in extra_hidden_inputs.items():
-            tmp_markup = f"<input type='hidden' name='{name}' value='{value}' />"
-            extra_hidden_inputs_markup_list.append(mark_safe(tmp_markup))
-    # debugging_print(extra_hidden_inputs_markup_list)
-    modal_size = kwargs.get("modal_size", "sm")
-    modal_size_css_classes = ""
-    match modal_size:
-        case "sm":
-            # modal_size_css_classes = " sm:max-w-lg sm:w-full m-3 sm:mx-auto "
-            modal_size_css_classes = " bw-js-modal-sm mx-auto "
-        case "md":
-            # modal_size_css_classes = " md:max-w-2xl md:w-full m-3 md:mx-auto "
-            modal_size_css_classes = " bw-js-modal-md mx-auto "
-        case "lg":
-            # modal_size_css_classes = " lg:max-w-4xl lg:w-full m-3 lg:mx-auto "
-            modal_size_css_classes = " bw-js-modal-lg mx-auto "
+            extra_hidden_inputs_markup_list.append(
+                format_html("<input type='hidden' name='{}' value='{}' />", name, value)
+            )
+
+    # Modal size (optional, defaults to 'md' for backward compatibility)
+    # Size parameter is kept but doesn't affect responsive behavior
+    modal_size = kwargs.get("modal_size", "md")
 
     if action_url is not None:
         url = reverse_lazy(action_url)
         if action_url_pk is not None:
             url = reverse_lazy(action_url, kwargs={"pk": action_url_pk})
         context_data.update({"form_action_url": url})
-    # debugging_print(modal_size_css_classes)
-    context_data.update({"modal_size_css_classes": modal_size_css_classes})
+
     context_data.update(
         {"extra_hidden_inputs_markup_list": extra_hidden_inputs_markup_list}
     )

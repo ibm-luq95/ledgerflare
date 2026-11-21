@@ -7,7 +7,7 @@ Date: 5/13/24
 Description: All templatetags that handle string processes
 """
 from typing import Any, Union, Optional
-import stringcase
+import inflection
 import textwrap
 from django import template
 from django.template.defaultfilters import stringfilter
@@ -30,7 +30,7 @@ def to_title_case(text: Union[str, Any]) -> str:
         str: The converted string in title case.
 
     """
-    return stringcase.titlecase(str(text))
+    return inflection.titleize(str(text))
 
 
 @register.filter(name="replace_string")

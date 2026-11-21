@@ -1,0 +1,95 @@
+{% load i18n humanize %}
+
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+    <!-- Card 1: Total Clients -->
+    <div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Total Clients" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[38px] bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-900/30 dark:text-blue-400">
+                <svg class="size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-neutral-200">
+                {{ kpi_stats.total_clients|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Registered accounts" %}
+            </p>
+        </div>
+    </div>
+    <!-- End Card 1 -->
+
+    <!-- Card 2: Active Clients -->
+    <div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Active Clients" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[38px] bg-emerald-50 text-emerald-600 rounded-lg dark:bg-emerald-900/30 dark:text-emerald-400">
+                <svg class="size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                {{ kpi_stats.active_clients|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Enabled & in good standing" %}
+            </p>
+        </div>
+    </div>
+    <!-- End Card 2 -->
+
+    <!-- Card 3: Unassigned Clients -->
+    <div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Unassigned" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[38px] bg-amber-50 text-amber-600 rounded-lg dark:bg-amber-900/30 dark:text-amber-400">
+                <svg class="size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                {{ kpi_stats.unassigned_clients|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "Need staff assignment" %}
+            </p>
+        </div>
+    </div>
+    <!-- End Card 3 -->
+
+    <!-- Card 4: Active Jobs -->
+    <div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-2xs p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">
+                {% translate "Active Jobs" %}
+            </p>
+            <div class="shrink-0 flex justify-center items-center size-[38px] bg-indigo-50 text-indigo-600 rounded-lg dark:bg-indigo-900/30 dark:text-indigo-400">
+                <svg class="size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-3">
+            <h3 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                {{ kpi_stats.total_active_jobs|default:0|intcomma }}
+            </h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-neutral-400">
+                {% translate "In progress across clients" %}
+            </p>
+        </div>
+    </div>
+    <!-- End Card 4 -->
+</div>

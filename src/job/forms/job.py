@@ -70,6 +70,30 @@ class JobForm(BWJSModalFormRendererMixin, BaseModelFormMixin, JoditFormMixin):
                 self.fields["managed_by"].widget = forms.HiddenInput()
                 self.fields["managed_by"].initial = self.user.pk
 
+    def clean_client(self):
+        client = self.cleaned_data.get("client")
+        if self.is_update and self.instance and self.instance.pk:
+            if (
+                self.user_type in ("bookkeeper", "cfo")
+                and client != self.instance.client
+            ):
+                raise ValidationError(
+                    "You do not have permission to reassign this job to another client."
+                )
+        return client
+
+    def clean_managed_by(self):
+        managed_by = self.cleaned_data.get("managed_by")
+        if self.is_update and self.instance and self.instance.pk:
+            if (
+                self.user_type in ("bookkeeper", "cfo")
+                and managed_by != self.instance.managed_by
+            ):
+                raise ValidationError(
+                    "You do not have permission to change the manager of this job."
+                )
+        return managed_by
+
     # def clean_due_date(self):
     #     data = self.cleaned_data["due_date"]
     #     now = timezone.now().date()

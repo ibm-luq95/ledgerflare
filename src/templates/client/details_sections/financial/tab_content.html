@@ -1,0 +1,21 @@
+{% load i18n %}
+{% load elements.placeholders %}
+
+<!-- Financial Tab Content -->
+<div id="financial-tab"
+     class="hidden"
+     role="tabpanel"
+     aria-labelledby="financial-tab-btn">
+    
+    <div class="space-y-6">
+        <!-- Bank Accounts Section -->
+        {% placeholder_bank_accounts client=object limit=3 %}
+        
+        <!-- Transactions Section -->
+        {% placeholder_transactions client=object limit=5 %}
+        
+        <!-- Chart of Accounts Section -->
+        {% placeholder_chart_of_accounts_summary client=object %}
+    </div>
+</div>
+<!-- End Financial Tab Content -->

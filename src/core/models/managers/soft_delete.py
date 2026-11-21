@@ -30,24 +30,19 @@ class SoftDeleteManager(models.Manager):
     ALLOWED_STATUS = [CON_ARCHIVED, CON_COMPLETED]
 
     def get_queryset(self):
-        """
-        Return a custom QuerySet that excludes soft-deleted rows by default.
-        """
-        return BaseQuerySetMixin(self.model, using=self._db).filter(is_deleted=False)
+        """Return a custom QuerySet that excludes soft-deleted rows by default."""
+        try:
+            return self.instance._prefetched_objects_cache[self.prefetch_cache_name]
+        except (AttributeError, KeyError):
+            pass
+        return super().get_queryset().filter(is_deleted=False)
 
     def all(self) -> QuerySet[Any, Any] | QuerySet[Model | Any, Any]:
-        """
-        Returns a `BaseQuerySetMixin` object representing all instances of the model with a
-        status of either `CON_ARCHIVED` or `CON_COMPLETED`, ordered by `created_at` in
-        descending order.
-
-        Args:
-            self: The instance of the class.
-
-        Returns:
-            A `BaseQuerySetMixin` object representing all instances of the model with the specified statuses.
-
-        """
+        """Returns a BaseQuerySetMixin excluding archived and completed items unless prefetched."""
+        try:
+            return self.instance._prefetched_objects_cache[self.prefetch_cache_name]
+        except (AttributeError, KeyError):
+            pass
         qs = self.get_queryset()
         field_names = [field.name for field in self.model._meta.fields]
         if "status" in field_names:

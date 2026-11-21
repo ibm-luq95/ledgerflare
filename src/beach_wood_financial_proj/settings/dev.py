@@ -1,6 +1,11 @@
 import mimetypes
+import re
+import logging
 
 from .base import *
+
+DJANGO_VITE["default"]["dev_mode"] = app_settings.VITE_DEV_MODE
+
 
 # Add color formatter
 try:
@@ -11,19 +16,37 @@ except ImportError:
     HAS_COLORLOG = False
 
 
+# Custom formatter to strip ANSI codes for file logs
+class PlainFormatter(logging.Formatter):
+    """Formatter that strips ANSI color codes from log messages"""
+
+    # ANSI escape code pattern
+    ANSI_ESCAPE_PATTERN = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+
+    def format(self, record):
+        # Get the formatted message
+        formatted = super().format(record)
+
+        # Strip ANSI codes from the entire formatted string
+        clean_message = self.ANSI_ESCAPE_PATTERN.sub("", formatted)
+
+        return clean_message
+
+
 mimetypes.add_type("application/javascript", ".js", True)
 
-DEBUG = config("DEBUG", cast=bool)
+DEBUG = app_settings.DEBUG
 
 CSRF_USE_SESSIONS = False
 
 INSTALLED_APPS = INSTALLED_APPS + [
     "django.contrib.admindocs",
     "debug_toolbar",
-    "template_profiler_panel",
-    "debugtools",
-    "debug_permissions",
+    # "template_profiler_panel",
+    # "debugtools",
+    # "debug_permissions",
     "django_model_info.apps.DjangoModelInfoConfig",
+    "client_accounting",
     # "silk",
     # "django_pdb",
     # "request_viewer",
@@ -35,25 +58,26 @@ MIDDLEWARE = MIDDLEWARE + [
     # "request_viewer.middleware.RequestViewerMiddleware",
     # "request_viewer.middleware.ExceptionMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-    "debugtools.middleware.XViewMiddleware",
+    # "debugtools.middleware.XViewMiddleware",
     "django.contrib.admindocs.middleware.XViewMiddleware",
     # "django_pdb.middleware.PdbMiddleware",
     # "silk.middleware.SilkyMiddleware",
+    "core.middleware.security_logging.SecurityLoggingMiddleware",  # Add security logging
 ]
 
 # Database configurations
 DATABASES = {
     "default": {
-        "ENGINE": config("DB_ENGINE", cast=str),
-        "NAME": config("DB_NAME", cast=str),
-        "USER": config("DB_USER", cast=str),
-        "PASSWORD": config("DB_PASSWORD", cast=str),
-        "HOST": config("DB_HOST", cast=str),
-        "PORT": config("DB_PORT", cast=str),
-        "CONN_MAX_AGE": None,
+        "ENGINE": app_settings.DB_ENGINE,
+        "NAME": app_settings.DB_NAME,
+        "USER": app_settings.DB_USER,
+        "PASSWORD": app_settings.DB_PASSWORD,
+        "HOST": app_settings.DB_HOST,
+        "PORT": app_settings.DB_PORT,
+        "CONN_MAX_AGE": 60,
         "ATOMIC_REQUESTS": True,
         "OPTIONS": {
-            "client_encoding": config("DB_CLIENT_ENCODING", cast=str),
+            "client_encoding": app_settings.DB_CLIENT_ENCODING,
             "server_side_binding": True,
         },
         "TEST": {
@@ -75,13 +99,13 @@ DATABASES = {
 # DATABASES["default"]["OPTIONS"].update({"read_default_file": "/etc/my.cnf"})
 
 TEMPLATES[0]["OPTIONS"]["builtins"].extend([
-    "debugtools.templatetags.debugtools_tags",
+    # "debugtools.templatetags.debugtools_tags",
     "core.templatetags.development_tags",
 ])
 
 # DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
 # Djagno Debug Toolbar
-INTERNAL_IPS = config("INTERNAL_IPS", cast=Csv())
+INTERNAL_IPS = app_settings.INTERNAL_IPS
 DISABLE_PANELS = {}
 
 DEBUG_TOOLBAR_PANELS = [
@@ -93,14 +117,14 @@ DEBUG_TOOLBAR_PANELS = [
     "debug_toolbar.panels.request.RequestPanel",
     "debug_toolbar.panels.sql.SQLPanel",
     "debug_toolbar.panels.staticfiles.StaticFilesPanel",
-    "debugtools.panels.ViewPanel",
+    # "debugtools.panels.ViewPanel",
     "debug_toolbar.panels.templates.TemplatesPanel",
-    "debug_toolbar.panels.cache.CachePanel",
+    # "debug_toolbar.panels.cache.CachePanel",
     "debug_toolbar.panels.signals.SignalsPanel",
     "debug_toolbar.panels.logging.LoggingPanel",
     "debug_toolbar.panels.redirects.RedirectsPanel",
     # "debug_toolbar.panels.profiling.ProfilingPanel",
-    "template_profiler_panel.panels.template.TemplateProfilerPanel",
+    # "template_profiler_panel.panels.template.TemplateProfilerPanel",
 ]
 
 SHOW_COLLAPSED = True
@@ -165,13 +189,13 @@ REQUEST_VIEWER = {"LIVE_MONITORING": False, "WHITELISTED_PATH": []}
 
 TEMPLATES[0]["OPTIONS"]["debug"] = DEBUG
 
-COMPONENTS = ComponentsSettings(
-    autodiscover=True,
-    reload_on_file_change=True,
-    # cache=None,
-    # template_cache_size=1,
-)
-DJANGO_EASY_AUDIT_PROPAGATE_EXCEPTIONS = DEBUG
+# COMPONENTS = ComponentsSettings(
+#     autodiscover=True,
+#     reload_on_file_change=True,
+#     cache=None,
+#     # template_cache_size=0,
+# )
+# DJANGO_EASY_AUDIT_PROPAGATE_EXCEPTIONS = DEBUG
 if HAS_COLORLOG:
     LOGGING_BASE["formatters"]["dev_color"] = {
         "()": "colorlog.ColoredFormatter",
@@ -191,7 +215,43 @@ if HAS_COLORLOG:
     }
 
     LOGGING_BASE["handlers"]["console"]["formatter"] = "dev_color"
+# Logging configs - Enhanced with file logging for development
 LOGGING = LOGGING_BASE.copy()
+
+# Add plain formatter that strips ANSI codes
+LOGGING["formatters"] = LOGGING.get("formatters", {}).copy()
+LOGGING["formatters"]["plain"] = {
+    "()": PlainFormatter,
+    "format": (
+        "{levelname} {asctime} {name} {module}:{lineno} :: {message}\n{exc_info}"
+    ),
+    "style": "{",
+}
+
+# Add development file handler for persistent logs (no colors)
+LOGGING["handlers"]["dev_file"] = {
+    "level": "DEBUG",
+    "class": "logging.FileHandler",
+    "filename": LOGS_FOLDER / "dev_debug.log",
+    "formatter": "plain",  # Use custom plain formatter that strips ANSI codes
+    "encoding": "utf8",
+}
+
+# Update bw_logger to include file handler
+LOGGING["loggers"]["bw_logger"]["handlers"] = ["console", "dev_file"]
+
+# Add Django framework loggers for better debugging
+LOGGING["loggers"]["django.db.backends"] = {
+    "handlers": ["console", "dev_file"],
+    "level": "WARNING",
+    "propagate": False,
+}
+
+LOGGING["loggers"]["django.request"] = {
+    "handlers": ["console", "dev_file"],
+    "level": "ERROR",
+    "propagate": False,
+}
 
 # LOGGING = {
 #     "version": 1,
@@ -235,9 +295,7 @@ DJANGO_CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
 
 # CORS Settings (Dev)
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Your dev frontend URL
-]
+CORS_ALLOWED_ORIGINS = app_settings.CORS_ALLOWED_ORIGINS
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
@@ -268,7 +326,8 @@ SESSION_COOKIE_DOMAIN = None
 CSRF_COOKIE_HTTPONLY = False  # JS needs access
 CSRF_COOKIE_SECURE = False  # Allow HTTP
 CSRF_COOKIE_SAMESITE = "Lax"
-CSRF_TRUSTED_ORIGINS = []
+# CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = app_settings.CSRF_TRUSTED_ORIGINS
 CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 CSRF_COOKIE_NAME = "csrftoken"
 
@@ -277,3 +336,30 @@ SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 X_FRAME_OPTIONS = "DENY"
+
+# Development CSP Overrides for Vite HMR
+if "CONTENT_SECURITY_POLICY" in locals():
+    VITE_DEV_ORIGINS = ["http://localhost:3036", "http://127.0.0.1:3036"]
+    VITE_WS_ORIGINS = ["ws://localhost:3036", "ws://127.0.0.1:3036"]
+
+    CONTENT_SECURITY_POLICY["DIRECTIVES"]["connect-src"].extend(
+        VITE_DEV_ORIGINS + VITE_WS_ORIGINS
+    )
+    CONTENT_SECURITY_POLICY["DIRECTIVES"]["script-src"].extend(
+        VITE_DEV_ORIGINS + ["'sha256-LU/kkUjvgwMjOUdsHfzKOn8XfOOZeOMchvUy8L9Hy00='"]
+    )
+
+    CONTENT_SECURITY_POLICY["DIRECTIVES"]["style-src"].extend(VITE_DEV_ORIGINS)
+    CONTENT_SECURITY_POLICY["DIRECTIVES"]["font-src"].extend(VITE_DEV_ORIGINS)
+    CONTENT_SECURITY_POLICY["DIRECTIVES"]["img-src"].extend(VITE_DEV_ORIGINS)
+
+
+# Development Throttle Overrides (Prevent HTTP 429 during local development)
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {
+    "anon": "1000/minute",
+    "user": "1000/minute",
+    "auth_endpoint": "1000/minute",
+    "export_data": "1000/minute",
+}
+
+

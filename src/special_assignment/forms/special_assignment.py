@@ -58,16 +58,14 @@ class SpecialAssignmentForm(BaseModelFormMixin, JoditFormMixin):
         self.fields.pop("bookkeeper")
         self.fields.pop("manager")
         self.fields.pop("assistant")
-        self.fields.get("attachment").widget.attrs.update(
-            {
-                "accept": (
-                    f"{PDF_MIME_TYPE}, {DOCX_MIME_TYPE}, {DOC_MIME_TYPE}, {CSV_MIME_TYPE},"
-                    f" {PNG_MIME_TYPE}, {JPEG_MIME_TYPE}, {JPG_MIME_TYPE},"
-                    f" {PPTX_MIME_TYPE}, {PPT_MIME_TYPE}, {AVIF_MIME_TYPE},"
-                    f" {WEBP_MIME_TYPE}"
-                )
-            }
-        )
+        self.fields.get("attachment").widget.attrs.update({
+            "accept": (
+                f"{PDF_MIME_TYPE}, {DOCX_MIME_TYPE}, {DOC_MIME_TYPE}, {CSV_MIME_TYPE},"
+                f" {PNG_MIME_TYPE}, {JPEG_MIME_TYPE}, {JPG_MIME_TYPE},"
+                f" {PPTX_MIME_TYPE}, {PPT_MIME_TYPE}, {AVIF_MIME_TYPE},"
+                f" {WEBP_MIME_TYPE}"
+            )
+        })
 
     class Meta(BaseModelFormMixin.Meta):
         model = SpecialAssignmentProxy

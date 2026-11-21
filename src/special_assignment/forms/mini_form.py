@@ -27,28 +27,29 @@ from core.utils.developments.enhanced_debugging_print import (
 )
 from job.models import JobProxy
 
-file_validator = FileValidator(max_size=1024 * 1000, content_types=IMAGES_AND_DOCS_FT)
+file_validator = FileValidator(
+    max_size=1024 * 1024 * 100,
+    content_types=IMAGES_AND_DOCS_FT,
+    scan_malware=True,
+)
 
 
 class MiniSpecialAssignmentForm(BWJSModalFormRendererMixin, BWBaseFormMixin):
-
     def __init__(self, *args, **kwargs):
         super(BWBaseFormMixin, self).__init__(*args, **kwargs)
-        initial_values: dict = kwargs.get("initial")
+        initial_values: dict = kwargs.get("initial") or {}
         if initial_values.get("job"):
-            ENHANCED_DEBUGGING_PRINT_INSTANCE.display(locals())
+            # ENHANCED_DEBUGGING_PRINT_INSTANCE.display(locals())
             self.fields["job"].initial = initial_values.get("job")
         # self.fields["assigned_by"].label = ""
-        self.fields.get("attachment").widget.attrs.update(
-            {
-                "accept": (
-                    f"{PDF_MIME_TYPE}, {DOCX_MIME_TYPE}, {DOC_MIME_TYPE}, {CSV_MIME_TYPE},"
-                    f" {PNG_MIME_TYPE}, {JPEG_MIME_TYPE}, {JPG_MIME_TYPE},"
-                    f" {PPTX_MIME_TYPE}, {PPT_MIME_TYPE}, {AVIF_MIME_TYPE},"
-                    f" {WEBP_MIME_TYPE}"
-                )
-            }
-        )
+        self.fields.get("attachment").widget.attrs.update({
+            "accept": (
+                f"{PDF_MIME_TYPE}, {DOCX_MIME_TYPE}, {DOC_MIME_TYPE}, {CSV_MIME_TYPE},"
+                f" {PNG_MIME_TYPE}, {JPEG_MIME_TYPE}, {JPG_MIME_TYPE},"
+                f" {PPTX_MIME_TYPE}, {PPT_MIME_TYPE}, {AVIF_MIME_TYPE},"
+                f" {WEBP_MIME_TYPE}"
+            )
+        })
 
     field_order = ["job", "client"]
     assigned_to = forms.ModelChoiceField(

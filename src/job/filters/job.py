@@ -1,78 +1,140 @@
-# -*- coding: utf-8 -*-#
+"""Job filtering module for dashboard job views."""
+
+from __future__ import annotations
+
 import django_filters
 from django import forms
-from django.db.models.sql.where import WhereNode
+from django.utils.translation import gettext as _
 
+from beach_wood_user.models import BWUser
+from client.models import ClientProxy
+from core.choices import (
+    JobStateEnum,
+    JobStatusEnum,
+    JobTypeEnum,
+)
+from core.choices.fiscal_year import FiscalYearEnum
+from core.choices.months import MonthChoices
 from core.filters.filter_created_mixin import FilterCreatedMixin
-from core.filters.filter_help_text import HelpfulFilterSet
-from core.utils.developments.debugging_print_object import DebuggingPrint
 from job.models import JobProxy
 from job_category.models import JobCategory
-from django.utils.translation import gettext as _
+
+_INPUT_CSS = (
+    "py-2 px-3 block w-full border-gray-200 rounded-lg text-xs "
+    "focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-800 "
+    "dark:border-neutral-700 dark:text-neutral-300"
+)
 
 
 class JobFilter(FilterCreatedMixin):
+    """FilterSet for JobProxy list views with extended filter fields."""
+
+    form_prefix = "job-filter"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # DebuggingPrint.pprint(self.form.fields.items())
-        self.form.fields.pop("created_between")
+        self.form.fields.pop("created_between", None)
 
+    title = django_filters.CharFilter(
+        field_name="title",
+        lookup_expr="icontains",
+        label=_("Job Title"),
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": _("Filter by job title..."),
+                "class": _INPUT_CSS,
+            }
+        ),
+    )
+    client = django_filters.ModelChoiceFilter(
+        field_name="client",
+        queryset=ClientProxy.objects.all(),
+        label=_("Client"),
+        empty_label=_("All Clients"),
+        widget=forms.Select(attrs={"class": _INPUT_CSS}),
+    )
+    managed_by = django_filters.ModelChoiceFilter(
+        field_name="managed_by",
+        queryset=BWUser.objects.filter(is_active=True),
+        label=_("Managed By"),
+        empty_label=_("All Staff"),
+        widget=forms.Select(attrs={"class": _INPUT_CSS}),
+    )
+    status = django_filters.ChoiceFilter(
+        field_name="status",
+        choices=JobStatusEnum.choices,
+        label=_("Status"),
+        empty_label=_("All Statuses"),
+        widget=forms.Select(attrs={"class": _INPUT_CSS}),
+    )
+    state = django_filters.ChoiceFilter(
+        field_name="state",
+        choices=JobStateEnum.choices,
+        label=_("State"),
+        empty_label=_("All States"),
+        widget=forms.Select(attrs={"class": _INPUT_CSS}),
+    )
+    job_type = django_filters.ChoiceFilter(
+        field_name="job_type",
+        choices=JobTypeEnum.choices,
+        label=_("Job Type"),
+        empty_label=_("All Job Types"),
+        widget=forms.Select(attrs={"class": _INPUT_CSS}),
+    )
+    period_year = django_filters.ChoiceFilter(
+        field_name="period_year",
+        choices=FiscalYearEnum.choices,
+        label=_("Period Year"),
+        empty_label=_("All Years"),
+        widget=forms.Select(attrs={"class": _INPUT_CSS}),
+    )
+    period_month = django_filters.ChoiceFilter(
+        field_name="period_month",
+        choices=MonthChoices.choices,
+        label=_("Period Month"),
+        empty_label=_("All Months"),
+        widget=forms.Select(attrs={"class": _INPUT_CSS}),
+    )
     due_date = django_filters.DateFilter(
-        field_name="due_date", widget=forms.DateInput(attrs={"type": "date"})
+        field_name="due_date",
+        label=_("Due Date"),
+        widget=forms.DateInput(attrs={"type": "date", "class": _INPUT_CSS}),
     )
     due_date__gt = django_filters.DateFilter(
         field_name="due_date",
-        widget=forms.DateInput(attrs={"type": "date"}),
+        label=_("Due After"),
+        widget=forms.DateInput(attrs={"type": "date", "class": _INPUT_CSS}),
         lookup_expr="gt",
     )
     due_date__lt = django_filters.DateFilter(
         field_name="due_date",
-        widget=forms.DateInput(attrs={"type": "date"}),
+        label=_("Due Before"),
+        widget=forms.DateInput(attrs={"type": "date", "class": _INPUT_CSS}),
         lookup_expr="lt",
     )
     categories = django_filters.ModelMultipleChoiceFilter(
         field_name="categories",
         queryset=JobCategory.objects.all(),
-        # widget=forms.CheckboxSelectMultiple,
-        widget=forms.SelectMultiple(attrs={"data_name": "job-categories"}),
+        label=_("Categories"),
+        widget=forms.SelectMultiple(
+            attrs={"data_name": "job-categories", "class": _INPUT_CSS}
+        ),
         lookup_expr="exact",
     )
-    # show_all = django_filters.ChoiceFilter(
-    #     label=_("Show all jobs"),
-    #     method="filter_show_all",
-    #     help_text=_("Check this box to show all jobs."),
-    #     choices=[
-    #         ("true", _("Yes")),
-    #     ],
-    #     empty_label=_("Select an option"),
-    # )
-
-    # def filter_show_all(self, queryset, name, value):
-    #     if value:
-    #         # Capture existing filters
-    #         where_clause: WhereNode = queryset.query.where
-    #         DebuggingPrint.print(where_clause)
-    #         # DebuggingPrint.inspect(where_clause, is_all=True)
-    #         # DebuggingPrint.print(type(where_clause))
-    #         DebuggingPrint.pprint(where_clause.get_source_expressions())
-    #
-    #         # Create new queryset with original manager
-    #         new_qs = JobProxy.original_objects.all()
-    #
-    #         # Apply captured filters to new manager
-    #         return new_qs.filter(where_clause)
-    #
-    #     return queryset
 
     class Meta:
         model = JobProxy
-        fields = {
-            "title": ["icontains"],
-            "managed_by": ["exact"],
-            "period_year": ["exact"],
-            "period_month": ["exact"],
-            "client": ["exact"],
-            "status": ["exact"],
-            "state": ["exact"],
-        }
+        fields = [
+            "title",
+            "client",
+            "managed_by",
+            "status",
+            "state",
+            "job_type",
+            "period_year",
+            "period_month",
+            "due_date",
+            "due_date__gt",
+            "due_date__lt",
+            "categories",
+        ]

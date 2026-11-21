@@ -1,34 +1,45 @@
-# -*- coding: utf-8 -*-#
+from __future__ import annotations
+
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.utils.translation import gettext as _
 
 from core.choices import ServiceNameEnum
-from core.models.mixins import BaseModelMixin
-from core.models.mixins import StrModelMixin
-from core.utils import PasswordHasher
+from core.fields.encrypted_fields import EncryptedCharField, EncryptedTextField
+from core.models.mixins import BaseModelMixin, StrModelMixin
 
 
 class StaffAccounts(BaseModelMixin, StrModelMixin):
-    """Represents a staff account.
+    """Represents a staff account with encrypted password storage."""
 
-    This class defines a staff account with attributes such as title, URL, username/email, password, and name.
-
-    Attributes:
-        title (CharField): The title of the account.
-        url (TextField): The URL associated with the account.
-        username_email (CharField): The username or email associated with the account.
-        password (CharField): The password associated with the account.
-        name (CharField): The name of the service associated with the account.
-
-    Methods:
-        decrypted_password(self) -> str | None: Returns the decrypted password if it exists, otherwise returns None.
-        save(self, *args, **kwargs): Overrides the save method to encrypt the password before saving.
-    """
-
-    title = models.CharField(_("title"), max_length=25)
-    url = models.TextField(_("url"), null=True, blank=True)
-    username_email = models.CharField(_("Username / Email"), max_length=150)
-    password = models.CharField(_("Password"), max_length=250)
+    title = models.CharField(_("title"), max_length=150)
+    url = EncryptedTextField(
+        _("url"),
+        null=True,
+        blank=True,
+        trigram_blind_index=True,
+        blind_index_field="url_bidx",
+    )
+    url_bidx = ArrayField(
+        models.CharField(max_length=16),
+        default=list,
+        blank=True,
+        help_text=_("Trigram blind index tokens for partial URL searching."),
+    )
+    username_email = EncryptedCharField(
+        _("Username / Email"),
+        max_length=512,
+        trigram_blind_index=True,
+        blind_index_field="username_email_bidx",
+    )
+    username_email_bidx = ArrayField(
+        models.CharField(max_length=16),
+        default=list,
+        blank=True,
+        help_text=_("Trigram blind index tokens for partial username searching."),
+    )
+    password = EncryptedCharField(_("Password"), max_length=500, null=True, blank=True)
     name = models.CharField(
         _("name"),
         max_length=35,
@@ -40,23 +51,17 @@ class StaffAccounts(BaseModelMixin, StrModelMixin):
     class Meta(BaseModelMixin.Meta):
         ordering = ["title"]
         indexes = [
+            *BaseModelMixin.Meta.indexes,
             models.Index(name="staff_account_name_idx", fields=["name"]),
             models.Index(name="staff_account_title_idx", fields=["title"]),
-            models.Index(name="staff_account_username_idx", fields=["username_email"]),
+            GinIndex(fields=["username_email_bidx"], name="idx_stf_acc_user_trigram"),
+            GinIndex(fields=["url_bidx"], name="idx_stf_acc_url_trigram"),
         ]
 
     @property
     def decrypted_password(self) -> str | None:
-        """Property function to return the decrypted password if it exists, otherwise
-        returns None."""
-        if not self.password:
-            return None
-        else:
-            return PasswordHasher.decrypt(self.password)
+        """Alias property returning password for backward compatibility."""
+        return self.password
 
     def save(self, *args, **kwargs):
-        if self.decrypted_password:
-            self.password = PasswordHasher.encrypt(self.password)
-        else:
-            self.password = PasswordHasher.encrypt(self.password)
-        super(StaffAccounts, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)

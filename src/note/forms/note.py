@@ -1,13 +1,15 @@
-# -*- coding: utf-8 -*-#
 from typing import Optional
+
+from django import forms
 
 from core.forms import BaseModelFormMixin, JoditFormMixin
 from core.forms.mixins.remove_fields_mixin import RemoveFieldsMixin
-from core.forms.mixins.set_bookkeeper_related_mixin import InitBookkeeperRelatedFieldsMixin
+from core.forms.mixins.set_bookkeeper_related_mixin import (
+    InitBookkeeperRelatedFieldsMixin,
+)
 from core.forms.mixins.set_field_to_hidden import SetFieldsInputsHiddenMixin
 from core.forms.widgets import RichHTMLEditorWidget
 from note.models import Note
-from django import forms
 
 
 class NoteForm(
@@ -18,18 +20,18 @@ class NoteForm(
         client=None,
         note_section=None,
         add_jodit_css_class=False,
-        removed_fields: Optional[list] = None,
-        hidden_inputs: Optional[dict] = None,
+        removed_fields: list | None = None,
+        hidden_inputs: dict | None = None,
         bookkeeper=None,
         *args,
         **kwargs,
     ):
-        super(NoteForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         RemoveFieldsMixin.__init__(self, removed_fields=removed_fields)
         JoditFormMixin.__init__(self, add_jodit_css_class=add_jodit_css_class)
         SetFieldsInputsHiddenMixin.__init__(self, hidden_inputs=hidden_inputs)
         InitBookkeeperRelatedFieldsMixin.__init__(self, bookkeeper=bookkeeper)
-        
+
         if client is not None:
             self.fields["client"].initial = client
             self.fields.pop("task")

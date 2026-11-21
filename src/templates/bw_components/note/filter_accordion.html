@@ -1,0 +1,191 @@
+{% load i18n core_tags widget_tweaks %}
+
+<div class="bg-white border border-gray-200 rounded-xl shadow-2xs overflow-hidden dark:bg-neutral-900 dark:border-neutral-700 mb-6 mx-2 sm:mx-4 md:mx-0">
+    <!-- Filter Card Top Bar: Quick Section Tabs & Filter Toggle -->
+    <div class="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-gray-200 dark:border-neutral-700 bg-gray-50/50 dark:bg-neutral-800/30">
+        <!-- Quick Section Tabs -->
+        <nav class="flex space-x-1.5 overflow-x-auto py-0.5 scrollbar-none" aria-label="Section Filters">
+            <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}"
+               class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium transition-all {% if not request.GET.note_section and not request.GET.created %}bg-blue-600 text-white shadow-2xs{% else %}bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700{% endif %}">
+                {% translate "All Notes" %}
+                <span class="inline-flex items-center justify-center py-0.5 px-1.5 rounded-full text-[10px] font-semibold {% if not request.GET.note_section and not request.GET.created %}bg-blue-700 text-white{% else %}bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-200{% endif %}">
+                    {{ kpi_stats.total_notes|default:0 }}
+                </span>
+            </a>
+
+            <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}?note_section=client"
+               class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium transition-all {% if request.GET.note_section == 'client' %}bg-emerald-600 text-white shadow-2xs{% else %}bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700{% endif %}">
+                {% translate "Client Notes" %}
+                <span class="inline-flex items-center justify-center py-0.5 px-1.5 rounded-full text-[10px] font-semibold {% if request.GET.note_section == 'client' %}bg-emerald-700 text-white{% else %}bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-200{% endif %}">
+                    {{ kpi_stats.client_notes|default:0 }}
+                </span>
+            </a>
+
+            <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}?note_section=job"
+               class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium transition-all {% if request.GET.note_section == 'job' %}bg-indigo-600 text-white shadow-2xs{% else %}bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700{% endif %}">
+                {% translate "Job Notes" %}
+                <span class="inline-flex items-center justify-center py-0.5 px-1.5 rounded-full text-[10px] font-semibold {% if request.GET.note_section == 'job' %}bg-indigo-700 text-white{% else %}bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-200{% endif %}">
+                    {{ kpi_stats.job_notes|default:0 }}
+                </span>
+            </a>
+
+            <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}?note_section=task"
+               class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium transition-all {% if request.GET.note_section == 'task' %}bg-amber-600 text-white shadow-2xs{% else %}bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700{% endif %}">
+                {% translate "Task Notes" %}
+                <span class="inline-flex items-center justify-center py-0.5 px-1.5 rounded-full text-[10px] font-semibold {% if request.GET.note_section == 'task' %}bg-amber-700 text-white{% else %}bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-200{% endif %}">
+                    {{ kpi_stats.task_notes|default:0 }}
+                </span>
+            </a>
+
+            <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}?created=this_week"
+               class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-lg text-xs font-medium transition-all {% if request.GET.created == 'this_week' %}bg-purple-600 text-white shadow-2xs{% else %}bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700{% endif %}">
+                {% translate "Recent (7d)" %}
+                <span class="inline-flex items-center justify-center py-0.5 px-1.5 rounded-full text-[10px] font-semibold {% if request.GET.created == 'this_week' %}bg-purple-700 text-white{% else %}bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-neutral-200{% endif %}">
+                    {{ kpi_stats.recent_notes|default:0 }}
+                </span>
+            </a>
+        </nav>
+
+        <!-- Collapsible Filters Trigger Button -->
+        <div class="flex items-center gap-2">
+            <button type="button"
+                    id="toggleNoteFilterBtn"
+                    class="py-1.5 px-3 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 focus:outline-hidden dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-all shadow-2xs">
+                <svg class="size-3.5 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                </svg>
+                {% translate "Filters" %}
+
+                {% if request.GET %}
+                    <span class="inline-flex items-center justify-center size-4 text-[10px] font-bold bg-blue-600 text-white rounded-full">
+                        !
+                    </span>
+                {% endif %}
+
+                <svg id="noteFilterChevronIcon"
+                     class="size-3 transition-transform duration-200 {% if request.GET %}rotate-180{% endif %}"
+                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6"/>
+                </svg>
+            </button>
+
+            {% if request.GET %}
+                <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}"
+                   class="py-1.5 px-2.5 inline-flex items-center gap-x-1 text-xs text-red-600 hover:text-red-700 dark:text-red-400 font-medium transition-colors">
+                    <svg class="size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                    </svg>
+                    {% translate "Reset" %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Accordion Collapsible Filter Form Panel -->
+    <div id="noteFilterPanel"
+         class="{% if not request.GET %}hidden{% endif %} p-4 sm:p-5 border-t border-gray-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition-all">
+        
+        {% if filter_form %}
+            <form method="get" id="{{ filter_form_id|default:'notesFilterForm' }}" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
+                    <!-- Title / Search Filter -->
+                    {% if filter_form.title %}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1">
+                                {% translate "Title / Keyword" %}
+                            </label>
+                            {{ filter_form.title }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Body Content Filter -->
+                    {% if filter_form.body %}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1">
+                                {% translate "Content Keywords" %}
+                            </label>
+                            {{ filter_form.body }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Section Filter -->
+                    {% if filter_form.note_section %}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1">
+                                {% translate "Section" %}
+                            </label>
+                            {{ filter_form.note_section }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Client Filter -->
+                    {% if filter_form.client %}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1">
+                                {% translate "Client" %}
+                            </label>
+                            {{ filter_form.client }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Job Filter -->
+                    {% if filter_form.job %}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1">
+                                {% translate "Job" %}
+                            </label>
+                            {{ filter_form.job }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Task Filter -->
+                    {% if filter_form.task %}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1">
+                                {% translate "Task" %}
+                            </label>
+                            {{ filter_form.task }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Created Choice Filter -->
+                    {% if filter_form.created %}
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1">
+                                {% translate "Timeframe" %}
+                            </label>
+                            {{ filter_form.created }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Created Between Range -->
+                    {% if filter_form.created_between %}
+                        <div class="col-span-1 sm:col-span-2">
+                            <label class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 mb-1">
+                                {% translate "Created Date (From / To)" %}
+                            </label>
+                            <div class="grid grid-cols-2 gap-2">
+                                {{ filter_form.created_between }}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-gray-100 dark:border-neutral-800">
+                    <a href="{% url pagination_list_url_name|default:'dashboard:note:list' %}"
+                       class="py-2 px-3 inline-flex items-center gap-x-1.5 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 transition-colors">
+                        {% translate "Reset" %}
+                    </a>
+                    <button type="submit"
+                            class="py-2 px-4 inline-flex items-center gap-x-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden transition-colors shadow-2xs">
+                        <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                        </svg>
+                        {% translate "Apply Filters" %}
+                    </button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</div>

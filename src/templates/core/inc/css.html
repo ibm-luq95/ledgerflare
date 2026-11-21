@@ -1,7 +1,7 @@
-{% load webpack_loader static %}
+{% load static %}
+{% load django_vite %}
+{% vite_hmr_client %}
+{% vite_asset "application/app.js" %}
 
-{% comment  %}
-    {% stylesheet_pack 'app' %}
-{% endcomment %}
-{% stylesheet_pack 'app' 'app_vue' %}
 {% component_css_dependencies %}
+

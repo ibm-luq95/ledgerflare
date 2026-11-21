@@ -4,10 +4,10 @@ from django import forms
 from django.utils.translation import gettext as _
 
 PER_PAGE_CHOICES = (
-    (15, 15),
-    (25, 25),
+    (10, 10),
+    (20, 20),
+    (30, 30),
     (50, 50),
-    (75, 75),
     (100, 100),
 )
 

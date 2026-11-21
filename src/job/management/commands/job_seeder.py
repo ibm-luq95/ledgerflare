@@ -33,7 +33,9 @@ class Command(BaseCommand, CommandStdOutputMixin):
             required=False,
             default=1,
         )
-        parser.add_argument("--client", "-c", type=str, help=_("Client"), required=False)
+        parser.add_argument(
+            "--client", "-c", type=str, help=_("Client"), required=False
+        )
         parser.add_argument(
             "--created-year", "-cy", type=int, help=_("Created year"), required=False
         )
@@ -84,7 +86,9 @@ class Command(BaseCommand, CommandStdOutputMixin):
                             end_date="-1d",
                         ),
                         # "due_date": faker.date_between(start_date="-1y", end_date="today"),
-                        "due_date": faker.date_between(start_date="+4d", end_date="+5d"),
+                        "due_date": faker.date_between(
+                            start_date="+4d", end_date="+5d"
+                        ),
                     }
                     if client is not None:
                         fake_data["client"] = ClientProxy.objects.get(pk=client)

@@ -5,12 +5,12 @@ from django.views.generic import ListView
 from core.cache import BWSiteSettingsViewMixin
 from core.constants import LIST_VIEW_PAGINATE_BY
 from core.constants.css_classes import BW_INFO_MODAL_CSS_CLASSES
-from core.constants.users import CON_BOOKKEEPER
+from core.constants.users import CON_BOOKKEEPER, CON_CFO
 from django.utils.translation import gettext as _
 
 from core.views.mixins import BWLoginRequiredMixin, BWBaseListViewMixin
 from document.filters import DocumentFilter
-from document.models import Document
+from document.models import Document, DocumentProxy
 
 
 class DocumentArchiveListView(
@@ -45,7 +45,9 @@ class DocumentArchiveListView(
     pagination_list_url_name = "dashboard:archive:documents:list"
     base_url_name = "dashboard:document"
     empty_label = _("document(s)")
-    subtitle = _("Documents archive".title())
+    subtitle = _(
+        "Archived financial documents, past period workpapers, and historical attachments."
+    )
     actions_items = "update,delete"
 
     def get_context_data(self, **kwargs):
@@ -73,6 +75,10 @@ class DocumentArchiveListView(
                 self.request.user.bookkeeper.get_proxy_model().get_all_related_items(
                     "documents", is_archived=True
                 )
+            )
+        elif self.request.user.user_type == CON_CFO:
+            queryset = DocumentProxy.archive_objects.filter(
+                client__cfos__user=self.request.user
             )
         self.filterset = DocumentFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs

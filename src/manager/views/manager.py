@@ -63,7 +63,9 @@ class ManagerListView(
     actions_items = "update,delete"
     base_url_name = "dashboard:managers"
     empty_label = _("managers")
-    subtitle = _("managers".title())
+    subtitle = _(
+        "Engagement managers, team leads, and operational supervisors overseeing client portfolios."
+    )
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -71,12 +73,17 @@ class ManagerListView(
         context["title"] = _("Managers")
         # context.setdefault("filter_form", self.filterset.form)
         # context.setdefault("list_type", self.list_type)
-        context.setdefault("table_header_subtitle", _("managers subtitle"))
+        context.setdefault(
+            "table_header_subtitle",
+            _("Practice leadership, staff assignments, and portfolio management."),
+        )
         context.setdefault("extra_context", {})
         context.setdefault(
             "info_details",
             {
-                "tooltip_txt": BW_INFO_MODAL_CSS_CLASSES.get("manager").get("tooltip_txt"),
+                "tooltip_txt": BW_INFO_MODAL_CSS_CLASSES.get("manager").get(
+                    "tooltip_txt"
+                ),
                 "modal_css_id": BW_INFO_MODAL_CSS_CLASSES.get("manager").get("cssID"),
             },
         )

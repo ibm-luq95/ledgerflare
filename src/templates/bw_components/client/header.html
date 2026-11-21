@@ -1,0 +1,105 @@
+{% load i18n core_tags %}
+
+<div class="bg-white border border-gray-200 rounded-xl shadow-2xs p-4 sm:p-5 dark:bg-neutral-900 dark:border-neutral-700 mb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <!-- Title & Context -->
+        <div>
+            <!-- Breadcrumb / Section Label -->
+            <div class="flex items-center gap-x-2 text-xs text-gray-500 dark:text-neutral-400 mb-1">
+                <span>{% translate "Dashboard" %}</span>
+                <svg class="size-3 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+                <span class="font-medium text-gray-800 dark:text-neutral-200">{% translate "Clients" %}</span>
+            </div>
+
+            <!-- Heading + Total Count Pill -->
+            <div class="flex items-center gap-x-3">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-neutral-100 tracking-tight">
+                    {{ page_header|default:"Clients" }}
+                </h1>
+                <span class="inline-flex items-center py-0.5 px-2.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                    {{ kpi_stats.total_clients|default:total_records|default:object_list.count }} {% translate "total" %}
+                </span>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-neutral-400 mt-1">
+                {{ subtitle|default:"Manage client accounts, assign bookkeepers, and track active services." }}
+            </p>
+        </div>
+
+        <!-- Actions & View Toggle Controls -->
+        <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+            <!-- Export Dropdown (Respects active filters) -->
+            <div class="hs-dropdown relative inline-flex">
+                <button id="hs-client-export-dropdown"
+                        type="button"
+                        class="hs-dropdown-toggle py-2 px-3 inline-flex items-center gap-x-1.5 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 focus:outline-hidden dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 shadow-2xs transition-all cursor-pointer"
+                        aria-haspopup="menu"
+                        aria-expanded="false"
+                        aria-label="Export Menu">
+                    <svg class="size-3.5 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span>{% translate "Export" %}</span>
+                    <svg class="size-3 text-gray-400 hs-dropdown-open:rotate-180 transition-transform" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                </button>
+
+                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-44 bg-white shadow-xl rounded-xl p-1.5 mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700 z-50"
+                     role="menu"
+                     aria-orientation="vertical"
+                     aria-labelledby="hs-client-export-dropdown">
+                    <a class="flex items-center gap-x-2.5 py-2 px-3 rounded-lg text-xs font-medium text-gray-800 hover:bg-emerald-50 hover:text-emerald-700 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-emerald-400 transition-colors"
+                       href="{% url 'dashboard:client:export_excel' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">
+                        <svg class="size-4 text-emerald-600 dark:text-emerald-400 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/>
+                        </svg>
+                        <span>{% translate "Excel (.xlsx)" %}</span>
+                    </a>
+                    <a class="flex items-center gap-x-2.5 py-2 px-3 rounded-lg text-xs font-medium text-gray-800 hover:bg-blue-50 hover:text-blue-700 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-blue-400 transition-colors"
+                       href="{% url 'dashboard:client:export_csv' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">
+                        <svg class="size-4 text-blue-600 dark:text-blue-400 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h8"/>
+                        </svg>
+                        <span>{% translate "CSV (.csv)" %}</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- View Switcher (Table vs Grid Cards) -->
+            <div class="inline-flex p-0.5 bg-gray-100 border border-gray-200 rounded-lg dark:bg-neutral-800 dark:border-neutral-700" role="group" aria-label="View toggle">
+                <button type="button"
+                        id="clientViewTableBtn"
+                        class="client-view-btn py-1.5 px-2.5 inline-flex items-center gap-x-1.5 text-xs font-medium rounded-md transition-all bg-white text-gray-900 shadow-2xs dark:bg-neutral-700 dark:text-white"
+                        title="{% translate 'Table View' %}">
+                    <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3h18v18H3z"/><path d="M21 9H3"/><path d="M21 15H3"/><path d="M9 3v18"/>
+                    </svg>
+                    <span class="hidden sm:inline">{% translate "Table" %}</span>
+                </button>
+
+                <button type="button"
+                        id="clientViewGridBtn"
+                        class="client-view-btn py-1.5 px-2.5 inline-flex items-center gap-x-1.5 text-xs font-medium rounded-md transition-all text-gray-500 hover:text-gray-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                        title="{% translate 'Grid Cards View' %}">
+                    <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>
+                    </svg>
+                    <span class="hidden sm:inline">{% translate "Cards" %}</span>
+                </button>
+            </div>
+
+            <!-- Primary Create Client Button -->
+            {% if is_show_create_btn is True %}
+                <a href="{% url actions_base_url|add:':create' %}"
+                   class="py-2 px-3.5 inline-flex items-center gap-x-2 text-xs font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 shadow-2xs transition-all">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    {% translate "New Client" %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

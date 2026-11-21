@@ -1,24 +1,57 @@
 {% extends "core/layouts/dashboard_content_base.html" %}
 
-{% load development_tags %}
+{% load i18n core_tags %}
 
 {% block dashboard_content_block %}
-    {# Page Heading #}
+    <!-- Modern Dedicated Report Header -->
+    {% include "bw_components/reports/client/job/report_header.html" %}
 
-    {% include "components/inc/dashboard/content_header.html" with title="Client's jobs report" subtitle="" is_show_create_btn=False app_label=app_label actions_base_url="dashboard:client" %}
+    <!-- KPI Summary Section -->
+    {% include "bw_components/reports/client/job/kpi_cards.html" %}
 
-    {# End Page Heading #}
-    {# Start Filter Form #}
-    {% component "bw_filter_form" filter_form_id="clientJobsReportFilterForm" filter_form=form filter_cancel_url="dashboard:reports:clients_reports:job_reports_list" filter_form_action="dashboard:reports:clients_reports:job_reports_list" %}{% endcomponent %}
-    {# End Filter Form #}
-    {% if object_list %}
-        <!-- Table Section -->
-        {% include "bw_components/reports/client/job/report_table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at header_title="Jobs" header_subtitle="" app_label=app_label object_list=object_list pagination_list_url_name="dashboard:reports:clients_reports:job_reports_list" is_actions_menu_enabled=False actions_items="details" actions_app_name=app_label actions_base_url="dashboard:client" base_url_name="dashboard:client" filter_form=filter_form filter_cancel_url="dashboard:client:jobs_report" is_header_enabled=True is_footer_enabled=True is_show_client=True months_list=months_list %}
+    <!-- Dedicated Modern Report Filter Form -->
+    {% include "bw_components/reports/client/job/report_filter_form.html" %}
 
-        <!-- End Table Section -->
+    <!-- 12-Month Macro Trend Chart Section -->
+    {% include "bw_components/reports/client/job/trend_chart.html" %}
+
+    <!-- Control Bar & View Mode Switcher -->
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-3 my-4 mx-1 sm:mx-0 print:hidden">
+        <div class="text-xs text-gray-500 dark:text-gray-400">
+            {% blocktranslate with count=report_rows|length total=total_clients_count %}
+                Showing {{ count }} of {{ total }} clients
+            {% endblocktranslate %}
+        </div>
+
+        <div class="flex items-center gap-2">
+            <!-- View Mode Switcher Buttons -->
+            <div class="inline-flex p-0.5 rounded-lg bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-gray-700" role="group" aria-label="View Switcher">
+                <button type="button" id="btnMatrixView" data-view-mode="matrix" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-white text-gray-800 shadow-sm dark:bg-slate-900 dark:text-white">
+                    <i class="fa-solid fa-table-cells"></i>
+                    <span class="hidden sm:inline">{% translate "Matrix Table" %}</span>
+                </button>
+                <button type="button" id="btnCardView" data-view-mode="card" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white transition-all">
+                    <i class="fa-solid fa-grip"></i>
+                    <span class="hidden sm:inline">{% translate "Cards Grid" %}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Containers -->
+    {% if report_rows %}
+        <div id="matrixViewContainer" class="block transition-opacity duration-200">
+            {% include "bw_components/reports/client/job/matrix_table.html" %}
+        </div>
+        <div id="cardViewContainer" class="hidden transition-opacity duration-200">
+            {% include "bw_components/reports/client/job/card_grid.html" %}
+        </div>
+
+        <!-- Pagination Section -->
+        <div class="mt-6 print:hidden">
+            {% include "components/inc/dashboard/table_list/table_list_pagination.html" with page_obj=page_obj pagination_list_url_name="dashboard:reports:clients_reports:job_reports_list" %}
+        </div>
     {% else %}
-
-        {% include "bw_ui_components/global/empty_card.html" with label="jobs" %}
-
+        {% include "bw_ui_components/global/empty_card.html" with label="jobs report" %}
     {% endif %}
 {% endblock dashboard_content_block %}

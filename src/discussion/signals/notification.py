@@ -17,6 +17,8 @@ from discussion.models import DiscussionProxy, DiscussionNotification
 from job.models import JobProxy
 from manager.models import ManagerProxy
 from special_assignment.models import SpecialAssignmentProxy
+from lf_notifications.services import NotificationService
+from lf_notifications.models import NotificationVerb
 
 
 @receiver(post_save, sender=DiscussionProxy)
@@ -61,10 +63,23 @@ def create_notification(
                                     discussion=instance,
                                     job=job,
                                     recipient=discussion_user,
-                                    msg=_("You have notification for job ") + short_title,
+                                    msg=_("You have notification for job ")
+                                    + short_title,
                                 )
                             )
                             notification_obj.save()
+                            NotificationService.trigger(
+                                notification_type_name="discussion_created",
+                                actor=instance.sender,
+                                recipients=[discussion_user],
+                                verb=NotificationVerb.COMMENTED,
+                                context={
+                                    "actor_name": instance.sender.fullname,
+                                    "target_name": job.title,
+                                    "url": job.get_absolute_url(),
+                                },
+                                content_object=instance,
+                            )
                             break
                         else:
                             # if there is no discussion user, it will send the manager by default
@@ -81,22 +96,45 @@ def create_notification(
                                     )
                                 )
                                 notification_obj.save()
+                                NotificationService.trigger(
+                                    notification_type_name="discussion_created",
+                                    actor=instance.sender,
+                                    recipients=[managed_by],
+                                    verb=NotificationVerb.COMMENTED,
+                                    context={
+                                        "actor_name": instance.sender.fullname,
+                                        "target_name": job.title,
+                                        "url": job.get_absolute_url(),
+                                    },
+                                    content_object=instance,
+                                )
                                 break
-                            else:
                                 manager_user = BWUser.objects.filter(
                                     email=settings.MANAGER_MAIN_EMAIL
                                 ).first()
-                                # DebuggingPrint.pprint(manager_user)
-                                notification_obj: DiscussionNotification = (
-                                    DiscussionNotification(
-                                        discussion=instance,
-                                        job=job,
-                                        recipient=manager_user,
-                                        msg=_("You have notification for job ")
-                                        + short_title,
+                                if manager_user is not None:
+                                    notification_obj: DiscussionNotification = (
+                                        DiscussionNotification(
+                                            discussion=instance,
+                                            job=job,
+                                            recipient=manager_user,
+                                            msg=_("You have notification for job ")
+                                            + short_title,
+                                        )
                                     )
-                                )
-                                notification_obj.save()
+                                    notification_obj.save()
+                                    NotificationService.trigger(
+                                        notification_type_name="discussion_created",
+                                        actor=instance.sender,
+                                        recipients=[manager_user],
+                                        verb=NotificationVerb.COMMENTED,
+                                        context={
+                                            "actor_name": instance.sender.fullname,
+                                            "target_name": job.title,
+                                            "url": job.get_absolute_url(),
+                                        },
+                                        content_object=instance,
+                                    )
                                 break
             elif isinstance(instance.for_what(), SpecialAssignmentProxy):
                 special_assignment: SpecialAssignmentProxy = instance.for_what()
@@ -115,6 +153,18 @@ def create_notification(
                         msg=_("You have notification for assignment ") + short_title,
                     )
                     notification_obj.save()
+                    NotificationService.trigger(
+                        notification_type_name="discussion_created",
+                        actor=instance.sender,
+                        recipients=[managed_by],
+                        verb=NotificationVerb.COMMENTED,
+                        context={
+                            "actor_name": instance.sender.fullname,
+                            "target_name": special_assignment.title,
+                            "url": special_assignment.get_absolute_url(),
+                        },
+                        content_object=instance,
+                    )
 
                 elif instance.sender == managed_by:
                     # DebuggingPrint.pprint("SDFSFD")
@@ -128,6 +178,18 @@ def create_notification(
                         msg=_("You have notification for assignment ") + short_title,
                     )
                     notification_obj.save()
+                    NotificationService.trigger(
+                        notification_type_name="discussion_created",
+                        actor=instance.sender,
+                        recipients=[manager_user],
+                        verb=NotificationVerb.COMMENTED,
+                        context={
+                            "actor_name": instance.sender.fullname,
+                            "target_name": special_assignment.title,
+                            "url": special_assignment.get_absolute_url(),
+                        },
+                        content_object=instance,
+                    )
                 # DebuggingPrint.pprint(locals())
     except Exception as e:
         print(f"Error creating notification: {e}")
