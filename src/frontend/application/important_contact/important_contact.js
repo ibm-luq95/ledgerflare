@@ -12,6 +12,7 @@ import { showToastNotification } from "../utils/toasts.js";
 
 document.addEventListener("DOMContentLoaded", (readyEvent) => {
   initImportantContactListView();
+  initImportantContactQuickPeek();
 
   const filterForm = document.getElementById("importantContactFilterForm");
   const resetFilterBtn = document.querySelector("button#resetFilterBtn");
@@ -183,16 +184,15 @@ function initImportantContactListView() {
       }
     });
   }
+}
 
-  // 3. Slide-Over Quick Peek Drawer
-  const quickPeekDrawer = document.getElementById("contactQuickPeekDrawer");
-  const quickPeekBackdrop = document.getElementById("contactQuickPeekBackdrop");
-  const quickPeekDrawerBody = document.getElementById(
-    "contactQuickPeekDrawerBody",
-  );
-  const closeQuickPeekBtn = document.getElementById("closeContactQuickPeekBtn");
-
+function initImportantContactQuickPeek() {
   function openQuickPeek(url) {
+    const quickPeekDrawer = document.getElementById("contactQuickPeekDrawer");
+    const quickPeekBackdrop = document.getElementById("contactQuickPeekBackdrop");
+    const quickPeekDrawerBody = document.getElementById(
+      "contactQuickPeekDrawerBody",
+    );
     if (!quickPeekDrawer || !quickPeekBackdrop || !quickPeekDrawerBody) return;
 
     quickPeekDrawerBody.innerHTML = `
@@ -230,6 +230,8 @@ function initImportantContactListView() {
   }
 
   function closeQuickPeek() {
+    const quickPeekDrawer = document.getElementById("contactQuickPeekDrawer");
+    const quickPeekBackdrop = document.getElementById("contactQuickPeekBackdrop");
     if (!quickPeekDrawer || !quickPeekBackdrop) return;
     quickPeekDrawer.classList.remove("translate-x-0");
     quickPeekDrawer.classList.add("translate-x-full");
@@ -241,13 +243,15 @@ function initImportantContactListView() {
     if (trigger && trigger.dataset.quickPeekUrl) {
       e.preventDefault();
       openQuickPeek(trigger.dataset.quickPeekUrl);
+      return;
+    }
+
+    if (
+      e.target.closest("#closeContactQuickPeekBtn") ||
+      e.target.matches("#contactQuickPeekBackdrop")
+    ) {
+      e.preventDefault();
+      closeQuickPeek();
     }
   });
-
-  if (closeQuickPeekBtn) {
-    closeQuickPeekBtn.addEventListener("click", closeQuickPeek);
-  }
-  if (quickPeekBackdrop) {
-    quickPeekBackdrop.addEventListener("click", closeQuickPeek);
-  }
 }

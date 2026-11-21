@@ -446,7 +446,7 @@
                                                 <ul class="max-w-full flex flex-col divide-y divide-gray-200 dark:divide-gray-700 mt-2">
                                                     {% for past_due_job in object.get_all_past_due_jobs|slice:":5" %}
                                                         <li class="inline-flex items-center gap-x-2 py-3 text-sm font-medium text-gray-800 dark:text-white">
-                                                            <a href="" class="truncate">{{ past_due_job.title|truncatechars:20 }}</a>
+                                                            <a href="{% url 'dashboard:job:details' past_due_job.pk %}" class="truncate text-blue-600 hover:underline dark:text-blue-400">{{ past_due_job.title|truncatechars:20 }}</a>
                                                         </li>
                                                     {% endfor %}
                                                 </ul>
@@ -852,7 +852,7 @@
                     </div>
                 </div>
                 <div class="mt-3 overflow-x-auto">
-                    {% if object.documents.all %}
+                    {% if object.get_all_related_notes_and_documents.documents %}
 
                         {% include "bw_components/document/table_list.html" with is_checkbox_enabled=False is_show_created_at=is_show_created_at is_show_create_btn=False app_label="document" pagination_list_url_name="dashboard:document:list" is_filters_enabled=False is_actions_menu_enabled=True actions_items="update,delete" actions_app_name="document" actions_base_url="dashboard:document" base_url_name="dashboard:document" filter_form=filter_form filter_cancel_url="dashboard:document:list" object_list=object.get_all_related_notes_and_documents.documents is_show_section=True is_show_job_link=True is_show_task_link=True is_show_client_link=True %}
 
@@ -889,5 +889,10 @@
     {# Start Add CFO to client modal #}
     {% ldgf_pop_modal modal_css_id="addCfoModal" modal_size="md" modal_title="Assign CFOs" is_submit_btn_enabled=True is_form_modal=True form_object=client_assign_cfo_form is_upload_form=False form_id="assignCfoClientForm" form_submit_text="Assign" extra_hidden_inputs=extra_hidden_inputs action_url="dashboard:client:api:client-api-router-assign-cfo" custom_styled_checkboxes=True is_only_checkbox_form=True %}
     {# End Add CFO to client modal #}
+    {# Slide-over Quick Peek Drawers #}
+    {% include "bw_components/note/quick_peek_drawer.html" %}
+    {% include "bw_components/important_contact/quick_peek_drawer.html" %}
+    {% include "bw_components/special_assignment/quick_peek_drawer.html" %}
+    {% include "bw_components/job/quick_peek_drawer.html" %}
     {# End tabs #}
 {% endblock dashboard_content_block %}
